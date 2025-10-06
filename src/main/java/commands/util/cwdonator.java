@@ -39,7 +39,19 @@ public class cwdonator extends ListenerAdapter {
 
 		String clantag = clanOption.getAsString();
 
+		User userexecuted = new User(event.getUser().getId());
+		HashMap<String, Player.RoleType> clanroles = userexecuted.getClanRoles();
+		boolean ping = false;
+		for (String key : clanroles.keySet()) {
+			if (clanroles.get(key) == Player.RoleType.ADMIN || clanroles.get(key) == Player.RoleType.LEADER
+					|| clanroles.get(key) == Player.RoleType.COLEADER) {
+				ping = true;
+				break;
+			}
+		}
+
 		String desc = "";
+		desc += "ausgeführt von " + event.getUser().getAsMention() + "\n";
 		desc += "## " + title + "\n";
 		desc += "Folgende Mitglieder wurden zufällig als Spender ausgewählt: \n\n";
 
@@ -59,47 +71,40 @@ public class cwdonator extends ListenerAdapter {
 
 		ArrayList<Tuple<Integer, Integer>> currentmap = mappings.get(cwsize);
 
-		User userexecuted = new User(event.getUser().getId());
-		HashMap<String, Player.RoleType> clanroles = userexecuted.getClanRoles();
-		boolean ping = false;
-		for (String key : clanroles.keySet()) {
-			if (clanroles.get(key) == Player.RoleType.ADMIN || clanroles.get(key) == Player.RoleType.LEADER
-					|| clanroles.get(key) == Player.RoleType.COLEADER) {
-				ping = true;
-				break;
-			}
-		}
-
 		for (Tuple<Integer, Integer> map : currentmap) {
 			Collections.shuffle(warMemberList);
 			Player chosen = warMemberList.get(0);
 			int mapposition = chosen.getWarMapPosition();
-			while (mapposition > map.getFirst() && mapposition < map.getSecond()) {
-				Collections.shuffle(warMemberList);
-				chosen = warMemberList.get(0);
+			int i = 0;
+			while (mapposition >= map.getFirst() && mapposition <= map.getSecond()) {
+				chosen = warMemberList.get(i);
 				mapposition = chosen.getWarMapPosition();
+				i++;
 			}
 			warMemberList.remove(chosen);
 			if (ping) {
 				if (chosen.getUser() != null) {
-					desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameDB() + "(<@"
+					desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI() + "(<@"
 							+ chosen.getUser().getUserID() + ">) (Nr. " + mapposition + ")\n";
 				} else {
-					desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameDB()
+					desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI()
 							+ "(nicht verlinkt) (Nr. " + mapposition + ")\n";
 				}
 			} else {
 				if (chosen.getUser() != null) {
-					desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameDB() + "(UserID: "
+					desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI() + "(UserID: "
 							+ chosen.getUser().getUserID() + ") (Nr. " + mapposition + ")\n";
 				} else {
-					desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameDB()
+					desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI()
 							+ "(nicht verlinkt) (Nr. " + mapposition + ")\n";
 				}
 			}
 		}
 
-		event.getHook().editOriginal(desc);
+		event.getHook().editOriginal(".").queue(message -> {
+			message.delete().queue();
+		});
+		event.getChannel().sendMessage(desc).queue();
 
 	}
 

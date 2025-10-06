@@ -91,7 +91,6 @@ public class Bot extends ListenerAdapter {
 	public static void registerCommands(JDA jda, String guildId) {
 		Guild guild = jda.getGuildById(guildId);
 		if (guild != null) {
-			guild.updateCommands().addCommands().queue();
 			guild.updateCommands()
 					.addCommands(Commands.slash("verify", "Verifiziere deinen Clash of Clans Account.")
 							.addOption(OptionType.STRING, "tag", "Der Tag des Clash of Clans Accounts", true)
@@ -293,7 +292,7 @@ public class Bot extends ListenerAdapter {
 	@Override
 	public void onReady(ReadyEvent event) {
 		setJda(event.getJDA());
-		//registerCommands(event.getJDA(), guild_id);
+		registerCommands(event.getJDA(), guild_id);
 	}
 
 	@Override

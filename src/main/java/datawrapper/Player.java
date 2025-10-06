@@ -396,7 +396,7 @@ public class Player {
 		if (kickpointstotal == null) {
 			ArrayList<Kickpoint> a = new ArrayList<>();
 			String sql = "SELECT id FROM kickpoints WHERE player_tag = ?";
-			for (Integer id : DBUtil.getArrayListFromSQL(sql, Integer.class, tag)) {
+			for (Long id : DBUtil.getArrayListFromSQL(sql, Long.class, tag)) {
 				a.add(new Kickpoint(id));
 			}
 			kickpointstotal = a.size();
