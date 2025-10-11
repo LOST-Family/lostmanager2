@@ -175,8 +175,7 @@ public class Clan {
 				String name = member.getString("name");
 				int warmapposition = member.getInt("mapPosition");
 				Player p = new Player(tag).setNameAPI(name).setWarMapPosition(warmapposition);
-				boolean WarpreferenceIn = p.getWarPreference();
-				clanwarmembers.add(p.setWarPreference(WarpreferenceIn));
+				clanwarmembers.add(p);
 			}
 		}
 		return clanwarmembers;

@@ -76,10 +76,20 @@ public class cwdonator extends ListenerAdapter {
 			Player chosen = warMemberList.get(0);
 			int mapposition = chosen.getWarMapPosition();
 			int i = 0;
-			while (mapposition >= map.getFirst() && mapposition <= map.getSecond()) {
-				chosen = warMemberList.get(i);
-				mapposition = chosen.getWarMapPosition();
-				i++;
+			while (true) {
+				if (mapposition >= map.getFirst() && mapposition <= map.getSecond()) {
+					chosen = warMemberList.get(i);
+					mapposition = chosen.getWarMapPosition();
+					i++;
+					continue;
+				}
+				if (chosen.getWarPreference() == false) {
+					chosen = warMemberList.get(i);
+					mapposition = chosen.getWarMapPosition();
+					i++;
+					continue;
+				}
+				break;
 			}
 			warMemberList.remove(chosen);
 			if (ping) {

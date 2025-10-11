@@ -289,7 +289,7 @@ public class Player {
 	public boolean getWarPreference() {
 		if (warpreference == null) {
 			JSONObject jsonObject = new JSONObject(APIUtil.getPlayerJson(tag));
-			warpreference = jsonObject.getString("warPreference").equals("IN");
+			warpreference = jsonObject.getString("warPreference").equals("in");
 		}
 		return warpreference;
 	}
@@ -400,7 +400,7 @@ public class Player {
 				a.add(new Kickpoint(id));
 			}
 			kickpointstotal = 0L;
-			for(Kickpoint kp : a) {
+			for (Kickpoint kp : a) {
 				kickpointstotal = kickpointstotal + kp.getAmount();
 			}
 		}

@@ -60,7 +60,8 @@ public class verify extends ListenerAdapter {
 						Member member = event.getGuild().getMemberById(userid);
 						member.modifyNickname(playername).queue();
 						if (!member.getRoles().contains(event.getGuild().getRoleById(Bot.verified_roleid)))
-							event.getGuild().addRoleToMember(member, event.getGuild().getRoleById(Bot.verified_roleid));
+							event.getGuild().addRoleToMember(member, event.getGuild().getRoleById(Bot.verified_roleid))
+									.queue();
 					}
 					event.getHook()
 							.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
