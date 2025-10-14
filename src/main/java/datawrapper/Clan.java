@@ -28,6 +28,7 @@ public class Clan {
 	private ArrayList<Player> playerlistapi;
 	private ArrayList<Player> clanwarmembers;
 	private ArrayList<Player> raidmembers;
+	private Boolean raidactive;
 	private Long max_kickpoints;
 	private Long min_season_wins;
 	private Integer kickpoints_expire_after_days;
@@ -47,6 +48,8 @@ public class Clan {
 		playerlistdb = null;
 		playerlistapi = null;
 		clanwarmembers = null;
+		raidmembers = null;
+		raidactive = null;
 		max_kickpoints = null;
 		min_season_wins = null;
 		kickpoints_expire_after_days = null;
@@ -67,6 +70,13 @@ public class Clan {
 		return false;
 	}
 
+	public boolean RaidActive() {
+		if(raidactive == null) {
+			getRaidMemberList();
+		}
+		return raidactive;
+	}
+	
 	public ArrayList<Player> getRaidMemberList() {
 		if (raidmembers == null) {
 			raidmembers = new ArrayList<>();
@@ -105,9 +115,7 @@ public class Clan {
 			JSONArray items = jsonObject.getJSONArray("items");
 			JSONObject currentitem = items.getJSONObject(0);
 			String state = currentitem.getString("state");
-			if (!state.equals("ongoing")) {
-				return null;
-			}
+			raidactive = state.equals("ongoing") ? true : false;
 			JSONArray members = currentitem.getJSONArray("members");
 
 			for (int i = 0; i < members.length(); i++) {

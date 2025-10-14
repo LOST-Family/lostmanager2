@@ -58,13 +58,20 @@ public class raidping extends ListenerAdapter {
 			return;
 		}
 
-		String desc = "";
-		desc += "ausgeführt von " + event.getUser().getAsMention() + "\n";
-		desc += "## Fehlende Raid Angriffe:\n";
-
 		Clan clan = new Clan(clantag);
 
 		ArrayList<Player> raidmembers = clan.getRaidMemberList();
+
+		boolean raidactive = clan.RaidActive();
+
+		String desc = "";
+		desc += "ausgeführt von " + event.getUser().getAsMention() + "\n";
+
+		if (!raidactive) {
+			desc += "\n**Kein Ping, da Raid aktuell nicht aktiv ist.**\n";
+		}
+
+		desc += "## Fehlende Raid Angriffe:\n";
 
 		ArrayList<Player> dbmemberlist = clan.getPlayersDB();
 
@@ -135,7 +142,14 @@ public class raidping extends ListenerAdapter {
 		event.getHook().editOriginal(".").queue(message -> {
 			message.delete().queue();
 		});
-		event.getChannel().sendMessage(desc).queue();
+		if (raidactive) {
+			event.getChannel().sendMessage(desc).queue();
+		} else {
+			final String newmessage = desc;
+			event.getChannel().sendMessage(".").queue(message -> {
+				message.editMessage(newmessage).queue();
+			});
+		}
 	}
 
 	@Override

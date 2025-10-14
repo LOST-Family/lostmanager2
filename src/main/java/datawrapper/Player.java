@@ -48,7 +48,12 @@ public class Player {
 	// sets all Data except tag to null for reloading with getters
 
 	public Player refreshData() {
+		currentRaidAttacks = null;
+		currentRaidGoldLooted = null;
+		currentRaidAttackLimit = null;
+		currentRaidbonusAttackLimit = null;
 		warpreference = null;
+		warmapposition = null;
 		namedb = null;
 		nameapi = null;
 		user = null;

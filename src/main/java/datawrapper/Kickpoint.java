@@ -26,6 +26,7 @@ public class Kickpoint {
 		kpdate = null;
 		givendate = null;
 		expirationdate = null;
+		givenby = null;
 		return this;
 	}
 

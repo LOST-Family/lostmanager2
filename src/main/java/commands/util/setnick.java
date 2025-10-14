@@ -59,7 +59,7 @@ public class setnick extends ListenerAdapter {
 		}
 
 		try {
-			event.getGuild().getMember(event.getUser()).modifyNickname(nick);
+			event.getGuild().getMember(event.getUser()).modifyNickname(nick).queue();
 		} catch (Exception ex) {
 			event.getHook()
 					.editOriginalEmbeds(MessageUtil.buildEmbed(title,
