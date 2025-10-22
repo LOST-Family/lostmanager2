@@ -99,7 +99,7 @@ public class ListeningEvent {
 					String.class, id);
 			listeningtype = type.equals("cw") ? LISTENINGTYPE.CW
 					: type.equals("raid") ? LISTENINGTYPE.RAID
-							: type.equals("cwl") ? LISTENINGTYPE.CWL : type.equals("cs") ? LISTENINGTYPE.CS : null;
+							: type.equals("cwl") ? LISTENINGTYPE.CWLDAY : type.equals("cs") ? LISTENINGTYPE.CS : null;
 		}
 		return listeningtype;
 	}
