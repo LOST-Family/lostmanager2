@@ -60,23 +60,24 @@ public class memberstatus extends ListenerAdapter {
 				inclannotmember.add(new Player(s));
 			}
 		}
-		
+
 		String wrongrolestr = "";
-		
-		for(String tag : taglistapi) {
-			if(taglistdb.contains(tag)) {
+
+		for (String tag : taglistapi) {
+			if (taglistdb.contains(tag)) {
 				Player p = new Player(tag);
 				RoleType roleapi = p.getRoleAPI();
 				RoleType roledb = p.getRoleDB();
-				switch (roleapi) {
-				case COLEADER: {
-					if(roledb != RoleType.COLEADER) {
-						wrongrolestr += p.getInfoStringDB() + " \n";
-						wrongrolestr += " Ingame: " + getRoleString(roleapi) + "; Datenbank: " + getRoleString(roledb) + "\n\n";
-					}
+				if (roledb == RoleType.LEADER) {
+					roledb = RoleType.COLEADER;
 				}
-				default:
-					//doesn't matter
+				if(roleapi == RoleType.LEADER) {
+					continue;
+				}
+				if (roledb != roleapi) {
+					wrongrolestr += p.getInfoStringDB() + ": \n";
+					wrongrolestr += "- Ingame: " + getRoleString(roleapi) + "\n- Datenbank: " + getRoleString(roledb)
+							+ "\n\n";
 				}
 			}
 		}
@@ -95,9 +96,11 @@ public class memberstatus extends ListenerAdapter {
 
 		String desc = "## " + c.getInfoString() + "\n";
 
-		desc += "**Mitglied, ingame nicht im Clan:**\n\n";
+		desc += "**Im Clan, falsche Rolle:**\n";
+		desc += wrongrolestr == "" ? "---\n\n" : MessageUtil.unformat(wrongrolestr) + "\n";
+		desc += "**Mitglied, ingame nicht im Clan:**\n";
 		desc += membernotinclanstr == "" ? "---\n\n" : MessageUtil.unformat(membernotinclanstr) + "\n";
-		desc += "**Kein Mitglied, ingame im Clan:**\n\n";
+		desc += "**Kein Mitglied, ingame im Clan:**\n";
 		desc += inclannotmemberstr == "" ? "---\n\n" : MessageUtil.unformat(inclannotmemberstr) + "\n";
 
 		event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.INFO)).queue();
@@ -133,7 +136,7 @@ public class memberstatus extends ListenerAdapter {
 			return "Member";
 		default:
 			return null;
-			//egal
+		// egal
 		}
 	}
 
