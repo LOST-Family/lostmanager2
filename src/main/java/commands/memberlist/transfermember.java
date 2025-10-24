@@ -59,7 +59,7 @@ public class transfermember extends ListenerAdapter {
 			return;
 		}
 
-		Player.RoleType role = player.getRole();
+		Player.RoleType role = player.getRoleDB();
 
 		Clan playerclan = player.getClanDB();
 

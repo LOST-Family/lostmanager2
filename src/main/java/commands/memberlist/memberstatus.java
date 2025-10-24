@@ -6,12 +6,14 @@ import java.util.List;
 import datautil.DBManager;
 import datawrapper.Clan;
 import datawrapper.Player;
+import datawrapper.Player.RoleType;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import util.MessageUtil;
+
 public class memberstatus extends ListenerAdapter {
 
 	@Override
@@ -58,6 +60,26 @@ public class memberstatus extends ListenerAdapter {
 				inclannotmember.add(new Player(s));
 			}
 		}
+		
+		String wrongrolestr = "";
+		
+		for(String tag : taglistapi) {
+			if(taglistdb.contains(tag)) {
+				Player p = new Player(tag);
+				RoleType roleapi = p.getRoleAPI();
+				RoleType roledb = p.getRoleDB();
+				switch (roleapi) {
+				case COLEADER: {
+					if(roledb != RoleType.COLEADER) {
+						wrongrolestr += p.getInfoStringDB() + " \n";
+						wrongrolestr += " Ingame: " + getRoleString(roleapi) + "; Datenbank: " + getRoleString(roledb) + "\n\n";
+					}
+				}
+				default:
+					//doesn't matter
+				}
+			}
+		}
 
 		String membernotinclanstr = "";
 
@@ -93,7 +115,25 @@ public class memberstatus extends ListenerAdapter {
 		if (focused.equals("clan")) {
 			List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
 
-			event.replyChoices(choices).queue(success ->{}, failure -> {});
+			event.replyChoices(choices).queue(success -> {
+			}, failure -> {
+			});
+		}
+	}
+
+	public String getRoleString(RoleType role) {
+		switch (role) {
+		case LEADER:
+			return "Leader";
+		case COLEADER:
+			return "CoLeader";
+		case ADMIN:
+			return "Elder";
+		case MEMBER:
+			return "Member";
+		default:
+			return null;
+			//egal
 		}
 	}
 

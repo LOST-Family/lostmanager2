@@ -122,8 +122,12 @@ public class raidping extends ListenerAdapter {
 				}
 			}
 			for (Player p : notdone) {
-				if (!desc.contains("Noch")) {
-					desc += "### Noch gar nicht angegriffen:\n";
+				if (!desc.contains("icht angegriffen")) {
+					if (raidactive) {
+						desc += "### Noch gar nicht angegriffen:\n";
+					} else {
+						desc += "### Nicht angegriffen:\n";
+					}
 				}
 				desc += p.getNameAPI() + " (<@" + p.getUser().getUserID() + ">)\n";
 			}
@@ -133,8 +137,12 @@ public class raidping extends ListenerAdapter {
 		for (Player p : notfinished) {
 			int currentattacks = p.getCurrentRaidAttacks();
 			int max = p.getCurrentRaidAttackLimit() + p.getCurrentRaidbonusAttackLimit();
-			if (!desc.contains("offene")) {
-				desc += "### Noch offene Angriffe:\n";
+			if (!desc.contains("Angriffe")) {
+				if (raidactive) {
+					desc += "### Noch offene Angriffe:\n";
+				} else {
+					desc += "### Teil der Angriffe gemacht:\n";
+				}
 			}
 			desc += p.getNameAPI() + " (<@" + p.getUser().getUserID() + ">): " + currentattacks + "/" + max + "\n";
 		}

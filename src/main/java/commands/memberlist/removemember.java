@@ -49,7 +49,7 @@ public class removemember extends ListenerAdapter {
 			return;
 		}
 
-		Player.RoleType role = player.getRole();
+		Player.RoleType role = player.getRoleDB();
 
 		Clan playerclan = player.getClanDB();
 
@@ -117,7 +117,7 @@ public class removemember extends ListenerAdapter {
 				if (acc.getClanDB() != null) {
 					if (acc.getClanDB().getTag().equals(clantag)) {
 						b = true;
-						if (acc.getRole() == Player.RoleType.ELDER) {
+						if (acc.getRoleDB() == Player.RoleType.ELDER) {
 							othereldersameclan = true;
 						}
 						break;

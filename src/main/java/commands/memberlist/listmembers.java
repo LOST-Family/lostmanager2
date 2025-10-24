@@ -43,16 +43,16 @@ public class listmembers extends ListenerAdapter {
 		String memberlist = "";
 
 		for (Player p : playerlist) {
-			if (p.getRole() == Player.RoleType.LEADER) {
+			if (p.getRoleDB() == Player.RoleType.LEADER) {
 				leaderlist += p.getInfoStringDB() + "\n";
 			}
-			if (p.getRole() == Player.RoleType.COLEADER) {
+			if (p.getRoleDB() == Player.RoleType.COLEADER) {
 				coleaderlist += p.getInfoStringDB() + "\n";
 			}
-			if (p.getRole() == Player.RoleType.ELDER) {
+			if (p.getRoleDB() == Player.RoleType.ELDER) {
 				elderlist += p.getInfoStringDB() + "\n";
 			}
-			if (p.getRole() == Player.RoleType.MEMBER) {
+			if (p.getRoleDB() == Player.RoleType.MEMBER) {
 				memberlist += p.getInfoStringDB() + "\n";
 			}
 		}

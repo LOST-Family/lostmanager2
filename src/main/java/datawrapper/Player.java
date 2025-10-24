@@ -39,7 +39,8 @@ public class Player {
 	private Clan clanapi;
 	private ArrayList<Kickpoint> kickpoints;
 	private Long kickpointstotal;
-	private RoleType role;
+	private RoleType roledb;
+	private RoleType roleapi;
 
 	public Player(String tag) {
 		this.tag = tag;
@@ -61,7 +62,8 @@ public class Player {
 		clanapi = null;
 		kickpoints = null;
 		kickpointstotal = null;
-		role = null;
+		roledb = null;
+		roleapi = null;
 		return this;
 	}
 
@@ -134,8 +136,8 @@ public class Player {
 		return this;
 	}
 
-	public Player setRole(RoleType role) {
-		this.role = role;
+	public Player setRoleDB(RoleType role) {
+		this.roledb = role;
 		return this;
 	}
 
@@ -412,8 +414,8 @@ public class Player {
 		return kickpointstotal;
 	}
 
-	public RoleType getRole() {
-		if (role == null) {
+	public RoleType getRoleDB() {
+		if (roledb == null) {
 			if (new Player(tag).getClanDB() == null) {
 				return RoleType.NOTINCLAN;
 			}
@@ -423,7 +425,7 @@ public class Player {
 				try (ResultSet rs = pstmt.executeQuery()) {
 					if (rs.next()) {
 						String rolestring = rs.getString("clan_role");
-						role = rolestring.equals("leader") ? RoleType.LEADER
+						roledb = rolestring.equals("leader") ? RoleType.LEADER
 								: rolestring.equals("coLeader") ? RoleType.COLEADER
 										: rolestring.equals("admin") ? RoleType.ELDER
 												: rolestring.equals("member") ? RoleType.MEMBER : null;
@@ -433,6 +435,19 @@ public class Player {
 				e.printStackTrace();
 			}
 		}
-		return role;
+		return roledb;
+	}
+
+	public RoleType getRoleAPI() {
+		if (roleapi == null) {
+			JSONObject jsonObject = new JSONObject(APIUtil.getPlayerJson(tag));
+			String rolestring = jsonObject.getString("role");
+			roleapi = rolestring.equalsIgnoreCase("leader") ? RoleType.LEADER
+					: rolestring.equalsIgnoreCase("coleader") ? RoleType.COLEADER
+							: rolestring.equalsIgnoreCase("admin") ? RoleType.ELDER
+									: rolestring.equalsIgnoreCase("member") ? RoleType.MEMBER
+											: rolestring.equalsIgnoreCase("not_member") ? RoleType.NOTINCLAN : null;
+		}
+		return roleapi;
 	}
 }
