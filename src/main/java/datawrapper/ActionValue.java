@@ -16,11 +16,11 @@ public class ActionValue {
 	private kind saved;
 	private ACTIONVALUETYPE type;
 	private KickpointReason reason;
-	private Integer value;
+	private Long value;
 
 	@JsonCreator
 	public ActionValue(@JsonProperty("type") ACTIONVALUETYPE type, @JsonProperty("reason") KickpointReason reason,
-			@JsonProperty("value") Integer value) {
+			@JsonProperty("value") Long value) {
 		if (type != null) {
 			this.saved = kind.type;
 			this.type = type;
@@ -43,7 +43,7 @@ public class ActionValue {
 		this.reason = reason;
 	}
 
-	public ActionValue(Integer value) {
+	public ActionValue(Long value) {
 		this.saved = kind.value;
 		this.value = value;
 	}
@@ -60,7 +60,7 @@ public class ActionValue {
 		return reason;
 	}
 
-	public Integer getValue() {
+	public Long getValue() {
 		return value;
 	}
 

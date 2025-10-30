@@ -38,6 +38,7 @@ import commands.util.raidping;
 import commands.util.setnick;
 import datautil.DBUtil;
 import datawrapper.AchievementData.Type;
+import datawrapper.ListeningEvent;
 import datawrapper.Player;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -88,8 +89,7 @@ public class Bot extends ListenerAdapter {
 
 		// sql.Connection.tablesExists();
 		startNameUpdates();
-		startClanGamesSavings();
-		endClanGamesSavings();
+		restartAllEvents();
 
 		JDABuilder.createDefault(token).enableIntents(GatewayIntent.GUILD_MEMBERS)
 				.setMemberCachePolicy(MemberCachePolicy.ALL).setChunkingFilter(ChunkingFilter.ALL)
@@ -328,6 +328,24 @@ public class Bot extends ListenerAdapter {
 
 	public static JDA getJda() {
 		return jda;
+	}
+	
+	public static void restartAllEvents() {
+		schedulertasks.shutdown();
+		schedulertasks = Executors.newSingleThreadScheduledExecutor();
+		endClanGamesSavings();
+		startClanGamesSavings();
+		String sql = "SELECT id FROM listening_events";
+		ArrayList<Long> ids = DBUtil.getArrayListFromSQL(sql, Long.class);
+		for (Long id : ids) {
+			ListeningEvent le = new ListeningEvent(id);
+			
+			long timeuntilfire = le.getTimestamp() - System.currentTimeMillis();
+			
+			schedulertasks.schedule(() -> {
+			    le.fireEvent();
+			}, timeuntilfire, TimeUnit.MILLISECONDS);
+		}
 	}
 
 	public static void endClanGamesSavings() {

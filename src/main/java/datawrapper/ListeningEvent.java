@@ -11,7 +11,7 @@ import datautil.DBUtil;
 public class ListeningEvent {
 
 	public enum LISTENINGTYPE {
-		CW, RAID, CWLDAY, CS
+		CW, RAID, CWLDAY, CS, FIXTIMEINTERVAL
 	}
 
 	public enum ACTIONTYPE {
@@ -27,8 +27,6 @@ public class ListeningEvent {
 	private ArrayList<ActionValue> actionvalues;
 
 	private Long timestamptofire;
-
-	private boolean fireStatus = false;
 
 	public ListeningEvent refreshData() {
 		clan_tag = null;
@@ -72,11 +70,6 @@ public class ListeningEvent {
 
 	public ListeningEvent setActionValues(ArrayList<ActionValue> list) {
 		this.actionvalues = list;
-		return this;
-	}
-
-	public ListeningEvent setFireStatus(boolean b) {
-		fireStatus = b;
 		return this;
 	}
 
@@ -144,29 +137,57 @@ public class ListeningEvent {
 		return actionvalues;
 	}
 
-	public Boolean hasFired() {
-		return fireStatus;
-	}
-
 	public Long getTimestamp() {
 		if (timestamptofire == null) {
 			Clan c = new Clan(clan_tag);
 			switch (getListeningType()) {
 			case CS:
-				timestamptofire = c.getCGEndTimeMillis();
+				timestamptofire = c.getCGEndTimeMillis() - getDurationUntilEnd();
 				break;
 			case CW:
-				timestamptofire = c.getCWEndTimeMillis();
+				timestamptofire = c.getCWEndTimeMillis() - getDurationUntilEnd();
 				break;
 			case CWLDAY:
-				timestamptofire = c.getCWLDayEndTimeMillis();
+				timestamptofire = c.getCWLDayEndTimeMillis() - getDurationUntilEnd();
 				break;
 			case RAID:
-				timestamptofire = c.getRaidEndTimeMillis();
+				timestamptofire = c.getRaidEndTimeMillis() - getDurationUntilEnd();
+				break;
+			case FIXTIMEINTERVAL:
+				timestamptofire = getDurationUntilEnd();
 				break;
 			}
 		}
 		return timestamptofire;
+	}
+
+	public void fireEvent() {
+		switch (getListeningType()) {
+		case CS:
+			switch (getActionType()) {
+			case CUSTOMMESSAGE:
+
+				break;
+			case INFOMESSAGE:
+
+				break;
+			case KICKPOINT:
+
+				break;
+			default:
+				break;
+			}
+			break;
+		case CW:
+
+			break;
+		case CWLDAY:
+
+			break;
+		case RAID:
+
+			break;
+		}
 	}
 
 }
