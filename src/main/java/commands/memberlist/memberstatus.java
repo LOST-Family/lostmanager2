@@ -1,5 +1,8 @@
 package commands.memberlist;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,11 +10,14 @@ import datautil.DBManager;
 import datawrapper.Clan;
 import datawrapper.Player;
 import datawrapper.Player.RoleType;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import util.MessageUtil;
 
 public class memberstatus extends ListenerAdapter {
@@ -103,7 +109,16 @@ public class memberstatus extends ListenerAdapter {
 		desc += "**Im Clan, falsche Rolle:**\n";
 		desc += wrongrolestr == "" ? "---\n\n" : MessageUtil.unformat(wrongrolestr) + "\n";
 
-		event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.INFO)).queue();
+		Button refreshButton = Button.secondary("memberstatus_" + clantag, "\u200B")
+				.withEmoji(Emoji.fromUnicode("🔁"));
+
+
+		ZonedDateTime jetzt = ZonedDateTime.now(ZoneId.of("Europe/Berlin"));
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
+		String formatiert = jetzt.format(formatter);
+		
+		event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.INFO, "Zuletzt aktualisiert am " + formatiert))
+				.setActionRow(refreshButton).queue();
 
 	}
 
@@ -138,6 +153,110 @@ public class memberstatus extends ListenerAdapter {
 			return null;
 		// egal
 		}
+	}
+
+	@Override
+	public void onButtonInteraction(ButtonInteractionEvent event) {
+		String id = event.getComponentId();
+		if (!id.startsWith("memberstatus_"))
+			return;
+
+		event.deferEdit().queue();
+
+		String clantag = id.substring("memberstatus_".length());
+		String title = "Memberstatus";
+
+		event.getInteraction().getHook()
+				.editOriginalEmbeds(MessageUtil.buildEmbed(title, "Wird geladen...", MessageUtil.EmbedType.LOADING))
+				.queue();
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				Clan c = new Clan(clantag);
+
+				ArrayList<Player> playerlistdb = c.getPlayersDB();
+
+				ArrayList<String> taglistdb = new ArrayList<>();
+				playerlistdb.forEach(p -> taglistdb.add(p.getTag()));
+
+				ArrayList<Player> playerlistapi = c.getPlayersAPI();
+
+				ArrayList<String> taglistapi = new ArrayList<>();
+				playerlistapi.forEach(p -> taglistapi.add(p.getTag()));
+
+				ArrayList<Player> membernotinclan = new ArrayList<>();
+				ArrayList<Player> inclannotmember = new ArrayList<>();
+
+				for (String s : taglistdb) {
+					if (!taglistapi.contains(s)) {
+						membernotinclan.add(new Player(s));
+					}
+				}
+
+				for (String s : taglistapi) {
+					if (!taglistdb.contains(s)) {
+						inclannotmember.add(new Player(s));
+					}
+				}
+
+				String wrongrolestr = "";
+
+				for (String tag : taglistapi) {
+					if (taglistdb.contains(tag)) {
+						Player p = new Player(tag);
+						RoleType roleapi = p.getRoleAPI();
+						RoleType roledb = p.getRoleDB();
+						if (roledb == RoleType.LEADER) {
+							roledb = RoleType.COLEADER;
+						}
+						if (roleapi == RoleType.LEADER) {
+							continue;
+						}
+						if (roledb != roleapi) {
+							wrongrolestr += p.getInfoStringDB() + ": \n";
+							wrongrolestr += "- Ingame: " + getRoleString(roleapi) + "\n- Datenbank: "
+									+ getRoleString(roledb) + "\n\n";
+						}
+					}
+				}
+
+				String membernotinclanstr = "";
+
+				for (Player p : membernotinclan) {
+					membernotinclanstr += p.getInfoStringDB() + "\n";
+				}
+
+				String inclannotmemberstr = "";
+
+				for (Player p : inclannotmember) {
+					inclannotmemberstr += p.getInfoStringAPI() + "\n";
+				}
+
+				String desc = "## " + c.getInfoString() + "\n";
+
+				desc += "**Mitglied, ingame nicht im Clan:**\n";
+				desc += membernotinclanstr == "" ? "---\n\n" : MessageUtil.unformat(membernotinclanstr) + "\n";
+				desc += "**Kein Mitglied, ingame im Clan:**\n";
+				desc += inclannotmemberstr == "" ? "---\n\n" : MessageUtil.unformat(inclannotmemberstr) + "\n";
+				desc += "**Im Clan, falsche Rolle:**\n";
+				desc += wrongrolestr == "" ? "---\n\n" : MessageUtil.unformat(wrongrolestr) + "\n";
+
+				Button refreshButton = Button.secondary("memberstatus_" + clantag, "\u200B")
+						.withEmoji(Emoji.fromUnicode("🔁"));
+
+
+				ZonedDateTime jetzt = ZonedDateTime.now(ZoneId.of("Europe/Berlin"));
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
+				String formatiert = jetzt.format(formatter);
+				
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.INFO, "Zuletzt aktualisiert am " + formatiert))
+						.setActionRow(refreshButton).queue();
+
+			}
+		}).start();
 	}
 
 }

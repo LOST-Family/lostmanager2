@@ -75,6 +75,8 @@ public class Player {
 		kickpointstotal = null;
 		roledb = null;
 		roleapi = null;
+		achievementDataAPI = null;
+		achievementDatasInDB = null;
 		return this;
 	}
 

@@ -60,9 +60,15 @@ public class cwdonator extends ListenerAdapter {
 		ArrayList<Player> warMemberList = clan.getWarMemberList();
 
 		if (warMemberList == null) {
-			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-					"Dieser Clan ist gerade nicht in einem Clankrieg.", MessageUtil.EmbedType.ERROR)).queue();
-			return;
+			warMemberList = clan.getCWLMemberList();
+			if (warMemberList == null) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Dieser Clan ist gerade nicht in einem Clankrieg oder in der Clankriegsliga.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
 		}
 
 		int cwsize = warMemberList.size();
