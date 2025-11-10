@@ -502,7 +502,7 @@ public class Clan {
 		return cwlday;
 	}
 
-	private JSONObject getCWLJson() {
+	public JSONObject getCWLJson() {
 		String json;
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
@@ -536,7 +536,7 @@ public class Clan {
 		return jsonObject;
 	}
 
-	private JSONObject getCWJson() {
+	public JSONObject getCWJson() {
 		String json;
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
@@ -604,7 +604,7 @@ public class Clan {
 		return jsonObject;
 	}
 
-	private static JSONObject getCWLDayJson(String warTag) {
+	public static JSONObject getCWLDayJson(String warTag) {
 		String json;
 
 		String url = "https://api.clashofclans.com/v1/clans/clanwarleagues/wars/" + warTag;

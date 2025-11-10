@@ -34,6 +34,7 @@ import commands.memberlist.removemember;
 import commands.memberlist.transfermember;
 import commands.util.checkreacts;
 import commands.util.cwdonator;
+import commands.util.listeningevent;
 import commands.util.raidping;
 import commands.util.setnick;
 import datautil.DBUtil;
@@ -270,7 +271,28 @@ public class Bot extends ListenerAdapter {
 											.setAutoComplete(true))
 									.addOptions(new OptionData(OptionType.STRING, "clan",
 											"Der Clan, zu welchem der Spieler hinzugefügt werden soll", true)
-											.setAutoComplete(true))
+											.setAutoComplete(true)),
+
+							Commands.slash("listeningevent", "Verwalte automatische Event-Listener für Clan-Events.")
+									.addSubcommands(
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("add",
+													"Füge ein neues Listening Event hinzu")
+													.addOptions(new OptionData(OptionType.STRING, "clan",
+															"Der Clan für das Event", true).setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.STRING, "type",
+															"Event-Typ (cs, cw, cwlday, raid)", true)
+															.addChoices(new Command.Choice("Clan Games", "cs"),
+																	new Command.Choice("Clan War", "cw"),
+																	new Command.Choice("CWL Tag", "cwlday"),
+																	new Command.Choice("Raid", "raid"))),
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("list",
+													"Liste alle Listening Events auf")
+													.addOptions(new OptionData(OptionType.STRING, "clan",
+															"Filtere nach Clan (optional)", false).setAutoComplete(true)),
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("remove",
+													"Lösche ein Listening Event")
+													.addOptions(new OptionData(OptionType.INTEGER, "id",
+															"Die ID des zu löschenden Events", true)))
 
 					).queue();
 		}
@@ -307,6 +329,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new deletemessages());
 		classes.add(new raidping());
 		classes.add(new transfermember());
+		classes.add(new listeningevent());
 
 		return classes.toArray();
 	}
