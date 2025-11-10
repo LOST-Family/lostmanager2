@@ -284,7 +284,19 @@ public class Bot extends ListenerAdapter {
 															.addChoices(new Command.Choice("Clan Games", "cs"),
 																	new Command.Choice("Clan War", "cw"),
 																	new Command.Choice("CWL Tag", "cwlday"),
-																	new Command.Choice("Raid", "raid"))),
+																	new Command.Choice("Raid", "raid")))
+													.addOptions(new OptionData(OptionType.INTEGER, "duration",
+															"Zeit bis Event-Ende in Millisekunden (0 = am Ende)", true))
+													.addOptions(new OptionData(OptionType.STRING, "actiontype",
+															"Aktionstyp", true)
+															.addChoices(new Command.Choice("Info-Nachricht", "infomessage"),
+																	new Command.Choice("Kickpoint", "kickpoint"),
+																	new Command.Choice("CW Donator (Filler)", "cwdonator")))
+													.addOptions(new OptionData(OptionType.CHANNEL, "channel",
+															"Discord Channel für Nachrichten", true))
+													.addOptions(new OptionData(OptionType.STRING, "kickpoint_reason",
+															"Kickpoint-Grund (erforderlich bei actiontype=kickpoint)", false)
+															.setAutoComplete(true)),
 											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("list",
 													"Liste alle Listening Events auf")
 													.addOptions(new OptionData(OptionType.STRING, "clan",

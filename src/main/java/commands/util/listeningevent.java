@@ -15,16 +15,11 @@ import datawrapper.ListeningEvent;
 import datawrapper.Player;
 import datawrapper.User;
 import lostmanager.Bot;
-import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.Modal;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import util.MessageUtil;
 
 public class listeningevent extends ListenerAdapter {
@@ -78,37 +73,88 @@ public class listeningevent extends ListenerAdapter {
 	}
 
 	private void handleAdd(SlashCommandInteractionEvent event, String title) {
+		event.deferReply().queue();
+		
 		OptionMapping clanOption = event.getOption("clan");
 		OptionMapping typeOption = event.getOption("type");
+		OptionMapping durationOption = event.getOption("duration");
+		OptionMapping actionTypeOption = event.getOption("actiontype");
+		OptionMapping channelOption = event.getOption("channel");
+		OptionMapping kickpointReasonOption = event.getOption("kickpoint_reason");
 
-		if (clanOption == null || typeOption == null) {
-			event.replyEmbeds(MessageUtil.buildEmbed(title, "Clan und Typ sind erforderlich!",
-					MessageUtil.EmbedType.ERROR)).queue();
+		if (clanOption == null || typeOption == null || durationOption == null || 
+		    actionTypeOption == null || channelOption == null) {
+			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, 
+				"Alle erforderlichen Parameter müssen angegeben werden!", 
+				MessageUtil.EmbedType.ERROR)).queue();
 			return;
 		}
 
 		String clantag = clanOption.getAsString();
 		String type = typeOption.getAsString();
+		long duration = durationOption.getAsLong();
+		String actionTypeStr = actionTypeOption.getAsString();
+		String channelId = channelOption.getAsChannel().getId();
+		String kickpointReasonName = kickpointReasonOption != null ? kickpointReasonOption.getAsString() : null;
 
-		// Create modal with appropriate fields based on type
-		TextInput durationInput = TextInput.create("duration", "Zeit bis Event-Ende (ms)", TextInputStyle.SHORT)
-				.setPlaceholder("z.B. 3600000 für 1 Stunde").setRequired(true).build();
+		// Validate action type
+		if (!actionTypeStr.equals("infomessage") && !actionTypeStr.equals("kickpoint") 
+		    && !actionTypeStr.equals("cwdonator")) {
+			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+				"Ungültiger Aktionstyp. Erlaubt: infomessage, kickpoint, cwdonator",
+				MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
 
-		TextInput actionTypeInput = TextInput.create("actiontype", "Aktionstyp", TextInputStyle.SHORT)
-				.setPlaceholder("infomessage, custommessage, kickpoint, cwdonator").setRequired(true).build();
+		// Check if kickpoint_reason is required
+		if (actionTypeStr.equals("kickpoint") && kickpointReasonName == null) {
+			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+				"Kickpoint-Grund ist erforderlich, wenn actiontype=kickpoint!",
+				MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
 
-		TextInput channelIdInput = TextInput.create("channelid", "Discord Channel ID", TextInputStyle.SHORT)
-				.setPlaceholder("z.B. 1234567890").setRequired(true).build();
+		// Build action values
+		ArrayList<ActionValue> actionValues = new ArrayList<>();
+		if (actionTypeStr.equals("cwdonator")) {
+			actionValues.add(new ActionValue(ActionValue.ACTIONVALUETYPE.FILLER));
+		} else if (actionTypeStr.equals("kickpoint") && kickpointReasonName != null) {
+			// Create KickpointReason with name and clan tag
+			KickpointReason kpReason = new KickpointReason(kickpointReasonName, clantag);
+			actionValues.add(new ActionValue(kpReason));
+		}
 
-		TextInput actionValuesInput = TextInput.create("actionvalues", "Action Values (JSON)", TextInputStyle.PARAGRAPH)
-				.setPlaceholder("[{\"type\":\"FILLER\"}, {\"reason\":...}]").setRequired(false).build();
+		// Convert action values to JSON
+		String actionValuesJson = "[]";
+		if (!actionValues.isEmpty()) {
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				actionValuesJson = mapper.writeValueAsString(actionValues);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+		}
 
-		Modal modal = Modal.create("listeningevent_add_" + clantag + "_" + type, "Listening Event hinzufügen")
-				.addActionRows(ActionRow.of(durationInput), ActionRow.of(actionTypeInput),
-						ActionRow.of(channelIdInput), ActionRow.of(actionValuesInput))
-				.build();
+		// Insert into database
+		DBUtil.executeUpdate(
+			"INSERT INTO listening_events (clan_tag, listeningtype, listeningvalue, actiontype, channel_id, actionvalues) VALUES (?, ?, ?, ?, ?, ?::jsonb)",
+			clantag, type, duration, actionTypeStr, channelId, actionValuesJson);
 
-		event.replyModal(modal).queue();
+		String desc = "### Listening Event wurde hinzugefügt.\n";
+		desc += "**Clan:** " + clantag + "\n";
+		desc += "**Typ:** " + type + "\n";
+		desc += "**Dauer:** " + duration + " ms\n";
+		desc += "**Aktionstyp:** " + actionTypeStr + "\n";
+		desc += "**Channel:** <#" + channelId + ">\n";
+		if (kickpointReasonName != null) {
+			desc += "**Kickpoint-Grund:** " + kickpointReasonName + "\n";
+		}
+
+		event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
+			.queue();
+
+		// Restart all events to include the new one
+		Bot.restartAllEvents();
 	}
 
 	private void handleList(SlashCommandInteractionEvent event, String title) {
@@ -189,91 +235,6 @@ public class listeningevent extends ListenerAdapter {
 	}
 
 	@Override
-	public void onModalInteraction(ModalInteractionEvent event) {
-		if (event.getModalId().startsWith("listeningevent_add")) {
-			event.deferReply().queue();
-			String title = "Listening Event";
-
-			String[] parts = event.getModalId().split("_");
-			String clantag = parts[2];
-			String type = parts[3];
-
-			String durationStr = event.getValue("duration").getAsString();
-			String actionTypeStr = event.getValue("actiontype").getAsString();
-			String channelId = event.getValue("channelid").getAsString();
-			String actionValuesStr = event.getValue("actionvalues") != null
-					? event.getValue("actionvalues").getAsString()
-					: "[]";
-
-			// Validate duration
-			long duration;
-			try {
-				duration = Long.parseLong(durationStr);
-			} catch (NumberFormatException e) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Die Dauer muss eine Zahl sein.", MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			// Validate action type
-			if (!actionTypeStr.equals("infomessage") && !actionTypeStr.equals("custommessage")
-					&& !actionTypeStr.equals("kickpoint") && !actionTypeStr.equals("cwdonator")) {
-				event.getHook()
-						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-								"Ungültiger Aktionstyp. Erlaubt: infomessage, custommessage, kickpoint, cwdonator",
-								MessageUtil.EmbedType.ERROR))
-						.queue();
-				return;
-			}
-
-			// Parse action values
-			ArrayList<ActionValue> actionValues = new ArrayList<>();
-			if (!actionValuesStr.trim().isEmpty() && !actionValuesStr.equals("[]")) {
-				ObjectMapper mapper = new ObjectMapper();
-				try {
-					actionValues = mapper.readValue(actionValuesStr,
-							mapper.getTypeFactory().constructCollectionType(ArrayList.class, ActionValue.class));
-				} catch (JsonProcessingException e) {
-					event.getHook()
-							.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-									"Ungültiges JSON-Format für Action Values.", MessageUtil.EmbedType.ERROR))
-							.queue();
-					return;
-				}
-			}
-
-			// Convert action values back to JSON
-			String actionValuesJson = "[]";
-			if (!actionValues.isEmpty()) {
-				ObjectMapper mapper = new ObjectMapper();
-				try {
-					actionValuesJson = mapper.writeValueAsString(actionValues);
-				} catch (JsonProcessingException e) {
-					e.printStackTrace();
-				}
-			}
-
-			// Insert into database
-			DBUtil.executeUpdate(
-					"INSERT INTO listening_events (clan_tag, listeningtype, listeningvalue, actiontype, channel_id, actionvalues) VALUES (?, ?, ?, ?, ?, ?::jsonb)",
-					clantag, type, duration, actionTypeStr, channelId, actionValuesJson);
-
-			String desc = "### Listening Event wurde hinzugefügt.\n";
-			desc += "**Clan:** " + clantag + "\n";
-			desc += "**Typ:** " + type + "\n";
-			desc += "**Dauer:** " + duration + " ms\n";
-			desc += "**Aktionstyp:** " + actionTypeStr + "\n";
-			desc += "**Channel:** <#" + channelId + ">\n";
-
-			event.getHook()
-					.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
-
-			// Restart all events to include the new one
-			Bot.restartAllEvents();
-		}
-	}
-
-	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("listeningevent"))
 			return;
@@ -286,6 +247,18 @@ public class listeningevent extends ListenerAdapter {
 			event.replyChoices(choices).queue(success -> {
 			}, error -> {
 			});
+		} else if (focused.equals("kickpoint_reason")) {
+			// Get the clan from the command to filter kickpoint reasons
+			OptionMapping clanOption = event.getOption("clan");
+			if (clanOption != null) {
+				String clantag = clanOption.getAsString();
+				List<Command.Choice> choices = DBManager.getKPReasonsAutocomplete(input, clantag);
+				event.replyChoices(choices).queue(success -> {
+				}, error -> {
+				});
+			} else {
+				event.replyChoices(new ArrayList<>()).queue();
+			}
 		}
 	}
 }
