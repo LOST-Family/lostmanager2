@@ -141,6 +141,12 @@ public class ListeningEvent {
 
 	public Long getTimestamp() {
 		if (timestamptofire == null) {
+			// Special case for "start" triggers (duration = -1)
+			if (getDurationUntilEnd() == -1) {
+				// Start triggers don't have a specific timestamp - they fire on state change
+				return Long.MAX_VALUE; // Return far future to prevent scheduling
+			}
+			
 			Clan c = new Clan(clan_tag);
 			switch (getListeningType()) {
 			case CS:

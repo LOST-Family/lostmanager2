@@ -367,10 +367,19 @@ public class Bot extends ListenerAdapter {
 		schedulertasks = Executors.newSingleThreadScheduledExecutor();
 		endClanGamesSavings();
 		startClanGamesSavings();
+		
 		String sql = "SELECT id FROM listening_events";
 		ArrayList<Long> ids = DBUtil.getArrayListFromSQL(sql, Long.class);
+		
 		for (Long id : ids) {
 			ListeningEvent le = new ListeningEvent(id);
+			long duration = le.getDurationUntilEnd();
+			
+			// Check if this is a "start" trigger (duration = -1)
+			if (duration == -1 && le.getListeningType() == ListeningEvent.LISTENINGTYPE.CW) {
+				// Start triggers are handled by the CW start monitoring task
+				continue;
+			}
 			
 			long timeuntilfire = le.getTimestamp() - System.currentTimeMillis();
 			
@@ -378,6 +387,98 @@ public class Bot extends ListenerAdapter {
 			    le.fireEvent();
 			}, timeuntilfire, TimeUnit.MILLISECONDS);
 		}
+		
+		// Start CW start monitoring for all "start" triggers
+		startCWStartMonitoring();
+	}
+	
+	/**
+	 * Monitors for CW start events and fires triggers with duration=-1
+	 * Checks every 5 minutes for war state changes
+	 */
+	private static void startCWStartMonitoring() {
+		Runnable monitoringTask = () -> {
+			try {
+				// Get all CW start triggers (duration = -1)
+				String sql = "SELECT id FROM listening_events WHERE listeningtype = 'cw' AND listeningvalue = -1";
+				ArrayList<Long> startTriggerIds = DBUtil.getArrayListFromSQL(sql, Long.class);
+				
+				if (startTriggerIds.isEmpty()) {
+					return; // No start triggers to monitor
+				}
+				
+				// Group by clan to minimize API calls
+				java.util.HashMap<String, java.util.ArrayList<Long>> triggersByClan = new java.util.HashMap<>();
+				for (Long id : startTriggerIds) {
+					ListeningEvent le = new ListeningEvent(id);
+					String clanTag = le.getClanTag();
+					triggersByClan.computeIfAbsent(clanTag, k -> new java.util.ArrayList<>()).add(id);
+				}
+				
+				// Check each clan's war state
+				for (String clanTag : triggersByClan.keySet()) {
+					try {
+						datawrapper.Clan clan = new datawrapper.Clan(clanTag);
+						
+						// Get war state from last check (stored in memory or DB)
+						String lastState = getCWLastState(clanTag);
+						
+						// Get current war state
+						String currentState = "notInWar"; // default
+						if (clan.isCWActive()) {
+							org.json.JSONObject cwJson = clan.getCWJson();
+							currentState = cwJson.getString("state");
+						}
+						
+						// Detect transition to war start
+						boolean warJustStarted = false;
+						if ((lastState.equals("notInWar") || lastState.equals("")) && 
+						    (currentState.equals("preparation") || currentState.equals("inWar"))) {
+							warJustStarted = true;
+						}
+						
+						// Update last state
+						setCWLastState(clanTag, currentState);
+						
+						// Fire all start triggers for this clan if war just started
+						if (warJustStarted) {
+							System.out.println("CW Start detected for clan " + clanTag + ". Firing start triggers...");
+							for (Long triggerId : triggersByClan.get(clanTag)) {
+								ListeningEvent le = new ListeningEvent(triggerId);
+								// Execute in separate thread to avoid blocking
+								schedulertasks.execute(() -> {
+									try {
+										le.fireEvent();
+									} catch (Exception e) {
+										System.err.println("Error firing start trigger " + triggerId + ": " + e.getMessage());
+										e.printStackTrace();
+									}
+								});
+							}
+						}
+					} catch (Exception e) {
+						System.err.println("Error checking CW state for clan " + clanTag + ": " + e.getMessage());
+					}
+				}
+			} catch (Exception e) {
+				System.err.println("Error in CW start monitoring: " + e.getMessage());
+				e.printStackTrace();
+			}
+		};
+		
+		// Schedule to run every 5 minutes
+		schedulertasks.scheduleAtFixedRate(monitoringTask, 0, 5, TimeUnit.MINUTES);
+	}
+	
+	// Simple in-memory storage for last war states
+	private static java.util.HashMap<String, String> cwLastStates = new java.util.HashMap<>();
+	
+	private static String getCWLastState(String clanTag) {
+		return cwLastStates.getOrDefault(clanTag, "");
+	}
+	
+	private static void setCWLastState(String clanTag, String state) {
+		cwLastStates.put(clanTag, state);
 	}
 
 	public static void endClanGamesSavings() {
