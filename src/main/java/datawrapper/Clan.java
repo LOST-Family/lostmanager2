@@ -1,10 +1,5 @@
 package datawrapper;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +12,6 @@ import org.json.JSONObject;
 import datautil.APIUtil;
 import datautil.Connection;
 import datautil.DBUtil;
-import lostmanager.Bot;
 
 public class Clan {
 
@@ -81,55 +75,29 @@ public class Clan {
 		if (raidmembers == null) {
 			raidmembers = new ArrayList<>();
 
-			String json;
+			String json = APIUtil.getClanCapitalRaidSeasonsJson(clan_tag, 1);
 
-			String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
+			if (json != null) {
+				JSONObject jsonObject = new JSONObject(json);
+				JSONArray items = jsonObject.getJSONArray("items");
+				JSONObject currentitem = items.getJSONObject(0);
+				String state = currentitem.getString("state");
+				raidactive = state.equals("ongoing") ? true : false;
+				JSONArray members = currentitem.getJSONArray("members");
 
-			String url = "https://api.clashofclans.com/v1/clans/" + encodedTag + "/capitalraidseasons?limit=1";
-
-			HttpClient client = HttpClient.newHttpClient();
-
-			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
-					.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET()
-					.build();
-
-			HttpResponse<String> response = null;
-			try {
-				response = client.send(request, HttpResponse.BodyHandlers.ofString());
-			} catch (IOException | InterruptedException e) {
-				e.printStackTrace();
-				json = null;
-			}
-
-			if (response.statusCode() == 200) {
-				String responseBody = response.body();
-				// Einfacher JSON-Name-Parser ohne Bibliotheken:
-				json = responseBody;
-			} else {
-				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
-				System.err.println("Antwort: " + response.body());
-				json = null;
-			}
-
-			JSONObject jsonObject = new JSONObject(json);
-			JSONArray items = jsonObject.getJSONArray("items");
-			JSONObject currentitem = items.getJSONObject(0);
-			String state = currentitem.getString("state");
-			raidactive = state.equals("ongoing") ? true : false;
-			JSONArray members = currentitem.getJSONArray("members");
-
-			for (int i = 0; i < members.length(); i++) {
-				JSONObject member = members.getJSONObject(i);
-				String tag = member.getString("tag");
-				String name = member.getString("name");
-				int attacks = member.getInt("attacks");
-				int attackLimit = member.getInt("attackLimit");
-				int bonusAttackLimit = member.getInt("bonusAttackLimit");
-				int capitalResourcesLooted = member.getInt("capitalResourcesLooted");
-				Player p = new Player(tag).setNameAPI(name).setCurrentRaidAttacks(attacks)
-						.setCurrentRaidAttackLimit(attackLimit).setCurrentRaidBonusAttackLimit(bonusAttackLimit)
-						.setCurrentGoldLooted(capitalResourcesLooted);
-				raidmembers.add(p);
+				for (int i = 0; i < members.length(); i++) {
+					JSONObject member = members.getJSONObject(i);
+					String tag = member.getString("tag");
+					String name = member.getString("name");
+					int attacks = member.getInt("attacks");
+					int attackLimit = member.getInt("attackLimit");
+					int bonusAttackLimit = member.getInt("bonusAttackLimit");
+					int capitalResourcesLooted = member.getInt("capitalResourcesLooted");
+					Player p = new Player(tag).setNameAPI(name).setCurrentRaidAttacks(attacks)
+							.setCurrentRaidAttackLimit(attackLimit).setCurrentRaidBonusAttackLimit(bonusAttackLimit)
+							.setCurrentGoldLooted(capitalResourcesLooted);
+					raidmembers.add(p);
+				}
 			}
 		}
 		return raidmembers;
@@ -139,51 +107,25 @@ public class Clan {
 		if (clanwarmembers == null) {
 			clanwarmembers = new ArrayList<>();
 
-			String json;
+			String json = APIUtil.getClanCurrentWarJson(clan_tag);
 
-			String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
+			if (json != null) {
+				JSONObject jsonObject = new JSONObject(json);
+				String state = jsonObject.getString("state");
+				if (state.equals("notInWar")) {
+					return null;
+				}
+				JSONObject WarClan = jsonObject.getJSONObject("clan");
+				JSONArray ClanWarMemberList = WarClan.getJSONArray("members");
 
-			String url = "https://api.clashofclans.com/v1/clans/" + encodedTag + "/currentwar";
-
-			HttpClient client = HttpClient.newHttpClient();
-
-			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
-					.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET()
-					.build();
-
-			HttpResponse<String> response = null;
-			try {
-				response = client.send(request, HttpResponse.BodyHandlers.ofString());
-			} catch (IOException | InterruptedException e) {
-				e.printStackTrace();
-				json = null;
-			}
-
-			if (response.statusCode() == 200) {
-				String responseBody = response.body();
-				// Einfacher JSON-Name-Parser ohne Bibliotheken:
-				json = responseBody;
-			} else {
-				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
-				System.err.println("Antwort: " + response.body());
-				json = null;
-			}
-
-			JSONObject jsonObject = new JSONObject(json);
-			String state = jsonObject.getString("state");
-			if (state.equals("notInWar")) {
-				return null;
-			}
-			JSONObject WarClan = jsonObject.getJSONObject("clan");
-			JSONArray ClanWarMemberList = WarClan.getJSONArray("members");
-
-			for (int i = 0; i < ClanWarMemberList.length(); i++) {
-				JSONObject member = ClanWarMemberList.getJSONObject(i);
-				String tag = member.getString("tag");
-				String name = member.getString("name");
-				int warmapposition = member.getInt("mapPosition");
-				Player p = new Player(tag).setNameAPI(name).setWarMapPosition(warmapposition);
-				clanwarmembers.add(p);
+				for (int i = 0; i < ClanWarMemberList.length(); i++) {
+					JSONObject member = ClanWarMemberList.getJSONObject(i);
+					String tag = member.getString("tag");
+					String name = member.getString("name");
+					int warmapposition = member.getInt("mapPosition");
+					Player p = new Player(tag).setNameAPI(name).setWarMapPosition(warmapposition);
+					clanwarmembers.add(p);
+				}
 			}
 		}
 		return clanwarmembers;

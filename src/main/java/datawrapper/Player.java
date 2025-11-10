@@ -1,11 +1,5 @@
 package datawrapper;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +11,6 @@ import org.json.JSONObject;
 import datautil.APIUtil;
 import datautil.Connection;
 import datautil.DBUtil;
-import lostmanager.Bot;
 
 public class Player {
 
@@ -219,74 +212,11 @@ public class Player {
 	}
 
 	public boolean AccExists() {
-		try {
-			String encodedTag = URLEncoder.encode(tag, "UTF-8");
-			// Clash of Clans API-Endpunkt
-			URL url = new URL("https://api.clashofclans.com/v1/players/" + encodedTag);
-
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod("GET");
-			connection.setRequestProperty("Authorization", "Bearer " + Bot.api_key);
-			connection.setRequestProperty("Accept", "application/json");
-
-			int responseCode = connection.getResponseCode();
-
-			if (responseCode == 200) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-				String line;
-				StringBuilder responseContent = new StringBuilder();
-				while ((line = in.readLine()) != null) {
-					responseContent.append(line);
-				}
-				in.close();
-
-				return true;
-			} else {
-				System.out.println("Verifizierung fehlgeschlagen. Fehlercode: " + responseCode);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
+		return APIUtil.checkPlayerExists(tag);
 	}
 
 	public boolean verifyCocTokenAPI(String playerApiToken) {
-		try {
-			String encodedTag = URLEncoder.encode(tag, "UTF-8");
-			URL url = new URL("https://api.clashofclans.com/v1/players/" + encodedTag + "/verifytoken");
-
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Authorization", "Bearer " + Bot.api_key);
-			connection.setRequestProperty("Accept", "application/json");
-			connection.setRequestProperty("Content-Type", "application/json");
-			connection.setDoOutput(true);
-
-			// JSON-Body mit Token senden
-			String requestBody = "{ \"token\": \"" + playerApiToken + "\" }";
-			try (OutputStream os = connection.getOutputStream()) {
-				byte[] input = requestBody.getBytes("utf-8");
-				os.write(input, 0, input.length);
-			}
-
-			int responseCode = connection.getResponseCode();
-
-			// Wenn 200: Antwort lesen und JSON prüfen (expect: { "status":"ok" } wenn
-			// richtig)
-			if (responseCode == 200) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-				String responseLine = in.readLine();
-				in.close();
-				return responseLine != null && responseLine.contains("\"status\":\"ok\"");
-			} else {
-				System.out.println("Verifizierung fehlgeschlagen. Fehlercode: " + responseCode);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
+		return APIUtil.verifyPlayerToken(tag, playerApiToken);
 	}
 
 	// all public getter Methods
