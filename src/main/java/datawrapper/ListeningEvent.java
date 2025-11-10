@@ -15,7 +15,7 @@ public class ListeningEvent {
 	}
 
 	public enum ACTIONTYPE {
-		INFOMESSAGE, CUSTOMMESSAGE, KICKPOINT, CWDONATOR
+		INFOMESSAGE, CUSTOMMESSAGE, KICKPOINT, CWDONATOR, FILLER
 	}
 
 	private Long id;
@@ -110,7 +110,8 @@ public class ListeningEvent {
 			actiontype = type.equals("infomessage") ? ACTIONTYPE.INFOMESSAGE
 					: type.equals("custommessage") ? ACTIONTYPE.CUSTOMMESSAGE
 							: type.equals("kickpoint") ? ACTIONTYPE.KICKPOINT 
-							: type.equals("cwdonator") ? ACTIONTYPE.CWDONATOR : null;
+							: type.equals("cwdonator") ? ACTIONTYPE.CWDONATOR 
+							: type.equals("filler") ? ACTIONTYPE.FILLER : null;
 		}
 		return actiontype;
 	}
@@ -249,12 +250,15 @@ public class ListeningEvent {
 		String state = cwJson.getString("state");
 		
 		// Check if it's a "filler" action at start
-		boolean isFillerAction = false;
-		for (ActionValue av : getActionValues()) {
-			if (av.getSaved() == ActionValue.kind.type && 
-			    av.getType() == ActionValue.ACTIONVALUETYPE.FILLER) {
-				isFillerAction = true;
-				break;
+		boolean isFillerAction = getActionType() == ACTIONTYPE.FILLER || getActionType() == ACTIONTYPE.CWDONATOR;
+		if (!isFillerAction) {
+			// Also check action values for backward compatibility
+			for (ActionValue av : getActionValues()) {
+				if (av.getSaved() == ActionValue.kind.type && 
+				    av.getType() == ActionValue.ACTIONVALUETYPE.FILLER) {
+					isFillerAction = true;
+					break;
+				}
 			}
 		}
 		
@@ -269,6 +273,12 @@ public class ListeningEvent {
 		// Get war members and check preferences
 		org.json.JSONObject clanData = cwJson.getJSONObject("clan");
 		org.json.JSONArray members = clanData.getJSONArray("members");
+		String warTag = cwJson.has("tag") ? cwJson.getString("tag") : null;
+		
+		// Calculate war end time to associate fillers with this specific war
+		String endTimeStr = cwJson.getString("endTime");
+		java.time.OffsetDateTime endTime = java.time.OffsetDateTime.parse(endTimeStr, 
+			java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 		
 		StringBuilder message = new StringBuilder();
 		message.append("## CW War Preferences Check\n\n");
@@ -276,6 +286,7 @@ public class ListeningEvent {
 		
 		ArrayList<Player> dbMembers = clan.getPlayersDB();
 		boolean hasOptedOut = false;
+		ArrayList<String> fillerTags = new ArrayList<>();
 		
 		for (Player dbPlayer : dbMembers) {
 			boolean inWar = false;
@@ -289,11 +300,23 @@ public class ListeningEvent {
 			
 			if (!inWar) {
 				hasOptedOut = true;
+				fillerTags.add(dbPlayer.getTag());
 				message.append("- ").append(dbPlayer.getNameAPI());
 				if (dbPlayer.getUser() != null) {
 					message.append(" (<@").append(dbPlayer.getUser().getUserID()).append(">)");
 				}
 				message.append("\n");
+			}
+		}
+		
+		// Save fillers to database for this war
+		if (!fillerTags.isEmpty()) {
+			java.sql.Timestamp endTimeTs = java.sql.Timestamp.from(endTime.toInstant());
+			for (String tag : fillerTags) {
+				// Store with war end time as identifier
+				DBUtil.executeUpdate(
+					"INSERT INTO cw_fillers (clan_tag, player_tag, war_end_time) VALUES (?, ?, ?) ON CONFLICT (clan_tag, player_tag, war_end_time) DO NOTHING",
+					clan.getTag(), tag, endTimeTs);
 			}
 		}
 		
@@ -306,6 +329,16 @@ public class ListeningEvent {
 		org.json.JSONObject clanData = cwJson.getJSONObject("clan");
 		org.json.JSONArray members = clanData.getJSONArray("members");
 		int attacksPerMember = cwJson.getInt("attacksPerMember");
+		
+		// Get war end time to match with fillers
+		String endTimeStr = cwJson.getString("endTime");
+		java.time.OffsetDateTime endTime = java.time.OffsetDateTime.parse(endTimeStr, 
+			java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+		java.sql.Timestamp endTimeTs = java.sql.Timestamp.from(endTime.toInstant());
+		
+		// Get list of fillers for this war
+		String fillerSql = "SELECT player_tag FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?";
+		ArrayList<String> fillerTags = DBUtil.getArrayListFromSQL(fillerSql, String.class, clan.getTag(), endTimeTs);
 		
 		StringBuilder message = new StringBuilder();
 		message.append("## Clan War - Missed Attacks\n\n");
@@ -322,6 +355,14 @@ public class ListeningEvent {
 			}
 			
 			if (attacks < attacksPerMember) {
+				// Check if this player is a filler
+				boolean isFiller = fillerTags.contains(tag);
+				
+				// Skip fillers from missed attacks reporting
+				if (isFiller) {
+					continue;
+				}
+				
 				hasMissedAttacks = true;
 				Player p = new Player(tag);
 				message.append("- ").append(name).append(": ").append(attacks).append("/")
@@ -341,6 +382,10 @@ public class ListeningEvent {
 		if (hasMissedAttacks) {
 			sendMessageToChannel(message.toString());
 		}
+		
+		// Clean up old fillers after war ends
+		DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", 
+			clan.getTag(), endTimeTs);
 	}
 	
 	private void handleCWLDayEvent(Clan clan) {

@@ -288,10 +288,7 @@ public class Bot extends ListenerAdapter {
 													.addOptions(new OptionData(OptionType.INTEGER, "duration",
 															"Zeit bis Event-Ende in Millisekunden (0 = am Ende)", true))
 													.addOptions(new OptionData(OptionType.STRING, "actiontype",
-															"Aktionstyp", true)
-															.addChoices(new Command.Choice("Info-Nachricht", "infomessage"),
-																	new Command.Choice("Kickpoint", "kickpoint"),
-																	new Command.Choice("CW Donator (Filler)", "cwdonator")))
+															"Aktionstyp", true).setAutoComplete(true))
 													.addOptions(new OptionData(OptionType.CHANNEL, "channel",
 															"Discord Channel für Nachrichten", true))
 													.addOptions(new OptionData(OptionType.STRING, "kickpoint_reason",
