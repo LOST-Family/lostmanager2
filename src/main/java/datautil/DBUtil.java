@@ -2,6 +2,7 @@ package datautil;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.OffsetDateTime;
@@ -54,11 +55,15 @@ public class DBUtil {
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
+					// Get the first column name from ResultSetMetaData
+					ResultSetMetaData metaData = rs.getMetaData();
+					String columnName = metaData.getColumnName(1);
+					
 					// Use getString() for String class to handle JSONB columns properly
 					if (clazz == String.class) {
-						result = clazz.cast(rs.getString(sql.split(" ")[1]));
+						result = clazz.cast(rs.getString(columnName));
 					} else {
-						result = rs.getObject(sql.split(" ")[1], clazz);
+						result = rs.getObject(columnName, clazz);
 					}
 				}
 				Statement stmt = rs.getStatement();
@@ -82,7 +87,10 @@ public class DBUtil {
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
-					a = rs.getObject(sql.split(" ")[1], OffsetDateTime.class);
+					// Get the first column name from ResultSetMetaData
+					ResultSetMetaData metaData = rs.getMetaData();
+					String columnName = metaData.getColumnName(1);
+					a = rs.getObject(columnName, OffsetDateTime.class);
 				}
 				Statement stmt = rs.getStatement();
 				rs.close();
@@ -105,12 +113,16 @@ public class DBUtil {
 			}
 
 			try (ResultSet rs = pstmt.executeQuery()) {
+				// Get the first column name from ResultSetMetaData
+				ResultSetMetaData metaData = rs.getMetaData();
+				String columnName = metaData.getColumnName(1);
+				
 				while (rs.next()) {
 					// Use getString() for String class to handle JSONB columns properly
 					if (clazz == String.class) {
-						result.add(clazz.cast(rs.getString(sql.split(" ")[1])));
+						result.add(clazz.cast(rs.getString(columnName)));
 					} else {
-						result.add(rs.getObject(sql.split(" ")[1], clazz));
+						result.add(rs.getObject(columnName, clazz));
 					}
 				}
 				Statement stmt = rs.getStatement();
