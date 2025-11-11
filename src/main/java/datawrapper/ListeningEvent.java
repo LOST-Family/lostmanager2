@@ -1,5 +1,8 @@
 package datawrapper;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -454,8 +457,10 @@ public class ListeningEvent {
 		
 		// Calculate war end time to associate fillers with this specific war
 		String endTimeStr = cwJson.getString("endTime");
-		java.time.OffsetDateTime endTime = java.time.OffsetDateTime.parse(endTimeStr, 
-			java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
+			.withZone(ZoneOffset.UTC);
+		Instant instant = Instant.from(formatter.parse(endTimeStr));
+		java.time.OffsetDateTime endTime = java.time.OffsetDateTime.ofInstant(instant, ZoneOffset.UTC);
 		
 		StringBuilder message = new StringBuilder();
 		message.append("## CW War Preferences Check\n\n");
@@ -518,8 +523,10 @@ public class ListeningEvent {
 		
 		// Get war end time to match with fillers
 		String endTimeStr = cwJson.getString("endTime");
-		java.time.OffsetDateTime endTime = java.time.OffsetDateTime.parse(endTimeStr, 
-			java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
+			.withZone(ZoneOffset.UTC);
+		Instant instant = Instant.from(formatter.parse(endTimeStr));
+		java.time.OffsetDateTime endTime = java.time.OffsetDateTime.ofInstant(instant, ZoneOffset.UTC);
 		java.sql.Timestamp endTimeTs = java.sql.Timestamp.from(endTime.toInstant());
 		
 		// Get list of fillers for this war
