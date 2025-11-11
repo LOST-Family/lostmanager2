@@ -564,9 +564,13 @@ public class ListeningEvent {
 				try {
 					org.json.JSONObject warData = clan.getCWLDayJson(warTag);
 					
-					// Check if this war involves our clan
+					// Check if this war involves our clan (could be in "clan" or "opponent" field)
 					org.json.JSONObject clanData = warData.getJSONObject("clan");
-					if (clanData.getString("tag").equals(clan.getTag())) {
+					org.json.JSONObject opponentData = warData.getJSONObject("opponent");
+					boolean isOurWar = clanData.getString("tag").equals(clan.getTag()) ||
+					                   opponentData.getString("tag").equals(clan.getTag());
+					
+					if (isOurWar) {
 						String state = warData.getString("state");
 						
 						// If we find an active war, the previous round was the last completed
@@ -613,9 +617,16 @@ public class ListeningEvent {
 			try {
 				org.json.JSONObject warData = clan.getCWLDayJson(warTag);
 				
+				// Check if this war involves our clan (could be in "clan" or "opponent" field)
 				org.json.JSONObject clanData = warData.getJSONObject("clan");
-				if (clanData.getString("tag").equals(clan.getTag()) && 
-				    warData.getString("state").equals("warEnded")) {
+				org.json.JSONObject opponentData = warData.getJSONObject("opponent");
+				boolean isOurWar = clanData.getString("tag").equals(clan.getTag()) ||
+				                   opponentData.getString("tag").equals(clan.getTag());
+				
+				if (isOurWar && warData.getString("state").equals("warEnded")) {
+					// Determine which object contains our clan's data
+					org.json.JSONObject ourClanData = clanData.getString("tag").equals(clan.getTag()) 
+					                                   ? clanData : opponentData;
 					
 					// Process missed attacks for this war
 					StringBuilder message = new StringBuilder();
@@ -623,7 +634,7 @@ public class ListeningEvent {
 					       .append(" - Missed Attacks\n\n");
 					boolean hasMissedAttacks = false;
 					
-					org.json.JSONArray members = clanData.getJSONArray("members");
+					org.json.JSONArray members = ourClanData.getJSONArray("members");
 					
 					for (int i = 0; i < members.length(); i++) {
 						org.json.JSONObject member = members.getJSONObject(i);
