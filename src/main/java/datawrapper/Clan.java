@@ -268,8 +268,9 @@ public class Clan {
 			int day = now.getDayOfMonth();
 			int hour = now.getHour();
 
-			// Wenn heute nach dem 28. ist oder genau am 28. nach 12 Uhr
-			if (day > 28 || (day == 28 && hour >= 12)) {
+			// Wenn heute nach dem 28. ist oder genau am 28. nach 13 Uhr (1pm)
+			// Use 13:00 for listening events to ensure API data has propagated (1 hour after actual end)
+			if (day > 28 || (day == 28 && hour >= 13)) {
 				month++;
 				if (month > 12) {
 					month = 1;
@@ -277,9 +278,10 @@ public class Clan {
 				}
 			}
 
-			LocalDateTime next28thAtNoon = LocalDateTime.of(year, month, 28, 12, 0);
+			// Schedule for 13:00 (1pm) - 1 hour after actual clan games end
+			LocalDateTime next28thAt1pm = LocalDateTime.of(year, month, 28, 13, 0);
 
-			ZonedDateTime zdt = next28thAtNoon.atZone(ZoneId.systemDefault());
+			ZonedDateTime zdt = next28thAt1pm.atZone(ZoneId.systemDefault());
 			return zdt.toInstant().toEpochMilli();
 		}
 		return CGEndTimeMillis;
@@ -502,7 +504,7 @@ public class Clan {
 		return cwlday;
 	}
 
-	private JSONObject getCWLJson() {
+	public JSONObject getCWLJson() {
 		String json;
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
@@ -536,7 +538,7 @@ public class Clan {
 		return jsonObject;
 	}
 
-	private JSONObject getCWJson() {
+	public JSONObject getCWJson() {
 		String json;
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
@@ -604,7 +606,7 @@ public class Clan {
 		return jsonObject;
 	}
 
-	private static JSONObject getCWLDayJson(String warTag) {
+	public static JSONObject getCWLDayJson(String warTag) {
 		String json;
 
 		String url = "https://api.clashofclans.com/v1/clans/clanwarleagues/wars/" + warTag;

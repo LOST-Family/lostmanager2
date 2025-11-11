@@ -40,6 +40,10 @@ public class KickpointReason {
 	public String getReason() {
 		return kpreason;
 	}
+	
+	public String getName() {
+		return kpreason;
+	}
 
 	public String getClanTag() {
 		return clan_tag;

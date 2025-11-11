@@ -34,6 +34,7 @@ import commands.memberlist.removemember;
 import commands.memberlist.transfermember;
 import commands.util.checkreacts;
 import commands.util.cwdonator;
+import commands.util.listeningevent;
 import commands.util.raidping;
 import commands.util.setnick;
 import datautil.DBUtil;
@@ -270,7 +271,37 @@ public class Bot extends ListenerAdapter {
 											.setAutoComplete(true))
 									.addOptions(new OptionData(OptionType.STRING, "clan",
 											"Der Clan, zu welchem der Spieler hinzugefügt werden soll", true)
-											.setAutoComplete(true))
+											.setAutoComplete(true)),
+
+							Commands.slash("listeningevent", "Verwalte automatische Event-Listener für Clan-Events.")
+									.addSubcommands(
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("add",
+													"Füge ein neues Listening Event hinzu")
+													.addOptions(new OptionData(OptionType.STRING, "clan",
+															"Der Clan für das Event", true).setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.STRING, "type",
+															"Event-Typ (cs, cw, cwlday, raid)", true)
+															.addChoices(new Command.Choice("Clan Games", "cs"),
+																	new Command.Choice("Clan War", "cw"),
+																	new Command.Choice("CWL Tag", "cwlday"),
+																	new Command.Choice("Raid", "raid")))
+													.addOptions(new OptionData(OptionType.STRING, "duration",
+															"Dauer/Zeitpunkt (z.B. 1h, 24h, start, 0)", true).setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.STRING, "actiontype",
+															"Aktionstyp", true).setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.CHANNEL, "channel",
+															"Discord Channel für Nachrichten", true))
+													.addOptions(new OptionData(OptionType.STRING, "kickpoint_reason",
+															"Kickpoint-Grund (erforderlich bei actiontype=kickpoint)", false)
+															.setAutoComplete(true)),
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("list",
+													"Liste alle Listening Events auf")
+													.addOptions(new OptionData(OptionType.STRING, "clan",
+															"Filtere nach Clan (optional)", false).setAutoComplete(true)),
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("remove",
+													"Lösche ein Listening Event")
+													.addOptions(new OptionData(OptionType.INTEGER, "id",
+															"Die ID des zu löschenden Events", true)))
 
 					).queue();
 		}
@@ -307,6 +338,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new deletemessages());
 		classes.add(new raidping());
 		classes.add(new transfermember());
+		classes.add(new listeningevent());
 
 		return classes.toArray();
 	}
@@ -335,10 +367,19 @@ public class Bot extends ListenerAdapter {
 		schedulertasks = Executors.newSingleThreadScheduledExecutor();
 		endClanGamesSavings();
 		startClanGamesSavings();
+		
 		String sql = "SELECT id FROM listening_events";
 		ArrayList<Long> ids = DBUtil.getArrayListFromSQL(sql, Long.class);
+		
 		for (Long id : ids) {
 			ListeningEvent le = new ListeningEvent(id);
+			long duration = le.getDurationUntilEnd();
+			
+			// Check if this is a "start" trigger (duration = -1)
+			if (duration == -1 && le.getListeningType() == ListeningEvent.LISTENINGTYPE.CW) {
+				// Start triggers are handled by the CW start monitoring task
+				continue;
+			}
 			
 			long timeuntilfire = le.getTimestamp() - System.currentTimeMillis();
 			
@@ -346,6 +387,98 @@ public class Bot extends ListenerAdapter {
 			    le.fireEvent();
 			}, timeuntilfire, TimeUnit.MILLISECONDS);
 		}
+		
+		// Start CW start monitoring for all "start" triggers
+		startCWStartMonitoring();
+	}
+	
+	/**
+	 * Monitors for CW start events and fires triggers with duration=-1
+	 * Checks every 5 minutes for war state changes
+	 */
+	private static void startCWStartMonitoring() {
+		Runnable monitoringTask = () -> {
+			try {
+				// Get all CW start triggers (duration = -1)
+				String sql = "SELECT id FROM listening_events WHERE listeningtype = 'cw' AND listeningvalue = -1";
+				ArrayList<Long> startTriggerIds = DBUtil.getArrayListFromSQL(sql, Long.class);
+				
+				if (startTriggerIds.isEmpty()) {
+					return; // No start triggers to monitor
+				}
+				
+				// Group by clan to minimize API calls
+				java.util.HashMap<String, java.util.ArrayList<Long>> triggersByClan = new java.util.HashMap<>();
+				for (Long id : startTriggerIds) {
+					ListeningEvent le = new ListeningEvent(id);
+					String clanTag = le.getClanTag();
+					triggersByClan.computeIfAbsent(clanTag, k -> new java.util.ArrayList<>()).add(id);
+				}
+				
+				// Check each clan's war state
+				for (String clanTag : triggersByClan.keySet()) {
+					try {
+						datawrapper.Clan clan = new datawrapper.Clan(clanTag);
+						
+						// Get war state from last check (stored in memory or DB)
+						String lastState = getCWLastState(clanTag);
+						
+						// Get current war state
+						String currentState = "notInWar"; // default
+						if (clan.isCWActive()) {
+							org.json.JSONObject cwJson = clan.getCWJson();
+							currentState = cwJson.getString("state");
+						}
+						
+						// Detect transition to war start
+						boolean warJustStarted = false;
+						if ((lastState.equals("notInWar") || lastState.equals("")) && 
+						    (currentState.equals("preparation") || currentState.equals("inWar"))) {
+							warJustStarted = true;
+						}
+						
+						// Update last state
+						setCWLastState(clanTag, currentState);
+						
+						// Fire all start triggers for this clan if war just started
+						if (warJustStarted) {
+							System.out.println("CW Start detected for clan " + clanTag + ". Firing start triggers...");
+							for (Long triggerId : triggersByClan.get(clanTag)) {
+								ListeningEvent le = new ListeningEvent(triggerId);
+								// Execute in separate thread to avoid blocking
+								schedulertasks.execute(() -> {
+									try {
+										le.fireEvent();
+									} catch (Exception e) {
+										System.err.println("Error firing start trigger " + triggerId + ": " + e.getMessage());
+										e.printStackTrace();
+									}
+								});
+							}
+						}
+					} catch (Exception e) {
+						System.err.println("Error checking CW state for clan " + clanTag + ": " + e.getMessage());
+					}
+				}
+			} catch (Exception e) {
+				System.err.println("Error in CW start monitoring: " + e.getMessage());
+				e.printStackTrace();
+			}
+		};
+		
+		// Schedule to run every 5 minutes
+		schedulertasks.scheduleAtFixedRate(monitoringTask, 0, 5, TimeUnit.MINUTES);
+	}
+	
+	// Simple in-memory storage for last war states
+	private static java.util.HashMap<String, String> cwLastStates = new java.util.HashMap<>();
+	
+	private static String getCWLastState(String clanTag) {
+		return cwLastStates.getOrDefault(clanTag, "");
+	}
+	
+	private static void setCWLastState(String clanTag, String state) {
+		cwLastStates.put(clanTag, state);
 	}
 
 	public static void endClanGamesSavings() {
@@ -489,6 +622,55 @@ public class Bot extends ListenerAdapter {
 				year--;
 			}
 			target = LocalDateTime.of(year, month, 28, 12, 0, 0, 0);
+		}
+
+		ZonedDateTime zdt = target.atZone(ZoneId.systemDefault());
+		return zdt;
+	}
+	
+	/**
+	 * Get next 28th at 13:00 (1pm) - used for listening events to ensure API data has propagated
+	 * This is 1 hour after the actual clan games end time
+	 */
+	public static ZonedDateTime getNext28thAt1pm() {
+		LocalDateTime now = LocalDateTime.now();
+		int year = now.getYear();
+		int month = now.getMonthValue();
+
+		LocalDateTime target = LocalDateTime.of(year, month, 28, 13, 0, 0, 0);
+
+		// Wenn jetzt >= 28. um 13:00 Uhr dann nächsten Monat nehmen
+		if (!now.isBefore(target)) {
+			month++;
+			if (month > 12) {
+				month = 1;
+				year++;
+			}
+			target = LocalDateTime.of(year, month, 28, 13, 0, 0, 0);
+		}
+
+		ZonedDateTime zdt = target.atZone(ZoneId.systemDefault());
+		return zdt;
+	}
+	
+	/**
+	 * Get previous 28th at 13:00 (1pm) - used for listening events
+	 */
+	public static ZonedDateTime getPrevious28thAt1pm() {
+		LocalDateTime now = LocalDateTime.now();
+		int year = now.getYear();
+		int month = now.getMonthValue();
+
+		LocalDateTime target = LocalDateTime.of(year, month, 28, 13, 0, 0, 0);
+
+		// Wenn jetzt < 28. um 13:00 Uhr, dann vorherigen Monat nehmen
+		if (now.isBefore(target)) {
+			month--;
+			if (month < 1) {
+				month = 12;
+				year--;
+			}
+			target = LocalDateTime.of(year, month, 28, 13, 0, 0, 0);
 		}
 
 		ZonedDateTime zdt = target.atZone(ZoneId.systemDefault());
