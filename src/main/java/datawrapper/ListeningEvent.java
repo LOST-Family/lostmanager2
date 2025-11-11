@@ -557,6 +557,7 @@ public class ListeningEvent {
 		// We need to find the most recent completed war for our clan
 		int lastCompletedRound = -1;
 		String lastCompletedWarTag = null;
+		org.json.JSONObject cachedWarData = null;
 		
 		// Iterate through all 7 rounds to find the last completed one
 		for (int r = 0; r < rounds.length(); r++) {
@@ -588,6 +589,7 @@ public class ListeningEvent {
 							// This round is completed, update tracking
 							lastCompletedRound = r;
 							lastCompletedWarTag = warTag;
+							cachedWarData = warData; // Cache the war data to avoid refetching
 						}
 					}
 				} catch (Exception e) {
@@ -618,8 +620,21 @@ public class ListeningEvent {
 		
 		for (int w = 0; w < lastRoundWarTags.length(); w++) {
 			String warTag = lastRoundWarTags.getString(w);
+			
+			// Use cached data if available, otherwise fetch
+			org.json.JSONObject warData;
+			if (cachedWarData != null && warTag.equals(lastCompletedWarTag)) {
+				warData = cachedWarData;
+			} else {
+				try {
+					warData = Clan.getCWLDayJson(warTag);
+				} catch (Exception e) {
+					// If war data is not available, skip
+					continue;
+				}
+			}
+			
 			try {
-				org.json.JSONObject warData = Clan.getCWLDayJson(warTag);
 				
 				// Check if this war involves our clan (could be in "clan" or "opponent" field)
 				org.json.JSONObject clanData = warData.getJSONObject("clan");
