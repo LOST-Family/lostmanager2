@@ -118,96 +118,99 @@ public class kpadd extends ListenerAdapter {
 	public void onModalInteraction(ModalInteractionEvent event) {
 		if (event.getModalId().equals("kpadd")) {
 			event.deferReply().queue();
-			String title = "Kickpunkte";
-			String reason = event.getValue("reason").getAsString();
-			String amountstr = event.getValue("amount").getAsString();
-			int amount = -1;
-			try {
-				amount = Integer.valueOf(amountstr);
-			} catch (Exception ex) {
-				event.getHook().editOriginalEmbeds(
-						MessageUtil.buildEmbed(title, "Die Anzahl muss eine Zahl sein.", MessageUtil.EmbedType.ERROR))
-						.queue();
-				return;
-			}
-			String date = event.getValue("date").getAsString();
-			String playertag = event.getValue("tag").getAsString();
 
-			Player p = new Player(playertag);
-			Clan c = p.getClanDB();
-			if (c == null) {
-				event.getHook()
-						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-								"Dieser Spieler existiert nicht oder ist in keinem Clan.", MessageUtil.EmbedType.ERROR))
-						.queue();
-				return;
-			}
-
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-			boolean validdate;
-			try {
-				LocalDate.parse(date, formatter);
-				validdate = true;
-			} catch (DateTimeParseException e) {
-				validdate = false;
-			}
-			if (!validdate) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Ungültiges Format für die Datums-Eingabe. Nutze dd.MM.yyyy", MessageUtil.EmbedType.ERROR))
-						.queue();
-				return;
-			}
-
-			LocalDate localdate = LocalDate.parse(date, formatter);
-			LocalDateTime dateTime = localdate.atStartOfDay();
-			ZoneId zone = ZoneId.of("Europe/Berlin");
-			ZonedDateTime zonedDateTime = dateTime.atZone(zone);
-			Timestamp timestampcreated = Timestamp.from(zonedDateTime.toInstant());
-			Timestamp timestampexpires = Timestamp.valueOf(dateTime.plusDays(c.getDaysKickpointsExpireAfter()));
-			Timestamp timestampnow = Timestamp.from(Instant.now());
-			String userid = event.getUser().getId();
-
-			Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(
-					"INSERT INTO kickpoints (player_tag, date, amount, description, created_by_discord_id, created_at, expires_at, clan_tag, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-					playertag, timestampcreated, amount, reason, userid, timestampnow, timestampexpires, c.getTag(),
-					timestampnow);
-
-			PreparedStatement stmt = result.getFirst();
-			int rowsAffected = result.getSecond();
-
-			Long id = null;
-
-			if (rowsAffected > 0) {
-				try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-					if (generatedKeys.next()) {
-						id = generatedKeys.getLong(1);
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
+			new Thread(() -> {
+				String title = "Kickpunkte";
+				String reason = event.getValue("reason").getAsString();
+				String amountstr = event.getValue("amount").getAsString();
+				int amount = -1;
+				try {
+					amount = Integer.valueOf(amountstr);
+				} catch (Exception ex) {
+					event.getHook().editOriginalEmbeds(
+							MessageUtil.buildEmbed(title, "Die Anzahl muss eine Zahl sein.", MessageUtil.EmbedType.ERROR))
+							.queue();
+					return;
 				}
-			}
+				String date = event.getValue("date").getAsString();
+				String playertag = event.getValue("tag").getAsString();
 
-			String desc = "### Der Kickpunkt wurde hinzugefügt.\n";
-			desc += "Spieler: " + MessageUtil.unformat(p.getInfoStringDB()) + "\n";
-			desc += "Clan: " + c.getInfoString() + "\n";
-			desc += "Anzahl: " + amount + "\n";
-			desc += "Grund: " + reason + "\n";
-			desc += "ID: " + id + "\n";
+				Player p = new Player(playertag);
+				Clan c = p.getClanDB();
+				if (c == null) {
+					event.getHook()
+							.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+									"Dieser Spieler existiert nicht oder ist in keinem Clan.", MessageUtil.EmbedType.ERROR))
+							.queue();
+					return;
+				}
 
-			if (timestampexpires.before(Timestamp.from(Instant.now()))) {
-				desc += "### Achtung: Der Kickpunkt ist bereits abgelaufen.\n";
-			}
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+				boolean validdate;
+				try {
+					LocalDate.parse(date, formatter);
+					validdate = true;
+				} catch (DateTimeParseException e) {
+					validdate = false;
+				}
+				if (!validdate) {
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Ungültiges Format für die Datums-Eingabe. Nutze dd.MM.yyyy", MessageUtil.EmbedType.ERROR))
+							.queue();
+					return;
+				}
 
-			int kptotal = 0;
-			for (Kickpoint kp : p.getActiveKickpoints()) {
-				kptotal += kp.getAmount();
-			}
-			if (kptotal >= c.getMaxKickpoints()) {
-				desc += "### Achtung: Der Spieler hat die maximale Anzahl der Kickpunkte erreicht.\n";
-			}
+				LocalDate localdate = LocalDate.parse(date, formatter);
+				LocalDateTime dateTime = localdate.atStartOfDay();
+				ZoneId zone = ZoneId.of("Europe/Berlin");
+				ZonedDateTime zonedDateTime = dateTime.atZone(zone);
+				Timestamp timestampcreated = Timestamp.from(zonedDateTime.toInstant());
+				Timestamp timestampexpires = Timestamp.valueOf(dateTime.plusDays(c.getDaysKickpointsExpireAfter()));
+				Timestamp timestampnow = Timestamp.from(Instant.now());
+				String userid = event.getUser().getId();
 
-			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
-					.queue();
+				Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(
+						"INSERT INTO kickpoints (player_tag, date, amount, description, created_by_discord_id, created_at, expires_at, clan_tag, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+						playertag, timestampcreated, amount, reason, userid, timestampnow, timestampexpires, c.getTag(),
+						timestampnow);
+
+				PreparedStatement stmt = result.getFirst();
+				int rowsAffected = result.getSecond();
+
+				Long id = null;
+
+				if (rowsAffected > 0) {
+					try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+						if (generatedKeys.next()) {
+							id = generatedKeys.getLong(1);
+						}
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+
+				String desc = "### Der Kickpunkt wurde hinzugefügt.\n";
+				desc += "Spieler: " + MessageUtil.unformat(p.getInfoStringDB()) + "\n";
+				desc += "Clan: " + c.getInfoString() + "\n";
+				desc += "Anzahl: " + amount + "\n";
+				desc += "Grund: " + reason + "\n";
+				desc += "ID: " + id + "\n";
+
+				if (timestampexpires.before(Timestamp.from(Instant.now()))) {
+					desc += "### Achtung: Der Kickpunkt ist bereits abgelaufen.\n";
+				}
+
+				int kptotal = 0;
+				for (Kickpoint kp : p.getActiveKickpoints()) {
+					kptotal += kp.getAmount();
+				}
+				if (kptotal >= c.getMaxKickpoints()) {
+					desc += "### Achtung: Der Spieler hat die maximale Anzahl der Kickpunkte erreicht.\n";
+				}
+
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
+						.queue();
+			}, "KpaddModal-" + event.getUser().getId()).start();
 		}
 	}
 

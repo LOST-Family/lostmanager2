@@ -81,55 +81,58 @@ public class kpedit extends ListenerAdapter {
 	public void onModalInteraction(ModalInteractionEvent event) {
 		if (event.getModalId().startsWith("kpedit")) {
 			event.deferReply().queue();
-			int id = Integer.valueOf(event.getModalId().split("_")[1]);
-			String title = "Kickpunkte";
-			String reason = event.getValue("reason").getAsString();
-			String amountstr = event.getValue("amount").getAsString();
-			int amount = -1;
-			try {
-				amount = Integer.valueOf(amountstr);
-			} catch (Exception ex) {
-				event.getHook().editOriginalEmbeds(
-						MessageUtil.buildEmbed(title, "Die Anzahl muss eine Zahl sein.", MessageUtil.EmbedType.ERROR))
+
+			new Thread(() -> {
+				int id = Integer.valueOf(event.getModalId().split("_")[1]);
+				String title = "Kickpunkte";
+				String reason = event.getValue("reason").getAsString();
+				String amountstr = event.getValue("amount").getAsString();
+				int amount = -1;
+				try {
+					amount = Integer.valueOf(amountstr);
+				} catch (Exception ex) {
+					event.getHook().editOriginalEmbeds(
+							MessageUtil.buildEmbed(title, "Die Anzahl muss eine Zahl sein.", MessageUtil.EmbedType.ERROR))
+							.queue();
+					return;
+				}
+				String date = event.getValue("date").getAsString();
+
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+				boolean validdate;
+				try {
+					LocalDate.parse(date, formatter);
+					validdate = true;
+				} catch (DateTimeParseException e) {
+					validdate = false;
+				}
+				if (!validdate) {
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Ungültiges Format für die Datums-Eingabe. Nutze dd.MM.yyyy", MessageUtil.EmbedType.ERROR))
+							.queue();
+					return;
+				}
+
+				LocalDate localdate = LocalDate.parse(date, formatter);
+				LocalDateTime dateTime = localdate.atStartOfDay();
+				ZoneId zone = ZoneId.of("Europe/Berlin");
+				ZonedDateTime zonedDateTime = dateTime.atZone(zone);
+				Timestamp timestampcreated = Timestamp.from(zonedDateTime.toInstant());
+				Timestamp timestampnow = Timestamp.from(Instant.now());
+
+				DBUtil.executeUpdate(
+						"UPDATE kickpoints SET description = ?, amount = ?, date = ?, updated_at = ? WHERE id = ?", reason,
+						amount, timestampcreated, timestampnow, id);
+
+				String desc = "### Der Kickpunkt wurde bearbeitet.\n";
+				desc += "ID: " + id + "\n";
+				desc += "Grund: " + reason + "\n";
+				desc += "Datum: " + date + "\n";
+				desc += "Anzahl: " + amount + "\n";
+
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
 						.queue();
-				return;
-			}
-			String date = event.getValue("date").getAsString();
-
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-			boolean validdate;
-			try {
-				LocalDate.parse(date, formatter);
-				validdate = true;
-			} catch (DateTimeParseException e) {
-				validdate = false;
-			}
-			if (!validdate) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Ungültiges Format für die Datums-Eingabe. Nutze dd.MM.yyyy", MessageUtil.EmbedType.ERROR))
-						.queue();
-				return;
-			}
-
-			LocalDate localdate = LocalDate.parse(date, formatter);
-			LocalDateTime dateTime = localdate.atStartOfDay();
-			ZoneId zone = ZoneId.of("Europe/Berlin");
-			ZonedDateTime zonedDateTime = dateTime.atZone(zone);
-			Timestamp timestampcreated = Timestamp.from(zonedDateTime.toInstant());
-			Timestamp timestampnow = Timestamp.from(Instant.now());
-
-			DBUtil.executeUpdate(
-					"UPDATE kickpoints SET description = ?, amount = ?, date = ?, updated_at = ? WHERE id = ?", reason,
-					amount, timestampcreated, timestampnow, id);
-
-			String desc = "### Der Kickpunkt wurde bearbeitet.\n";
-			desc += "ID: " + id + "\n";
-			desc += "Grund: " + reason + "\n";
-			desc += "Datum: " + date + "\n";
-			desc += "Anzahl: " + amount + "\n";
-
-			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
-					.queue();
+			}, "KpeditModal-" + event.getUser().getId()).start();
 		}
 	}
 

@@ -95,46 +95,49 @@ public class clanconfig extends ListenerAdapter {
 	public void onModalInteraction(ModalInteractionEvent event) {
 		if (event.getModalId().startsWith("clanconfig")) {
 			event.deferReply().queue();
-			String title = "Clanconfig";
-			String winsstr = event.getValue("wins").getAsString();
-			String daysstr = event.getValue("days").getAsString();
-			String maxstr = event.getValue("max").getAsString();
-			int wins = -1;
-			int days = -1;
-			int max = -1;
-			try {
-				wins = Integer.valueOf(winsstr);
-				days = Integer.valueOf(daysstr);
-				max = Integer.valueOf(maxstr);
-			} catch (Exception ex) {
-				event.getHook()
-						.editOriginalEmbeds(
-								MessageUtil.buildEmbed(title, "Es müssen Zahlen sein.", MessageUtil.EmbedType.ERROR))
+
+			new Thread(() -> {
+				String title = "Clanconfig";
+				String winsstr = event.getValue("wins").getAsString();
+				String daysstr = event.getValue("days").getAsString();
+				String maxstr = event.getValue("max").getAsString();
+				int wins = -1;
+				int days = -1;
+				int max = -1;
+				try {
+					wins = Integer.valueOf(winsstr);
+					days = Integer.valueOf(daysstr);
+					max = Integer.valueOf(maxstr);
+				} catch (Exception ex) {
+					event.getHook()
+							.editOriginalEmbeds(
+									MessageUtil.buildEmbed(title, "Es müssen Zahlen sein.", MessageUtil.EmbedType.ERROR))
+							.queue();
+					return;
+				}
+
+				String clantag = event.getModalId().split("_")[1];
+
+				Clan c = new Clan(clantag);
+
+				if (c.getDaysKickpointsExpireAfter() == null) {
+					DBUtil.executeUpdate(
+							"INSERT INTO clan_settings (clan_tag, max_kickpoints, kickpoints_expire_after_days, min_season_wins) VALUES (?, ?, ?, ?)",
+							clantag, max, days, wins);
+				} else {
+					DBUtil.executeUpdate(
+							"UPDATE clan_settings SET max_kickpoints = ?, kickpoints_expire_after_days = ?, min_season_wins = ? WHERE clan_tag = ?",
+							max, days, wins, clantag);
+				}
+
+				String desc = "### Die Clan-Settings wurden bearbeitet.\n";
+				desc += "Clan: " + c.getInfoString() + "\n";
+				desc += "Gültigkeitsdauer von Kickpunkten: " + c.getDaysKickpointsExpireAfter() + " Tage\n";
+				desc += "Maximale Anzahl an Kickpunkten: " + c.getMaxKickpoints() + "\n";
+
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
 						.queue();
-				return;
-			}
-
-			String clantag = event.getModalId().split("_")[1];
-
-			Clan c = new Clan(clantag);
-
-			if (c.getDaysKickpointsExpireAfter() == null) {
-				DBUtil.executeUpdate(
-						"INSERT INTO clan_settings (clan_tag, max_kickpoints, kickpoints_expire_after_days, min_season_wins) VALUES (?, ?, ?, ?)",
-						clantag, max, days, wins);
-			} else {
-				DBUtil.executeUpdate(
-						"UPDATE clan_settings SET max_kickpoints = ?, kickpoints_expire_after_days = ?, min_season_wins = ? WHERE clan_tag = ?",
-						max, days, wins, clantag);
-			}
-
-			String desc = "### Die Clan-Settings wurden bearbeitet.\n";
-			desc += "Clan: " + c.getInfoString() + "\n";
-			desc += "Gültigkeitsdauer von Kickpunkten: " + c.getDaysKickpointsExpireAfter() + " Tage\n";
-			desc += "Maximale Anzahl an Kickpunkten: " + c.getMaxKickpoints() + "\n";
-
-			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
-					.queue();
+			}, "ClanconfigModal-" + event.getUser().getId()).start();
 		}
 	}
 
@@ -143,14 +146,16 @@ public class clanconfig extends ListenerAdapter {
 		if (!event.getName().equals("clanconfig"))
 			return;
 
-		String focused = event.getFocusedOption().getName();
-		String input = event.getFocusedOption().getValue();
+		new Thread(() -> {
+			String focused = event.getFocusedOption().getName();
+			String input = event.getFocusedOption().getValue();
 
-		if (focused.equals("clan")) {
-			List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
+			if (focused.equals("clan")) {
+				List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
 
-			event.replyChoices(choices).queue(_ ->{}, _ -> {});
-		}
+				event.replyChoices(choices).queue(_ ->{}, _ -> {});
+			}
+		}, "ClanconfigAutocomplete-" + event.getUser().getId()).start();
 	}
 
 }

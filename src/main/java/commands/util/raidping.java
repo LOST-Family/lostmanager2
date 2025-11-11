@@ -28,6 +28,8 @@ public class raidping extends ListenerAdapter {
 		String title = "Raid-Ping";
 		event.deferReply().queue();
 
+		new Thread(() -> {
+
 		OptionMapping clanOption = event.getOption("clan");
 
 		if (clanOption == null) {
@@ -158,8 +160,9 @@ public class raidping extends ListenerAdapter {
 				message.editMessage(newmessage).queue();
 			});
 		}
-	}
+		}, "RaidpingCommand-" + event.getUser().getId()).start();
 
+	}
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("raidping"))
