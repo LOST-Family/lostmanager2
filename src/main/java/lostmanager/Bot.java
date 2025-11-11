@@ -501,6 +501,8 @@ public class Bot extends ListenerAdapter {
 	private static void startEventPolling() {
 		// Track which events have been scheduled to avoid duplicate scheduling
 		final java.util.Set<Long> scheduledEvents = java.util.concurrent.ConcurrentHashMap.newKeySet();
+		// Track timestamps of scheduled events to allow cleanup of old ones
+		final java.util.Map<Long, Long> scheduledEventTimestamps = new java.util.concurrent.ConcurrentHashMap<>();
 		
 		Runnable pollingTask = () -> {
 			try {
@@ -509,6 +511,22 @@ public class Bot extends ListenerAdapter {
 				
 				long currentTime = System.currentTimeMillis();
 				long schedulingThreshold = 5 * 60 * 1000; // 5 minutes in milliseconds
+				long cleanupThreshold = 60 * 60 * 1000; // 1 hour - events scheduled this long ago can be cleaned up
+				
+				// Clean up old scheduled events (events whose fire time has passed by more than 1 hour)
+				java.util.Iterator<java.util.Map.Entry<Long, Long>> iterator = scheduledEventTimestamps.entrySet().iterator();
+				while (iterator.hasNext()) {
+					java.util.Map.Entry<Long, Long> entry = iterator.next();
+					Long eventId = entry.getKey();
+					Long fireTime = entry.getValue();
+					
+					// If the event's fire time has passed by more than 1 hour, remove it
+					if (fireTime != null && fireTime < (currentTime - cleanupThreshold)) {
+						scheduledEvents.remove(eventId);
+						iterator.remove();
+						System.out.println("Cleaned up old scheduled event " + eventId);
+					}
+				}
 				
 				for (Long id : ids) {
 					try {
@@ -583,29 +601,31 @@ public class Bot extends ListenerAdapter {
 						if (timeUntilFire <= schedulingThreshold && timeUntilFire > 0) {
 							System.out.println("Scheduling event " + id + " to fire in " + (timeUntilFire / 1000 / 60) + " minutes");
 							scheduledEvents.add(id);
+							scheduledEventTimestamps.put(id, timestamp);
 							schedulertasks.schedule(() -> {
 								try {
 									executeEventWithRetry(le, id, 3);
-									// Remove from scheduled set after firing
-									scheduledEvents.remove(id);
+									// Keep in scheduled set to prevent re-scheduling
+									// Event will be removed when conditions change (new war, etc.)
 								} catch (Exception e) {
 									System.err.println("Error executing event " + id + ": " + e.getMessage());
 									e.printStackTrace();
-									scheduledEvents.remove(id);
+									// Keep in set even on error to prevent retry loops
 								}
 							}, timeUntilFire, TimeUnit.MILLISECONDS);
 						} else if (timeUntilFire <= 0) {
 							// Event is overdue, fire immediately
 							System.out.println("Event " + id + " is overdue, firing immediately");
 							scheduledEvents.add(id);
+							scheduledEventTimestamps.put(id, currentTime);
 							schedulertasks.execute(() -> {
 								try {
 									executeEventWithRetry(le, id, 3);
-									scheduledEvents.remove(id);
+									// Keep in scheduled set to prevent re-firing
 								} catch (Exception e) {
 									System.err.println("Error executing overdue event " + id + ": " + e.getMessage());
 									e.printStackTrace();
-									scheduledEvents.remove(id);
+									// Keep in set even on error
 								}
 							});
 						}
