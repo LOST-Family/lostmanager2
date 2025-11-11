@@ -530,14 +530,11 @@ public class Bot extends ListenerAdapter {
 					}
 				}
 				
-				// First pass: Detect clan war state changes ONCE per clan
-				// Map of clan tag -> whether war just started
-				java.util.Map<String, Boolean> clanWarStarted = new java.util.HashMap<>();
+				// First pass: Group start events by clan for batch processing
+				// Map to group start events by clan tag
+				java.util.Map<String, java.util.List<Long>> cwStartEventsByClan = new java.util.HashMap<>();
 				// Track clan state updates to apply after processing all events
 				java.util.Map<String, String> clanStateUpdates = new java.util.HashMap<>();
-				
-				// Group events by clan and type to process start triggers efficiently
-				java.util.Map<String, java.util.List<Long>> cwStartEventsByClan = new java.util.HashMap<>();
 				
 				for (Long id : ids) {
 					try {
