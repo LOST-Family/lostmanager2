@@ -1,5 +1,8 @@
 package commands.util;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +29,7 @@ import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import util.MessageUtil;
+import util.Tuple;
 
 public class listeningevent extends ListenerAdapter {
 
@@ -249,12 +253,30 @@ public class listeningevent extends ListenerAdapter {
 			}
 		}
 
-		// Insert into database
-		DBUtil.executeUpdate(
+		// Insert into database and get generated ID
+		Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(
 			"INSERT INTO listening_events (clan_tag, listeningtype, listeningvalue, actiontype, channel_id, actionvalues) VALUES (?, ?, ?, ?, ?, ?::jsonb)",
 			clantag, type, duration, actionTypeStr, channelId, actionValuesJson);
 
+		PreparedStatement stmt = result.getFirst();
+		int rowsAffected = result.getSecond();
+
+		Long id = null;
+
+		if (rowsAffected > 0) {
+			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+				if (generatedKeys.next()) {
+					id = generatedKeys.getLong(1);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
 		String desc = "### Listening Event wurde hinzugefügt.\n";
+		if (id != null) {
+			desc += "**ID:** " + id + "\n";
+		}
 		desc += "**Clan:** " + clantag + "\n";
 		desc += "**Typ:** " + type + "\n";
 		desc += "**Dauer:** " + duration + " ms\n";
