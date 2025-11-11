@@ -382,40 +382,8 @@ public class Bot extends ListenerAdapter {
 		endClanGamesSavings();
 		startClanGamesSavings();
 		
-		String sql = "SELECT id FROM listening_events";
-		ArrayList<Long> ids = DBUtil.getArrayListFromSQL(sql, Long.class);
-		
-		for (Long id : ids) {
-			try {
-				ListeningEvent le = new ListeningEvent(id);
-				long duration = le.getDurationUntilEnd();
-				
-				// Check if this is a "start" trigger (duration = -1)
-				if (duration == -1 && le.getListeningType() == ListeningEvent.LISTENINGTYPE.CW) {
-					// Start triggers are handled by the CW start monitoring task
-					continue;
-				}
-				
-				Long timestamp = le.getTimestamp();
-				// Skip if timestamp is null or invalid
-				if (timestamp == null || timestamp == Long.MAX_VALUE) {
-					System.err.println("Skipping event " + id + " due to invalid timestamp");
-					continue;
-				}
-				
-				long timeuntilfire = timestamp - System.currentTimeMillis();
-				
-				schedulertasks.schedule(() -> {
-					executeEventWithRetry(le, id, 3);
-				}, timeuntilfire, TimeUnit.MILLISECONDS);
-			} catch (Exception e) {
-				System.err.println("Error scheduling event " + id + ": " + e.getMessage());
-				e.printStackTrace();
-			}
-		}
-		
-		// Start CW start monitoring for all "start" triggers
-		startCWStartMonitoring();
+		// Start unified event polling system that checks all events periodically
+		startEventPolling();
 	}
 	
 	/**
@@ -526,107 +494,138 @@ public class Bot extends ListenerAdapter {
 	}
 	
 	/**
-	 * Monitors for CW start events and fires triggers with duration=-1
-	 * Also monitors war state changes to reschedule events with updated timestamps
-	 * Checks every 5 minutes for war state changes
+	 * Unified event polling system that checks all events periodically
+	 * Checks every 2 minutes and schedules events that are within 5 minutes of firing
+	 * This handles all event types uniformly including CW start triggers
 	 */
-	private static void startCWStartMonitoring() {
-		// Initialize last states to prevent false triggers on bot restart
-		initializeCWLastStates();
+	private static void startEventPolling() {
+		// Track which events have been scheduled to avoid duplicate scheduling
+		final java.util.Set<Long> scheduledEvents = java.util.concurrent.ConcurrentHashMap.newKeySet();
 		
-		Runnable monitoringTask = () -> {
+		Runnable pollingTask = () -> {
 			try {
-				// Get all CW events (both start triggers and regular events)
-				String sql = "SELECT DISTINCT clan_tag FROM listening_events WHERE listeningtype = 'cw'";
-				ArrayList<String> clanTags = DBUtil.getArrayListFromSQL(sql, String.class);
+				String sql = "SELECT id FROM listening_events";
+				ArrayList<Long> ids = DBUtil.getArrayListFromSQL(sql, Long.class);
 				
-				if (clanTags.isEmpty()) {
-					return; // No CW events to monitor
-				}
+				long currentTime = System.currentTimeMillis();
+				long schedulingThreshold = 5 * 60 * 1000; // 5 minutes in milliseconds
 				
-				// Get all start trigger IDs for firing
-				String startSql = "SELECT id, clan_tag FROM listening_events WHERE listeningtype = 'cw' AND listeningvalue = -1";
-				java.util.HashMap<String, java.util.ArrayList<Long>> startTriggersByClan = new java.util.HashMap<>();
-				
-				// We need to query and group manually since we need both id and clan_tag
-				try (java.sql.PreparedStatement pstmt = datautil.Connection.getConnection().prepareStatement(startSql)) {
-					try (java.sql.ResultSet rs = pstmt.executeQuery()) {
-						while (rs.next()) {
-							Long id = rs.getLong("id");
-							String clanTag = rs.getString("clan_tag");
-							startTriggersByClan.computeIfAbsent(clanTag, k -> new java.util.ArrayList<>()).add(id);
-						}
-					}
-				} catch (Exception e) {
-					System.err.println("Error fetching start triggers: " + e.getMessage());
-				}
-				
-				// Check each clan's war state
-				for (String clanTag : clanTags) {
+				for (Long id : ids) {
 					try {
-						datawrapper.Clan clan = new datawrapper.Clan(clanTag);
-						
-						// Get war state from last check (stored in memory or DB)
-						String lastState = getCWLastState(clanTag);
-						
-						// Get current war state
-						String currentState = "notInWar"; // default
-						if (clan.isCWActive()) {
-							org.json.JSONObject cwJson = clan.getCWJson();
-							currentState = cwJson.getString("state");
+						// Skip if already scheduled
+						if (scheduledEvents.contains(id)) {
+							continue;
 						}
 						
-						// Detect transition to war start
-						// Only trigger if we had a known previous state that was NOT in war
-						boolean warJustStarted = false;
-						if (!lastState.isEmpty() && lastState.equals("notInWar") && 
-						    (currentState.equals("preparation") || currentState.equals("inWar"))) {
-							warJustStarted = true;
-						}
+						ListeningEvent le = new ListeningEvent(id);
+						long duration = le.getDurationUntilEnd();
 						
-						// Detect any state change (for rescheduling events)
-						boolean stateChanged = !lastState.isEmpty() && !lastState.equals(currentState);
-						
-						// Update last state
-						setCWLastState(clanTag, currentState);
-						
-						// Fire all start triggers for this clan if war just started
-						if (warJustStarted) {
-							System.out.println("CW Start detected for clan " + clanTag + ". Firing start triggers...");
-							java.util.ArrayList<Long> triggers = startTriggersByClan.get(clanTag);
-							if (triggers != null) {
-								for (Long triggerId : triggers) {
-									ListeningEvent le = new ListeningEvent(triggerId);
-									// Execute in separate thread to avoid blocking
-									schedulertasks.execute(() -> {
-										try {
-											le.fireEvent();
-										} catch (Exception e) {
-											System.err.println("Error firing start trigger " + triggerId + ": " + e.getMessage());
-											e.printStackTrace();
-										}
-									});
+						// Handle "start" triggers (duration = -1) specially
+						if (duration == -1) {
+							// For start triggers, check if a war just started
+							if (le.getListeningType() == ListeningEvent.LISTENINGTYPE.CW) {
+								String clanTag = le.getClanTag();
+								try {
+									datawrapper.Clan clan = new datawrapper.Clan(clanTag);
+									
+									// Get last known state
+									String lastState = getCWLastState(clanTag);
+									
+									// Get current state
+									String currentState = "notInWar";
+									if (clan.isCWActive()) {
+										org.json.JSONObject cwJson = clan.getCWJson();
+										currentState = cwJson.getString("state");
+									}
+									
+									// Check if war just started
+									boolean warJustStarted = !lastState.isEmpty() && 
+										lastState.equals("notInWar") && 
+										(currentState.equals("preparation") || currentState.equals("inWar"));
+									
+									// Update state
+									setCWLastState(clanTag, currentState);
+									
+									// Fire immediately if war just started
+									if (warJustStarted) {
+										System.out.println("CW Start detected for clan " + clanTag + ", firing event " + id);
+										scheduledEvents.add(id);
+										schedulertasks.execute(() -> {
+											try {
+												le.fireEvent();
+												// Remove from scheduled set after firing to allow re-trigger on next war
+												scheduledEvents.remove(id);
+											} catch (Exception e) {
+												System.err.println("Error firing start trigger " + id + ": " + e.getMessage());
+												e.printStackTrace();
+												scheduledEvents.remove(id);
+											}
+										});
+									}
+								} catch (Exception e) {
+									System.err.println("Error checking war state for event " + id + ": " + e.getMessage());
 								}
 							}
+							continue; // Don't process start triggers as regular time-based events
 						}
 						
-						// Reschedule all events when war state changes to update timestamps
-						if (stateChanged) {
-							System.out.println("War state changed for clan " + clanTag + " from " + lastState + " to " + currentState + ". Rescheduling all events...");
-							restartAllEvents();
+						// For regular time-based events, check timestamp
+						Long timestamp = le.getTimestamp();
+						
+						// Skip if timestamp is null or invalid
+						if (timestamp == null || timestamp == Long.MAX_VALUE) {
+							continue;
+						}
+						
+						long timeUntilFire = timestamp - currentTime;
+						
+						// If event is within threshold and not yet scheduled, schedule it
+						if (timeUntilFire <= schedulingThreshold && timeUntilFire > 0) {
+							System.out.println("Scheduling event " + id + " to fire in " + (timeUntilFire / 1000 / 60) + " minutes");
+							scheduledEvents.add(id);
+							schedulertasks.schedule(() -> {
+								try {
+									executeEventWithRetry(le, id, 3);
+									// Remove from scheduled set after firing
+									scheduledEvents.remove(id);
+								} catch (Exception e) {
+									System.err.println("Error executing event " + id + ": " + e.getMessage());
+									e.printStackTrace();
+									scheduledEvents.remove(id);
+								}
+							}, timeUntilFire, TimeUnit.MILLISECONDS);
+						} else if (timeUntilFire <= 0) {
+							// Event is overdue, fire immediately
+							System.out.println("Event " + id + " is overdue, firing immediately");
+							scheduledEvents.add(id);
+							schedulertasks.execute(() -> {
+								try {
+									executeEventWithRetry(le, id, 3);
+									scheduledEvents.remove(id);
+								} catch (Exception e) {
+									System.err.println("Error executing overdue event " + id + ": " + e.getMessage());
+									e.printStackTrace();
+									scheduledEvents.remove(id);
+								}
+							});
 						}
 					} catch (Exception e) {
-						System.err.println("Error checking CW state for clan " + clanTag + ": " + e.getMessage());
+						System.err.println("Error processing event " + id + ": " + e.getMessage());
+						e.printStackTrace();
 					}
 				}
 			} catch (Exception e) {
-				System.err.println("Error in CW start monitoring: " + e.getMessage());
+				System.err.println("Error in event polling: " + e.getMessage());
 				e.printStackTrace();
 			}
 		};
 		
-		// Schedule to run every 5 minutes
-		schedulertasks.scheduleAtFixedRate(monitoringTask, 0, 5, TimeUnit.MINUTES);
+		// Initialize CW states for start trigger detection
+		initializeCWLastStates();
+		
+		// Run immediately on startup, then every 2 minutes
+		schedulertasks.scheduleAtFixedRate(pollingTask, 0, 2, TimeUnit.MINUTES);
+		System.out.println("Event polling system started - checking every 2 minutes");
 	}
 	
 	/**
