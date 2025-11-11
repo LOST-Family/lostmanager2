@@ -20,6 +20,8 @@ public class setnick extends ListenerAdapter {
 		if (!event.getName().equals("setnick"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "Nickname ändern";
 
 		OptionMapping myplayerOption = event.getOption("my_player");
@@ -73,12 +75,15 @@ public class setnick extends ListenerAdapter {
 		String desc = "Du hast deinen Nickname erfolgreich zu " + nick + " geändert.";
 		event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
 
-	}
+		}, "SetnickCommand-" + event.getUser().getId()).start();
 
+	}
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("setnick"))
 			return;
+
+		new Thread(() -> {
 
 		String focused = event.getFocusedOption().getName();
 		String input = event.getFocusedOption().getValue();
@@ -99,6 +104,6 @@ public class setnick extends ListenerAdapter {
 			}, _ -> {
 			});
 		}
+		}, "SetnickAutocomplete-" + event.getUser().getId()).start();
 	}
-
 }

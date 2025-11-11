@@ -165,6 +165,8 @@ public class raidping extends ListenerAdapter {
 		if (!event.getName().equals("raidping"))
 			return;
 
+		new Thread(() -> {
+
 		String focused = event.getFocusedOption().getName();
 		String input = event.getFocusedOption().getValue();
 
@@ -175,6 +177,6 @@ public class raidping extends ListenerAdapter {
 			}, _ -> {
 			});
 		}
+		}, "RaidpingAutocomplete-" + event.getUser().getId()).start();
 	}
-
 }

@@ -27,6 +27,8 @@ public class memberstatus extends ListenerAdapter {
 		if (!event.getName().equals("memberstatus"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "Memberstatus";
 
 		OptionMapping clanOption = event.getOption("clan");
@@ -118,12 +120,15 @@ public class memberstatus extends ListenerAdapter {
 		event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.INFO,
 				"Zuletzt aktualisiert am " + formatiert)).setActionRow(refreshButton).queue();
 
-	}
+		}, "MemberstatusCommand-" + event.getUser().getId()).start();
 
+	}
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("memberstatus"))
 			return;
+
+		new Thread(() -> {
 
 		String focused = event.getFocusedOption().getName();
 		String input = event.getFocusedOption().getValue();
@@ -135,8 +140,8 @@ public class memberstatus extends ListenerAdapter {
 			}, _ -> {
 			});
 		}
+		}, "MemberstatusAutocomplete-" + event.getUser().getId()).start();
 	}
-
 	public String getRoleString(RoleType role) {
 		switch (role) {
 		case LEADER:

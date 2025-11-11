@@ -26,6 +26,8 @@ public class cwdonator extends ListenerAdapter {
 		if (!event.getName().equals("cwdonator"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "CW-Spender";
 
 		OptionMapping clanOption = event.getOption("clan");
@@ -122,12 +124,15 @@ public class cwdonator extends ListenerAdapter {
 		});
 		event.getChannel().sendMessage(desc).queue();
 
-	}
+		}, "CwdonatorCommand-" + event.getUser().getId()).start();
 
+	}
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("cwdonator"))
 			return;
+
+		new Thread(() -> {
 
 		String focused = event.getFocusedOption().getName();
 		String input = event.getFocusedOption().getValue();
@@ -139,8 +144,8 @@ public class cwdonator extends ListenerAdapter {
 			}, _ -> {
 			});
 		}
+		}, "CwdonatorAutocomplete-" + event.getUser().getId()).start();
 	}
-
 	private HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> getMappings() {
 		if (map == null) {
 			HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> mappings = new HashMap<>();

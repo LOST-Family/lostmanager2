@@ -12,6 +12,8 @@ public class restart extends ListenerAdapter {
 		if (!event.getName().equals("restart"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "Restart";
 
 		User userexecuted = new User(event.getUser().getId());
@@ -36,5 +38,6 @@ public class restart extends ListenerAdapter {
 
 		 System.exit(0);
 
-	}
-}
+		}, "RestartCommand-" + event.getUser().getId()).start();
+
+	}}

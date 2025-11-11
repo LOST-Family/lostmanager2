@@ -27,6 +27,8 @@ public class transfermember extends ListenerAdapter {
 		if (!event.getName().equals("transfermember"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "Memberverwaltung";
 
 		OptionMapping playeroption = event.getOption("player");
@@ -207,12 +209,15 @@ public class transfermember extends ListenerAdapter {
 
 		event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
 
-	}
+		}, "TransfermemberCommand-" + event.getUser().getId()).start();
 
+	}
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("transfermember"))
 			return;
+
+		new Thread(() -> {
 
 		String focused = event.getFocusedOption().getName();
 		String input = event.getFocusedOption().getValue();
@@ -245,6 +250,6 @@ public class transfermember extends ListenerAdapter {
 			}, _ -> {
 			});
 		}
+		}, "TransfermemberAutocomplete-" + event.getUser().getId()).start();
 	}
-
 }

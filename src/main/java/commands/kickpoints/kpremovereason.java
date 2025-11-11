@@ -22,6 +22,8 @@ public class kpremovereason extends ListenerAdapter {
 		if (!event.getName().equals("kpremovereason"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "Kickpunkt-Grund Vorlage";
 
 		OptionMapping clanOption = event.getOption("clan");
@@ -75,12 +77,15 @@ public class kpremovereason extends ListenerAdapter {
 
 		event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
 
-	}
+		}, "KpremovereasonCommand-" + event.getUser().getId()).start();
 
+	}
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("kpremovereason"))
 			return;
+
+		new Thread(() -> {
 
 		String focused = event.getFocusedOption().getName();
 		String input = event.getFocusedOption().getValue();
@@ -96,6 +101,6 @@ public class kpremovereason extends ListenerAdapter {
 
 			event.replyChoices(choices).queue(_ ->{}, _ -> {});
 		}
+		}, "KpremovereasonAutocomplete-" + event.getUser().getId()).start();
 	}
-
 }

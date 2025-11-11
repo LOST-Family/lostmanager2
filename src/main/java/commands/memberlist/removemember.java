@@ -27,6 +27,8 @@ public class removemember extends ListenerAdapter {
 		if (!event.getName().equals("removemember"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "Memberverwaltung";
 
 		OptionMapping playeroption = event.getOption("player");
@@ -186,12 +188,15 @@ public class removemember extends ListenerAdapter {
 
 		event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
 
-	}
+		}, "RemovememberCommand-" + event.getUser().getId()).start();
 
+	}
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("removemember"))
 			return;
+
+		new Thread(() -> {
 
 		String focused = event.getFocusedOption().getName();
 		String input = event.getFocusedOption().getValue();
@@ -203,6 +208,6 @@ public class removemember extends ListenerAdapter {
 			}, _ -> {
 			});
 		}
+		}, "RemovememberAutocomplete-" + event.getUser().getId()).start();
 	}
-
 }

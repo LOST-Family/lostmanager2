@@ -22,6 +22,8 @@ public class checkreacts extends ListenerAdapter {
 		if (!event.getName().equals("checkreacts"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "Check-Reacts";
 
 		OptionMapping roleOption = event.getOption("role");
@@ -99,6 +101,7 @@ public class checkreacts extends ListenerAdapter {
 					.queue();
 		});
 
-	}
+		}, "CheckreactsCommand-" + event.getUser().getId()).start();
 
+	}
 }

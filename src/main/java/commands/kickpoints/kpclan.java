@@ -31,6 +31,8 @@ public class kpclan extends ListenerAdapter {
 		if (!event.getName().equals("kpclan"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "Aktive Kickpunkte des Clans";
 
 		OptionMapping clanOption = event.getOption("clan");
@@ -96,12 +98,15 @@ public class kpclan extends ListenerAdapter {
 
 			}
 		}).start();
-	}
+		}, "KpclanCommand-" + event.getUser().getId()).start();
 
+	}
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("kpclan"))
 			return;
+
+		new Thread(() -> {
 
 		String focused = event.getFocusedOption().getName();
 		String input = event.getFocusedOption().getValue();
@@ -113,8 +118,8 @@ public class kpclan extends ListenerAdapter {
 			}, _ -> {
 			});
 		}
+		}, "KpclanAutocomplete-" + event.getUser().getId()).start();
 	}
-
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();

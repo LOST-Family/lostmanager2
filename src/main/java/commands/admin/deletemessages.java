@@ -20,6 +20,8 @@ public class deletemessages extends ListenerAdapter {
 		if (!event.getName().equals("deletemessages"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "Delete-Messages";
 
 		User userexecuted = new User(event.getUser().getId());
@@ -84,6 +86,7 @@ public class deletemessages extends ListenerAdapter {
 					message.delete().queueAfter(10, TimeUnit.SECONDS);
 				});
 
-	}
+		}, "DeletemessagesCommand-" + event.getUser().getId()).start();
 
+	}
 }

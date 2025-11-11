@@ -16,6 +16,8 @@ public class kpremove extends ListenerAdapter {
 		if (!event.getName().equals("kpremove"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "Kickpunkte";
 
 		OptionMapping idOption = event.getOption("id");
@@ -65,6 +67,7 @@ public class kpremove extends ListenerAdapter {
 					.queue();
 		}
 
-	}
+		}, "KpremoveCommand-" + event.getUser().getId()).start();
 
+	}
 }

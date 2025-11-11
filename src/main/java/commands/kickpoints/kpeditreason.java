@@ -22,6 +22,8 @@ public class kpeditreason extends ListenerAdapter {
 		if (!event.getName().equals("kpeditreason"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "Kickpunkt-Grund Vorlage";
 
 		OptionMapping clanOption = event.getOption("clan");
@@ -79,12 +81,15 @@ public class kpeditreason extends ListenerAdapter {
 
 		event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
 
-	}
+		}, "KpeditreasonCommand-" + event.getUser().getId()).start();
 
+	}
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("kpeditreason"))
 			return;
+
+		new Thread(() -> {
 
 		String focused = event.getFocusedOption().getName();
 		String input = event.getFocusedOption().getValue();
@@ -100,6 +105,6 @@ public class kpeditreason extends ListenerAdapter {
 
 			event.replyChoices(choices).queue(_ ->{}, _ -> {});
 		}
+		}, "KpeditreasonAutocomplete-" + event.getUser().getId()).start();
 	}
-
 }

@@ -21,6 +21,8 @@ public class kpinfo extends ListenerAdapter {
 		if (!event.getName().equals("kpinfo"))
 			return;
 		event.deferReply().queue();
+
+		new Thread(() -> {
 		String title = "Einstellungen";
 
 		OptionMapping clanOption = event.getOption("clan");
@@ -103,12 +105,15 @@ public class kpinfo extends ListenerAdapter {
 				.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.INFO, days, max, wins))
 				.queue();
 
-	}
+		}, "KpinfoCommand-" + event.getUser().getId()).start();
 
+	}
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("kpinfo"))
 			return;
+
+		new Thread(() -> {
 
 		String focused = event.getFocusedOption().getName();
 		String input = event.getFocusedOption().getValue();
@@ -118,6 +123,6 @@ public class kpinfo extends ListenerAdapter {
 
 			event.replyChoices(choices).queue(_ ->{}, _ -> {});
 		}
+		}, "KpinfoAutocomplete-" + event.getUser().getId()).start();
 	}
-
 }

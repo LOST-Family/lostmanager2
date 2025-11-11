@@ -474,6 +474,8 @@ public class listeningevent extends ListenerAdapter {
 		if (!event.getName().equals("listeningevent"))
 			return;
 
+		new Thread(() -> {
+
 		String focused = event.getFocusedOption().getName();
 		String input = event.getFocusedOption().getValue();
 
@@ -548,8 +550,8 @@ public class listeningevent extends ListenerAdapter {
 				event.replyChoices(new ArrayList<>()).queue();
 			}
 		}
-	}
-	
+		}, "ListeningeventAutocomplete-" + event.getUser().getId()).start();
+	}	
 	/**
 	 * Parses a duration string into milliseconds.
 	 * Supports: 0, plain numbers (ms), h (hours), d (days), m (minutes), s (seconds)
