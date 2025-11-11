@@ -216,30 +216,32 @@ public class kpadd extends ListenerAdapter {
 		if (!event.getName().equals("kpadd"))
 			return;
 
-		String focused = event.getFocusedOption().getName();
-		String input = event.getFocusedOption().getValue();
+		new Thread(() -> {
+			String focused = event.getFocusedOption().getName();
+			String input = event.getFocusedOption().getValue();
 
-		if (focused.equals("player")) {
-			List<Command.Choice> choices = DBManager.getPlayerlistAutocomplete(input, DBManager.InClanType.INCLAN);
+			if (focused.equals("player")) {
+				List<Command.Choice> choices = DBManager.getPlayerlistAutocomplete(input, DBManager.InClanType.INCLAN);
 
-			event.replyChoices(choices).queue(_ -> {
-			}, _ -> {
-			});
-		}
-		if (focused.equals("reason")) {
-			String playertag = event.getOption("player").getAsString();
-			Player p = new Player(playertag);
-			Clan c = p.getClanDB();
-			if (c == null) {
-				return;
+				event.replyChoices(choices).queue(_ -> {
+				}, _ -> {
+				});
 			}
-			String clantag = c.getTag();
-			List<Command.Choice> choices = DBManager.getKPReasonsAutocomplete(input, clantag);
+			if (focused.equals("reason")) {
+				String playertag = event.getOption("player").getAsString();
+				Player p = new Player(playertag);
+				Clan c = p.getClanDB();
+				if (c == null) {
+					return;
+				}
+				String clantag = c.getTag();
+				List<Command.Choice> choices = DBManager.getKPReasonsAutocomplete(input, clantag);
 
-			event.replyChoices(choices).queue(_ -> {
-			}, _ -> {
-			});
-		}
+				event.replyChoices(choices).queue(_ -> {
+				}, _ -> {
+				});
+			}
+		}, "KpAddAutocomplete-" + event.getUser().getId()).start();
 	}
 
 }

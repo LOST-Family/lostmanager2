@@ -20,55 +20,58 @@ public class unlink extends ListenerAdapter {
 		if (!event.getName().equals("unlink"))
 			return;
 		event.deferReply().queue();
-		String title = "User-Link";
 
-		boolean b = false;
-		User userexecuted = new User(event.getUser().getId());
-		for (String clantag : DBManager.getAllClans()) {
-			if (userexecuted.getClanRoles().get(clantag) == Player.RoleType.ADMIN
-					|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.LEADER
-					|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.COLEADER) {
-				b = true;
-				break;
+		new Thread(() -> {
+			String title = "User-Link";
+
+			boolean b = false;
+			User userexecuted = new User(event.getUser().getId());
+			for (String clantag : DBManager.getAllClans()) {
+				if (userexecuted.getClanRoles().get(clantag) == Player.RoleType.ADMIN
+						|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.LEADER
+						|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.COLEADER) {
+					b = true;
+					break;
+				}
 			}
-		}
-		if (b == false) {
-			event.getHook()
-					.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-							"Du musst mindestens Vize-Anführer eines Clans sein, um diesen Befehl ausführen zu können.",
-							MessageUtil.EmbedType.ERROR))
-					.queue();
-			return;
-		}
-
-		OptionMapping tagOption = event.getOption("tag");
-
-		if (tagOption == null) {
-			event.getHook().editOriginalEmbeds(
-					MessageUtil.buildEmbed(title, "Der Parameter ist erforderlich!", MessageUtil.EmbedType.ERROR))
-					.queue();
-			return;
-		}
-
-		String tag = tagOption.getAsString();
-		Player p = new Player(tag);
-
-		if (p.IsLinked()) {
-			if (p.getClanDB() == null) {
-				DBUtil.executeUpdate("DELETE FROM players WHERE coc_tag = ?", tag);
-				String desc = "Die Verknüpfung des Spielers mit dem Tag " + tag + " wurde erfolgreich gelöscht.";
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
+			if (b == false) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Du musst mindestens Vize-Anführer eines Clans sein, um diesen Befehl ausführen zu können.",
+								MessageUtil.EmbedType.ERROR))
 						.queue();
+				return;
+			}
+
+			OptionMapping tagOption = event.getOption("tag");
+
+			if (tagOption == null) {
+				event.getHook().editOriginalEmbeds(
+						MessageUtil.buildEmbed(title, "Der Parameter ist erforderlich!", MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
+
+			String tag = tagOption.getAsString();
+			Player p = new Player(tag);
+
+			if (p.IsLinked()) {
+				if (p.getClanDB() == null) {
+					DBUtil.executeUpdate("DELETE FROM players WHERE coc_tag = ?", tag);
+					String desc = "Die Verknüpfung des Spielers mit dem Tag " + tag + " wurde erfolgreich gelöscht.";
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
+							.queue();
+				} else {
+					String desc = "Der Spieler ist noch in einen Clan eingetragen. Entferne ihn dort erst.";
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.ERROR))
+							.queue();
+				}
 			} else {
-				String desc = "Der Spieler ist noch in einen Clan eingetragen. Entferne ihn dort erst.";
+				String desc = "Der Spieler mit dem Tag " + tag + " ist bereits nicht mehr verknüpft.";
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.ERROR))
 						.queue();
 			}
-		} else {
-			String desc = "Der Spieler mit dem Tag " + tag + " ist bereits nicht mehr verknüpft.";
-			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.ERROR))
-					.queue();
-		}
+		}, "UnlinkCommand-" + event.getUser().getId()).start();
 
 	}
 
@@ -77,16 +80,18 @@ public class unlink extends ListenerAdapter {
 		if (!event.getName().equals("unlink"))
 			return;
 
-		String focused = event.getFocusedOption().getName();
-		String input = event.getFocusedOption().getValue();
+		new Thread(() -> {
+			String focused = event.getFocusedOption().getName();
+			String input = event.getFocusedOption().getValue();
 
-		if (focused.equals("tag")) {
-			List<Command.Choice> choices = DBManager.getPlayerlistAutocomplete(input, DBManager.InClanType.ALL);
+			if (focused.equals("tag")) {
+				List<Command.Choice> choices = DBManager.getPlayerlistAutocomplete(input, DBManager.InClanType.ALL);
 
-			event.replyChoices(choices).queue(_ -> {
-			}, _ -> {
-			});
-		}
+				event.replyChoices(choices).queue(_ -> {
+				}, _ -> {
+				});
+			}
+		}, "UnlinkAutocomplete-" + event.getUser().getId()).start();
 	}
 
 }

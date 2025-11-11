@@ -24,57 +24,71 @@ public class verify extends ListenerAdapter {
 		if (!event.getName().equals("verify"))
 			return;
 		event.deferReply().queue();
-		String title = "Verifizierung";
 
-		OptionMapping tagOption = event.getOption("tag");
-		OptionMapping apitokenoption = event.getOption("apitoken");
+		new Thread(() -> {
+			String title = "Verifizierung";
 
-		if (tagOption == null || apitokenoption == null) {
-			event.getHook().editOriginalEmbeds(
-					MessageUtil.buildEmbed(title, "Beide Parameter sind erforderlich!", MessageUtil.EmbedType.ERROR))
-					.queue(sentMessage -> {
-						scheduler.schedule(() -> {
-							sentMessage.delete().queue();
-						}, 120, TimeUnit.SECONDS);
-					});
-			return;
-		}
+			OptionMapping tagOption = event.getOption("tag");
+			OptionMapping apitokenoption = event.getOption("apitoken");
 
-		String tag = tagOption.getAsString().toUpperCase().replaceAll("O", "0");
-		if (!tag.startsWith("#")) {
-			tag = "#" + tag;
-		}
-		String apitoken = apitokenoption.getAsString();
-		User userexecuted = new User(event.getUser().getId());
-		String userid = userexecuted.getUserID();
-		Player p = new Player(tag);
+			if (tagOption == null || apitokenoption == null) {
+				event.getHook().editOriginalEmbeds(
+						MessageUtil.buildEmbed(title, "Beide Parameter sind erforderlich!", MessageUtil.EmbedType.ERROR))
+						.queue(sentMessage -> {
+							scheduler.schedule(() -> {
+								sentMessage.delete().queue();
+							}, 120, TimeUnit.SECONDS);
+						});
+				return;
+			}
 
-		if (p.AccExists()) {
-			String playername = p.getNameAPI();
-			if (!p.IsLinked()) {
-				if (p.verifyCocTokenAPI(apitoken)) {
-					DBUtil.executeUpdate("INSERT INTO players (coc_tag, discord_id, name) VALUES (?, ?, ?)", tag,
-							userid, playername);
-					Player player = new Player(tag);
-					String desc = "Der Spieler " + MessageUtil.unformat(player.getInfoStringDB())
-							+ " wurde erfolgreich mit dem User <@" + userid + "> verknüpft.";
-					ArrayList<Player> linkedaccs = userexecuted.refreshData().getAllLinkedAccounts();
-					if (linkedaccs.size() == 1) {
-						Member member = event.getGuild().getMemberById(userid);
-						member.modifyNickname(playername).queue();
-						if (!member.getRoles().contains(event.getGuild().getRoleById(Bot.verified_roleid)))
-							event.getGuild().addRoleToMember(member, event.getGuild().getRoleById(Bot.verified_roleid))
-									.queue();
+			String tag = tagOption.getAsString().toUpperCase().replaceAll("O", "0");
+			if (!tag.startsWith("#")) {
+				tag = "#" + tag;
+			}
+			String apitoken = apitokenoption.getAsString();
+			User userexecuted = new User(event.getUser().getId());
+			String userid = userexecuted.getUserID();
+			Player p = new Player(tag);
+
+			if (p.AccExists()) {
+				String playername = p.getNameAPI();
+				if (!p.IsLinked()) {
+					if (p.verifyCocTokenAPI(apitoken)) {
+						DBUtil.executeUpdate("INSERT INTO players (coc_tag, discord_id, name) VALUES (?, ?, ?)", tag,
+								userid, playername);
+						Player player = new Player(tag);
+						String desc = "Der Spieler " + MessageUtil.unformat(player.getInfoStringDB())
+								+ " wurde erfolgreich mit dem User <@" + userid + "> verknüpft.";
+						ArrayList<Player> linkedaccs = userexecuted.refreshData().getAllLinkedAccounts();
+						if (linkedaccs.size() == 1) {
+							Member member = event.getGuild().getMemberById(userid);
+							member.modifyNickname(playername).queue();
+							if (!member.getRoles().contains(event.getGuild().getRoleById(Bot.verified_roleid)))
+								event.getGuild().addRoleToMember(member, event.getGuild().getRoleById(Bot.verified_roleid))
+										.queue();
+						}
+						event.getHook()
+								.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
+								.queue(sentMessage -> {
+									scheduler.schedule(() -> {
+										sentMessage.delete().queue();
+									}, 120, TimeUnit.SECONDS);
+								});
+					} else {
+						String desc = "Der API-Token passt nicht zu dem Account.";
+						event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.ERROR))
+								.queue(sentMessage -> {
+									scheduler.schedule(() -> {
+										sentMessage.delete().queue();
+									}, 120, TimeUnit.SECONDS);
+								});
 					}
-					event.getHook()
-							.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
-							.queue(sentMessage -> {
-								scheduler.schedule(() -> {
-									sentMessage.delete().queue();
-								}, 120, TimeUnit.SECONDS);
-							});
 				} else {
-					String desc = "Der API-Token passt nicht zu dem Account.";
+					Player player = new Player(tag);
+					String linkeduserid = player.getUser().getUserID();
+					String desc = "Der Spieler " + MessageUtil.unformat(player.getInfoStringDB()) + " ist bereits mit <@"
+							+ linkeduserid + "> verknüpft. Bitte einen Vize-Anführer, den Account zu entlinken.";
 					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.ERROR))
 							.queue(sentMessage -> {
 								scheduler.schedule(() -> {
@@ -83,10 +97,7 @@ public class verify extends ListenerAdapter {
 							});
 				}
 			} else {
-				Player player = new Player(tag);
-				String linkeduserid = player.getUser().getUserID();
-				String desc = "Der Spieler " + MessageUtil.unformat(player.getInfoStringDB()) + " ist bereits mit <@"
-						+ linkeduserid + "> verknüpft. Bitte einen Vize-Anführer, den Account zu entlinken.";
+				String desc = "Der Spieler mit dem Tag " + tag + " existiert nicht oder es ist ein API-Fehler aufgetreten.";
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.ERROR))
 						.queue(sentMessage -> {
 							scheduler.schedule(() -> {
@@ -94,15 +105,7 @@ public class verify extends ListenerAdapter {
 							}, 120, TimeUnit.SECONDS);
 						});
 			}
-		} else {
-			String desc = "Der Spieler mit dem Tag " + tag + " existiert nicht oder es ist ein API-Fehler aufgetreten.";
-			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.ERROR))
-					.queue(sentMessage -> {
-						scheduler.schedule(() -> {
-							sentMessage.delete().queue();
-						}, 120, TimeUnit.SECONDS);
-					});
-		}
+		}, "VerifyCommand-" + event.getUser().getId()).start();
 
 	}
 
