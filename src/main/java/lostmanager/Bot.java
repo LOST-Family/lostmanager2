@@ -548,7 +548,7 @@ public class Bot extends ListenerAdapter {
 				for (Long id : startTriggerIds) {
 					ListeningEvent le = new ListeningEvent(id);
 					String clanTag = le.getClanTag();
-					triggersByClan.computeIfAbsent(clanTag, k -> new java.util.ArrayList<>()).add(id);
+					triggersByClan.computeIfAbsent(clanTag, _ -> new java.util.ArrayList<>()).add(id);
 				}
 				
 				// Check each clan's war state
