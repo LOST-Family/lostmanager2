@@ -459,30 +459,33 @@ public class ListeningEvent {
 
 		StringBuilder message = new StringBuilder();
 		message.append("## CW War Preferences Check\n\n");
-		message.append("The following members are opted OUT of war:\n\n");
+		message.append("The following members are opted OUT but were still added to war:\n\n");
 
-		ArrayList<Player> dbMembers = clan.getPlayersDB();
 		boolean hasOptedOut = false;
 		ArrayList<String> fillerTags = new ArrayList<>();
 
-		for (Player dbPlayer : dbMembers) {
-			boolean inWar = false;
-			for (int i = 0; i < members.length(); i++) {
-				org.json.JSONObject member = members.getJSONObject(i);
-				if (member.getString("tag").equals(dbPlayer.getTag())) {
-					inWar = true;
-					break;
+		// Check each war member to see if they have opted out
+		for (int i = 0; i < members.length(); i++) {
+			org.json.JSONObject member = members.getJSONObject(i);
+			String tag = member.getString("tag");
+			
+			try {
+				Player player = new Player(tag);
+				
+				// Check if this player has opted out (warPreference = "out")
+				boolean isOptedOut = !player.getWarPreference();
+				
+				if (isOptedOut) {
+					hasOptedOut = true;
+					fillerTags.add(tag);
+					message.append("- ").append(player.getNameAPI());
+					if (player.getUser() != null) {
+						message.append(" (<@").append(player.getUser().getUserID()).append(">)");
+					}
+					message.append("\n");
 				}
-			}
-
-			if (!inWar) {
-				hasOptedOut = true;
-				fillerTags.add(dbPlayer.getTag());
-				message.append("- ").append(dbPlayer.getNameAPI());
-				if (dbPlayer.getUser() != null) {
-					message.append(" (<@").append(dbPlayer.getUser().getUserID()).append(">)");
-				}
-				message.append("\n");
+			} catch (Exception e) {
+				System.err.println("Error checking war preference for player " + tag + ": " + e.getMessage());
 			}
 		}
 

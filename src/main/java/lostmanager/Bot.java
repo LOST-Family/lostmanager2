@@ -530,6 +530,9 @@ public class Bot extends ListenerAdapter {
 	 * Checks every 5 minutes for war state changes
 	 */
 	private static void startCWStartMonitoring() {
+		// Initialize last states to prevent false triggers on bot restart
+		initializeCWLastStates();
+		
 		Runnable monitoringTask = () -> {
 			try {
 				// Get all CW start triggers (duration = -1)
@@ -545,7 +548,7 @@ public class Bot extends ListenerAdapter {
 				for (Long id : startTriggerIds) {
 					ListeningEvent le = new ListeningEvent(id);
 					String clanTag = le.getClanTag();
-					triggersByClan.computeIfAbsent(clanTag, _ -> new java.util.ArrayList<>()).add(id);
+					triggersByClan.computeIfAbsent(clanTag, k -> new java.util.ArrayList<>()).add(id);
 				}
 				
 				// Check each clan's war state
@@ -564,8 +567,9 @@ public class Bot extends ListenerAdapter {
 						}
 						
 						// Detect transition to war start
+						// Only trigger if we had a known previous state that was NOT in war
 						boolean warJustStarted = false;
-						if ((lastState.equals("notInWar") || lastState.equals("")) && 
+						if (!lastState.isEmpty() && lastState.equals("notInWar") && 
 						    (currentState.equals("preparation") || currentState.equals("inWar"))) {
 							warJustStarted = true;
 						}
@@ -601,6 +605,37 @@ public class Bot extends ListenerAdapter {
 		
 		// Schedule to run every 5 minutes
 		schedulertasks.scheduleAtFixedRate(monitoringTask, 0, 5, TimeUnit.MINUTES);
+	}
+	
+	/**
+	 * Initialize CW last states to current state to prevent false start triggers on restart
+	 */
+	private static void initializeCWLastStates() {
+		try {
+			// Get all CW start triggers (duration = -1)
+			String sql = "SELECT DISTINCT clan_tag FROM listening_events WHERE listeningtype = 'cw' AND listeningvalue = -1";
+			ArrayList<String> clanTags = DBUtil.getArrayListFromSQL(sql, String.class);
+			
+			for (String clanTag : clanTags) {
+				try {
+					datawrapper.Clan clan = new datawrapper.Clan(clanTag);
+					String currentState = "notInWar"; // default
+					
+					if (clan.isCWActive()) {
+						org.json.JSONObject cwJson = clan.getCWJson();
+						currentState = cwJson.getString("state");
+					}
+					
+					// Initialize last state to current state
+					setCWLastState(clanTag, currentState);
+					System.out.println("Initialized CW state for clan " + clanTag + ": " + currentState);
+				} catch (Exception e) {
+					System.err.println("Error initializing CW state for clan " + clanTag + ": " + e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("Error in initializeCWLastStates: " + e.getMessage());
+		}
 	}
 	
 	// Simple in-memory storage for last war states
