@@ -337,8 +337,18 @@ public class listeningevent extends ListenerAdapter {
 				desc.append("**Typ:** ").append(le.getListeningType()).append("\n");
 				desc.append("**Action:** ").append(le.getActionType()).append("\n");
 				desc.append("**Channel:** <#").append(le.getChannelID()).append(">\n");
-				desc.append("**Feuert in:** ")
-						.append((le.getTimestamp() - System.currentTimeMillis()) / 1000 / 60).append(" Minuten\n");
+				
+				// Display user-friendly message for events without valid timestamps
+				Long timestamp = le.getTimestamp();
+				if (timestamp == null || timestamp == Long.MAX_VALUE) {
+					// Event doesn't have a valid timestamp - provide descriptive text
+					String fireDescription = getFireDescriptionForEvent(le);
+					desc.append("**Feuert in:** ").append(fireDescription).append("\n");
+				} else {
+					long minutesUntilFire = (timestamp - System.currentTimeMillis()) / 1000 / 60;
+					desc.append("**Feuert in:** ").append(minutesUntilFire).append(" Minuten\n");
+				}
+				
 				desc.append("\n");
 			}
 		}
@@ -603,6 +613,43 @@ public class listeningevent extends ListenerAdapter {
 			return num * multiplier;
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("Ungültige Zahl: " + numPart);
+		}
+	}
+	
+	/**
+	 * Get a user-friendly description for when an event will fire
+	 * when no valid timestamp is available
+	 */
+	private String getFireDescriptionForEvent(ListeningEvent le) {
+		ListeningEvent.LISTENINGTYPE type = le.getListeningType();
+		long duration = le.getDurationUntilEnd();
+		
+		// Check if this is a "start" trigger
+		if (duration == -1) {
+			switch (type) {
+			case CW:
+				return "Feuert, wenn neuer CW startet";
+			default:
+				return "Feuert bei Event-Start";
+			}
+		}
+		
+		// Otherwise, it's waiting for an active event
+		switch (type) {
+		case CW:
+			return "Wartet auf aktiven CW";
+		case RAID:
+			return "Wartet auf aktives Raid Weekend";
+		case CWLDAY:
+			return "Wartet auf aktive CWL";
+		case CS:
+			return "Wartet auf aktive Clan Games";
+		case FIXTIMEINTERVAL:
+			return "Zeitbasiertes Event";
+		case CWLEND:
+			return "Wartet auf CWL Ende";
+		default:
+			return "Wartet auf Event";
 		}
 	}
 }
