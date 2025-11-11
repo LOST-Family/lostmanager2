@@ -548,56 +548,118 @@ public class ListeningEvent {
 		org.json.JSONObject cwlJson = clan.getCWLJson();
 		org.json.JSONArray rounds = cwlJson.getJSONArray("rounds");
 		
-		StringBuilder message = new StringBuilder();
-		message.append("## CWL Day - Missed Attacks\n\n");
-		boolean hasMissedAttacks = false;
+		// Find the last completed day by checking rounds in order
+		// CWL has 7 days, each day has up to 4 wars (warTags)
+		// We need to find the most recent completed war for our clan
+		int lastCompletedRound = -1;
+		String lastCompletedWarTag = null;
 		
-		// Find the current/most recent war
+		// Iterate through all 7 rounds to find the last completed one
 		for (int r = 0; r < rounds.length(); r++) {
 			org.json.JSONArray warTags = rounds.getJSONObject(r).getJSONArray("warTags");
 			
+			// Check each war in this round to find our clan's war
 			for (int w = 0; w < warTags.length(); w++) {
 				String warTag = warTags.getString(w);
-				org.json.JSONObject warData = clan.getCWLDayJson(warTag);
-				
-				if (warData.getString("state").equals("warEnded") || 
-				    warData.getString("state").equals("inWar")) {
+				try {
+					org.json.JSONObject warData = clan.getCWLDayJson(warTag);
 					
+					// Check if this war involves our clan
 					org.json.JSONObject clanData = warData.getJSONObject("clan");
 					if (clanData.getString("tag").equals(clan.getTag())) {
-						org.json.JSONArray members = clanData.getJSONArray("members");
+						String state = warData.getString("state");
 						
-						for (int i = 0; i < members.length(); i++) {
-							org.json.JSONObject member = members.getJSONObject(i);
-							String tag = member.getString("tag");
-							String name = member.getString("name");
-							
-							int attacks = 0;
-							if (member.has("attacks")) {
-								attacks = member.getJSONArray("attacks").length();
+						// If we find an active war, the previous round was the last completed
+						if (state.equals("inWar") || state.equals("preparation")) {
+							// Current active round found, so last completed is r-1
+							if (r > 0) {
+								lastCompletedRound = r - 1;
 							}
-							
-							if (attacks < 1) { // CWL has 1 attack per member
-								hasMissedAttacks = true;
-								Player p = new Player(tag);
-								message.append("- ").append(name);
-								if (p.getUser() != null) {
-									message.append(" (<@").append(p.getUser().getUserID()).append(">)");
-								}
-								message.append("\n");
-								
-								if (getActionType() == ACTIONTYPE.KICKPOINT) {
-									addKickpointForPlayer(p, "CWL Angriff verpasst");
-								}
-							}
+							break; // Found active war, no need to check further
+						} else if (state.equals("warEnded")) {
+							// This round is completed, update tracking
+							lastCompletedRound = r;
+							lastCompletedWarTag = warTag;
 						}
 					}
+				} catch (Exception e) {
+					// If war data is not available, skip
+					continue;
 				}
+			}
+			
+			// If we found an active round, stop checking further rounds
+			if (lastCompletedRound < r && lastCompletedRound >= 0) {
+				break;
 			}
 		}
 		
-		if (hasMissedAttacks) {
-			sendMessageToChannel(message.toString());
+		// If no active wars found and we have completed wars, it means all 7 days are done
+		// In this case, lastCompletedRound should be the last round (day 7 = round 6)
+		if (lastCompletedRound == -1 && rounds.length() == 7) {
+			lastCompletedRound = 6; // Day 7 (0-indexed)
+		}
+		
+		// If we couldn't determine the round, exit
+		if (lastCompletedRound == -1 || lastCompletedRound >= rounds.length()) {
+			return;
+		}
+		
+		// Now find our clan's war in the last completed round
+		org.json.JSONArray lastRoundWarTags = rounds.getJSONObject(lastCompletedRound).getJSONArray("warTags");
+		
+		for (int w = 0; w < lastRoundWarTags.length(); w++) {
+			String warTag = lastRoundWarTags.getString(w);
+			try {
+				org.json.JSONObject warData = clan.getCWLDayJson(warTag);
+				
+				org.json.JSONObject clanData = warData.getJSONObject("clan");
+				if (clanData.getString("tag").equals(clan.getTag()) && 
+				    warData.getString("state").equals("warEnded")) {
+					
+					// Process missed attacks for this war
+					StringBuilder message = new StringBuilder();
+					message.append("## CWL Day ").append(lastCompletedRound + 1)
+					       .append(" - Missed Attacks\n\n");
+					boolean hasMissedAttacks = false;
+					
+					org.json.JSONArray members = clanData.getJSONArray("members");
+					
+					for (int i = 0; i < members.length(); i++) {
+						org.json.JSONObject member = members.getJSONObject(i);
+						String tag = member.getString("tag");
+						String name = member.getString("name");
+						
+						int attacks = 0;
+						if (member.has("attacks")) {
+							attacks = member.getJSONArray("attacks").length();
+						}
+						
+						if (attacks < 1) { // CWL has 1 attack per member
+							hasMissedAttacks = true;
+							Player p = new Player(tag);
+							message.append("- ").append(name);
+							if (p.getUser() != null) {
+								message.append(" (<@").append(p.getUser().getUserID()).append(">)");
+							}
+							message.append("\n");
+							
+							if (getActionType() == ACTIONTYPE.KICKPOINT) {
+								addKickpointForPlayer(p, "CWL Angriff verpasst");
+							}
+						}
+					}
+					
+					if (hasMissedAttacks) {
+						sendMessageToChannel(message.toString());
+					}
+					
+					break; // Found our war, no need to check other wars in this round
+				}
+			} catch (Exception e) {
+				// If war data is not available, skip
+				continue;
+			}
 		}
 	}
 	
