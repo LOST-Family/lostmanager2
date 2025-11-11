@@ -413,6 +413,58 @@ public class Clan {
 
 	// CW
 
+	/**
+	 * Helper method to perform HTTP requests with retry logic
+	 * @param url The URL to request
+	 * @param maxRetries Maximum number of retry attempts
+	 * @return HttpResponse or null if all retries failed
+	 */
+	private HttpResponse<String> performHttpRequestWithRetry(String url, int maxRetries) {
+		HttpClient client = HttpClient.newHttpClient();
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
+				.header("Authorization", "Bearer " + Bot.api_key)
+				.header("Accept", "application/json")
+				.GET()
+				.build();
+		
+		int attempt = 0;
+		while (attempt <= maxRetries) {
+			try {
+				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				
+				// If successful (200) or client error (4xx), return immediately (no retry for client errors)
+				if (response.statusCode() == 200 || (response.statusCode() >= 400 && response.statusCode() < 500)) {
+					return response;
+				}
+				
+				// For server errors (5xx) or other errors, retry
+				if (attempt < maxRetries) {
+					long waitTime = (long) Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
+					System.err.println("Request failed with status " + response.statusCode() + ", retrying in " + waitTime + "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
+					Thread.sleep(waitTime);
+				}
+			} catch (IOException | InterruptedException e) {
+				if (attempt < maxRetries) {
+					long waitTime = (long) Math.pow(2, attempt) * 1000; // Exponential backoff
+					System.err.println("Request failed with exception: " + e.getMessage() + ", retrying in " + waitTime + "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
+					try {
+						Thread.sleep(waitTime);
+					} catch (InterruptedException ie) {
+						Thread.currentThread().interrupt();
+						return null;
+					}
+				} else {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			attempt++;
+		}
+		
+		System.err.println("All retry attempts failed for URL: " + url);
+		return null;
+	}
+
 	public Boolean isCWActive() {
 		if (cwactive == null) {
 			String json;
@@ -425,22 +477,10 @@ public class Clan {
 			}
 
 			String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-
 			String url = "https://api.clashofclans.com/v1/clans/" + encodedTag + "/currentwar";
 
-			HttpClient client = HttpClient.newHttpClient();
-
-			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
-					.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET()
-					.build();
-
-			HttpResponse<String> response = null;
-			try {
-				response = client.send(request, HttpResponse.BodyHandlers.ofString());
-			} catch (IOException | InterruptedException e) {
-				e.printStackTrace();
-				json = null;
-			}
+			// Use retry logic with up to 3 attempts
+			HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
 
 			// Check if response is null before accessing it
 			if (response != null && response.statusCode() == 200) {
@@ -528,21 +568,10 @@ public class Clan {
 		}
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-
 		String url = "https://api.clashofclans.com/v1/clans/" + encodedTag + "/currentwar/leaguegroup";
 
-		HttpClient client = HttpClient.newHttpClient();
-
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
-				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
-
-		HttpResponse<String> response = null;
-		try {
-			response = client.send(request, HttpResponse.BodyHandlers.ofString());
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-			json = null;
-		}
+		// Use retry logic with up to 3 attempts
+		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
 
 		// Check if response is null before accessing it
 		if (response != null && response.statusCode() == 200) {
@@ -578,21 +607,10 @@ public class Clan {
 		}
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-
 		String url = "https://api.clashofclans.com/v1/clans/" + encodedTag + "/currentwar";
 
-		HttpClient client = HttpClient.newHttpClient();
-
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
-				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
-
-		HttpResponse<String> response = null;
-		try {
-			response = client.send(request, HttpResponse.BodyHandlers.ofString());
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-			json = null;
-		}
+		// Use retry logic with up to 3 attempts
+		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
 
 		// Check if response is null before accessing it
 		if (response != null && response.statusCode() == 200) {
@@ -628,21 +646,10 @@ public class Clan {
 		}
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-
 		String url = "https://api.clashofclans.com/v1/clans/" + encodedTag + "/capitalraidseasons?limit=1";
 
-		HttpClient client = HttpClient.newHttpClient();
-
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
-				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
-
-		HttpResponse<String> response = null;
-		try {
-			response = client.send(request, HttpResponse.BodyHandlers.ofString());
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-			json = null;
-		}
+		// Use retry logic with up to 3 attempts
+		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
 
 		// Check if response is null before accessing it
 		if (response != null && response.statusCode() == 200) {
@@ -709,21 +716,10 @@ public class Clan {
 		
 		// URL-kodieren des Spieler-Tags (# -> %23)
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-
 		String url = "https://api.clashofclans.com/v1/clans/" + encodedTag;
 
-		HttpClient client = HttpClient.newHttpClient();
-
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
-				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
-
-		HttpResponse<String> response = null;
-		try {
-			response = client.send(request, HttpResponse.BodyHandlers.ofString());
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-			return null;
-		}
+		// Use retry logic with up to 3 attempts
+		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
 
 		// Check if response is null before accessing it
 		if (response != null && response.statusCode() == 200) {
