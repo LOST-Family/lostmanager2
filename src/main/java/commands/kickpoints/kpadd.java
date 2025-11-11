@@ -200,7 +200,7 @@ public class kpadd extends ListenerAdapter {
 					desc += "### Achtung: Der Kickpunkt ist bereits abgelaufen.\n";
 				}
 
-				int kptotal = 0;
+				long kptotal = 0;
 				for (Kickpoint kp : p.getActiveKickpoints()) {
 					kptotal += kp.getAmount();
 				}
