@@ -152,18 +152,31 @@ public class ListeningEvent {
 			}
 			
 			Clan c = new Clan(clan_tag);
+			Long endTimeMillis = null;
 			switch (getListeningType()) {
 			case CS:
-				timestamptofire = c.getCGEndTimeMillis() - getDurationUntilEnd();
+				endTimeMillis = c.getCGEndTimeMillis();
+				if (endTimeMillis != null) {
+					timestamptofire = endTimeMillis - getDurationUntilEnd();
+				}
 				break;
 			case CW:
-				timestamptofire = c.getCWEndTimeMillis() - getDurationUntilEnd();
+				endTimeMillis = c.getCWEndTimeMillis();
+				if (endTimeMillis != null) {
+					timestamptofire = endTimeMillis - getDurationUntilEnd();
+				}
 				break;
 			case CWLDAY:
-				timestamptofire = c.getCWLDayEndTimeMillis() - getDurationUntilEnd();
+				endTimeMillis = c.getCWLDayEndTimeMillis();
+				if (endTimeMillis != null) {
+					timestamptofire = endTimeMillis - getDurationUntilEnd();
+				}
 				break;
 			case RAID:
-				timestamptofire = c.getRaidEndTimeMillis() - getDurationUntilEnd();
+				endTimeMillis = c.getRaidEndTimeMillis();
+				if (endTimeMillis != null) {
+					timestamptofire = endTimeMillis - getDurationUntilEnd();
+				}
 				break;
 			case FIXTIMEINTERVAL:
 				timestamptofire = getDurationUntilEnd();
@@ -173,6 +186,12 @@ public class ListeningEvent {
 				break;
 			default:
 				break;
+			}
+			
+			// If timestamptofire is still null, return a far future time to prevent scheduling errors
+			if (timestamptofire == null) {
+				System.err.println("Warning: Unable to calculate timestamp for listening event. endTime may be missing from API response.");
+				return Long.MAX_VALUE;
 			}
 		}
 		return timestamptofire;

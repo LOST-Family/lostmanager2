@@ -364,6 +364,18 @@ public class Bot extends ListenerAdapter {
 	}
 	
 	public static void restartAllEvents() {
+		// Run in a separate thread to avoid crashing the bot if there are errors
+		new Thread(() -> {
+			try {
+				restartAllEventsInternal();
+			} catch (Exception e) {
+				System.err.println("Error in restartAllEvents: " + e.getMessage());
+				e.printStackTrace();
+			}
+		}, "RestartAllEventsThread").start();
+	}
+	
+	private static void restartAllEventsInternal() {
 		schedulertasks.shutdown();
 		schedulertasks = Executors.newSingleThreadScheduledExecutor();
 		endClanGamesSavings();
@@ -373,20 +385,32 @@ public class Bot extends ListenerAdapter {
 		ArrayList<Long> ids = DBUtil.getArrayListFromSQL(sql, Long.class);
 		
 		for (Long id : ids) {
-			ListeningEvent le = new ListeningEvent(id);
-			long duration = le.getDurationUntilEnd();
-			
-			// Check if this is a "start" trigger (duration = -1)
-			if (duration == -1 && le.getListeningType() == ListeningEvent.LISTENINGTYPE.CW) {
-				// Start triggers are handled by the CW start monitoring task
-				continue;
+			try {
+				ListeningEvent le = new ListeningEvent(id);
+				long duration = le.getDurationUntilEnd();
+				
+				// Check if this is a "start" trigger (duration = -1)
+				if (duration == -1 && le.getListeningType() == ListeningEvent.LISTENINGTYPE.CW) {
+					// Start triggers are handled by the CW start monitoring task
+					continue;
+				}
+				
+				Long timestamp = le.getTimestamp();
+				// Skip if timestamp is null or invalid
+				if (timestamp == null || timestamp == Long.MAX_VALUE) {
+					System.err.println("Skipping event " + id + " due to invalid timestamp");
+					continue;
+				}
+				
+				long timeuntilfire = timestamp - System.currentTimeMillis();
+				
+				schedulertasks.schedule(() -> {
+					le.fireEvent();
+				}, timeuntilfire, TimeUnit.MILLISECONDS);
+			} catch (Exception e) {
+				System.err.println("Error scheduling event " + id + ": " + e.getMessage());
+				e.printStackTrace();
 			}
-			
-			long timeuntilfire = le.getTimestamp() - System.currentTimeMillis();
-			
-			schedulertasks.schedule(() -> {
-			    le.fireEvent();
-			}, timeuntilfire, TimeUnit.MILLISECONDS);
 		}
 		
 		// Start CW start monitoring for all "start" triggers

@@ -304,11 +304,17 @@ public class Clan {
 		if (CWLDayEndTimeMillis == null) {
 			if (isCWLActive()) {
 				JSONObject jsonObject = getCWLJson();
-				String endTime = jsonObject.getString("endTime");
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
-						.withZone(ZoneOffset.UTC);
-				Instant instant = Instant.from(formatter.parse(endTime));
-				CWLDayEndTimeMillis = instant.toEpochMilli();
+				// Check if endTime exists and is not null
+				if (jsonObject.has("endTime") && !jsonObject.isNull("endTime")) {
+					String endTime = jsonObject.getString("endTime");
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
+							.withZone(ZoneOffset.UTC);
+					Instant instant = Instant.from(formatter.parse(endTime));
+					CWLDayEndTimeMillis = instant.toEpochMilli();
+				} else {
+					System.err.println("Warning: endTime field is missing or null in CWL API response");
+					CWLDayEndTimeMillis = null;
+				}
 			}
 		}
 		return CWLDayEndTimeMillis;
@@ -356,11 +362,17 @@ public class Clan {
 			raidactive = state.equals("ongoing") ? true : false;
 
 			// endtimelogic here to prevent double api requests if in same result
-			String endTime = currentitem.getString("endTime");
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
-					.withZone(ZoneOffset.UTC);
-			Instant instant = Instant.from(formatter.parse(endTime));
-			RaidEndTimeMillis = instant.toEpochMilli();
+			// Check if endTime exists and is not null
+			if (currentitem.has("endTime") && !currentitem.isNull("endTime")) {
+				String endTime = currentitem.getString("endTime");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
+						.withZone(ZoneOffset.UTC);
+				Instant instant = Instant.from(formatter.parse(endTime));
+				RaidEndTimeMillis = instant.toEpochMilli();
+			} else {
+				System.err.println("Warning: endTime field is missing or null in Raid API response");
+				RaidEndTimeMillis = null;
+			}
 		}
 		return raidactive;
 	}
@@ -405,6 +417,13 @@ public class Clan {
 		if (cwactive == null) {
 			String json;
 
+			// Check if clan_tag is null before encoding
+			if (clan_tag == null) {
+				System.err.println("Clan tag is null, cannot check CW status");
+				cwactive = false;
+				return cwactive;
+			}
+
 			String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
 
 			String url = "https://api.clashofclans.com/v1/clans/" + encodedTag + "/currentwar";
@@ -423,31 +442,47 @@ public class Clan {
 				json = null;
 			}
 
-			if (response.statusCode() == 200) {
+			// Check if response is null before accessing it
+			if (response != null && response.statusCode() == 200) {
 				String responseBody = response.body();
 				// Einfacher JSON-Name-Parser ohne Bibliotheken:
 				json = responseBody;
 			} else {
-				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
-				System.err.println("Antwort: " + response.body());
+				if (response != null) {
+					System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
+					System.err.println("Antwort: " + response.body());
+				} else {
+					System.err.println("Fehler beim Abrufen: response is null");
+				}
 				json = null;
 			}
 
-			JSONObject jsonObject = new JSONObject(json);
-			String state = jsonObject.getString("state");
-			if (state.equalsIgnoreCase("notInWar")) {
-				cwactive = false;
-			} else {
-				cwactive = true;
-			}
+			if (json != null) {
+				JSONObject jsonObject = new JSONObject(json);
+				String state = jsonObject.getString("state");
+				if (state.equalsIgnoreCase("notInWar")) {
+					cwactive = false;
+				} else {
+					cwactive = true;
+				}
 
-			if (cwactive) {
-				// CW Endtime logic here to prevent double api request if in same result
-				String endTime = jsonObject.getString("endTime");
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
-						.withZone(ZoneOffset.UTC);
-				Instant instant = Instant.from(formatter.parse(endTime));
-				CWEndTimeMillis = instant.toEpochMilli();
+				if (cwactive) {
+					// CW Endtime logic here to prevent double api request if in same result
+					// Check if endTime exists and is not null
+					if (jsonObject.has("endTime") && !jsonObject.isNull("endTime")) {
+						String endTime = jsonObject.getString("endTime");
+						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
+								.withZone(ZoneOffset.UTC);
+						Instant instant = Instant.from(formatter.parse(endTime));
+						CWEndTimeMillis = instant.toEpochMilli();
+					} else {
+						System.err.println("Warning: endTime field is missing or null in CW API response");
+						CWEndTimeMillis = null;
+					}
+				}
+			} else {
+				// If json is null, set cwactive to false to prevent further errors
+				cwactive = false;
 			}
 		}
 		return cwactive;
@@ -486,6 +521,12 @@ public class Clan {
 	public JSONObject getCWLJson() {
 		String json;
 
+		// Check if clan_tag is null before encoding
+		if (clan_tag == null) {
+			System.err.println("Clan tag is null, cannot retrieve CWL data");
+			return new JSONObject("{\"state\":\"groupnotfound\"}");
+		}
+
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
 
 		String url = "https://api.clashofclans.com/v1/clans/" + encodedTag + "/currentwar/leaguegroup";
@@ -503,22 +544,38 @@ public class Clan {
 			json = null;
 		}
 
-		if (response.statusCode() == 200) {
+		// Check if response is null before accessing it
+		if (response != null && response.statusCode() == 200) {
 			String responseBody = response.body();
 			// Einfacher JSON-Name-Parser ohne Bibliotheken:
 			json = responseBody;
 		} else {
-			System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
-			System.err.println("Antwort: " + response.body());
+			if (response != null) {
+				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
+				System.err.println("Antwort: " + response.body());
+			} else {
+				System.err.println("Fehler beim Abrufen: response is null");
+			}
 			json = null;
 		}
 
-		JSONObject jsonObject = new JSONObject(json);
-		return jsonObject;
+		if (json != null) {
+			JSONObject jsonObject = new JSONObject(json);
+			return jsonObject;
+		} else {
+			// Return a default JSONObject indicating no war
+			return new JSONObject("{\"state\":\"groupnotfound\"}");
+		}
 	}
 
 	public JSONObject getCWJson() {
 		String json;
+
+		// Check if clan_tag is null before encoding
+		if (clan_tag == null) {
+			System.err.println("Clan tag is null, cannot retrieve CW data");
+			return new JSONObject("{\"state\":\"notInWar\"}");
+		}
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
 
@@ -537,22 +594,38 @@ public class Clan {
 			json = null;
 		}
 
-		if (response.statusCode() == 200) {
+		// Check if response is null before accessing it
+		if (response != null && response.statusCode() == 200) {
 			String responseBody = response.body();
 			// Einfacher JSON-Name-Parser ohne Bibliotheken:
 			json = responseBody;
 		} else {
-			System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
-			System.err.println("Antwort: " + response.body());
+			if (response != null) {
+				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
+				System.err.println("Antwort: " + response.body());
+			} else {
+				System.err.println("Fehler beim Abrufen: response is null");
+			}
 			json = null;
 		}
 
-		JSONObject jsonObject = new JSONObject(json);
-		return jsonObject;
+		if (json != null) {
+			JSONObject jsonObject = new JSONObject(json);
+			return jsonObject;
+		} else {
+			// Return a default JSONObject indicating no war
+			return new JSONObject("{\"state\":\"notInWar\"}");
+		}
 	}
 
 	private JSONObject getRaidJson() {
 		String json;
+
+		// Check if clan_tag is null before encoding
+		if (clan_tag == null) {
+			System.err.println("Clan tag is null, cannot retrieve Raid data");
+			return new JSONObject("{\"items\":[{\"state\":\"ended\"}]}");
+		}
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
 
@@ -571,18 +644,28 @@ public class Clan {
 			json = null;
 		}
 
-		if (response.statusCode() == 200) {
+		// Check if response is null before accessing it
+		if (response != null && response.statusCode() == 200) {
 			String responseBody = response.body();
 			// Einfacher JSON-Name-Parser ohne Bibliotheken:
 			json = responseBody;
 		} else {
-			System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
-			System.err.println("Antwort: " + response.body());
+			if (response != null) {
+				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
+				System.err.println("Antwort: " + response.body());
+			} else {
+				System.err.println("Fehler beim Abrufen: response is null");
+			}
 			json = null;
 		}
 
-		JSONObject jsonObject = new JSONObject(json);
-		return jsonObject;
+		if (json != null) {
+			JSONObject jsonObject = new JSONObject(json);
+			return jsonObject;
+		} else {
+			// Return a default JSONObject indicating no active raid
+			return new JSONObject("{\"items\":[{\"state\":\"ended\"}]}");
+		}
 	}
 
 	public static JSONObject getCWLDayJson(String warTag) {
