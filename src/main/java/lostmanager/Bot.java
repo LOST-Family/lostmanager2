@@ -614,20 +614,11 @@ public class Bot extends ListenerAdapter {
 								}
 							}, timeUntilFire, TimeUnit.MILLISECONDS);
 						} else if (timeUntilFire <= 0) {
-							// Event is overdue, fire immediately
-							System.out.println("Event " + id + " is overdue, firing immediately");
+							// Event is overdue - skip it instead of firing to prevent duplicate triggers after restart
+							System.out.println("Event " + id + " is overdue by " + Math.abs(timeUntilFire / 1000 / 60) + " minutes, skipping to prevent duplicate execution");
+							// Mark as scheduled so we don't keep trying to process it
 							scheduledEvents.add(id);
-							scheduledEventTimestamps.put(id, currentTime);
-							schedulertasks.execute(() -> {
-								try {
-									executeEventWithRetry(le, id, 3);
-									// Keep in scheduled set to prevent re-firing
-								} catch (Exception e) {
-									System.err.println("Error executing overdue event " + id + ": " + e.getMessage());
-									e.printStackTrace();
-									// Keep in set even on error
-								}
-							});
+							scheduledEventTimestamps.put(id, timestamp);
 						}
 					} catch (Exception e) {
 						System.err.println("Error processing event " + id + ": " + e.getMessage());
