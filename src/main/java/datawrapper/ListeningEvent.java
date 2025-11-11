@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import datautil.DBUtil;
 import net.dv8tion.jda.api.entities.TextChannel;
+import util.Tuple;
 
 public class ListeningEvent {
 
@@ -430,20 +431,62 @@ public class ListeningEvent {
 
 	private HashMap<Integer, ArrayList<util.Tuple<Integer, Integer>>> getCWDonatorMappings() {
 		// Same mapping logic as cwdonator command
-		HashMap<Integer, ArrayList<util.Tuple<Integer, Integer>>> map = new HashMap<>();
 
-		map.put(50, new ArrayList<>(java.util.Arrays.asList(new util.Tuple<>(1, 5), new util.Tuple<>(6, 10),
-				new util.Tuple<>(11, 15), new util.Tuple<>(16, 20), new util.Tuple<>(21, 25))));
-		map.put(40, new ArrayList<>(java.util.Arrays.asList(new util.Tuple<>(1, 5), new util.Tuple<>(6, 10),
-				new util.Tuple<>(11, 15), new util.Tuple<>(16, 20))));
-		map.put(30, new ArrayList<>(
-				java.util.Arrays.asList(new util.Tuple<>(1, 5), new util.Tuple<>(6, 10), new util.Tuple<>(11, 15))));
-		map.put(25, new ArrayList<>(java.util.Arrays.asList(new util.Tuple<>(1, 5), new util.Tuple<>(6, 10))));
-		map.put(20, new ArrayList<>(java.util.Arrays.asList(new util.Tuple<>(1, 5), new util.Tuple<>(6, 10))));
-		map.put(15, new ArrayList<>(java.util.Arrays.asList(new util.Tuple<>(1, 5))));
-		map.put(10, new ArrayList<>(java.util.Arrays.asList(new util.Tuple<>(1, 3))));
+		HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> mappings = new HashMap<>();
+		ArrayList<Tuple<Integer, Integer>> size5 = new ArrayList<>();
+		size5.add(new Tuple<Integer, Integer>(1, 3));
+		size5.add(new Tuple<Integer, Integer>(4, 5));
+		ArrayList<Tuple<Integer, Integer>> size10 = new ArrayList<>();
+		size10.add(new Tuple<Integer, Integer>(1, 5));
+		size10.add(new Tuple<Integer, Integer>(6, 10));
+		ArrayList<Tuple<Integer, Integer>> size15 = new ArrayList<>();
+		size15.add(new Tuple<Integer, Integer>(1, 7));
+		size15.add(new Tuple<Integer, Integer>(8, 15));
+		ArrayList<Tuple<Integer, Integer>> size20 = new ArrayList<>();
+		size20.add(new Tuple<Integer, Integer>(1, 10));
+		size20.add(new Tuple<Integer, Integer>(11, 20));
+		ArrayList<Tuple<Integer, Integer>> size25 = new ArrayList<>();
+		size25.add(new Tuple<Integer, Integer>(1, 9));
+		size25.add(new Tuple<Integer, Integer>(10, 17));
+		size25.add(new Tuple<Integer, Integer>(18, 25));
+		ArrayList<Tuple<Integer, Integer>> size30 = new ArrayList<>();
+		size30.add(new Tuple<Integer, Integer>(1, 10));
+		size30.add(new Tuple<Integer, Integer>(11, 20));
+		size30.add(new Tuple<Integer, Integer>(21, 30));
+		ArrayList<Tuple<Integer, Integer>> size35 = new ArrayList<>();
+		size35.add(new Tuple<Integer, Integer>(1, 9));
+		size35.add(new Tuple<Integer, Integer>(10, 18));
+		size35.add(new Tuple<Integer, Integer>(19, 27));
+		size35.add(new Tuple<Integer, Integer>(28, 35));
+		ArrayList<Tuple<Integer, Integer>> size40 = new ArrayList<>();
+		size40.add(new Tuple<Integer, Integer>(1, 10));
+		size40.add(new Tuple<Integer, Integer>(11, 20));
+		size40.add(new Tuple<Integer, Integer>(21, 30));
+		size40.add(new Tuple<Integer, Integer>(31, 40));
+		ArrayList<Tuple<Integer, Integer>> size45 = new ArrayList<>();
+		size45.add(new Tuple<Integer, Integer>(1, 9));
+		size45.add(new Tuple<Integer, Integer>(10, 18));
+		size45.add(new Tuple<Integer, Integer>(19, 27));
+		size45.add(new Tuple<Integer, Integer>(28, 36));
+		size45.add(new Tuple<Integer, Integer>(37, 45));
+		ArrayList<Tuple<Integer, Integer>> size50 = new ArrayList<>();
+		size50.add(new Tuple<Integer, Integer>(1, 10));
+		size50.add(new Tuple<Integer, Integer>(11, 20));
+		size50.add(new Tuple<Integer, Integer>(21, 30));
+		size50.add(new Tuple<Integer, Integer>(31, 40));
+		size50.add(new Tuple<Integer, Integer>(41, 50));
+		mappings.put(5, size5);
+		mappings.put(10, size10);
+		mappings.put(15, size15);
+		mappings.put(20, size20);
+		mappings.put(25, size25);
+		mappings.put(30, size30);
+		mappings.put(35, size35);
+		mappings.put(40, size40);
+		mappings.put(45, size45);
+		mappings.put(50, size50);
 
-		return map;
+		return mappings;
 	}
 
 	private void handleCWFiller(Clan clan, org.json.JSONObject cwJson) {
