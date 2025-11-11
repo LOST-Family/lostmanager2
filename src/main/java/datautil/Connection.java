@@ -45,6 +45,7 @@ public class Connection {
 		tableNames.add("clan_settings");
 		tableNames.add("kickpoint_reasons");
 		tableNames.add("kickpoints");
+		tableNames.add("cw_fillers");
 		try (java.sql.Connection conn = DriverManager.getConnection(url, user, password)) {
 			DatabaseMetaData dbm = conn.getMetaData();
 
@@ -89,11 +90,23 @@ public class Connection {
 									+ "created_by_discord_id CHARACTER VARYING(19)," + "created_at TIMESTAMPTZ,"
 									+ "expires_at TIMESTAMPTZ)";
 							break;
+						case "cw_fillers":
+							createTableSQL = "CREATE TABLE " + tableName + " (id BIGSERIAL PRIMARY KEY,"
+									+ "clan_tag TEXT NOT NULL," + "player_tag TEXT NOT NULL,"
+									+ "war_end_time TIMESTAMP NOT NULL," + "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+									+ "UNIQUE(clan_tag, player_tag, war_end_time))";
+							break;
 						}
 
 						try (Statement stmt = conn.createStatement()) {
 							stmt.executeUpdate(createTableSQL);
 							System.out.println("Tabelle '" + tableName + "' wurde erstellt.");
+							
+							// Create index for cw_fillers table
+							if (tableName.equals("cw_fillers")) {
+								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_cw_fillers_lookup ON cw_fillers(clan_tag, war_end_time)");
+								System.out.println("Index 'idx_cw_fillers_lookup' wurde erstellt.");
+							}
 						}
 					}
 
