@@ -15,7 +15,9 @@ public class DBUtil {
 	public static Tuple<PreparedStatement, Integer> executeUpdate(String sql, Object... params) {
 		PreparedStatement pstmt = null;
 		try {
-			pstmt = Connection.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			// Explicitly specify "id" column to be returned for PostgreSQL compatibility
+			// This ensures we get the auto-generated ID instead of the first column value
+			pstmt = Connection.getConnection().prepareStatement(sql, new String[]{"id"});
 			for (int i = 0; i < params.length; i++) {
 				pstmt.setObject(i + 1, params[i]);
 			}
