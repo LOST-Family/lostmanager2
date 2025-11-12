@@ -22,6 +22,7 @@
 /home/runner/work/lostmanager2/lostmanager2/src/main/java/commands/memberlist/removemember.java
 /home/runner/work/lostmanager2/lostmanager2/src/main/java/commands/memberlist/transfermember.java
 /home/runner/work/lostmanager2/lostmanager2/src/main/java/commands/util/checkreacts.java
+/home/runner/work/lostmanager2/lostmanager2/src/main/java/commands/util/checkroles.java
 /home/runner/work/lostmanager2/lostmanager2/src/main/java/commands/util/cwdonator.java
 /home/runner/work/lostmanager2/lostmanager2/src/main/java/commands/util/listeningevent.java
 /home/runner/work/lostmanager2/lostmanager2/src/main/java/commands/util/raidping.java

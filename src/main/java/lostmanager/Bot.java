@@ -33,6 +33,7 @@ import commands.memberlist.memberstatus;
 import commands.memberlist.removemember;
 import commands.memberlist.transfermember;
 import commands.util.checkreacts;
+import commands.util.checkroles;
 import commands.util.cwdonator;
 import commands.util.listeningevent;
 import commands.util.raidping;
@@ -313,7 +314,12 @@ public class Bot extends ListenerAdapter {
 									.addOption(OptionType.ROLE, "team_role_2", "Die zweite Teamrolle (optional)", false)
 									.addOption(OptionType.ROLE, "team_role_3", "Die dritte Teamrolle (optional)", false)
 									.addOption(OptionType.ROLE, "team_role_4", "Die vierte Teamrolle (optional)", false)
-									.addOption(OptionType.ROLE, "team_role_5", "Die fünfte Teamrolle (optional)", false)
+									.addOption(OptionType.ROLE, "team_role_5", "Die fünfte Teamrolle (optional)", false),
+
+							Commands.slash("checkroles", "Überprüfe, ob Clan-Mitglieder die korrekten Discord-Rollen haben.")
+									.addOptions(new OptionData(OptionType.STRING, "clan",
+											"Der Clan, dessen Mitglieder überprüft werden sollen", true)
+											.setAutoComplete(true))
 
 					).queue();
 		}
@@ -352,6 +358,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new transfermember());
 		classes.add(new listeningevent());
 		classes.add(new teamcheck());
+		classes.add(new checkroles());
 
 		return classes.toArray();
 	}
