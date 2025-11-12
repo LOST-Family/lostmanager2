@@ -15,9 +15,17 @@ public class DBUtil {
 	public static Tuple<PreparedStatement, Integer> executeUpdate(String sql, Object... params) {
 		PreparedStatement pstmt = null;
 		try {
-			// Explicitly specify "id" column to be returned for PostgreSQL compatibility
-			// This ensures we get the auto-generated ID instead of the first column value
-			pstmt = Connection.getConnection().prepareStatement(sql, new String[]{"id"});
+			// Only request generated keys for INSERT statements that need them
+			// UPDATE and DELETE don't need generated keys, and some tables don't have an "id" column
+			String trimmedSql = sql.trim().toUpperCase();
+			if (trimmedSql.startsWith("INSERT")) {
+				// For INSERT statements, use RETURN_GENERATED_KEYS to let PostgreSQL decide which keys to return
+				// This avoids errors when tables don't have an "id" column
+				pstmt = Connection.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			} else {
+				// For UPDATE, DELETE, etc., don't request generated keys
+				pstmt = Connection.getConnection().prepareStatement(sql);
+			}
 			for (int i = 0; i < params.length; i++) {
 				pstmt.setObject(i + 1, params[i]);
 			}
