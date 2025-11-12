@@ -26,6 +26,7 @@
 /home/runner/work/lostmanager2/lostmanager2/src/main/java/commands/util/listeningevent.java
 /home/runner/work/lostmanager2/lostmanager2/src/main/java/commands/util/raidping.java
 /home/runner/work/lostmanager2/lostmanager2/src/main/java/commands/util/setnick.java
+/home/runner/work/lostmanager2/lostmanager2/src/main/java/commands/util/teamcheck.java
 /home/runner/work/lostmanager2/lostmanager2/src/main/java/datautil/Connection.java
 /home/runner/work/lostmanager2/lostmanager2/src/main/java/datautil/DBManager.java
 /home/runner/work/lostmanager2/lostmanager2/src/main/java/datautil/DBUtil.java

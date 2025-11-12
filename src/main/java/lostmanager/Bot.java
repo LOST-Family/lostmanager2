@@ -37,6 +37,7 @@ import commands.util.cwdonator;
 import commands.util.listeningevent;
 import commands.util.raidping;
 import commands.util.setnick;
+import commands.util.teamcheck;
 import datautil.DBUtil;
 import datawrapper.AchievementData.Type;
 import datawrapper.Clan;
@@ -303,7 +304,13 @@ public class Bot extends ListenerAdapter {
 											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("remove",
 													"Lösche ein Listening Event")
 													.addOptions(new OptionData(OptionType.INTEGER, "id",
-															"Die ID des zu löschenden Events", true)))
+															"Die ID des zu löschenden Events", true))),
+
+							Commands.slash("teamcheck", "Überprüfe die Teamverteilung der Mitglieder.")
+									.addOption(OptionType.ROLE, "memberrole", "Die Rolle der Mitglieder, die überprüft werden sollen", true)
+									.addOption(OptionType.ROLE, "team_role_1", "Die erste Teamrolle", true)
+									.addOption(OptionType.ROLE, "team_role_2", "Die zweite Teamrolle (optional)", false)
+									.addOption(OptionType.ROLE, "team_role_3", "Die dritte Teamrolle (optional)", false)
 
 					).queue();
 		}
@@ -341,6 +348,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new raidping());
 		classes.add(new transfermember());
 		classes.add(new listeningevent());
+		classes.add(new teamcheck());
 
 		return classes.toArray();
 	}
