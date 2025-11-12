@@ -56,14 +56,14 @@ public class cwlmemberstatus extends ListenerAdapter {
 			}
 
 			// Get parameters
-			OptionMapping roleOption = event.getOption("role");
-			OptionMapping clanAOption = event.getOption("clan_a");
-			OptionMapping clantagOption = event.getOption("clantag");
-			OptionMapping clanBOption = event.getOption("clan_b");
+			OptionMapping roleOption = event.getOption("team_role");
+			OptionMapping clanAOption = event.getOption("origin_clan_1");
+			OptionMapping clantagOption = event.getOption("cwl_clan_tag");
+			OptionMapping clanBOption = event.getOption("origin_clan_2");
 
 			if (roleOption == null || clanAOption == null || clantagOption == null) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Die Parameter 'role', 'clan_a' und 'clantag' sind erforderlich.",
+						"Die Parameter 'team_role', 'origin_clan_1' und 'cwl_clan_tag' sind erforderlich.",
 						MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
@@ -91,7 +91,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 			String focused = event.getFocusedOption().getName();
 			String input = event.getFocusedOption().getValue();
 
-			if (focused.equals("clan_a") || focused.equals("clan_b")) {
+			if (focused.equals("origin_clan_1") || focused.equals("origin_clan_2")) {
 				List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
 				event.replyChoices(choices).queue(success -> {
 				}, failure -> {
@@ -211,6 +211,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 			List<String> inClan = new ArrayList<>();
 			List<String> notInClan = new ArrayList<>();
 			List<String> notInClanUserIds = new ArrayList<>();
+			List<User> notInClanUsers = new ArrayList<>();
 
 			Clan clanA = new Clan(clanATag);
 			Clan clanB = clanBTag != null && !clanBTag.isEmpty() ? new Clan(clanBTag) : null;
@@ -249,6 +250,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 				if (!foundInClan) {
 					notInClan.add(member.getAsMention());
 					notInClanUserIds.add(member.getId());
+					notInClanUsers.add(user);
 				}
 			}
 
@@ -276,13 +278,16 @@ public class cwlmemberstatus extends ListenerAdapter {
 
 			description.append("**Nicht im Clan (").append(notInClan.size()).append("):**\n");
 			if (!notInClan.isEmpty()) {
-				for (String member : notInClan) {
-					description.append(member);
-					if (notInClan.indexOf(member) < notInClan.size() - 1) {
-						description.append(", ");
+				for (int i = 0; i < notInClan.size(); i++) {
+					String memberMention = notInClan.get(i);
+					User user = notInClanUsers.get(i);
+					ArrayList<Player> linkedAccounts = user.getAllLinkedAccounts();
+					
+					// Show all linked accounts for users not in clan
+					for (Player player : linkedAccounts) {
+						description.append(player.getInfoStringDB()).append(" (").append(memberMention).append(")\n");
 					}
 				}
-				description.append("\n");
 			} else {
 				description.append("---\n");
 			}
@@ -299,8 +304,8 @@ public class cwlmemberstatus extends ListenerAdapter {
 			if (!notInClanUserIds.isEmpty()) {
 				Button pingButton = Button.primary("cwlmsping", "Nicht im Clan pingen");
 				buttons.add(pingButton);
-				// Encode user IDs and store in message content (hidden format)
-				messageContent = "<!--USERIDS:" + encodeUserIds(notInClanUserIds) + "-->";
+				// Encode user IDs and store in message content directly
+				messageContent = encodeUserIds(notInClanUserIds);
 			}
 
 			// Add timestamp
@@ -380,32 +385,27 @@ public class cwlmemberstatus extends ListenerAdapter {
 	 * Extracts user IDs from message content that contains encoded user data
 	 */
 	private List<String> extractUserIdsFromMessage(String messageContent) {
-		// Extract encoded data from HTML comment format: <!--USERIDS:encodedData-->
-		int startIndex = messageContent.indexOf("<!--USERIDS:");
-		if (startIndex == -1) {
+		// Message content now contains the encoded data directly (no HTML comment)
+		if (messageContent == null || messageContent.isEmpty()) {
 			return new ArrayList<>();
 		}
 		
-		startIndex += "<!--USERIDS:".length();
-		int endIndex = messageContent.indexOf("-->", startIndex);
-		if (endIndex == -1) {
+		try {
+			// Decode Base64
+			byte[] data = Base64.getUrlDecoder().decode(messageContent);
+			ByteBuffer buffer = ByteBuffer.wrap(data);
+
+			List<String> userIds = new ArrayList<>();
+
+			// Read user IDs
+			while (buffer.hasRemaining()) {
+				long userId = buffer.getLong();
+				userIds.add(String.valueOf(userId));
+			}
+
+			return userIds;
+		} catch (Exception e) {
 			return new ArrayList<>();
 		}
-		
-		String encoded = messageContent.substring(startIndex, endIndex);
-		
-		// Decode Base64
-		byte[] data = Base64.getUrlDecoder().decode(encoded);
-		ByteBuffer buffer = ByteBuffer.wrap(data);
-
-		List<String> userIds = new ArrayList<>();
-
-		// Read user IDs
-		while (buffer.hasRemaining()) {
-			long userId = buffer.getLong();
-			userIds.add(String.valueOf(userId));
-		}
-
-		return userIds;
 	}
 }

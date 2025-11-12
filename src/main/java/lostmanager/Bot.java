@@ -183,14 +183,14 @@ public class Bot extends ListenerAdapter {
 
 							Commands.slash("cwlmemberstatus",
 									"Überprüfe, welche Mitglieder einer Rolle in einem bestimmten Clan sind.")
-									.addOption(OptionType.ROLE, "role",
+									.addOption(OptionType.ROLE, "team_role",
 											"Die Rolle der Mitglieder, die überprüft werden sollen", true)
-									.addOptions(new OptionData(OptionType.STRING, "clan_a",
+									.addOptions(new OptionData(OptionType.STRING, "origin_clan_1",
 											"Der erste Clan, dessen Mitglieder überprüft werden sollen", true)
 											.setAutoComplete(true))
-									.addOption(OptionType.STRING, "clantag",
+									.addOption(OptionType.STRING, "cwl_clan_tag",
 											"Der Clantag, nach dem gesucht werden soll (z.B. #2PP)", true)
-									.addOptions(new OptionData(OptionType.STRING, "clan_b",
+									.addOptions(new OptionData(OptionType.STRING, "origin_clan_2",
 											"Der zweite Clan, dessen Mitglieder überprüft werden sollen (optional)", false)
 											.setAutoComplete(true)),
 
