@@ -9,38 +9,38 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import commands.admin.deletemessages;
-import commands.admin.restart;
-import commands.kickpoints.clanconfig;
-import commands.kickpoints.kpadd;
-import commands.kickpoints.kpaddreason;
-import commands.kickpoints.kpclan;
-import commands.kickpoints.kpedit;
-import commands.kickpoints.kpeditreason;
-import commands.kickpoints.kpinfo;
-import commands.kickpoints.kpmember;
-import commands.kickpoints.kpremove;
-import commands.kickpoints.kpremovereason;
-import commands.links.link;
-import commands.links.playerinfo;
-import commands.links.relink;
-import commands.links.unlink;
-import commands.links.verify;
-import commands.memberlist.addmember;
-import commands.memberlist.editmember;
-import commands.memberlist.listmembers;
-import commands.memberlist.memberstatus;
-import commands.memberlist.removemember;
-import commands.memberlist.transfermember;
-import commands.util.checkreacts;
-import commands.util.checkroles;
-import commands.util.cwdonator;
-import commands.util.listeningevent;
-import commands.util.raidping;
-import commands.util.setnick;
-import commands.util.teamcheck;
-import datautil.DBUtil;
+import commands.coc.kickpoints.clanconfig;
+import commands.coc.kickpoints.kpadd;
+import commands.coc.kickpoints.kpaddreason;
+import commands.coc.kickpoints.kpclan;
+import commands.coc.kickpoints.kpedit;
+import commands.coc.kickpoints.kpeditreason;
+import commands.coc.kickpoints.kpinfo;
+import commands.coc.kickpoints.kpmember;
+import commands.coc.kickpoints.kpremove;
+import commands.coc.kickpoints.kpremovereason;
+import commands.coc.links.link;
+import commands.coc.links.playerinfo;
+import commands.coc.links.relink;
+import commands.coc.links.unlink;
+import commands.coc.links.verify;
+import commands.coc.memberlist.addmember;
+import commands.coc.memberlist.editmember;
+import commands.coc.memberlist.listmembers;
+import commands.coc.memberlist.memberstatus;
+import commands.coc.memberlist.removemember;
+import commands.coc.memberlist.transfermember;
+import commands.coc.util.cwdonator;
+import commands.coc.util.listeningevent;
+import commands.coc.util.raidping;
+import commands.coc.util.setnick;
+import commands.discord.admin.deletemessages;
+import commands.discord.admin.restart;
+import commands.discord.util.checkreacts;
+import commands.discord.util.checkroles;
+import commands.discord.util.teamcheck;
 import datawrapper.AchievementData.Type;
+import dbutil.DBUtil;
 import datawrapper.Clan;
 import datawrapper.ListeningEvent;
 import datawrapper.Player;
@@ -86,7 +86,7 @@ public class Bot extends ListenerAdapter {
 
 		String token = System.getenv("LOST_MANAGER_TOKEN");
 
-		if (datautil.Connection.checkDB()) {
+		if (dbutil.Connection.checkDB()) {
 			System.out.println("Verbindung zur Datenbank funktioniert.");
 		} else {
 			System.out.println("Verbindung zur Datenbank fehlgeschlagen.");

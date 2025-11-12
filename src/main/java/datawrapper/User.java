@@ -3,8 +3,8 @@ package datawrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import datautil.DBManager;
-import datautil.DBUtil;
+import dbutil.DBManager;
+import dbutil.DBUtil;
 import lostmanager.Bot;
 
 public class User {

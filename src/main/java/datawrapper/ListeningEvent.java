@@ -12,7 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import datautil.DBUtil;
+import dbutil.DBUtil;
 import net.dv8tion.jda.api.entities.TextChannel;
 import util.Tuple;
 

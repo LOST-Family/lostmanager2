@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import datautil.Connection;
-import datautil.DBUtil;
+import dbutil.Connection;
+import dbutil.DBUtil;
 import lostmanager.Bot;
 
 public class Clan {

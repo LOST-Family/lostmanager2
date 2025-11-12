@@ -2,7 +2,7 @@ package datawrapper;
 
 import java.time.OffsetDateTime;
 
-import datautil.DBUtil;
+import dbutil.DBUtil;
 
 public class Kickpoint {
 

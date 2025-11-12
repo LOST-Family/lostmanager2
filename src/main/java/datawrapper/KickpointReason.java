@@ -4,8 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import datautil.Connection;
-import datautil.DBUtil;
+import dbutil.Connection;
+import dbutil.DBUtil;
 
 public class KickpointReason {
 

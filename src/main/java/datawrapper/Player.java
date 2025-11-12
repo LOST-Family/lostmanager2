@@ -26,9 +26,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import datautil.Connection;
-import datautil.DBUtil;
 import datawrapper.AchievementData.Type;
+import dbutil.Connection;
+import dbutil.DBUtil;
 import lostmanager.Bot;
 
 public class Player {
