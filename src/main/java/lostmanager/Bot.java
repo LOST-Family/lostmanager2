@@ -558,7 +558,6 @@ public class Bot extends ListenerAdapter {
 					if (fireTime != null && fireTime < (currentTime - cleanupThreshold)) {
 						scheduledEvents.remove(eventId);
 						iterator.remove();
-						System.out.println("Cleaned up old scheduled event " + eventId);
 					}
 				}
 				
@@ -616,7 +615,6 @@ public class Bot extends ListenerAdapter {
 							}, timeUntilFire, TimeUnit.MILLISECONDS);
 						} else if (timeUntilFire <= 0) {
 							// Event is overdue - skip it instead of firing to prevent duplicate triggers after restart
-							System.out.println("Event " + id + " is overdue by " + Math.abs(timeUntilFire / 1000 / 60) + " minutes, skipping to prevent duplicate execution");
 							// Mark as scheduled so we don't keep trying to process it
 							scheduledEvents.add(id);
 							scheduledEventTimestamps.put(id, timestamp);

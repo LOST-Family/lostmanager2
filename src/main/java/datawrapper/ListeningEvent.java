@@ -1,5 +1,8 @@
 package datawrapper;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dbutil.DBUtil;
 import lostmanager.Bot;
 import net.dv8tion.jda.api.entities.TextChannel;
+import util.MessageUtil;
 import util.Tuple;
 
 public class ListeningEvent {
@@ -280,7 +284,7 @@ public class ListeningEvent {
 			if (p.isHiddenColeader()) {
 				continue;
 			}
-			
+
 			int difference = 0;
 
 			if (beforeActualEnd) {
@@ -517,13 +521,13 @@ public class ListeningEvent {
 		for (int i = 0; i < members.length(); i++) {
 			org.json.JSONObject member = members.getJSONObject(i);
 			String tag = member.getString("tag");
-			
+
 			try {
 				Player player = new Player(tag);
-				
+
 				// Check if this player has opted out (warPreference = "out")
 				boolean isOptedOut = !player.getWarPreference();
-				
+
 				if (isOptedOut) {
 					hasOptedOut = true;
 					fillerTags.add(tag);
@@ -797,7 +801,7 @@ public class ListeningEvent {
 			if (dbPlayer.isHiddenColeader()) {
 				continue;
 			}
-			
+
 			boolean foundInRaid = false;
 			for (Player raidPlayer : raidMembers) {
 				if (raidPlayer.getTag().equals(dbPlayer.getTag())) {
@@ -865,9 +869,36 @@ public class ListeningEvent {
 			java.sql.Timestamp expires = java.sql.Timestamp
 					.valueOf(now.toLocalDateTime().plusDays(clan.getDaysKickpointsExpireAfter()));
 
-			DBUtil.executeUpdate(
+			Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(
 					"INSERT INTO kickpoints (player_tag, date, amount, description, created_by_discord_id, created_at, expires_at, clan_tag, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-					player.getTag(), now, amount, reason, Bot.getJda().getSelfUser().getId(), now, expires, clan.getTag(), now);
+					player.getTag(), now, amount, reason, Bot.getJda().getSelfUser().getId(), now, expires,
+					clan.getTag(), now);
+
+			PreparedStatement stmt = result.getFirst();
+			int rowsAffected = result.getSecond();
+
+			Long id = null;
+
+			if (rowsAffected > 0) {
+				try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+					if (generatedKeys.next()) {
+						id = generatedKeys.getLong(1);
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+			String desc = "### Es wurde ein Kickpunkt automatisch hinzugefügt.\n";
+			desc += "Spieler: " + MessageUtil.unformat(player.getInfoStringDB()) + "\n";
+			if (player.getClanDB() != null) {
+				desc += "Clan: " + player.getClanDB().getInfoString() + "\n";
+			}
+			desc += "Anzahl: " + amount + "\n";
+			desc += "Grund: " + reason + "\n";
+			desc += "ID: " + id + "\n";
+
+			sendMessageToChannel(desc);
 		}
 	}
 
