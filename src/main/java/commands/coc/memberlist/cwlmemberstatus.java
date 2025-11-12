@@ -1,6 +1,5 @@
 package commands.coc.memberlist;
 
-import java.nio.ByteBuffer;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -56,14 +55,14 @@ public class cwlmemberstatus extends ListenerAdapter {
 			}
 
 			// Get parameters
-			OptionMapping roleOption = event.getOption("role");
-			OptionMapping clanAOption = event.getOption("clan_a");
-			OptionMapping clantagOption = event.getOption("clantag");
-			OptionMapping clanBOption = event.getOption("clan_b");
+			OptionMapping roleOption = event.getOption("team_role");
+			OptionMapping clanAOption = event.getOption("origin_clan_1");
+			OptionMapping clantagOption = event.getOption("cwl_clan_tag");
+			OptionMapping clanBOption = event.getOption("origin_clan_2");
 
 			if (roleOption == null || clanAOption == null || clantagOption == null) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Die Parameter 'role', 'clan_a' und 'clantag' sind erforderlich.",
+						"Die Parameter 'team_role', 'origin_clan_1' und 'cwl_clan_tag' sind erforderlich.",
 						MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
@@ -91,7 +90,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 			String focused = event.getFocusedOption().getName();
 			String input = event.getFocusedOption().getValue();
 
-			if (focused.equals("clan_a") || focused.equals("clan_b")) {
+			if (focused.equals("origin_clan_1") || focused.equals("origin_clan_2")) {
 				List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
 				event.replyChoices(choices).queue(success -> {
 				}, failure -> {
@@ -131,19 +130,18 @@ public class cwlmemberstatus extends ListenerAdapter {
 				return;
 			}
 
-			// Extract user IDs from message content and send pings
+			// Extract user mentions from embed description and send pings
 			new Thread(() -> {
 				try {
-					String messageContent = event.getMessage().getContentRaw();
-					List<String> userIds = extractUserIdsFromMessage(messageContent);
-					if (!userIds.isEmpty()) {
-						event.getInteraction().getMessageChannel().sendMessage(
-								String.join(" ", userIds.stream().map(uid -> "<@" + uid + ">").toArray(String[]::new)))
+					String embedDescription = event.getMessage().getEmbeds().get(0).getDescription();
+					List<String> userMentions = extractUserMentionsFromDescription(embedDescription);
+					if (!userMentions.isEmpty()) {
+						event.getInteraction().getMessageChannel().sendMessage(String.join(" ", userMentions))
 								.queue();
 					}
 				} catch (Exception e) {
 					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-							"Fehler beim Dekodieren der Benutzer-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+							"Fehler beim Extrahieren der Benutzer-Mentions.", MessageUtil.EmbedType.ERROR)).queue();
 				}
 			}, "CWLMemberstatusPing-" + event.getUser().getId()).start();
 			return;
@@ -221,6 +219,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 				ArrayList<Player> linkedAccounts = user.getAllLinkedAccounts();
 
 				boolean foundInClan = false;
+				List<String> accountsNotInCWL = new ArrayList<>();
 
 				// Check each linked account
 				for (Player player : linkedAccounts) {
@@ -244,11 +243,16 @@ public class cwlmemberstatus extends ListenerAdapter {
 							break;
 						}
 					}
+					
+					// Account is in clan_a/clan_b but not in CWL clan
+					accountsNotInCWL.add(player.getInfoStringDB());
 				}
 
-				if (!foundInClan) {
-					notInClan.add(member.getAsMention());
-					notInClanUserIds.add(member.getId());
+				if (!foundInClan && !accountsNotInCWL.isEmpty()) {
+					// Add each account on a separate line
+					for (String accountInfo : accountsNotInCWL) {
+						notInClan.add(accountInfo + " (" + member.getAsMention() + ")");
+					}
 				}
 			}
 
@@ -277,10 +281,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 			description.append("**Nicht im Clan (").append(notInClan.size()).append("):**\n");
 			if (!notInClan.isEmpty()) {
 				for (String member : notInClan) {
-					description.append(member);
-					if (notInClan.indexOf(member) < notInClan.size() - 1) {
-						description.append(", ");
-					}
+					description.append(member).append("\n");
 				}
 				description.append("\n");
 			} else {
@@ -293,14 +294,10 @@ public class cwlmemberstatus extends ListenerAdapter {
 			// Create ping button (only if there are users not in clan)
 			List<Button> buttons = new ArrayList<>();
 			buttons.add(refreshButton);
-			
-			String messageContent = "";
 
-			if (!notInClanUserIds.isEmpty()) {
+			if (!notInClan.isEmpty()) {
 				Button pingButton = Button.primary("cwlmsping", "Nicht im Clan pingen");
 				buttons.add(pingButton);
-				// Encode user IDs and store in message content (hidden format)
-				messageContent = "<!--USERIDS:" + encodeUserIds(notInClanUserIds) + "-->";
 			}
 
 			// Add timestamp
@@ -308,7 +305,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
 			String formatiert = jetzt.format(formatter);
 
-			hook.editOriginal(messageContent)
+			hook.editOriginal("")
 					.setEmbeds(MessageUtil.buildEmbed(title, description.toString(), MessageUtil.EmbedType.INFO,
 							"Zuletzt aktualisiert am " + formatiert))
 					.setActionRow(buttons).queue();
@@ -359,53 +356,41 @@ public class cwlmemberstatus extends ListenerAdapter {
 	}
 
 	/**
-	 * Encodes user IDs into a compact Base64 string using the same logic as
-	 * teamcheck.java
+	 * Extracts user mentions from the "Nicht im Clan" section of the embed description
 	 */
-	private String encodeUserIds(List<String> userIds) {
-		// Calculate buffer size: 8 bytes per user ID
-		int bufferSize = userIds.size() * 8;
-		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-
-		// Write user IDs
-		for (String userId : userIds) {
-			buffer.putLong(Long.parseLong(userId));
-		}
-
-		// Base64 encode (URL-safe variant to avoid issues with special chars)
-		return Base64.getUrlEncoder().withoutPadding().encodeToString(buffer.array());
-	}
-
-	/**
-	 * Extracts user IDs from message content that contains encoded user data
-	 */
-	private List<String> extractUserIdsFromMessage(String messageContent) {
-		// Extract encoded data from HTML comment format: <!--USERIDS:encodedData-->
-		int startIndex = messageContent.indexOf("<!--USERIDS:");
+	private List<String> extractUserMentionsFromDescription(String description) {
+		List<String> mentions = new ArrayList<>();
+		
+		// Find the "Nicht im Clan" section
+		int startIndex = description.indexOf("**Nicht im Clan (");
 		if (startIndex == -1) {
-			return new ArrayList<>();
+			return mentions;
 		}
 		
-		startIndex += "<!--USERIDS:".length();
-		int endIndex = messageContent.indexOf("-->", startIndex);
-		if (endIndex == -1) {
-			return new ArrayList<>();
+		// Find the end of the section (look for next "**" or end of string)
+		String section = description.substring(startIndex);
+		String[] lines = section.split("\n");
+		
+		// Skip the header line and process the rest
+		for (int i = 1; i < lines.length; i++) {
+			String line = lines[i].trim();
+			
+			// Stop at next section (starts with **) or empty line after content
+			if (line.startsWith("**") || (line.isEmpty() && i > 1)) {
+				break;
+			}
+			
+			// Extract user mention from line in format: "AccountInfo (<@userid>)"
+			int mentionStart = line.indexOf("<@");
+			int mentionEnd = line.indexOf(">", mentionStart);
+			if (mentionStart != -1 && mentionEnd != -1) {
+				String mention = line.substring(mentionStart, mentionEnd + 1);
+				if (!mentions.contains(mention)) {
+					mentions.add(mention);
+				}
+			}
 		}
 		
-		String encoded = messageContent.substring(startIndex, endIndex);
-		
-		// Decode Base64
-		byte[] data = Base64.getUrlDecoder().decode(encoded);
-		ByteBuffer buffer = ByteBuffer.wrap(data);
-
-		List<String> userIds = new ArrayList<>();
-
-		// Read user IDs
-		while (buffer.hasRemaining()) {
-			long userId = buffer.getLong();
-			userIds.add(String.valueOf(userId));
-		}
-
-		return userIds;
+		return mentions;
 	}
 }
