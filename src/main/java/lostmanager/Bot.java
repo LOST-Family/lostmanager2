@@ -291,38 +291,48 @@ public class Bot extends ListenerAdapter {
 																	new Command.Choice("CWL Day", "cwlday"),
 																	new Command.Choice("Raid", "raid")))
 													.addOptions(new OptionData(OptionType.STRING, "duration",
-															"Dauer/Zeitpunkt (z.B. 1h, 24h, start, 0)", true).setAutoComplete(true))
+															"Dauer/Zeitpunkt (z.B. 1h, 24h, start, 0)", true)
+															.setAutoComplete(true))
 													.addOptions(new OptionData(OptionType.STRING, "actiontype",
 															"Aktionstyp", true).setAutoComplete(true))
-													.addOptions(new OptionData(OptionType.CHANNEL, "channel",
+													.addOptions(new OptionData(
+															OptionType.CHANNEL, "channel",
 															"Discord Channel für Nachrichten", true))
-													.addOptions(new OptionData(OptionType.STRING, "kickpoint_reason",
-															"Kickpoint-Grund (erforderlich bei actiontype=kickpoint)", false)
-															.setAutoComplete(true)),
+													.addOptions(new OptionData(
+															OptionType.STRING, "kickpoint_reason",
+															"Kickpoint-Grund (erforderlich bei actiontype=kickpoint)",
+															false).setAutoComplete(true)),
 											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("list",
 													"Liste alle Listening Events auf")
 													.addOptions(new OptionData(OptionType.STRING, "clan",
-															"Filtere nach Clan (optional)", false).setAutoComplete(true)),
+															"Filtere nach Clan (optional)", false)
+															.setAutoComplete(true)),
 											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("remove",
 													"Lösche ein Listening Event")
 													.addOptions(new OptionData(OptionType.INTEGER, "id",
 															"Die ID des zu löschenden Events", true))),
 
 							Commands.slash("teamcheck", "Überprüfe die Teamverteilung der Mitglieder.")
-									.addOption(OptionType.ROLE, "memberrole", "Die Rolle der Mitglieder, die überprüft werden sollen", true)
-									.addOption(OptionType.ROLE, "memberrole_2", "Die zweite Rolle der Mitglieder (optional)", false)
+									.addOption(OptionType.ROLE, "memberrole",
+											"Die Rolle der Mitglieder, die überprüft werden sollen", true)
 									.addOption(OptionType.ROLE, "team_role_1", "Die erste Teamrolle", true)
+									.addOption(OptionType.ROLE, "memberrole_2",
+											"Die zweite Rolle der Mitglieder (optional)", false)
 									.addOption(OptionType.ROLE, "team_role_2", "Die zweite Teamrolle (optional)", false)
 									.addOption(OptionType.ROLE, "team_role_3", "Die dritte Teamrolle (optional)", false)
 									.addOption(OptionType.ROLE, "team_role_4", "Die vierte Teamrolle (optional)", false)
-									.addOption(OptionType.ROLE, "team_role_5", "Die fünfte Teamrolle (optional)", false),
+									.addOption(OptionType.ROLE, "team_role_5", "Die fünfte Teamrolle (optional)",
+											false),
 
-							Commands.slash("checkroles", "Überprüfe, ob Clan-Mitglieder die korrekten Discord-Rollen haben.")
-									.addOptions(new OptionData(OptionType.STRING, "clan",
+							Commands.slash("checkroles",
+									"Überprüfe, ob Clan-Mitglieder die korrekten Discord-Rollen haben.")
+									.addOptions(new OptionData(
+											OptionType.STRING, "clan",
 											"Der Clan, dessen Mitglieder überprüft werden sollen", true)
 											.setAutoComplete(true)),
 
-							Commands.slash("wins", "Zeige Wins-Statistiken für Spieler oder einen Clan in einer Season.")
+							Commands.slash("wins",
+									"Zeige Wins-Statistiken für Spieler oder einen Clan in einer Season.")
 									.addOptions(new OptionData(OptionType.STRING, "season",
 											"Der Monat, für den die Wins angezeigt werden sollen", true)
 											.setAutoComplete(true))
@@ -394,7 +404,7 @@ public class Bot extends ListenerAdapter {
 	public static JDA getJda() {
 		return jda;
 	}
-	
+
 	public static void restartAllEvents() {
 		// Run in a separate thread to avoid crashing the bot if there are errors
 		new Thread(() -> {
@@ -406,49 +416,52 @@ public class Bot extends ListenerAdapter {
 			}
 		}, "RestartAllEventsThread").start();
 	}
-	
+
 	private static void restartAllEventsInternal() {
 		schedulertasks.shutdown();
 		schedulertasks = Executors.newSingleThreadScheduledExecutor();
 		endClanGamesSavings();
 		startClanGamesSavings();
 		scheduleSeasonEndWinsSaving();
-		
+
 		// Start unified event polling system that checks all events periodically
 		startEventPolling();
 	}
-	
+
 	/**
 	 * Execute an event with retry logic and validation
-	 * @param le The listening event to execute
-	 * @param eventId The event ID for logging
+	 * 
+	 * @param le         The listening event to execute
+	 * @param eventId    The event ID for logging
 	 * @param maxRetries Maximum number of retry attempts
 	 */
 	private static void executeEventWithRetry(ListeningEvent le, Long eventId, int maxRetries) {
 		int attempt = 0;
 		boolean success = false;
-		
+
 		while (attempt <= maxRetries && !success) {
 			try {
-				System.out.println("Executing event " + eventId + " (attempt " + (attempt + 1) + "/" + (maxRetries + 1) + ")");
-				
+				System.out.println(
+						"Executing event " + eventId + " (attempt " + (attempt + 1) + "/" + (maxRetries + 1) + ")");
+
 				// Validate that the event should still fire
 				if (!shouldEventFire(le)) {
 					System.out.println("Event " + eventId + " validation failed - conditions no longer met, skipping");
 					return;
 				}
-				
+
 				// Execute the event
 				le.fireEvent();
-				
+
 				// If we reach here, event fired successfully
 				System.out.println("Event " + eventId + " executed successfully");
 				success = true;
-				
+
 			} catch (Exception e) {
-				System.err.println("Event " + eventId + " execution failed (attempt " + (attempt + 1) + "/" + (maxRetries + 1) + "): " + e.getMessage());
+				System.err.println("Event " + eventId + " execution failed (attempt " + (attempt + 1) + "/"
+						+ (maxRetries + 1) + "): " + e.getMessage());
 				e.printStackTrace();
-				
+
 				// If not the last attempt, wait before retrying
 				if (attempt < maxRetries) {
 					long waitTime = (long) Math.pow(2, attempt) * 5000; // 5s, 10s, 20s
@@ -467,22 +480,23 @@ public class Bot extends ListenerAdapter {
 			attempt++;
 		}
 	}
-	
+
 	/**
 	 * Validate if an event should still fire by checking current state
+	 * 
 	 * @param le The listening event
 	 * @return true if the event should fire, false otherwise
 	 */
 	private static boolean shouldEventFire(ListeningEvent le) {
 		try {
 			Clan clan = new Clan(le.getClanTag());
-			
+
 			// Check based on event type
 			switch (le.getListeningType()) {
 			case CS:
 				// Clan Games events should fire regardless (they check historical data)
 				return true;
-				
+
 			case CW:
 				// Check if clan war is actually active
 				Boolean cwActive = clan.isCWActive();
@@ -491,7 +505,7 @@ public class Bot extends ListenerAdapter {
 					return false;
 				}
 				return true;
-				
+
 			case CWLDAY:
 				// Check if CWL is active
 				Boolean cwlActive = clan.isCWLActive();
@@ -500,7 +514,7 @@ public class Bot extends ListenerAdapter {
 					return false;
 				}
 				return true;
-				
+
 			case RAID:
 				// Check if raid is active
 				boolean raidActive = clan.RaidActive();
@@ -509,11 +523,11 @@ public class Bot extends ListenerAdapter {
 					return false;
 				}
 				return true;
-				
+
 			case FIXTIMEINTERVAL:
 				// Fixed time events should always fire
 				return true;
-				
+
 			default:
 				// Unknown types should fire (conservative approach)
 				return true;
@@ -524,54 +538,57 @@ public class Bot extends ListenerAdapter {
 			return true;
 		}
 	}
-	
+
 	/**
-	 * Unified event polling system that checks all events periodically
-	 * Checks every 2 minutes and schedules events that are within 5 minutes of firing
-	 * This handles all event types uniformly including CW start triggers
+	 * Unified event polling system that checks all events periodically Checks every
+	 * 2 minutes and schedules events that are within 5 minutes of firing This
+	 * handles all event types uniformly including CW start triggers
 	 */
 	private static void startEventPolling() {
 		// Track which events have been scheduled to avoid duplicate scheduling
 		final java.util.Set<Long> scheduledEvents = java.util.concurrent.ConcurrentHashMap.newKeySet();
 		// Track timestamps of scheduled events to allow cleanup of old ones
 		final java.util.Map<Long, Long> scheduledEventTimestamps = new java.util.concurrent.ConcurrentHashMap<>();
-		// Track which start events have been fired for each clan in this war to avoid duplicates
+		// Track which start events have been fired for each clan in this war to avoid
+		// duplicates
 		final java.util.Map<String, java.util.Set<Long>> firedStartEvents = new java.util.concurrent.ConcurrentHashMap<>();
-		
+
 		Runnable pollingTask = () -> {
 			try {
 				String sql = "SELECT id FROM listening_events";
 				ArrayList<Long> ids = DBUtil.getArrayListFromSQL(sql, Long.class);
-				
+
 				long currentTime = System.currentTimeMillis();
 				long schedulingThreshold = 5 * 60 * 1000; // 5 minutes in milliseconds
 				long cleanupThreshold = 60 * 60 * 1000; // 1 hour - events scheduled this long ago can be cleaned up
-				
-				// Clean up old scheduled events (events whose fire time has passed by more than 1 hour)
-				java.util.Iterator<java.util.Map.Entry<Long, Long>> iterator = scheduledEventTimestamps.entrySet().iterator();
+
+				// Clean up old scheduled events (events whose fire time has passed by more than
+				// 1 hour)
+				java.util.Iterator<java.util.Map.Entry<Long, Long>> iterator = scheduledEventTimestamps.entrySet()
+						.iterator();
 				while (iterator.hasNext()) {
 					java.util.Map.Entry<Long, Long> entry = iterator.next();
 					Long eventId = entry.getKey();
 					Long fireTime = entry.getValue();
-					
+
 					// If the event's fire time has passed by more than 1 hour, remove it
 					if (fireTime != null && fireTime < (currentTime - cleanupThreshold)) {
 						scheduledEvents.remove(eventId);
 						iterator.remove();
 					}
 				}
-				
+
 				// First pass: Group start events by clan for batch processing
 				// Map to group start events by clan tag
 				java.util.Map<String, java.util.List<Long>> cwStartEventsByClan = new java.util.HashMap<>();
 				// Track clan state updates to apply after processing all events
 				java.util.Map<String, String> clanStateUpdates = new java.util.HashMap<>();
-				
+
 				for (Long id : ids) {
 					try {
 						ListeningEvent le = new ListeningEvent(id);
 						long duration = le.getDurationUntilEnd();
-						
+
 						// Handle "start" triggers (duration = -1) specially
 						if (duration == -1) {
 							// For start triggers, group by clan for batch processing
@@ -581,25 +598,26 @@ public class Bot extends ListenerAdapter {
 							}
 							continue; // Don't process start triggers as regular time-based events yet
 						}
-						
+
 						// Skip if already scheduled (only for non-start events)
 						if (scheduledEvents.contains(id)) {
 							continue;
 						}
-						
+
 						// For regular time-based events, check timestamp
 						Long timestamp = le.getTimestamp();
-						
+
 						// Skip if timestamp is null or invalid
 						if (timestamp == null || timestamp == Long.MAX_VALUE) {
 							continue;
 						}
-						
+
 						long timeUntilFire = timestamp - currentTime;
-						
+
 						// If event is within threshold and not yet scheduled, schedule it
 						if (timeUntilFire <= schedulingThreshold && timeUntilFire > 0) {
-							System.out.println("Scheduling event " + id + " to fire in " + (timeUntilFire / 1000 / 60) + " minutes");
+							System.out.println("Scheduling event " + id + " to fire in " + (timeUntilFire / 1000 / 60)
+									+ " minutes");
 							scheduledEvents.add(id);
 							scheduledEventTimestamps.put(id, timestamp);
 							schedulertasks.schedule(() -> {
@@ -614,7 +632,8 @@ public class Bot extends ListenerAdapter {
 								}
 							}, timeUntilFire, TimeUnit.MILLISECONDS);
 						} else if (timeUntilFire <= 0) {
-							// Event is overdue - skip it instead of firing to prevent duplicate triggers after restart
+							// Event is overdue - skip it instead of firing to prevent duplicate triggers
+							// after restart
 							// Mark as scheduled so we don't keep trying to process it
 							scheduledEvents.add(id);
 							scheduledEventTimestamps.put(id, timestamp);
@@ -624,61 +643,66 @@ public class Bot extends ListenerAdapter {
 						e.printStackTrace();
 					}
 				}
-				
-				// Second pass: Check clan war states ONCE per clan and fire all start events for that clan
+
+				// Second pass: Check clan war states ONCE per clan and fire all start events
+				// for that clan
 				for (java.util.Map.Entry<String, java.util.List<Long>> entry : cwStartEventsByClan.entrySet()) {
 					String clanTag = entry.getKey();
 					java.util.List<Long> eventIds = entry.getValue();
-					
+
 					try {
 						datawrapper.Clan clan = new datawrapper.Clan(clanTag);
-						
+
 						// Get last known state (only once per clan)
 						String lastState = getCWLastState(clanTag);
-						
+
 						// Get current state (only once per clan)
 						String currentState = "notInWar";
 						if (clan.isCWActive()) {
 							org.json.JSONObject cwJson = clan.getCWJson();
 							currentState = cwJson.getString("state");
 						}
-						
+
 						// Check if war just started (only once per clan)
-						boolean warJustStarted = !lastState.isEmpty() && 
-							lastState.equals("notInWar") && 
-							(currentState.equals("preparation") || currentState.equals("inWar"));
-						
+						boolean warJustStarted = !lastState.isEmpty() && lastState.equals("notInWar")
+								&& (currentState.equals("preparation") || currentState.equals("inWar"));
+
 						// Fire all start events for this clan if war just started
 						if (warJustStarted) {
-							System.out.println("CW Start detected for clan " + clanTag + ", firing " + eventIds.size() + " events");
+							System.out.println("CW Start detected for clan " + clanTag + ", firing " + eventIds.size()
+									+ " events");
 							// Mark state for update AFTER all events are processed
 							clanStateUpdates.put(clanTag, currentState);
-							
+
 							// Get or create set of fired events for this clan
-							java.util.Set<Long> clanFiredEvents = firedStartEvents.computeIfAbsent(clanTag, _ -> java.util.concurrent.ConcurrentHashMap.newKeySet());
-							
+							java.util.Set<Long> clanFiredEvents = firedStartEvents.computeIfAbsent(clanTag,
+									_ -> java.util.concurrent.ConcurrentHashMap.newKeySet());
+
 							// Fire all events that haven't been fired yet for this war
 							for (Long eventId : eventIds) {
 								if (!clanFiredEvents.contains(eventId)) {
 									System.out.println("Firing start event " + eventId + " for clan " + clanTag);
 									clanFiredEvents.add(eventId);
-									
+
 									// Create a final reference for use in lambda
 									final Long finalEventId = eventId;
 									schedulertasks.execute(() -> {
 										try {
 											ListeningEvent le = new ListeningEvent(finalEventId);
 											le.fireEvent();
-											System.out.println("Successfully fired start event " + finalEventId + " for clan " + clanTag);
+											System.out.println("Successfully fired start event " + finalEventId
+													+ " for clan " + clanTag);
 										} catch (Exception e) {
-											System.err.println("Error firing start trigger " + finalEventId + ": " + e.getMessage());
+											System.err.println("Error firing start trigger " + finalEventId + ": "
+													+ e.getMessage());
 											e.printStackTrace();
 											// Remove from fired set to allow retry in next poll
 											clanFiredEvents.remove(finalEventId);
 										}
 									});
 								} else {
-									System.out.println("Start event " + eventId + " already fired for current war in clan " + clanTag + ", skipping");
+									System.out.println("Start event " + eventId
+											+ " already fired for current war in clan " + clanTag + ", skipping");
 								}
 							}
 						} else if (currentState.equals("notInWar")) {
@@ -689,7 +713,7 @@ public class Bot extends ListenerAdapter {
 						System.err.println("Error checking war state for clan " + clanTag + ": " + e.getMessage());
 					}
 				}
-				
+
 				// Apply clan state updates after processing all events
 				for (java.util.Map.Entry<String, String> entry : clanStateUpdates.entrySet()) {
 					setCWLastState(entry.getKey(), entry.getValue());
@@ -700,34 +724,35 @@ public class Bot extends ListenerAdapter {
 				e.printStackTrace();
 			}
 		};
-		
+
 		// Initialize CW states for start trigger detection
 		initializeCWLastStates();
-		
+
 		// Run immediately on startup, then every 2 minutes
 		schedulertasks.scheduleAtFixedRate(pollingTask, 0, 2, TimeUnit.MINUTES);
 		System.out.println("Event polling system started - checking every 2 minutes");
 	}
-	
+
 	/**
-	 * Initialize CW last states to current state to prevent false start triggers on restart
+	 * Initialize CW last states to current state to prevent false start triggers on
+	 * restart
 	 */
 	private static void initializeCWLastStates() {
 		try {
 			// Get all clans with CW events (not just start triggers)
 			String sql = "SELECT DISTINCT clan_tag FROM listening_events WHERE listeningtype = 'cw'";
 			ArrayList<String> clanTags = DBUtil.getArrayListFromSQL(sql, String.class);
-			
+
 			for (String clanTag : clanTags) {
 				try {
 					datawrapper.Clan clan = new datawrapper.Clan(clanTag);
 					String currentState = "notInWar"; // default
-					
+
 					if (clan.isCWActive()) {
 						org.json.JSONObject cwJson = clan.getCWJson();
 						currentState = cwJson.getString("state");
 					}
-					
+
 					// Initialize last state to current state
 					setCWLastState(clanTag, currentState);
 					System.out.println("Initialized CW state for clan " + clanTag + ": " + currentState);
@@ -739,14 +764,14 @@ public class Bot extends ListenerAdapter {
 			System.err.println("Error in initializeCWLastStates: " + e.getMessage());
 		}
 	}
-	
+
 	// Simple in-memory storage for last war states
 	private static java.util.HashMap<String, String> cwLastStates = new java.util.HashMap<>();
-	
+
 	private static String getCWLastState(String clanTag) {
 		return cwLastStates.getOrDefault(clanTag, "");
 	}
-	
+
 	private static void setCWLastState(String clanTag, String state) {
 		cwLastStates.put(clanTag, state);
 	}
@@ -794,22 +819,22 @@ public class Bot extends ListenerAdapter {
 	public static void scheduleSeasonEndWinsSaving() {
 		// Fetch the actual season end time from the API
 		Timestamp seasonEndTime = util.SeasonUtil.fetchSeasonEndTime();
-		
+
 		if (seasonEndTime == null) {
 			System.err.println("Failed to fetch season end time from API. Retrying in 1 hour...");
 			// Retry after 1 hour if fetching fails
 			schedulertasks.schedule(() -> scheduleSeasonEndWinsSaving(), 1, TimeUnit.HOURS);
 			return;
 		}
-		
+
 		long nowMillis = System.currentTimeMillis();
 		long seasonEndMillis = seasonEndTime.getTime();
 		long delay = Math.max(seasonEndMillis - nowMillis, 0);
-		
+
 		System.out.println("Season end wins tracking scheduled for: " + seasonEndTime);
-		
+
 		String sql = "SELECT coc_tag FROM players";
-		
+
 		schedulertasks.schedule(() -> {
 			System.out.println("Saving all player wins at season end...");
 			for (String tag : DBUtil.getArrayListFromSQL(sql, String.class)) {
@@ -931,10 +956,10 @@ public class Bot extends ListenerAdapter {
 		ZonedDateTime zdt = target.atZone(ZoneId.systemDefault());
 		return zdt;
 	}
-	
+
 	/**
-	 * Get next 28th at 13:00 (1pm) - used for listening events to ensure API data has propagated
-	 * This is 1 hour after the actual clan games end time
+	 * Get next 28th at 13:00 (1pm) - used for listening events to ensure API data
+	 * has propagated This is 1 hour after the actual clan games end time
 	 */
 	public static ZonedDateTime getNext28thAt1pm() {
 		LocalDateTime now = LocalDateTime.now();
@@ -956,7 +981,7 @@ public class Bot extends ListenerAdapter {
 		ZonedDateTime zdt = target.atZone(ZoneId.systemDefault());
 		return zdt;
 	}
-	
+
 	/**
 	 * Get previous 28th at 13:00 (1pm) - used for listening events
 	 */
