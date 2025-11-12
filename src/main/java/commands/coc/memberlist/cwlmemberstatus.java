@@ -103,7 +103,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();
-		if (!id.startsWith("cwlms_") && !id.startsWith("cwlmsping_"))
+		if (!id.startsWith("cwlms_") && !id.equals("cwlmsping"))
 			return;
 
 		event.deferEdit().queue();
@@ -111,7 +111,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 		String title = "CWL Memberstatus";
 
 		// Handle ping button
-		if (id.startsWith("cwlmsping_")) {
+		if (id.equals("cwlmsping")) {
 			// Check permissions
 			User userExecuted = new User(event.getUser().getId());
 			boolean hasPermission = false;
@@ -131,19 +131,19 @@ public class cwlmemberstatus extends ListenerAdapter {
 				return;
 			}
 
-			// Extract user IDs from button ID and send pings
+			// Extract user IDs from message content and send pings
 			new Thread(() -> {
 				try {
-					List<String> userIds = decodeUserIdsFromButtonId(id.substring("cwlmsping_".length()));
+					String messageContent = event.getMessage().getContentRaw();
+					List<String> userIds = extractUserIdsFromMessage(messageContent);
 					if (!userIds.isEmpty()) {
-						String[] userIdArray = userIds.toArray(new String[0]);
 						event.getInteraction().getMessageChannel().sendMessage(
 								String.join(" ", userIds.stream().map(uid -> "<@" + uid + ">").toArray(String[]::new)))
 								.queue();
 					}
 				} catch (Exception e) {
 					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-							"Fehler beim Dekodieren der Button-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+							"Fehler beim Dekodieren der Benutzer-Daten.", MessageUtil.EmbedType.ERROR)).queue();
 				}
 			}, "CWLMemberstatusPing-" + event.getUser().getId()).start();
 			return;
@@ -293,11 +293,14 @@ public class cwlmemberstatus extends ListenerAdapter {
 			// Create ping button (only if there are users not in clan)
 			List<Button> buttons = new ArrayList<>();
 			buttons.add(refreshButton);
+			
+			String messageContent = "";
 
 			if (!notInClanUserIds.isEmpty()) {
-				String pingButtonId = "cwlmsping_" + encodeUserIds(notInClanUserIds);
-				Button pingButton = Button.primary(pingButtonId, "Nicht im Clan pingen");
+				Button pingButton = Button.primary("cwlmsping", "Nicht im Clan pingen");
 				buttons.add(pingButton);
+				// Encode user IDs and store in message content (hidden format)
+				messageContent = "<!--USERIDS:" + encodeUserIds(notInClanUserIds) + "-->";
 			}
 
 			// Add timestamp
@@ -305,8 +308,10 @@ public class cwlmemberstatus extends ListenerAdapter {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
 			String formatiert = jetzt.format(formatter);
 
-			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, description.toString(), MessageUtil.EmbedType.INFO,
-					"Zuletzt aktualisiert am " + formatiert)).setActionRow(buttons).queue();
+			hook.editOriginal(messageContent)
+					.setEmbeds(MessageUtil.buildEmbed(title, description.toString(), MessageUtil.EmbedType.INFO,
+							"Zuletzt aktualisiert am " + formatiert))
+					.setActionRow(buttons).queue();
 		});
 	}
 
@@ -372,9 +377,23 @@ public class cwlmemberstatus extends ListenerAdapter {
 	}
 
 	/**
-	 * Decodes user IDs from a Base64-encoded button ID
+	 * Extracts user IDs from message content that contains encoded user data
 	 */
-	private List<String> decodeUserIdsFromButtonId(String encoded) {
+	private List<String> extractUserIdsFromMessage(String messageContent) {
+		// Extract encoded data from HTML comment format: <!--USERIDS:encodedData-->
+		int startIndex = messageContent.indexOf("<!--USERIDS:");
+		if (startIndex == -1) {
+			return new ArrayList<>();
+		}
+		
+		startIndex += "<!--USERIDS:".length();
+		int endIndex = messageContent.indexOf("-->", startIndex);
+		if (endIndex == -1) {
+			return new ArrayList<>();
+		}
+		
+		String encoded = messageContent.substring(startIndex, endIndex);
+		
 		// Decode Base64
 		byte[] data = Base64.getUrlDecoder().decode(encoded);
 		ByteBuffer buffer = ByteBuffer.wrap(data);
