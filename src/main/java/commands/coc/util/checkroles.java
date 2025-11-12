@@ -1,4 +1,4 @@
-package commands.discord.util;
+package commands.coc.util;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
