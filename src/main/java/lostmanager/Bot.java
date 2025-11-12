@@ -35,6 +35,7 @@ import commands.coc.util.cwdonator;
 import commands.coc.util.listeningevent;
 import commands.coc.util.raidping;
 import commands.coc.util.setnick;
+import commands.coc.util.wins;
 import commands.discord.admin.deletemessages;
 import commands.discord.admin.restart;
 import commands.discord.util.checkreacts;
@@ -319,6 +320,17 @@ public class Bot extends ListenerAdapter {
 							Commands.slash("checkroles", "Überprüfe, ob Clan-Mitglieder die korrekten Discord-Rollen haben.")
 									.addOptions(new OptionData(OptionType.STRING, "clan",
 											"Der Clan, dessen Mitglieder überprüft werden sollen", true)
+											.setAutoComplete(true)),
+
+							Commands.slash("wins", "Zeige Wins-Statistiken für Spieler oder einen Clan in einer Season.")
+									.addOptions(new OptionData(OptionType.STRING, "season",
+											"Der Monat, für den die Wins angezeigt werden sollen", true)
+											.setAutoComplete(true))
+									.addOptions(new OptionData(OptionType.STRING, "player",
+											"Der Spieler, für den die Wins angezeigt werden sollen", false)
+											.setAutoComplete(true))
+									.addOptions(new OptionData(OptionType.STRING, "clan",
+											"Der Clan, für den die Wins angezeigt werden sollen", false)
 											.setAutoComplete(true))
 
 					).queue();
@@ -359,6 +371,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new listeningevent());
 		classes.add(new teamcheck());
 		classes.add(new checkroles());
+		classes.add(new wins());
 
 		return classes.toArray();
 	}
@@ -399,6 +412,7 @@ public class Bot extends ListenerAdapter {
 		schedulertasks = Executors.newSingleThreadScheduledExecutor();
 		endClanGamesSavings();
 		startClanGamesSavings();
+		scheduleSeasonEndWinsSaving();
 		
 		// Start unified event polling system that checks all events periodically
 		startEventPolling();
@@ -777,6 +791,40 @@ public class Bot extends ListenerAdapter {
 			}
 			startClanGamesSavings();
 		}, startdelay, TimeUnit.MILLISECONDS);
+	}
+
+	public static void scheduleSeasonEndWinsSaving() {
+		// Fetch the actual season end time from the API
+		Timestamp seasonEndTime = util.SeasonUtil.fetchSeasonEndTime();
+		
+		if (seasonEndTime == null) {
+			System.err.println("Failed to fetch season end time from API. Retrying in 1 hour...");
+			// Retry after 1 hour if fetching fails
+			schedulertasks.schedule(() -> scheduleSeasonEndWinsSaving(), 1, TimeUnit.HOURS);
+			return;
+		}
+		
+		long nowMillis = System.currentTimeMillis();
+		long seasonEndMillis = seasonEndTime.getTime();
+		long delay = Math.max(seasonEndMillis - nowMillis, 0);
+		
+		System.out.println("Season end wins tracking scheduled for: " + seasonEndTime);
+		
+		String sql = "SELECT coc_tag FROM players";
+		
+		schedulertasks.schedule(() -> {
+			System.out.println("Saving all player wins at season end...");
+			for (String tag : DBUtil.getArrayListFromSQL(sql, String.class)) {
+				try {
+					Player p = new Player(tag);
+					p.addAchievementDataToDB(Type.WINS, seasonEndTime);
+				} catch (Exception e) {
+					System.err.println("Error saving wins for player " + tag + ": " + e.getMessage());
+				}
+			}
+			// Schedule the next season end
+			scheduleSeasonEndWinsSaving();
+		}, delay, TimeUnit.MILLISECONDS);
 	}
 
 	public static void startNameUpdates() {

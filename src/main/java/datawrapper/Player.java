@@ -548,24 +548,23 @@ public class Player {
 		}
 	}
 
-	private AchievementData getAchievementDataAPI(AchievementData.Type type, Timestamp timestamp) {
-		if (achievementDataAPI == null) {
-			Integer value = null;
+	public AchievementData getAchievementDataAPI(AchievementData.Type type, Timestamp timestamp) {
+		Integer value = null;
+		AchievementData data = null;
 
-			switch (type) {
-			case WINS:
-				value = Integer.valueOf(getAchievementAPI("Conqueror"));
-				achievementDataAPI = new AchievementData(timestamp, value, Type.WINS);
-				break;
-			case CLANGAMES_POINTS:
-				value = Integer.valueOf(getAchievementAPI("Games Champion"));
-				achievementDataAPI = new AchievementData(timestamp, value, Type.WINS);
-				break;
-			default:
-				return null;
-			}
+		switch (type) {
+		case WINS:
+			value = Integer.valueOf(getAchievementAPI("Conqueror"));
+			data = new AchievementData(timestamp, value, Type.WINS);
+			break;
+		case CLANGAMES_POINTS:
+			value = Integer.valueOf(getAchievementAPI("Games Champion"));
+			data = new AchievementData(timestamp, value, Type.CLANGAMES_POINTS);
+			break;
+		default:
+			return null;
 		}
-		return achievementDataAPI;
+		return data;
 	}
 
 	private Integer getAchievementAPI(String achievementName) {
@@ -575,7 +574,7 @@ public class Player {
 		for (int i = 0; i < achievementarray.length(); i++) {
 			JSONObject achievement = achievementarray.getJSONObject(i);
 			String achievementname = achievement.getString("name");
-			if (achievementname.equals(achievementname)) {
+			if (achievementname.equals(achievementName)) {
 				value = achievement.getInt("value");
 				break;
 			}
