@@ -287,7 +287,7 @@ public class Bot extends ListenerAdapter {
 															"Event-Typ (cs, cw, cwlday, raid)", true)
 															.addChoices(new Command.Choice("Clan Games", "cs"),
 																	new Command.Choice("Clan War", "cw"),
-																	new Command.Choice("CWL Tag", "cwlday"),
+																	new Command.Choice("CWL Day", "cwlday"),
 																	new Command.Choice("Raid", "raid")))
 													.addOptions(new OptionData(OptionType.STRING, "duration",
 															"Dauer/Zeitpunkt (z.B. 1h, 24h, start, 0)", true).setAutoComplete(true))

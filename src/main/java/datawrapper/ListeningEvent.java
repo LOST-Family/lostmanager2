@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dbutil.DBUtil;
+import lostmanager.Bot;
 import net.dv8tion.jda.api.entities.TextChannel;
 import util.Tuple;
 
@@ -866,7 +867,7 @@ public class ListeningEvent {
 
 			DBUtil.executeUpdate(
 					"INSERT INTO kickpoints (player_tag, date, amount, description, created_by_discord_id, created_at, expires_at, clan_tag, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-					player.getTag(), now, amount, reason, "0", now, expires, clan.getTag(), now);
+					player.getTag(), now, amount, reason, Bot.getJda().getSelfUser().getId(), now, expires, clan.getTag(), now);
 		}
 	}
 
