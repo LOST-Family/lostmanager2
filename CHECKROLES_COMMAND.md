@@ -66,7 +66,7 @@ If all linked members have correct roles:
 - Format: `dd.MM.yyyy um HH:mm Uhr` (German timezone)
 
 ### Smart Handling
-- **Hidden Co-Leaders**: Automatically skipped (they shouldn't have visible roles)
+- **Hidden Co-Leaders**: Checked as co-leaders (they should have the co-leader role)
 - **Unlinked Members**: Counted but not checked for roles (can't have Discord roles)
 - **Unconfigured Roles**: Detected and reported if clan roles aren't set up
 

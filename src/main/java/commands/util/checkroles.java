@@ -144,11 +144,6 @@ public class checkroles extends ListenerAdapter {
 
 		for (Player p : playerlist) {
 			totalMembers++;
-			
-			// Skip hidden coleaders as they shouldn't have the role
-			if (p.isHiddenColeader()) {
-				continue;
-			}
 
 			Player.RoleType roleDB = p.getRoleDB();
 			if (roleDB == null || roleDB == Player.RoleType.NOTINCLAN) {
