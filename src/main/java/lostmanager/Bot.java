@@ -25,6 +25,7 @@ import commands.coc.links.relink;
 import commands.coc.links.unlink;
 import commands.coc.links.verify;
 import commands.coc.memberlist.addmember;
+import commands.coc.memberlist.cwlmemberstatus;
 import commands.coc.memberlist.editmember;
 import commands.coc.memberlist.listmembers;
 import commands.coc.memberlist.memberstatus;
@@ -179,6 +180,19 @@ public class Bot extends ListenerAdapter {
 													OptionType.STRING, "clan",
 													"Der Clan, welcher ausgegeben werden soll.", true)
 													.setAutoComplete(true)),
+
+							Commands.slash("cwlmemberstatus",
+									"Überprüfe, welche Mitglieder einer Rolle in einem bestimmten Clan sind.")
+									.addOption(OptionType.ROLE, "role",
+											"Die Rolle der Mitglieder, die überprüft werden sollen", true)
+									.addOptions(new OptionData(OptionType.STRING, "clan_a",
+											"Der erste Clan, dessen Mitglieder überprüft werden sollen", true)
+											.setAutoComplete(true))
+									.addOption(OptionType.STRING, "clantag",
+											"Der Clantag, nach dem gesucht werden soll (z.B. #2PP)", true)
+									.addOptions(new OptionData(OptionType.STRING, "clan_b",
+											"Der zweite Clan, dessen Mitglieder überprüft werden sollen (optional)", false)
+											.setAutoComplete(true)),
 
 							Commands.slash("kpaddreason", "Erstelle einen vorgefertigten Kickpunktgrund.")
 									.addOptions(new OptionData(OptionType.STRING, "clan",
@@ -362,6 +376,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new editmember());
 		classes.add(new playerinfo());
 		classes.add(new memberstatus());
+		classes.add(new cwlmemberstatus());
 		classes.add(new kpaddreason());
 		classes.add(new kpremovereason());
 		classes.add(new kpeditreason());
