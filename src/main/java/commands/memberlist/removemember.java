@@ -106,13 +106,16 @@ public class removemember extends ListenerAdapter {
 
 		String userid = player.getUser().getUserID();
 		Guild guild = Bot.getJda().getGuildById(Bot.guild_id);
-		Member member = guild.getMemberById(userid);
-		String memberroleid = playerclan.getRoleID(Clan.Role.MEMBER);
-		Role memberrole = guild.getRoleById(memberroleid);
-		String elderroleid = playerclan.getRoleID(Clan.Role.ELDER);
-		Role elderrole = guild.getRoleById(elderroleid);
-		if (member != null) {
-			ArrayList<Player> allaccs = player.getUser().getAllLinkedAccounts();
+		if (guild == null) {
+			desc += "\n\n**Fehler: Der Discord-Server wurde nicht gefunden.**";
+		} else {
+			Member member = guild.getMemberById(userid);
+			String memberroleid = playerclan.getRoleID(Clan.Role.MEMBER);
+			Role memberrole = guild.getRoleById(memberroleid);
+			String elderroleid = playerclan.getRoleID(Clan.Role.ELDER);
+			Role elderrole = guild.getRoleById(elderroleid);
+			if (member != null) {
+				ArrayList<Player> allaccs = player.getUser().getAllLinkedAccounts();
 			boolean b = false;
 			boolean othereldersameclan = false;
 			for (Player acc : allaccs) {
@@ -126,61 +129,70 @@ public class removemember extends ListenerAdapter {
 					}
 				}
 			}
-			if (member.getRoles().contains(memberrole)) {
-				if (!b) {
-					guild.removeRoleFromMember(member, memberrole).queue();
-					desc += "\n\n";
-					desc += "**Dem User <@" + userid + "> wurde die Rolle <@&" + memberroleid + "> genommen.**\n";
+			if (memberrole != null) {
+				if (member.getRoles().contains(memberrole)) {
+					if (!b) {
+						guild.removeRoleFromMember(member, memberrole).queue();
+						desc += "\n\n";
+						desc += "**Dem User <@" + userid + "> wurde die Rolle <@&" + memberroleid + "> genommen.**\n";
+					} else {
+						desc += "\n\n";
+						desc += "**Der User <@" + userid
+								+ "> hat noch mindestens einen anderen Account in dem Clan, daher behält er die Rolle <@&"
+								+ memberroleid + ">.**\n";
+					}
 				} else {
-					desc += "\n\n";
-					desc += "**Der User <@" + userid
-							+ "> hat noch mindestens einen anderen Account in dem Clan, daher behält er die Rolle <@&"
-							+ memberroleid + ">.**\n";
-				}
-			} else {
-				if (!b) {
-					desc += "\n\n";
-					desc += "**Der User <@" + userid + "> hat die Rolle <@&" + memberroleid
-							+ "> bereits nicht mehr.**\n";
-				} else {
-					desc += "\n\n";
-					desc += "**Der User <@" + userid
-							+ "> hat noch mindestens einen anderen Account in dem Clan, hat aber die Rolle <@&"
-							+ memberroleid + "> nicht. Gebe sie ihm manuell, falls erwünscht.**\n";
+					if (!b) {
+						desc += "\n\n";
+						desc += "**Der User <@" + userid + "> hat die Rolle <@&" + memberroleid
+								+ "> bereits nicht mehr.**\n";
+					} else {
+						desc += "\n\n";
+						desc += "**Der User <@" + userid
+								+ "> hat noch mindestens einen anderen Account in dem Clan, hat aber die Rolle <@&"
+								+ memberroleid + "> nicht. Gebe sie ihm manuell, falls erwünscht.**\n";
+					}
 				}
 			}
-			if (member.getRoles().contains(elderrole)) {
-				if (!othereldersameclan) {
-					guild.removeRoleFromMember(member, elderrole).queue();
-					desc += "\n\n";
-					desc += "**Dem User <@" + userid + "> wurde die Rolle <@&" + elderroleid + "> genommen.**\n";
+			if (elderrole != null) {
+				if (member.getRoles().contains(elderrole)) {
+					if (!othereldersameclan) {
+						guild.removeRoleFromMember(member, elderrole).queue();
+						desc += "\n\n";
+						desc += "**Dem User <@" + userid + "> wurde die Rolle <@&" + elderroleid + "> genommen.**\n";
+					} else {
+						desc += "\n\n";
+						desc += "**Der User <@" + userid
+								+ "> hat noch mindestens einen anderen Account als Ältester in dem Clan, daher behält er die Rolle <@&"
+								+ elderroleid + ">.**\n";
+					}
 				} else {
-					desc += "\n\n";
-					desc += "**Der User <@" + userid
-							+ "> hat noch mindestens einen anderen Account als Ältester in dem Clan, daher behält er die Rolle <@&"
-							+ elderroleid + ">.**\n";
-				}
-			} else {
-				if (othereldersameclan) {
-					desc += "\n\n";
-					desc += "**Der User <@" + userid
-							+ "> hat noch mindestens einen anderen Account als Ältester in dem Clan, hat aber die Rolle <@&"
-							+ elderroleid + "> nicht. Gebe sie ihm manuell, falls erwünscht.**\n";
+					if (othereldersameclan) {
+						desc += "\n\n";
+						desc += "**Der User <@" + userid
+								+ "> hat noch mindestens einen anderen Account als Ältester in dem Clan, hat aber die Rolle <@&"
+								+ elderroleid + "> nicht. Gebe sie ihm manuell, falls erwünscht.**\n";
+					}
 				}
 			}
 
 			String exmemberroleid = Bot.exmember_roleid;
 			Role exmemberrole = guild.getRoleById(exmemberroleid);
-			if (member.getRoles().contains(exmemberrole)) {
-				desc += "\n\n";
-				desc += "**Der User <@" + userid + "> hat die Rolle <@&" + exmemberroleid + "> bereits.**\n";
+			if (exmemberrole != null) {
+				if (member.getRoles().contains(exmemberrole)) {
+					desc += "\n\n";
+					desc += "**Der User <@" + userid + "> hat die Rolle <@&" + exmemberroleid + "> bereits.**\n";
+				} else {
+					guild.addRoleToMember(member, exmemberrole).queue();
+					desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + exmemberroleid + "> hinzugefügt.**";
+				}
 			} else {
-				guild.addRoleToMember(member, exmemberrole).queue();
-				desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + exmemberroleid + "> hinzugefügt.**";
+				desc += "\n\n**Die Ex-Member-Rolle ist nicht konfiguriert.**";
 			}
 		} else {
 			desc += "\n\n**Der User <@" + userid
 					+ "> existiert nicht auf dem Server. Ihm wurde somit keine Rolle hinzugefügt oder entfernt.**";
+		}
 		}
 
 		MessageChannelUnion channel = event.getChannel();

@@ -132,19 +132,43 @@ public class addmember extends ListenerAdapter {
 
 			String userid = p.getUser().getUserID();
 			Guild guild = Bot.getJda().getGuildById(Bot.guild_id);
-			Member member = guild.getMemberById(userid);
-			String memberroleid = c.getRoleID(Clan.Role.MEMBER);
-			Role memberrole = guild.getRoleById(memberroleid);
-			if (member != null) {
-				if (member.getRoles().contains(memberrole)) {
-					desc += "\n\n**Der User <@" + userid + "> hat bereits die Rolle <@&" + memberroleid + ">.**";
-				} else {
-					guild.addRoleToMember(member, memberrole).queue();
-					desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + memberroleid + "> hinzugefügt.**";
-				}
+			if (guild == null) {
+				desc += "\n\n**Fehler: Der Discord-Server wurde nicht gefunden.**";
 			} else {
-				desc += "\n\n**Der User <@" + userid
-						+ "> existiert nicht auf dem Server. Ihm wurde somit keine Rolle hinzugefügt.**";
+				Member member = guild.getMemberById(userid);
+				String memberroleid = c.getRoleID(Clan.Role.MEMBER);
+				Role memberrole = guild.getRoleById(memberroleid);
+				String elderroleid = c.getRoleID(Clan.Role.ELDER);
+				Role elderrole = guild.getRoleById(elderroleid);
+				if (member != null) {
+					if (memberrole != null) {
+						if (member.getRoles().contains(memberrole)) {
+							desc += "\n\n**Der User <@" + userid + "> hat bereits die Rolle <@&" + memberroleid + ">.**";
+						} else {
+							guild.addRoleToMember(member, memberrole).queue();
+							desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + memberroleid + "> hinzugefügt.**";
+						}
+					} else {
+						desc += "\n\n**Die Member-Rolle für diesen Clan ist nicht konfiguriert.**";
+					}
+					
+					// Handle elder role assignment
+					if (role.equals("admin")) {
+						if (elderrole != null) {
+							if (member.getRoles().contains(elderrole)) {
+								desc += "\n\n**Der User <@" + userid + "> hat bereits die Rolle <@&" + elderroleid + ">.**";
+							} else {
+								guild.addRoleToMember(member, elderrole).queue();
+								desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + elderroleid + "> hinzugefügt.**";
+							}
+						} else {
+							desc += "\n\n**Die Elder-Rolle für diesen Clan ist nicht konfiguriert.**";
+						}
+					}
+				} else {
+					desc += "\n\n**Der User <@" + userid
+							+ "> existiert nicht auf dem Server. Ihm wurde somit keine Rolle hinzugefügt.**";
+				}
 			}
 
 			MessageChannelUnion channel = event.getChannel();
