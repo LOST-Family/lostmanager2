@@ -62,9 +62,11 @@ public class cwlmemberstatus extends ListenerAdapter {
 			OptionMapping clanBOption = event.getOption("origin_clan_2");
 
 			if (roleOption == null || clanAOption == null || clantagOption == null) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Die Parameter 'team_role', 'origin_clan_1' und 'cwl_clan_tag' sind erforderlich.",
-						MessageUtil.EmbedType.ERROR)).queue();
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Die Parameter 'team_role', 'origin_clan_1' und 'cwl_clan_tag' sind erforderlich.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
 				return;
 			}
 
@@ -93,13 +95,13 @@ public class cwlmemberstatus extends ListenerAdapter {
 
 			if (focused.equals("origin_clan_1") || focused.equals("origin_clan_2")) {
 				List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
-				event.replyChoices(choices).queue(success -> {
-				}, failure -> {
+				event.replyChoices(choices).queue(_ -> {
+				}, _ -> {
 				});
 			} else if (focused.equals("cwl_clan_tag")) {
 				List<Command.Choice> choices = DBManager.getSideClansAutocomplete(input);
-				event.replyChoices(choices).queue(success -> {
-				}, failure -> {
+				event.replyChoices(choices).queue(_ -> {
+				}, _ -> {
 				});
 			}
 		}, "CWLMemberstatusAutocomplete-" + event.getUser().getId()).start();
@@ -130,9 +132,6 @@ public class cwlmemberstatus extends ListenerAdapter {
 			}
 
 			if (!hasPermission) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Du musst mindestens Vize-Anführer eines Clans sein, um diesen Button zu nutzen.",
-						MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
 
@@ -182,8 +181,10 @@ public class cwlmemberstatus extends ListenerAdapter {
 
 				Role discordRole = guild.getRoleById(roleId);
 				if (discordRole == null) {
-					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-							"Fehler: Rolle konnte nicht gefunden werden.", MessageUtil.EmbedType.ERROR)).queue();
+					event.getHook()
+							.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+									"Fehler: Rolle konnte nicht gefunden werden.", MessageUtil.EmbedType.ERROR))
+							.queue();
 					return;
 				}
 
@@ -191,8 +192,10 @@ public class cwlmemberstatus extends ListenerAdapter {
 						searchClantag, id);
 
 			} catch (Exception e) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Fehler: Button-Daten konnten nicht dekodiert werden.", MessageUtil.EmbedType.ERROR)).queue();
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Fehler: Button-Daten konnten nicht dekodiert werden.", MessageUtil.EmbedType.ERROR))
+						.queue();
 			}
 
 		}, "CWLMemberstatusRefresh-" + event.getUser().getId()).start();
@@ -209,8 +212,8 @@ public class cwlmemberstatus extends ListenerAdapter {
 
 		// Load all members with the specified role
 		guild.loadMembers().onSuccess(allMembers -> {
-			List<Member> membersWithRole = allMembers.stream()
-					.filter(member -> member.getRoles().contains(discordRole)).toList();
+			List<Member> membersWithRole = allMembers.stream().filter(member -> member.getRoles().contains(discordRole))
+					.toList();
 
 			int totalMembers = membersWithRole.size();
 			List<String> inClan = new ArrayList<>();
@@ -262,12 +265,14 @@ public class cwlmemberstatus extends ListenerAdapter {
 			// Build result description
 			StringBuilder description = new StringBuilder();
 
+			Clan cwlclan = new Clan(searchClantag);
+
 			description.append("**Rolle:** ").append(discordRole.getName()).append("\n");
-			description.append("**Clan A:** ").append(clanA.getInfoString()).append("\n");
+			description.append("**Spieler aus Clan:** ").append(clanA.getInfoString()).append("\n");
 			if (clanB != null) {
-				description.append("**Clan B:** ").append(clanB.getInfoString()).append("\n");
+				description.append("**Spieler aus Clan:** ").append(clanB.getInfoString()).append("\n");
 			}
-			description.append("**Gesuchter Clantag:** ").append(searchClantag).append("\n\n");
+			description.append("**CWL-Clan:** ").append(cwlclan.getInfoString()).append("\n\n");
 
 			description.append("**Gesamtzahl der Mitglieder mit der Rolle:** ").append(totalMembers).append("\n\n");
 
@@ -287,7 +292,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 					String memberMention = notInClan.get(i);
 					User user = notInClanUsers.get(i);
 					ArrayList<Player> linkedAccounts = user.getAllLinkedAccounts();
-					
+
 					// Show all linked accounts for users not in clan
 					for (Player player : linkedAccounts) {
 						description.append(player.getInfoStringDB()).append(" (").append(memberMention).append(")\n");
@@ -303,7 +308,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 			// Create ping button (only if there are users not in clan)
 			List<Button> buttons = new ArrayList<>();
 			buttons.add(refreshButton);
-			
+
 			String messageContent = "";
 
 			if (!notInClanUserIds.isEmpty()) {
@@ -318,16 +323,14 @@ public class cwlmemberstatus extends ListenerAdapter {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
 			String formatiert = jetzt.format(formatter);
 
-			hook.editOriginal(messageContent)
-					.setEmbeds(MessageUtil.buildEmbed(title, description.toString(), MessageUtil.EmbedType.INFO,
-							"Zuletzt aktualisiert am " + formatiert))
-					.setActionRow(buttons).queue();
+			hook.editOriginal(messageContent).setEmbeds(MessageUtil.buildEmbed(title, description.toString(),
+					MessageUtil.EmbedType.INFO, "Zuletzt aktualisiert am " + formatiert)).setActionRow(buttons).queue();
 		});
 	}
 
 	/**
-	 * Normalize a clan tag to the standard format: uppercase, replace O with 0,
-	 * add # if missing
+	 * Normalize a clan tag to the standard format: uppercase, replace O with 0, add
+	 * # if missing
 	 */
 	private String normalizeClanTag(String tag) {
 		if (tag == null || tag.isEmpty()) {
@@ -394,7 +397,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 		if (messageContent == null || messageContent.isEmpty()) {
 			return new ArrayList<>();
 		}
-		
+
 		try {
 			// Decode Base64
 			byte[] data = Base64.getUrlDecoder().decode(messageContent);

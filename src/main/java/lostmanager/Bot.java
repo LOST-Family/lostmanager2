@@ -188,11 +188,12 @@ public class Bot extends ListenerAdapter {
 									.addOptions(new OptionData(OptionType.STRING, "origin_clan_1",
 											"Der erste Clan, dessen Mitglieder überprüft werden sollen", true)
 											.setAutoComplete(true))
-									.addOption(OptionType.STRING, "cwl_clan_tag",
-											"Der Clantag, nach dem gesucht werden soll (z.B. #2PP)", true)
-									.addOptions(new OptionData(OptionType.STRING, "origin_clan_2",
-											"Der zweite Clan, dessen Mitglieder überprüft werden sollen (optional)", false)
-											.setAutoComplete(true)),
+									.addOptions(new OptionData(OptionType.STRING, "cwl_clan_tag",
+											"Der Clantag, des CWL-Clans", true).setAutoComplete(true))
+									.addOptions(new OptionData(
+											OptionType.STRING, "origin_clan_2",
+											"Der zweite Clan, dessen Mitglieder überprüft werden sollen (optional)",
+											false).setAutoComplete(true)),
 
 							Commands.slash("kpaddreason", "Erstelle einen vorgefertigten Kickpunktgrund.")
 									.addOptions(new OptionData(OptionType.STRING, "clan",
