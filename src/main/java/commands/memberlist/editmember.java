@@ -8,6 +8,10 @@ import datautil.DBUtil;
 import datawrapper.Clan;
 import datawrapper.Player;
 import datawrapper.User;
+import lostmanager.Bot;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -102,6 +106,13 @@ public class editmember extends ListenerAdapter {
 				return;
 			}
 
+			// Get old role before update
+			Player.RoleType oldRoleType = p.getRoleDB();
+			String oldRole = oldRoleType == Player.RoleType.ELDER ? "admin" 
+					: oldRoleType == Player.RoleType.LEADER ? "leader"
+					: oldRoleType == Player.RoleType.COLEADER ? "coLeader"
+					: oldRoleType == Player.RoleType.MEMBER ? "member" : null;
+
 			DBUtil.executeUpdate("UPDATE clan_members SET clan_role = ? WHERE player_tag = ?", role, playertag);
 			String rolestring = role.equals("leader") ? "Anführer"
 					: role.equals("coLeader") ? "Vize-Anführer"
@@ -113,6 +124,70 @@ public class editmember extends ListenerAdapter {
 						+ " ist nun " + rolestring + ".";
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+
+			// Handle Discord role management
+			String userid = p.getUser().getUserID();
+			Guild guild = Bot.getJda().getGuildById(Bot.guild_id);
+			if (guild != null) {
+				Member member = guild.getMemberById(userid);
+				if (member != null) {
+					String elderroleid = c.getRoleID(Clan.Role.ELDER);
+					Role elderrole = guild.getRoleById(elderroleid);
+					
+					boolean wasElder = oldRole != null && oldRole.equals("admin");
+					boolean isNowElder = role.equals("admin");
+					
+					if (elderrole != null) {
+						if (!wasElder && isNowElder) {
+							// Adding elder role
+							if (!member.getRoles().contains(elderrole)) {
+								guild.addRoleToMember(member, elderrole).queue();
+								desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + elderroleid + "> hinzugefügt.**";
+							} else {
+								desc += "\n\n**Der User <@" + userid + "> hat bereits die Rolle <@&" + elderroleid + ">.**";
+							}
+						} else if (wasElder && !isNowElder) {
+							// Removing elder role - check if user has other elder accounts in same clan
+							ArrayList<Player> allaccs = p.getUser().getAllLinkedAccounts();
+							boolean othereldersameclan = false;
+							for (Player acc : allaccs) {
+								if (!acc.getTag().equals(playertag) && acc.getClanDB() != null) {
+									if (acc.getClanDB().getTag().equals(clantag)) {
+										if (acc.getRoleDB() == Player.RoleType.ELDER) {
+											othereldersameclan = true;
+											break;
+										}
+									}
+								}
+							}
+							if (member.getRoles().contains(elderrole)) {
+								if (!othereldersameclan) {
+									guild.removeRoleFromMember(member, elderrole).queue();
+									desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + elderroleid + "> genommen.**";
+								} else {
+									desc += "\n\n**Der User <@" + userid
+											+ "> hat noch mindestens einen anderen Account als Ältester in dem Clan, daher behält er die Rolle <@&"
+											+ elderroleid + ">.**";
+								}
+							} else {
+								if (othereldersameclan) {
+									desc += "\n\n**Der User <@" + userid
+											+ "> hat noch mindestens einen anderen Account als Ältester in dem Clan, hat aber die Rolle <@&"
+											+ elderroleid + "> nicht. Gebe sie ihm manuell, falls erwünscht.**";
+								}
+							}
+						}
+					} else {
+						if (isNowElder) {
+							desc += "\n\n**Die Elder-Rolle für diesen Clan ist nicht konfiguriert.**";
+						}
+					}
+				} else {
+					desc += "\n\n**Der User <@" + userid + "> existiert nicht auf dem Server. Ihm wurde somit keine Rolle hinzugefügt oder entfernt.**";
+				}
+			} else {
+				desc += "\n\n**Fehler: Der Discord-Server wurde nicht gefunden.**";
 			}
 			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
 		}, "EditMemberCommand-" + event.getUser().getId()).start();
