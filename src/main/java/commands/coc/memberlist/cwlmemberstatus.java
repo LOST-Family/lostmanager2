@@ -57,28 +57,24 @@ public class cwlmemberstatus extends ListenerAdapter {
 
 			// Get parameters
 			OptionMapping roleOption = event.getOption("team_role");
-			OptionMapping clanAOption = event.getOption("origin_clan_1");
 			OptionMapping clantagOption = event.getOption("cwl_clan_tag");
-			OptionMapping clanBOption = event.getOption("origin_clan_2");
 
-			if (roleOption == null || clanAOption == null || clantagOption == null) {
+			if (roleOption == null || clantagOption == null) {
 				event.getHook()
 						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-								"Die Parameter 'team_role', 'origin_clan_1' und 'cwl_clan_tag' sind erforderlich.",
+								"Die Parameter 'team_role' und 'cwl_clan_tag' sind erforderlich.",
 								MessageUtil.EmbedType.ERROR))
 						.queue();
 				return;
 			}
 
 			Role discordRole = roleOption.getAsRole();
-			String clanATag = clanAOption.getAsString();
-			String clanBTag = clanBOption != null ? clanBOption.getAsString() : null;
 			String searchClantag = normalizeClanTag(clantagOption.getAsString());
 
 			// Create button ID with encoded data
-			String buttonId = encodeButtonId(discordRole.getId(), clanATag, clanBTag, searchClantag);
+			String buttonId = encodeButtonId(discordRole.getId(), searchClantag);
 
-			performCWLMemberStatusCheck(event.getHook(), event.getGuild(), title, discordRole, clanATag, clanBTag,
+			performCWLMemberStatusCheck(event.getHook(), event.getGuild(), title, discordRole,
 					searchClantag, buttonId);
 
 		}, "CWLMemberstatusCommand-" + event.getUser().getId()).start();
@@ -93,12 +89,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 			String focused = event.getFocusedOption().getName();
 			String input = event.getFocusedOption().getValue();
 
-			if (focused.equals("origin_clan_1") || focused.equals("origin_clan_2")) {
-				List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
-				event.replyChoices(choices).queue(_ -> {
-				}, _ -> {
-				});
-			} else if (focused.equals("cwl_clan_tag")) {
+			if (focused.equals("cwl_clan_tag")) {
 				List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
 				List<Command.Choice> choices2 = DBManager.getSideClansAutocomplete(input);
 				for (Command.Choice c : choices2) {
@@ -173,7 +164,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 			// Decode button ID to extract parameters
 			try {
 				String[] params = decodeButtonId(id, guild);
-				if (params == null || params.length < 4) {
+				if (params == null || params.length < 2) {
 					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
 							"Fehler: Button-Daten konnten nicht dekodiert werden.", MessageUtil.EmbedType.ERROR))
 							.queue();
@@ -181,9 +172,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 				}
 
 				String roleId = params[0];
-				String clanATag = params[1];
-				String clanBTag = params[2];
-				String searchClantag = params[3];
+				String searchClantag = params[1];
 
 				Role discordRole = guild.getRoleById(roleId);
 				if (discordRole == null) {
@@ -194,7 +183,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 					return;
 				}
 
-				performCWLMemberStatusCheck(event.getHook(), guild, title, discordRole, clanATag, clanBTag,
+				performCWLMemberStatusCheck(event.getHook(), guild, title, discordRole,
 						searchClantag, id);
 
 			} catch (Exception e) {
@@ -208,7 +197,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 	}
 
 	private void performCWLMemberStatusCheck(net.dv8tion.jda.api.interactions.InteractionHook hook, Guild guild,
-			String title, Role discordRole, String clanATag, String clanBTag, String searchClantag, String buttonId) {
+			String title, Role discordRole, String searchClantag, String buttonId) {
 
 		if (guild == null) {
 			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
@@ -227,9 +216,6 @@ public class cwlmemberstatus extends ListenerAdapter {
 			List<String> notInClanUserIds = new ArrayList<>();
 			List<User> notInClanUsers = new ArrayList<>();
 
-			Clan clanA = new Clan(clanATag);
-			Clan clanB = clanBTag != null && !clanBTag.isEmpty() ? new Clan(clanBTag) : null;
-
 			// Check each member
 			for (Member member : membersWithRole) {
 				User user = new User(member.getId());
@@ -239,16 +225,6 @@ public class cwlmemberstatus extends ListenerAdapter {
 
 				// Check each linked account
 				for (Player player : linkedAccounts) {
-					// Check if player is in Clan A or Clan B
-					Clan playerClanDB = player.getClanDB();
-					if (playerClanDB == null)
-						continue;
-
-					String playerClanTag = playerClanDB.getTag();
-					if (!playerClanTag.equals(clanATag) && (clanB == null || !playerClanTag.equals(clanBTag))) {
-						continue;
-					}
-
 					// Now check if this account is in the specified clantag via API
 					Clan playerClanAPI = player.getClanAPI();
 					if (playerClanAPI != null) {
@@ -274,10 +250,6 @@ public class cwlmemberstatus extends ListenerAdapter {
 			Clan cwlclan = new Clan(searchClantag);
 
 			description.append("**Rolle:** ").append(discordRole.getName()).append("\n");
-			description.append("**Spieler aus Clan:** ").append(clanA.getInfoString()).append("\n");
-			if (clanB != null) {
-				description.append("**Spieler aus Clan:** ").append(clanB.getInfoString()).append("\n");
-			}
 			description.append("**CWL-Clan:** ").append(cwlclan.getInfoString()).append("\n\n");
 
 			description.append("**Gesamtzahl der Mitglieder mit der Rolle:** ").append(totalMembers).append("\n\n");
@@ -357,9 +329,9 @@ public class cwlmemberstatus extends ListenerAdapter {
 	/**
 	 * Encodes parameters into a compact Base64 string for use in button IDs.
 	 */
-	private String encodeButtonId(String roleId, String clanATag, String clanBTag, String searchClantag) {
-		// Format: roleId|clanATag|clanBTag|searchClantag
-		String data = roleId + "|" + clanATag + "|" + (clanBTag != null ? clanBTag : "") + "|" + searchClantag;
+	private String encodeButtonId(String roleId, String searchClantag) {
+		// Format: roleId|searchClantag
+		String data = roleId + "|" + searchClantag;
 		return "cwlms_" + Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
 	}
 

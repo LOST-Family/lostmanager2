@@ -185,15 +185,8 @@ public class Bot extends ListenerAdapter {
 									"Überprüfe, welche Mitglieder einer Rolle in einem bestimmten Clan sind.")
 									.addOption(OptionType.ROLE, "team_role",
 											"Die Rolle der Mitglieder, die überprüft werden sollen", true)
-									.addOptions(new OptionData(OptionType.STRING, "origin_clan_1",
-											"Der erste Clan, dessen Mitglieder überprüft werden sollen", true)
-											.setAutoComplete(true))
 									.addOptions(new OptionData(OptionType.STRING, "cwl_clan_tag",
-											"Der Clantag, des CWL-Clans", true).setAutoComplete(true))
-									.addOptions(new OptionData(
-											OptionType.STRING, "origin_clan_2",
-											"Der zweite Clan, dessen Mitglieder überprüft werden sollen (optional)",
-											false).setAutoComplete(true)),
+											"Der Clantag, des CWL-Clans", true).setAutoComplete(true)),
 
 							Commands.slash("kpaddreason", "Erstelle einen vorgefertigten Kickpunktgrund.")
 									.addOptions(new OptionData(OptionType.STRING, "clan",
