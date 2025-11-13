@@ -141,15 +141,18 @@ public class addmember extends ListenerAdapter {
 				String elderroleid = c.getRoleID(Clan.Role.ELDER);
 				Role elderrole = guild.getRoleById(elderroleid);
 				if (member != null) {
-					if (memberrole != null) {
-						if (member.getRoles().contains(memberrole)) {
-							desc += "\n\n**Der User <@" + userid + "> hat bereits die Rolle <@&" + memberroleid + ">.**";
+					// Don't assign member role if player is added as hiddencoleader
+					if (!role.equals("hiddencoleader")) {
+						if (memberrole != null) {
+							if (member.getRoles().contains(memberrole)) {
+								desc += "\n\n**Der User <@" + userid + "> hat bereits die Rolle <@&" + memberroleid + ">.**";
+							} else {
+								guild.addRoleToMember(member, memberrole).queue();
+								desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + memberroleid + "> hinzugefügt.**";
+							}
 						} else {
-							guild.addRoleToMember(member, memberrole).queue();
-							desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + memberroleid + "> hinzugefügt.**";
+							desc += "\n\n**Die Member-Rolle für diesen Clan ist nicht konfiguriert.**";
 						}
-					} else {
-						desc += "\n\n**Die Member-Rolle für diesen Clan ist nicht konfiguriert.**";
 					}
 					
 					// Handle elder role assignment
