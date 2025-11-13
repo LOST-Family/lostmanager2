@@ -147,8 +147,8 @@ public class editmember extends ListenerAdapter {
 							} else {
 								desc += "\n\n**Der User <@" + userid + "> hat bereits die Rolle <@&" + elderroleid + ">.**";
 							}
-						} else if (wasElder && !isNowElder) {
-							// Removing elder role - check if user has other elder accounts in same clan
+						} else if (wasElder && !isNowElder && role.equals("member")) {
+							// Removing elder role only when editing to member - check if user has other elder accounts in same clan
 							ArrayList<Player> allaccs = p.getUser().getAllLinkedAccounts();
 							boolean othereldersameclan = false;
 							for (Player acc : allaccs) {
