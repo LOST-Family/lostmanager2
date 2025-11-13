@@ -117,11 +117,18 @@ Tracks raid participation and attacks.
 - Reports members who didn't complete all raid attacks
 - Reports members who didn't participate at all
 - Can add kickpoints for incomplete raids
+- **NEW:** When using `infomessage` or `kickpoint` action types, analyzes district attacks:
+  - Prompts for thresholds: max attacks on Capital Peak, max attacks on other districts
+  - At raid end, identifies districts where total attacks exceeded threshold
+  - For `infomessage`: lists all attackers on over-attacked districts
+  - For `kickpoint`: penalizes player(s) with most attacks on over-attacked districts
+  - Configurable tie-breaker: penalize both players or neither when tied
 
 **Example Setup:**
 ```
 /listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Kickpoint channel:#raid-logs kickpoint_reason:Raid_nicht_gemacht
 ```
+This will prompt for district thresholds and analyze district attacks at raid end.
 
 ## Action Types Explained
 
