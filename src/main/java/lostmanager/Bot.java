@@ -717,6 +717,12 @@ public class Bot extends ListenerAdapter {
 						} else if (currentState.equals("notInWar")) {
 							// War ended, clear fired events for this clan to allow re-firing on next war
 							firedStartEvents.remove(clanTag);
+							// Update last state to notInWar so next war start will be detected
+							String previousState = getCWLastState(clanTag);
+							if (!previousState.equals("notInWar")) {
+								setCWLastState(clanTag, "notInWar");
+								System.out.println("CW ended for clan " + clanTag + ", updated state from " + previousState + " to notInWar");
+							}
 						}
 					} catch (Exception e) {
 						System.err.println("Error checking war state for clan " + clanTag + ": " + e.getMessage());
