@@ -675,6 +675,10 @@ public class Clan {
 		}
 	}
 
+	public JSONObject getRaidJsonFull() {
+		return getRaidJson();
+	}
+
 	public static JSONObject getCWLDayJson(String warTag) {
 		String json;
 

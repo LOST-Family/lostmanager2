@@ -177,6 +177,25 @@ public class listeningevent extends ListenerAdapter {
 			modal = Modal.create(modalId, "Benötigte Angriffe eingeben").addActionRows(ActionRow.of(attacksInput))
 					.build();
 		}
+		// RAID + (infomessage or kickpoint) => ask for district attack thresholds
+		else if (type.equals("raid") && (actionTypeStr.equals("infomessage") || actionTypeStr.equals("kickpoint"))) {
+			needsModal = true;
+			modalId = "listeningevent_raid_districts_" + clantag + "_" + duration + "_" + actionTypeStr + "_" + channelId
+					+ "_" + (kickpointReasonName != null ? kickpointReasonName : "");
+
+			TextInput capitalPeakInput = TextInput.create("capital_peak_max", "Maximale Angriffe auf Capital Peak", TextInputStyle.SHORT)
+					.setPlaceholder("z.B. 10").setRequired(true).setMinLength(1).setMaxLength(3).setValue("10").build();
+			
+			TextInput otherDistrictsInput = TextInput.create("other_districts_max", "Maximale Angriffe auf restliche Distrikte", TextInputStyle.SHORT)
+					.setPlaceholder("z.B. 6").setRequired(true).setMinLength(1).setMaxLength(3).setValue("6").build();
+			
+			TextInput penalizeBothInput = TextInput.create("penalize_both", "Bei gleicher Anzahl an Angriffen beide bestrafen? 1->Ja; 2->Nein", TextInputStyle.SHORT)
+					.setPlaceholder("1 oder 2").setRequired(true).setMinLength(1).setMaxLength(1).setValue("1").build();
+
+			modal = Modal.create(modalId, "Raid Distrikt Einstellungen")
+					.addActionRows(ActionRow.of(capitalPeakInput), ActionRow.of(otherDistrictsInput), ActionRow.of(penalizeBothInput))
+					.build();
+		}
 		// custommessage => ask for custom message
 		else if (actionTypeStr.equals("custommessage")) {
 			needsModal = true;
@@ -205,6 +224,12 @@ public class listeningevent extends ListenerAdapter {
 	private void processEventCreation(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
 			String clantag, String type, long duration, String actionTypeStr, String channelId,
 			String kickpointReasonName, String customMessage, Integer thresholdOrAttacks) {
+		processEventCreation(hook, title, clantag, type, duration, actionTypeStr, channelId, kickpointReasonName, customMessage, thresholdOrAttacks, null);
+	}
+
+	private void processEventCreation(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
+			String clantag, String type, long duration, String actionTypeStr, String channelId,
+			String kickpointReasonName, String customMessage, Integer thresholdOrAttacks, java.util.Map<String, Integer> raidDistrictThresholds) {
 
 		// Build action values
 		ArrayList<ActionValue> actionValues = new ArrayList<>();
@@ -221,6 +246,21 @@ public class listeningevent extends ListenerAdapter {
 			ActionValue valueAV = new ActionValue(ActionValue.ACTIONVALUETYPE.VALUE);
 			valueAV.setValue((long) thresholdOrAttacks.intValue());
 			actionValues.add(valueAV);
+		}
+		
+		// Add raid district thresholds if provided
+		if (raidDistrictThresholds != null && !raidDistrictThresholds.isEmpty()) {
+			ActionValue capitalPeakAV = new ActionValue(ActionValue.ACTIONVALUETYPE.VALUE);
+			capitalPeakAV.setValue((long) raidDistrictThresholds.get("capital_peak_max").intValue());
+			actionValues.add(capitalPeakAV);
+			
+			ActionValue otherDistrictsAV = new ActionValue(ActionValue.ACTIONVALUETYPE.VALUE);
+			otherDistrictsAV.setValue((long) raidDistrictThresholds.get("other_districts_max").intValue());
+			actionValues.add(otherDistrictsAV);
+			
+			ActionValue penalizeBothAV = new ActionValue(ActionValue.ACTIONVALUETYPE.VALUE);
+			penalizeBothAV.setValue((long) raidDistrictThresholds.get("penalize_both").intValue());
+			actionValues.add(penalizeBothAV);
 		}
 
 		// Convert action values to JSON
@@ -288,6 +328,11 @@ public class listeningevent extends ListenerAdapter {
 			} else if (type.equals("cw")) {
 				desc += "**Benötigte Angriffe:** " + thresholdOrAttacks + "\n";
 			}
+		}
+		if (raidDistrictThresholds != null && !raidDistrictThresholds.isEmpty()) {
+			desc += "**Maximale Angriffe auf Capital Peak:** " + raidDistrictThresholds.get("capital_peak_max") + "\n";
+			desc += "**Maximale Angriffe auf restliche Distrikte:** " + raidDistrictThresholds.get("other_districts_max") + "\n";
+			desc += "**Beide bestrafen bei Gleichstand:** " + (raidDistrictThresholds.get("penalize_both") == 1 ? "Ja" : "Nein") + "\n";
 		}
 
 		hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
@@ -515,6 +560,60 @@ public class listeningevent extends ListenerAdapter {
 
 			processEventCreation(event.getHook(), title, clantag, "cw", duration, actionTypeStr, channelId,
 					kickpointReasonName, null, requiredAttacks);
+		} else if (modalId.startsWith("listeningevent_raid_districts_")) {
+			event.deferReply().queue();
+			String title = "Listening Event";
+
+			// Parse:
+			// listeningevent_raid_districts_{clantag}_{duration}_{actiontype}_{channelid}_{kpreason}
+			String[] parts = modalId.split("_");
+			if (parts.length < 7) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+
+			String clantag = parts[3];
+			long duration = Long.parseLong(parts[4]);
+			String actionTypeStr = parts[5];
+			String channelId = parts[6];
+			String kickpointReasonName = parts.length > 7 && !parts[7].isEmpty() ? parts[7] : null;
+
+			// Parse the three threshold values
+			String capitalPeakMaxStr = event.getValue("capital_peak_max").getAsString();
+			String otherDistrictsMaxStr = event.getValue("other_districts_max").getAsString();
+			String penalizeBothStr = event.getValue("penalize_both").getAsString();
+			
+			int capitalPeakMax, otherDistrictsMax, penalizeBoth;
+			try {
+				capitalPeakMax = Integer.parseInt(capitalPeakMaxStr);
+				otherDistrictsMax = Integer.parseInt(otherDistrictsMaxStr);
+				penalizeBoth = Integer.parseInt(penalizeBothStr);
+				
+				if (capitalPeakMax < 1 || otherDistrictsMax < 1) {
+					throw new NumberFormatException("Thresholds must be at least 1");
+				}
+				
+				if (penalizeBoth != 1 && penalizeBoth != 2) {
+					throw new NumberFormatException("Penalize both must be 1 or 2");
+				}
+			} catch (NumberFormatException e) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Ungültige Werte eingegeben. Capital Peak und Distrikte müssen >= 1 sein, 'beide bestrafen' muss 1 oder 2 sein.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
+
+			// Create map with thresholds
+			java.util.Map<String, Integer> raidDistrictThresholds = new java.util.HashMap<>();
+			raidDistrictThresholds.put("capital_peak_max", capitalPeakMax);
+			raidDistrictThresholds.put("other_districts_max", otherDistrictsMax);
+			raidDistrictThresholds.put("penalize_both", penalizeBoth);
+
+			processEventCreation(event.getHook(), title, clantag, "raid", duration, actionTypeStr, channelId,
+					kickpointReasonName, null, null, raidDistrictThresholds);
 		}
 	}
 

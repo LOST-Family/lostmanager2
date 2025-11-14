@@ -783,10 +783,55 @@ public class ListeningEvent {
 	}
 
 	private void handleRaidEvent(Clan clan) {
-		if (!clan.RaidActive()) {
+		// Get raid status - we need to handle both ongoing and recently ended raids
+		org.json.JSONObject raidJson = clan.getRaidJsonFull();
+		org.json.JSONArray items = raidJson.getJSONArray("items");
+		if (items.length() == 0) {
 			return;
 		}
+		
+		org.json.JSONObject currentRaid = items.getJSONObject(0);
+		String state = currentRaid.getString("state");
+		boolean isRaidActive = state.equals("ongoing");
+		boolean isRaidEnded = state.equals("ended");
+		
+		if (!isRaidActive && !isRaidEnded) {
+			return; // No valid raid state
+		}
 
+		// Check if we have district thresholds configured
+		boolean hasDistrictThresholds = false;
+		Integer capitalPeakMax = null;
+		Integer otherDistrictsMax = null;
+		Integer penalizeBoth = null;
+		
+		ArrayList<ActionValue> actionValues = getActionValues();
+		if (actionValues != null && actionValues.size() >= 3) {
+			// Check if we have 3 consecutive VALUE types (district thresholds)
+			// They would be after the kickpoint reason (if exists)
+			int valueCount = 0;
+			for (ActionValue av : actionValues) {
+				if (av.getSaved() == ActionValue.kind.value) {
+					valueCount++;
+					if (valueCount == 1) {
+						capitalPeakMax = av.getValue().intValue();
+					} else if (valueCount == 2) {
+						otherDistrictsMax = av.getValue().intValue();
+					} else if (valueCount == 3) {
+						penalizeBoth = av.getValue().intValue();
+						hasDistrictThresholds = true;
+					}
+				}
+			}
+		}
+
+		// If we have district thresholds and raid has ENDED, analyze districts
+		// Only analyze districts at raid end, not during ongoing raid
+		if (hasDistrictThresholds && isRaidEnded && (getActionType() == ACTIONTYPE.INFOMESSAGE || getActionType() == ACTIONTYPE.KICKPOINT)) {
+			handleRaidDistrictAnalysis(clan, capitalPeakMax, otherDistrictsMax, penalizeBoth);
+		}
+
+		// Continue with existing missed attacks logic (for both ongoing and ended raids)
 		ArrayList<Player> raidMembers = clan.getRaidMemberList();
 		ArrayList<Player> dbMembers = clan.getPlayersDB();
 
@@ -844,6 +889,165 @@ public class ListeningEvent {
 
 		if (hasMissedAttacks) {
 			sendMessageToChannel(message.toString());
+		}
+	}
+
+	private void handleRaidDistrictAnalysis(Clan clan, int capitalPeakMax, int otherDistrictsMax, int penalizeBoth) {
+		try {
+			// Fetch raid data with attackLog
+			org.json.JSONObject raidJson = clan.getRaidJsonFull();
+			org.json.JSONArray items = raidJson.getJSONArray("items");
+			if (items.length() == 0) {
+				return;
+			}
+			
+			org.json.JSONObject currentRaid = items.getJSONObject(0);
+			
+			// Check if attackLog exists
+			if (!currentRaid.has("attackLog") || currentRaid.isNull("attackLog")) {
+				return;
+			}
+			
+			org.json.JSONArray attackLog = currentRaid.getJSONArray("attackLog");
+			
+			// Process each defender (enemy clan) in the attack log
+			for (int i = 0; i < attackLog.length(); i++) {
+				org.json.JSONObject defenderEntry = attackLog.getJSONObject(i);
+				
+				if (!defenderEntry.has("districts") || defenderEntry.isNull("districts")) {
+					continue;
+				}
+				
+				org.json.JSONArray districts = defenderEntry.getJSONArray("districts");
+				
+				// Process each district
+				for (int j = 0; j < districts.length(); j++) {
+					org.json.JSONObject district = districts.getJSONObject(j);
+					String districtName = district.getString("name");
+					
+					if (!district.has("attacks") || district.isNull("attacks")) {
+						continue;
+					}
+					
+					org.json.JSONArray attacks = district.getJSONArray("attacks");
+					int totalAttacks = attacks.length();
+					
+					// Determine threshold based on district name
+					int threshold = districtName.equals("Capital Peak") ? capitalPeakMax : otherDistrictsMax;
+					
+					// Check if attacks exceed threshold
+					if (totalAttacks > threshold) {
+						// Count attacks per player
+						java.util.Map<String, Integer> attacksByPlayer = new java.util.HashMap<>();
+						java.util.Map<String, String> playerNames = new java.util.HashMap<>();
+						
+						for (int k = 0; k < attacks.length(); k++) {
+							org.json.JSONObject attack = attacks.getJSONObject(k);
+							org.json.JSONObject attacker = attack.getJSONObject("attacker");
+							String attackerTag = attacker.getString("tag");
+							String attackerName = attacker.getString("name");
+							
+							attacksByPlayer.put(attackerTag, attacksByPlayer.getOrDefault(attackerTag, 0) + 1);
+							playerNames.put(attackerTag, attackerName);
+						}
+						
+						// Find max attacks
+						int maxAttacks = attacksByPlayer.values().stream().max(Integer::compareTo).orElse(0);
+						
+						// Find players with max attacks
+						java.util.List<String> topAttackers = new java.util.ArrayList<>();
+						for (java.util.Map.Entry<String, Integer> entry : attacksByPlayer.entrySet()) {
+							if (entry.getValue() == maxAttacks) {
+								topAttackers.add(entry.getKey());
+							}
+						}
+						
+						// Build message
+						StringBuilder message = new StringBuilder();
+						message.append("## ").append(districtName).append(" - Zu viele Angriffe\n\n");
+						message.append("**Schwellenwert:** ").append(threshold).append("\n");
+						message.append("**Tatsächliche Angriffe:** ").append(totalAttacks).append("\n\n");
+						
+						if (getActionType() == ACTIONTYPE.INFOMESSAGE) {
+							// List all attackers
+							message.append("**Alle Angreifer:**\n");
+							for (java.util.Map.Entry<String, String> entry : playerNames.entrySet()) {
+								String tag = entry.getKey();
+								String name = entry.getValue();
+								int attackCount = attacksByPlayer.get(tag);
+								message.append("- ").append(name).append(": ").append(attackCount).append(" Angriffe");
+								
+								// Try to find discord user
+								try {
+									Player p = new Player(tag);
+									if (p.getUser() != null) {
+										message.append(" (<@").append(p.getUser().getUserID()).append(">)");
+									}
+								} catch (Exception e) {
+									// Player might not be in database
+								}
+								message.append("\n");
+							}
+						} else if (getActionType() == ACTIONTYPE.KICKPOINT) {
+							// Penalize top attacker(s)
+							boolean shouldPenalize = true;
+							
+							// If multiple players tied and penalizeBoth is 2 (No), skip penalizing
+							if (topAttackers.size() > 1 && penalizeBoth == 2) {
+								shouldPenalize = false;
+								message.append("**Mehrere Spieler mit gleicher Anzahl an Angriffen (").append(maxAttacks)
+										.append("), keine Bestrafung gemäß Einstellung.**\n");
+								for (String tag : topAttackers) {
+									String name = playerNames.get(tag);
+									message.append("- ").append(name).append(": ").append(maxAttacks).append(" Angriffe");
+									try {
+										Player p = new Player(tag);
+										if (p.getUser() != null) {
+											message.append(" (<@").append(p.getUser().getUserID()).append(">)");
+										}
+									} catch (Exception e) {
+										// Player might not be in database
+									}
+									message.append("\n");
+								}
+							} else {
+								// Penalize all top attackers
+								message.append("**Bestrafte Spieler (").append(maxAttacks).append(" Angriffe):**\n");
+								for (String tag : topAttackers) {
+									String name = playerNames.get(tag);
+									message.append("- ").append(name);
+									
+									try {
+										Player p = new Player(tag);
+										if (p.getUser() != null) {
+											message.append(" (<@").append(p.getUser().getUserID()).append(">)");
+										}
+										
+										// Add kickpoint
+										String reason = "Zu viele Angriffe auf " + districtName + " (" + maxAttacks + "/" + threshold + ")";
+										addKickpointForPlayer(p, reason);
+									} catch (Exception e) {
+										message.append(" (nicht in Datenbank gefunden)");
+									}
+									message.append("\n");
+								}
+							}
+						}
+						
+						// Send message (respect 4000 character limit)
+						String messageStr = message.toString();
+						if (messageStr.length() > 3900) {
+							// Split into multiple messages
+							sendMessageInChunks(messageStr);
+						} else {
+							sendMessageToChannel(messageStr);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("Error analyzing raid districts: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -912,6 +1116,33 @@ public class ListeningEvent {
 				}
 			} catch (Exception e) {
 				System.err.println("Failed to send message to channel " + channelId + ": " + e.getMessage());
+			}
+		}
+	}
+
+	private void sendMessageInChunks(String message) {
+		String channelId = getChannelID();
+		if (channelId != null && !channelId.isEmpty()) {
+			try {
+				TextChannel channel = lostmanager.Bot.getJda().getTextChannelById(channelId);
+				if (channel != null) {
+					// Split message into chunks of max 3900 characters to be safe
+					int chunkSize = 3900;
+					for (int i = 0; i < message.length(); i += chunkSize) {
+						int end = Math.min(message.length(), i + chunkSize);
+						String chunk = message.substring(i, end);
+						channel.sendMessage(chunk).queue();
+						
+						// Small delay between messages to avoid rate limiting
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+						}
+					}
+				}
+			} catch (Exception e) {
+				System.err.println("Failed to send chunked message to channel " + channelId + ": " + e.getMessage());
 			}
 		}
 	}
