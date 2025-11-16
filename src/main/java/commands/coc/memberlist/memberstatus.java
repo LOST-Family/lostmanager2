@@ -41,6 +41,9 @@ public class memberstatus extends ListenerAdapter {
 		}
 
 		String clantag = clanOption.getAsString();
+		
+		OptionMapping disableRolecheckOption = event.getOption("disable_rolecheck");
+		boolean disableRolecheck = disableRolecheckOption != null && "true".equals(disableRolecheckOption.getAsString());
 
 		Clan c = new Clan(clantag);
 
@@ -74,21 +77,23 @@ public class memberstatus extends ListenerAdapter {
 
 		String wrongrolestr = "";
 
-		for (String tag : taglistapi) {
-			if (taglistdb.contains(tag)) {
-				Player p = new Player(tag);
-				RoleType roleapi = p.getRoleAPI();
-				RoleType roledb = p.getRoleDB();
-				if (roledb == RoleType.LEADER) {
-					roledb = RoleType.COLEADER;
-				}
-				if (roleapi == RoleType.LEADER) {
-					continue;
-				}
-				if (roledb != roleapi) {
-					wrongrolestr += p.getInfoStringDB() + ": \n";
-					wrongrolestr += "- Ingame: " + getRoleString(roleapi) + "\n- Datenbank: " + getRoleString(roledb)
-							+ "\n\n";
+		if (!disableRolecheck) {
+			for (String tag : taglistapi) {
+				if (taglistdb.contains(tag)) {
+					Player p = new Player(tag);
+					RoleType roleapi = p.getRoleAPI();
+					RoleType roledb = p.getRoleDB();
+					if (roledb == RoleType.LEADER) {
+						roledb = RoleType.COLEADER;
+					}
+					if (roleapi == RoleType.LEADER) {
+						continue;
+					}
+					if (roledb != roleapi) {
+						wrongrolestr += p.getInfoStringDB() + ": \n";
+						wrongrolestr += "- Ingame: " + getRoleString(roleapi) + "\n- Datenbank: " + getRoleString(roledb)
+								+ "\n\n";
+					}
 				}
 			}
 		}
@@ -111,10 +116,14 @@ public class memberstatus extends ListenerAdapter {
 		desc += membernotinclanstr == "" ? "---\n\n" : MessageUtil.unformat(membernotinclanstr) + "\n";
 		desc += "**Kein Mitglied, ingame im Clan:**\n";
 		desc += inclannotmemberstr == "" ? "---\n\n" : MessageUtil.unformat(inclannotmemberstr) + "\n";
-		desc += "**Im Clan, falsche Rolle:**\n";
-		desc += wrongrolestr == "" ? "---\n\n" : MessageUtil.unformat(wrongrolestr) + "\n";
+		
+		if (!disableRolecheck) {
+			desc += "**Im Clan, falsche Rolle:**\n";
+			desc += wrongrolestr == "" ? "---\n\n" : MessageUtil.unformat(wrongrolestr) + "\n";
+		}
 
-		Button refreshButton = Button.secondary("memberstatus_" + clantag, "\u200B").withEmoji(Emoji.fromUnicode("🔁"));
+		String buttonId = "memberstatus_" + clantag + (disableRolecheck ? "_norolecheck" : "");
+		Button refreshButton = Button.secondary(buttonId, "\u200B").withEmoji(Emoji.fromUnicode("🔁"));
 
 		ZonedDateTime jetzt = ZonedDateTime.now(ZoneId.of("Europe/Berlin"));
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
@@ -139,6 +148,14 @@ public class memberstatus extends ListenerAdapter {
 		if (focused.equals("clan")) {
 			List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
 
+			event.replyChoices(choices).queue(_ -> {
+			}, _ -> {
+			});
+		} else if (focused.equals("disable_rolecheck")) {
+			List<Command.Choice> choices = new ArrayList<>();
+			if ("true".startsWith(input.toLowerCase())) {
+				choices.add(new Command.Choice("true", "true"));
+			}
 			event.replyChoices(choices).queue(_ -> {
 			}, _ -> {
 			});
@@ -169,7 +186,16 @@ public class memberstatus extends ListenerAdapter {
 
 		event.deferEdit().queue();
 
-		String clantag = id.substring("memberstatus_".length());
+		// Parse button ID: memberstatus_<clantag> or memberstatus_<clantag>_norolecheck
+		String idAfterPrefix = id.substring("memberstatus_".length());
+		boolean disableRolecheck = idAfterPrefix.endsWith("_norolecheck");
+		String clantag;
+		if (disableRolecheck) {
+			clantag = idAfterPrefix.substring(0, idAfterPrefix.length() - "_norolecheck".length());
+		} else {
+			clantag = idAfterPrefix;
+		}
+		
 		String title = "Memberstatus";
 
 		event.getInteraction().getHook()
@@ -213,21 +239,23 @@ public class memberstatus extends ListenerAdapter {
 
 				String wrongrolestr = "";
 
-				for (String tag : taglistapi) {
-					if (taglistdb.contains(tag)) {
-						Player p = new Player(tag);
-						RoleType roleapi = p.getRoleAPI();
-						RoleType roledb = p.getRoleDB();
-						if (roledb == RoleType.LEADER) {
-							roledb = RoleType.COLEADER;
-						}
-						if (roleapi == RoleType.LEADER) {
-							continue;
-						}
-						if (roledb != roleapi) {
-							wrongrolestr += p.getInfoStringDB() + ": \n";
-							wrongrolestr += "- Ingame: " + getRoleString(roleapi) + "\n- Datenbank: "
-									+ getRoleString(roledb) + "\n\n";
+				if (!disableRolecheck) {
+					for (String tag : taglistapi) {
+						if (taglistdb.contains(tag)) {
+							Player p = new Player(tag);
+							RoleType roleapi = p.getRoleAPI();
+							RoleType roledb = p.getRoleDB();
+							if (roledb == RoleType.LEADER) {
+								roledb = RoleType.COLEADER;
+							}
+							if (roleapi == RoleType.LEADER) {
+								continue;
+							}
+							if (roledb != roleapi) {
+								wrongrolestr += p.getInfoStringDB() + ": \n";
+								wrongrolestr += "- Ingame: " + getRoleString(roleapi) + "\n- Datenbank: "
+										+ getRoleString(roledb) + "\n\n";
+							}
 						}
 					}
 				}
@@ -250,10 +278,14 @@ public class memberstatus extends ListenerAdapter {
 				desc += membernotinclanstr == "" ? "---\n\n" : MessageUtil.unformat(membernotinclanstr) + "\n";
 				desc += "**Kein Mitglied, ingame im Clan:**\n";
 				desc += inclannotmemberstr == "" ? "---\n\n" : MessageUtil.unformat(inclannotmemberstr) + "\n";
-				desc += "**Im Clan, falsche Rolle:**\n";
-				desc += wrongrolestr == "" ? "---\n\n" : MessageUtil.unformat(wrongrolestr) + "\n";
+				
+				if (!disableRolecheck) {
+					desc += "**Im Clan, falsche Rolle:**\n";
+					desc += wrongrolestr == "" ? "---\n\n" : MessageUtil.unformat(wrongrolestr) + "\n";
+				}
 
-				Button refreshButton = Button.secondary("memberstatus_" + clantag, "\u200B")
+				String buttonId = "memberstatus_" + clantag + (disableRolecheck ? "_norolecheck" : "");
+				Button refreshButton = Button.secondary(buttonId, "\u200B")
 						.withEmoji(Emoji.fromUnicode("🔁"));
 
 				ZonedDateTime jetzt = ZonedDateTime.now(ZoneId.of("Europe/Berlin"));

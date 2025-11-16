@@ -179,6 +179,11 @@ public class Bot extends ListenerAdapter {
 											new OptionData(
 													OptionType.STRING, "clan",
 													"Der Clan, welcher ausgegeben werden soll.", true)
+													.setAutoComplete(true))
+									.addOptions(
+											new OptionData(
+													OptionType.STRING, "disable_rolecheck",
+													"Überspringe die Rollenüberprüfung (nur 'true' als Wert)", false)
 													.setAutoComplete(true)),
 
 							Commands.slash("cwlmemberstatus",
