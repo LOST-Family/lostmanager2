@@ -634,7 +634,7 @@ public class listeningevent extends ListenerAdapter {
 
 			// Parse: listeningevent_cwdonator_params_{clantag}_{duration}_{actiontype}_{channelid}
 			String[] parts = modalId.split("_");
-			if (parts.length < 6) {
+			if (parts.length < 7) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
 						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
 				return;
