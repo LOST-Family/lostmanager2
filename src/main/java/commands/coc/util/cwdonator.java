@@ -52,6 +52,17 @@ public class cwdonator extends ListenerAdapter {
 			OptionMapping useListsOption = event.getOption("use_lists");
 			boolean useLists = useListsOption != null && "true".equals(useListsOption.getAsString());
 
+			ArrayList<String> allclantags = DBManager.getAllClans();
+
+			if (!allclantags.contains(clantag) && useLists) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Die Listenfunktion kann nur auf registrierte Clans ausgeführt werden.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
+
 			User userexecuted = new User(event.getUser().getId());
 			HashMap<String, Player.RoleType> clanroles = userexecuted.getClanRoles();
 			boolean ping = false;
@@ -395,7 +406,7 @@ public class cwdonator extends ListenerAdapter {
 				Collections.shuffle(eligiblePlayers);
 
 				chosen = eligiblePlayers.get(0);
-				
+
 				if (isLeaderOrCoLeader(chosen) && excludeLeaders) {
 					listA.remove(chosen.getTag());
 					listB.add(chosen.getTag());
@@ -415,7 +426,7 @@ public class cwdonator extends ListenerAdapter {
 			} else {
 				listA.addAll(listB);
 				listB.clear();
-				
+
 				String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
 				try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
 					updateStmt.setArray(1, conn.createArrayOf("text", listA.toArray()));
