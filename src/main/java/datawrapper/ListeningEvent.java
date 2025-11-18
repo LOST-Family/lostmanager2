@@ -1352,11 +1352,12 @@ public class ListeningEvent {
 				Collections.shuffle(eligiblePlayers);
 
 				chosen = eligiblePlayers.get(0);
+				System.out.println(chosen.getInfoStringAPI() + " with Role " + chosen.getRoleDB());
 
-				if (isLeaderOrCoLeaderForEvent(chosen)) {
+				if (isLeaderOrCoLeaderForEvent(chosen) && excludeLeaders) {
 					listA.remove(chosen.getTag());
 					listB.add(chosen.getTag());
-					
+
 					// Update database
 					String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
 					try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
@@ -1365,24 +1366,23 @@ public class ListeningEvent {
 						updateStmt.setString(3, clanTag);
 						updateStmt.executeUpdate();
 					}
-					
+
 					// Recursive call to pick again
 					return pickPlayerFromListAForEvent(clanTag, warMemberList, map, excludeLeaders);
 				}
-			}
-			
-			// Fallback logic
-			if (chosen == null) {
-				for (Player p : warMemberList) {
-					if (listA.contains(p.getTag())) {
-						chosen = p;
-						break;
-					}
+			} else {
+				listA.addAll(listB);
+				listB.clear();
+				
+				String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
+				try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+					updateStmt.setArray(1, conn.createArrayOf("text", listA.toArray()));
+					updateStmt.setArray(2, conn.createArrayOf("text", listB.toArray()));
+					updateStmt.setString(3, clanTag);
+					updateStmt.executeUpdate();
 				}
-			}
-			
-			if (chosen == null && !warMemberList.isEmpty()) {
-				chosen = warMemberList.get(0);
+				// Recursive call to pick again
+				return pickPlayerFromListAForEvent(clanTag, warMemberList, map, excludeLeaders);
 			}
 			
 			if (chosen != null) {

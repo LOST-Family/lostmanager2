@@ -32,138 +32,139 @@ public class cwdonator extends ListenerAdapter {
 		event.deferReply().queue();
 
 		new Thread(() -> {
-		String title = "CW-Spender";
+			String title = "CW-Spender";
 
-		OptionMapping clanOption = event.getOption("clan");
+			OptionMapping clanOption = event.getOption("clan");
 
-		if (clanOption == null) {
-			event.getHook().editOriginalEmbeds(
-					MessageUtil.buildEmbed(title, "Der Parameter ist erforderlich!", MessageUtil.EmbedType.ERROR))
-					.queue();
-			return;
-		}
-
-		String clantag = clanOption.getAsString();
-		
-		// Get new optional parameters
-		OptionMapping excludeLeadersOption = event.getOption("exclude_leaders");
-		boolean excludeLeaders = excludeLeadersOption != null && "true".equals(excludeLeadersOption.getAsString());
-		
-		OptionMapping useListsOption = event.getOption("use_lists");
-		boolean useLists = useListsOption != null && "true".equals(useListsOption.getAsString());
-
-		User userexecuted = new User(event.getUser().getId());
-		HashMap<String, Player.RoleType> clanroles = userexecuted.getClanRoles();
-		boolean ping = false;
-		for (String key : clanroles.keySet()) {
-			if (clanroles.get(key) == Player.RoleType.ADMIN || clanroles.get(key) == Player.RoleType.LEADER
-					|| clanroles.get(key) == Player.RoleType.COLEADER) {
-				ping = true;
-				break;
-			}
-		}
-
-		String desc = "";
-		desc += "ausgeführt von " + event.getUser().getAsMention() + "\n";
-		desc += "## " + title + "\n";
-		desc += "Folgende Mitglieder wurden zufällig als Spender ausgewählt: \n\n";
-
-		Clan clan = new Clan(clantag);
-
-		ArrayList<Player> warMemberList = clan.getWarMemberList();
-
-		if (warMemberList == null) {
-			warMemberList = clan.getCWLMemberList();
-			if (warMemberList == null) {
-				event.getHook()
-						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-								"Dieser Clan ist gerade nicht in einem Clankrieg oder in der Clankriegsliga.",
-								MessageUtil.EmbedType.ERROR))
+			if (clanOption == null) {
+				event.getHook().editOriginalEmbeds(
+						MessageUtil.buildEmbed(title, "Der Parameter ist erforderlich!", MessageUtil.EmbedType.ERROR))
 						.queue();
 				return;
 			}
-		}
 
-		int cwsize = warMemberList.size();
+			String clantag = clanOption.getAsString();
 
-		HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> mappings = getMappings();
+			// Get new optional parameters
+			OptionMapping excludeLeadersOption = event.getOption("exclude_leaders");
+			boolean excludeLeaders = excludeLeadersOption != null && "true".equals(excludeLeadersOption.getAsString());
 
-		ArrayList<Tuple<Integer, Integer>> currentmap = mappings.get(cwsize);
-		
-		// If using lists, initialize/sync them
-		if (useLists) {
-			initializeAndSyncLists(clantag, clan);
-		}
+			OptionMapping useListsOption = event.getOption("use_lists");
+			boolean useLists = useListsOption != null && "true".equals(useListsOption.getAsString());
 
-		for (Tuple<Integer, Integer> map : currentmap) {
-			Player chosen = null;
-			
-			if (useLists) {
-				// Pick from list A
-				chosen = pickPlayerFromListA(clantag, warMemberList, map, excludeLeaders);
-			} else {
-				// Original random logic
-				Collections.shuffle(warMemberList);
-				chosen = warMemberList.get(0);
-				int mapposition = chosen.getWarMapPosition();
-				int i = 0;
-				while (true) {
-					if (mapposition >= map.getFirst() && mapposition <= map.getSecond()) {
-						chosen = warMemberList.get(i);
-						mapposition = chosen.getWarMapPosition();
-						i++;
-						continue;
-					}
-					if (chosen.getWarPreference() == false) {
-						chosen = warMemberList.get(i);
-						mapposition = chosen.getWarMapPosition();
-						i++;
-						continue;
-					}
-					// Check exclude_leaders if enabled
-					if (excludeLeaders && isLeaderOrCoLeader(chosen)) {
-						chosen = warMemberList.get(i);
-						mapposition = chosen.getWarMapPosition();
-						i++;
-						continue;
-					}
+			User userexecuted = new User(event.getUser().getId());
+			HashMap<String, Player.RoleType> clanroles = userexecuted.getClanRoles();
+			boolean ping = false;
+			for (String key : clanroles.keySet()) {
+				if (clanroles.get(key) == Player.RoleType.ADMIN || clanroles.get(key) == Player.RoleType.LEADER
+						|| clanroles.get(key) == Player.RoleType.COLEADER) {
+					ping = true;
 					break;
 				}
 			}
-			
-			if (chosen == null) {
-				continue; // Should not happen but safety check
-			}
-			
-			int mapposition = chosen.getWarMapPosition();
-			warMemberList.remove(chosen);
-			if (ping) {
-				if (chosen.getUser() != null) {
-					desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI() + "(<@"
-							+ chosen.getUser().getUserID() + ">) (Nr. " + mapposition + ")\n";
-				} else {
-					desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI()
-							+ "(nicht verlinkt) (Nr. " + mapposition + ")\n";
-				}
-			} else {
-				if (chosen.getUser() != null) {
-					desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI() + "(UserID: "
-							+ chosen.getUser().getUserID() + ") (Nr. " + mapposition + ")\n";
-				} else {
-					desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI()
-							+ "(nicht verlinkt) (Nr. " + mapposition + ")\n";
-				}
-			}
-		}
 
-		event.getHook().editOriginal(".").queue(message -> {
-			message.delete().queue();
-		});
-		event.getChannel().sendMessage(desc).queue();
+			String desc = "";
+			desc += "ausgeführt von " + event.getUser().getAsMention() + "\n";
+			desc += "## " + title + "\n";
+			desc += "Folgende Mitglieder wurden zufällig als Spender ausgewählt: \n\n";
+
+			Clan clan = new Clan(clantag);
+
+			ArrayList<Player> warMemberList = clan.getWarMemberList();
+
+			if (warMemberList == null) {
+				warMemberList = clan.getCWLMemberList();
+				if (warMemberList == null) {
+					event.getHook()
+							.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+									"Dieser Clan ist gerade nicht in einem Clankrieg oder in der Clankriegsliga.",
+									MessageUtil.EmbedType.ERROR))
+							.queue();
+					return;
+				}
+			}
+
+			int cwsize = warMemberList.size();
+
+			HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> mappings = getMappings();
+
+			ArrayList<Tuple<Integer, Integer>> currentmap = mappings.get(cwsize);
+
+			// If using lists, initialize/sync them
+			if (useLists) {
+				initializeAndSyncLists(clantag, clan);
+			}
+
+			for (Tuple<Integer, Integer> map : currentmap) {
+				Player chosen = null;
+
+				if (useLists) {
+					// Pick from list A
+					chosen = pickPlayerFromListA(clantag, warMemberList, map, excludeLeaders);
+				} else {
+					// Original random logic
+					Collections.shuffle(warMemberList);
+					chosen = warMemberList.get(0);
+					int mapposition = chosen.getWarMapPosition();
+					int i = 0;
+					while (true) {
+						if (mapposition >= map.getFirst() && mapposition <= map.getSecond()) {
+							chosen = warMemberList.get(i);
+							mapposition = chosen.getWarMapPosition();
+							i++;
+							continue;
+						}
+						if (chosen.getWarPreference() == false) {
+							chosen = warMemberList.get(i);
+							mapposition = chosen.getWarMapPosition();
+							i++;
+							continue;
+						}
+						// Check exclude_leaders if enabled
+						if (excludeLeaders && isLeaderOrCoLeader(chosen)) {
+							chosen = warMemberList.get(i);
+							mapposition = chosen.getWarMapPosition();
+							i++;
+							continue;
+						}
+						break;
+					}
+				}
+
+				if (chosen == null) {
+					continue; // Should not happen but safety check
+				}
+
+				int mapposition = chosen.getWarMapPosition();
+				warMemberList.remove(chosen);
+				if (ping) {
+					if (chosen.getUser() != null) {
+						desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI() + "(<@"
+								+ chosen.getUser().getUserID() + ">) (Nr. " + mapposition + ")\n";
+					} else {
+						desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI()
+								+ "(nicht verlinkt) (Nr. " + mapposition + ")\n";
+					}
+				} else {
+					if (chosen.getUser() != null) {
+						desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI() + "(UserID: "
+								+ chosen.getUser().getUserID() + ") (Nr. " + mapposition + ")\n";
+					} else {
+						desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI()
+								+ "(nicht verlinkt) (Nr. " + mapposition + ")\n";
+					}
+				}
+			}
+
+			event.getHook().editOriginal(".").queue(message -> {
+				message.delete().queue();
+			});
+			event.getChannel().sendMessage(desc).queue();
 
 		}, "CwdonatorCommand-" + event.getUser().getId()).start();
 
 	}
+
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("cwdonator"))
@@ -171,26 +172,27 @@ public class cwdonator extends ListenerAdapter {
 
 		new Thread(() -> {
 
-		String focused = event.getFocusedOption().getName();
-		String input = event.getFocusedOption().getValue();
+			String focused = event.getFocusedOption().getName();
+			String input = event.getFocusedOption().getValue();
 
-		if (focused.equals("clan")) {
-			List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
+			if (focused.equals("clan")) {
+				List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
 
-			event.replyChoices(choices).queue(_ -> {
-			}, _ -> {
-			});
-		} else if (focused.equals("exclude_leaders") || focused.equals("use_lists")) {
-			List<Command.Choice> choices = new ArrayList<>();
-			if ("true".startsWith(input.toLowerCase())) {
-				choices.add(new Command.Choice("true", "true"));
+				event.replyChoices(choices).queue(_ -> {
+				}, _ -> {
+				});
+			} else if (focused.equals("exclude_leaders") || focused.equals("use_lists")) {
+				List<Command.Choice> choices = new ArrayList<>();
+				if ("true".startsWith(input.toLowerCase())) {
+					choices.add(new Command.Choice("true", "true"));
+				}
+				event.replyChoices(choices).queue(_ -> {
+				}, _ -> {
+				});
 			}
-			event.replyChoices(choices).queue(_ -> {
-			}, _ -> {
-			});
-		}
 		}, "CwdonatorAutocomplete-" + event.getUser().getId()).start();
 	}
+
 	private HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> getMappings() {
 		if (map == null) {
 			HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> mappings = new HashMap<>();
@@ -250,7 +252,7 @@ public class cwdonator extends ListenerAdapter {
 		}
 		return map;
 	}
-	
+
 	/**
 	 * Initialize and synchronize cwdonator lists for a clan
 	 */
@@ -259,14 +261,14 @@ public class cwdonator extends ListenerAdapter {
 			// Check if lists exist
 			String checkSql = "SELECT list_a, list_b FROM cwdonator_lists WHERE clan_tag = ?";
 			try (Connection conn = dbutil.Connection.getConnection();
-				 PreparedStatement stmt = conn.prepareStatement(checkSql)) {
+					PreparedStatement stmt = conn.prepareStatement(checkSql)) {
 				stmt.setString(1, clanTag);
 				ResultSet rs = stmt.executeQuery();
-				
+
 				ArrayList<String> listA = new ArrayList<>();
 				ArrayList<String> listB = new ArrayList<>();
 				boolean exists = false;
-				
+
 				if (rs.next()) {
 					exists = true;
 					Array listAArray = rs.getArray("list_a");
@@ -284,7 +286,7 @@ public class cwdonator extends ListenerAdapter {
 						}
 					}
 				}
-				
+
 				// Get current clan members
 				ArrayList<Player> clanMembers = clan.getPlayersDB();
 				ArrayList<String> currentTags = new ArrayList<>();
@@ -293,7 +295,7 @@ public class cwdonator extends ListenerAdapter {
 						currentTags.add(p.getTag());
 					}
 				}
-				
+
 				if (!exists) {
 					// Create new lists with all current members in List A
 					listA.addAll(currentTags);
@@ -312,11 +314,11 @@ public class cwdonator extends ListenerAdapter {
 							listA.add(tag);
 						}
 					}
-					
+
 					// Remove players not in clan from both lists
 					listA.removeIf(tag -> !currentTags.contains(tag));
 					listB.removeIf(tag -> !currentTags.contains(tag));
-					
+
 					// Update database
 					String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
 					try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
@@ -332,18 +334,18 @@ public class cwdonator extends ListenerAdapter {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Pick a player from List A, move to List B, handle list swap if needed
 	 */
-	private Player pickPlayerFromListA(String clanTag, ArrayList<Player> warMemberList, 
-									   Tuple<Integer, Integer> map, boolean excludeLeaders) {
+	private Player pickPlayerFromListA(String clanTag, ArrayList<Player> warMemberList, Tuple<Integer, Integer> map,
+			boolean excludeLeaders) {
 		try (Connection conn = dbutil.Connection.getConnection()) {
 			// Get current lists
 			String selectSql = "SELECT list_a, list_b FROM cwdonator_lists WHERE clan_tag = ?";
 			ArrayList<String> listA = new ArrayList<>();
 			ArrayList<String> listB = new ArrayList<>();
-			
+
 			try (PreparedStatement stmt = conn.prepareStatement(selectSql)) {
 				stmt.setString(1, clanTag);
 				ResultSet rs = stmt.executeQuery();
@@ -364,13 +366,13 @@ public class cwdonator extends ListenerAdapter {
 					}
 				}
 			}
-			
+
 			// If List A is empty, swap List B to List A
 			if (listA.isEmpty()) {
 				listA.addAll(listB);
 				listB.clear();
 			}
-			
+
 			// Build a list of eligible players from warMemberList that are in List A
 			ArrayList<Player> eligiblePlayers = new ArrayList<>();
 			for (Player p : warMemberList) {
@@ -386,18 +388,19 @@ public class cwdonator extends ListenerAdapter {
 					eligiblePlayers.add(p);
 				}
 			}
-			
+
 			// Pick a player
 			Player chosen = null;
 			if (!eligiblePlayers.isEmpty()) {
 				Collections.shuffle(eligiblePlayers);
 
 				chosen = eligiblePlayers.get(0);
+				System.out.println(chosen.getInfoStringAPI() + " with Role " + chosen.getRoleDB());
 
-				if (isLeaderOrCoLeader(chosen)) {
+				if (isLeaderOrCoLeader(chosen) && excludeLeaders) {
 					listA.remove(chosen.getTag());
 					listB.add(chosen.getTag());
-					
+
 					// Update database
 					String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
 					try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
@@ -406,32 +409,30 @@ public class cwdonator extends ListenerAdapter {
 						updateStmt.setString(3, clanTag);
 						updateStmt.executeUpdate();
 					}
-					
+
 					// Recursive call to pick again
 					return pickPlayerFromListA(clanTag, warMemberList, map, excludeLeaders);
 				}
-			}
-			
-			// If no player found, fall back to any player from List A in war
-			if (chosen == null) {
-				for (Player p : warMemberList) {
-					if (listA.contains(p.getTag())) {
-						chosen = p;
-						break;
-					}
+			} else {
+				listA.addAll(listB);
+				listB.clear();
+				
+				String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
+				try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+					updateStmt.setArray(1, conn.createArrayOf("text", listA.toArray()));
+					updateStmt.setArray(2, conn.createArrayOf("text", listB.toArray()));
+					updateStmt.setString(3, clanTag);
+					updateStmt.executeUpdate();
 				}
+				// Recursive call to pick again
+				return pickPlayerFromListA(clanTag, warMemberList, map, excludeLeaders);
 			}
-			
-			// If still no player, fall back to first available
-			if (chosen == null && !warMemberList.isEmpty()) {
-				chosen = warMemberList.get(0);
-			}
-			
+
 			if (chosen != null) {
 				// Move chosen player from List A to List B
 				listA.remove(chosen.getTag());
 				listB.add(chosen.getTag());
-				
+
 				// Update database
 				String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
 				try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
@@ -441,7 +442,7 @@ public class cwdonator extends ListenerAdapter {
 					updateStmt.executeUpdate();
 				}
 			}
-			
+
 			return chosen;
 		} catch (Exception e) {
 			System.err.println("Error picking player from List A: " + e.getMessage());
@@ -454,7 +455,7 @@ public class cwdonator extends ListenerAdapter {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Check if a player is a leader or co-leader
 	 */
