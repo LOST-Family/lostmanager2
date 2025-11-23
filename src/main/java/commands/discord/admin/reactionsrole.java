@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import datawrapper.User;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
@@ -101,25 +100,25 @@ public class reactionsrole extends ListenerAdapter {
 										roleGiven, notInGuild, processedCount, totalUsers);
 							} else {
 								guild.addRoleToMember(member, role).queue(
-										success -> {
+										_ -> {
 											roleGiven.add(member.getAsMention());
 											checkAndSendResponse(event, title, emoji, messagelink, role, alreadyHadRole,
 													roleGiven, notInGuild, processedCount, totalUsers);
 										},
-										error -> {
+										_ -> {
 											notInGuild.add(member.getAsMention());
 											checkAndSendResponse(event, title, emoji, messagelink, role, alreadyHadRole,
 													roleGiven, notInGuild, processedCount, totalUsers);
 										});
 							}
-						}, error -> {
+						}, _ -> {
 							notInGuild.add(user.getAsMention());
 							checkAndSendResponse(event, title, emoji, messagelink, role, alreadyHadRole, roleGiven,
 									notInGuild, processedCount, totalUsers);
 						});
 					}
 				});
-			}, error -> {
+			}, _ -> {
 				event.getHook()
 						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 								"Nachricht mit dieser ID konnte nicht gefunden werden.", MessageUtil.EmbedType.ERROR))
