@@ -623,10 +623,8 @@ public class ListeningEvent {
 		ArrayList<String> fillerTags = DBUtil.getArrayListFromSQL(fillerSql, String.class, clan.getTag(), endTimeTs);
 
 		StringBuilder message = new StringBuilder();
-		message.append("## " + clan.getNameAPI() + " Clankrieg - Fehlende Angriffe\n");
-		message.append("*abzüglich Filler, wenn abgespeichert* \n");
+		message.append("## " + clan.getNameAPI() + " Clankrieg - ");
 		if (getDurationUntilEnd() > 0) {
-			message.append("Verbleibende Zeit im Krieg:");
 			int secondsLeft = (int) (getDurationUntilEnd() / 1000);
 			int minutesLeft = secondsLeft / 60;
 			int hoursLeft = minutesLeft / 60;
@@ -643,10 +641,11 @@ public class ListeningEvent {
 			if (secondsLeft > 0) {
 				message.append(" **" + secondsLeft).append("s**");
 			}
-			message.append(" \n\n");
+			message.append(" verbleibend\n");
 		} else {
-			message.append("**Krieg beendet.**\n\n");
+			message.append("**Krieg beendet.**\n");
 		}
+		message.append("*abzüglich Filler, wenn abgespeichert* \n\n");
 
 		boolean hasMissedAttacks = false;
 		for (int i = 0; i < members.length(); i++) {
