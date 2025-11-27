@@ -398,7 +398,7 @@ public class ListeningEvent {
 		// Check action values for parameters (backwards compatible)
 		boolean useLists = false;
 		boolean excludeLeaders = false;
-		
+
 		for (ActionValue av : getActionValues()) {
 			if (av.getSaved() == ActionValue.kind.value && av.getValue() != null) {
 				if (av.getValue() == 1L) {
@@ -431,7 +431,7 @@ public class ListeningEvent {
 
 		for (util.Tuple<Integer, Integer> map : currentmap) {
 			Player chosen = null;
-			
+
 			if (useLists) {
 				// Pick from list A
 				chosen = pickPlayerFromListAForEvent(getClanTag(), warMemberList, map, excludeLeaders);
@@ -467,11 +467,11 @@ public class ListeningEvent {
 			if (chosen == null && !warMemberList.isEmpty()) {
 				chosen = warMemberList.get(0);
 			}
-			
+
 			if (chosen == null) {
 				continue;
 			}
-			
+
 			int mapposition = chosen.getWarMapPosition();
 			warMemberList.remove(chosen);
 			message.append(map.getFirst()).append("-").append(map.getSecond()).append(": ").append(chosen.getNameAPI());
@@ -604,7 +604,8 @@ public class ListeningEvent {
 	}
 
 	private void handleCWMissedAttacks(Clan clan, org.json.JSONObject cwJson) {
-		// Get required attacks from action values (default to attacksPerMember from API)
+		// Get required attacks from action values (default to attacksPerMember from
+		// API)
 		int attacksPerMember = cwJson.getInt("attacksPerMember");
 		int requiredAttacks = attacksPerMember;
 		for (ActionValue av : getActionValues()) {
@@ -629,13 +630,13 @@ public class ListeningEvent {
 		CWMissedAttacksResult result = buildCWMissedAttacksMessage(clan, cwJson, requiredAttacks, fillerTags, false);
 
 		// Determine if this is an end-of-war event (duration = 0)
-		boolean isEndOfWarEvent = getDurationUntilEnd() == 0;
+		boolean isEndOfWarEvent = getDurationUntilEnd() <= 0;
 
 		if (isEndOfWarEvent && result.hasMissedAttacks) {
 			// At end of war: send initial message, then schedule 5-minute verification
 			// Don't process kickpoints yet - wait for verification
 			Message sentMessage = sendMessageToChannelAndReturn(result.message);
-			
+
 			if (sentMessage != null) {
 				// Store references needed for the delayed update
 				final String clanTag = clan.getTag();
@@ -652,7 +653,7 @@ public class ListeningEvent {
 				ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 				scheduler.schedule(() -> {
 					try {
-						handleCWMissedAttacksDelayedVerification(clanTag, finalRequiredAttacks, finalEndTimeTs, 
+						handleCWMissedAttacksDelayedVerification(clanTag, finalRequiredAttacks, finalEndTimeTs,
 								finalFillerTags, messageId, channelId, thisEvent, originalMessage);
 					} catch (Exception e) {
 						System.err.println("Error in delayed CW verification: " + e.getMessage());
@@ -667,7 +668,8 @@ public class ListeningEvent {
 		} else if (isEndOfWarEvent && !result.hasMissedAttacks) {
 			// End of war but no missed attacks - nothing to send or schedule
 			// Clean up fillers
-			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clan.getTag(), endTimeTs);
+			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clan.getTag(),
+					endTimeTs);
 		} else {
 			// Not end of war (e.g., reminder during war) - use original behavior
 			if (result.hasMissedAttacks) {
@@ -678,14 +680,15 @@ public class ListeningEvent {
 
 	/**
 	 * Handles the delayed verification of CW missed attacks after 5 minutes.
-	 * Fetches fresh data, updates the message, and processes kickpoints if appropriate.
+	 * Fetches fresh data, updates the message, and processes kickpoints if
+	 * appropriate.
 	 */
-	private void handleCWMissedAttacksDelayedVerification(String clanTag, int requiredAttacks, 
-			java.sql.Timestamp endTimeTs, ArrayList<String> fillerTags, long messageId, 
-			String channelId, ListeningEvent event, String originalMessage) {
-		
+	private void handleCWMissedAttacksDelayedVerification(String clanTag, int requiredAttacks,
+			java.sql.Timestamp endTimeTs, ArrayList<String> fillerTags, long messageId, String channelId,
+			ListeningEvent event, String originalMessage) {
+
 		System.out.println("Starting 5-minute CW verification for clan " + clanTag);
-		
+
 		try {
 			// Fetch fresh clan war data
 			Clan clan = new Clan(clanTag);
@@ -694,11 +697,11 @@ public class ListeningEvent {
 
 			// Check if war data is still available (state is notInWar or warEnded)
 			boolean dataIsReliable = currentState.equals("notInWar") || currentState.equals("warEnded");
-			
+
 			String updatedMessage;
 			boolean shouldProcessKickpoints = false;
 			CWMissedAttacksResult result = null;
-			
+
 			if (dataIsReliable) {
 				// Data is reliable - build updated message with fresh data
 				result = buildCWMissedAttacksMessage(clan, cwJson, requiredAttacks, fillerTags, true);
@@ -708,7 +711,8 @@ public class ListeningEvent {
 				// New war has already started - data is not reliable
 				// Use the original message content and just append a warning
 				// Don't try to build a new message as the API would return data for the new war
-				updatedMessage = originalMessage + "\n\n*Daten sind nicht zuverlässig, da Krieg direkt wieder gestartet wurde*";
+				updatedMessage = originalMessage
+						+ "\n\n*Daten sind nicht zuverlässig, da Krieg direkt wieder gestartet wurde*";
 				shouldProcessKickpoints = false; // Don't process kickpoints with unreliable data
 			}
 
@@ -718,24 +722,25 @@ public class ListeningEvent {
 			// Process kickpoints if appropriate
 			if (shouldProcessKickpoints && result != null) {
 				for (PlayerMissedAttacks pma : result.playersWithMissedAttacks) {
-					addKickpointForPlayer(pma.player, "CW Angriffe verpasst (" + pma.attacks + "/" + requiredAttacks + ")");
+					addKickpointForPlayer(pma.player,
+							"CW Angriffe verpasst (" + pma.attacks + "/" + requiredAttacks + ")");
 				}
 			}
 
 			// Clean up fillers after processing
 			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clanTag, endTimeTs);
-			
-			System.out.println("Completed 5-minute CW verification for clan " + clanTag + 
-					" (dataReliable=" + dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
-					
+
+			System.out.println("Completed 5-minute CW verification for clan " + clanTag + " (dataReliable="
+					+ dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
+
 		} catch (Exception e) {
 			System.err.println("Error in CW delayed verification for clan " + clanTag + ": " + e.getMessage());
 			e.printStackTrace();
-			
+
 			// On error, try to update the message with an error note appended to original
 			try {
-				editMessageInChannel(channelId, messageId, 
-						originalMessage + "\n\n*Fehler bei der 5-Minuten-Überprüfung. Daten möglicherweise nicht aktuell.*");
+				editMessageInChannel(channelId, messageId, originalMessage
+						+ "\n\n*Fehler bei der 5-Minuten-Überprüfung. Daten möglicherweise nicht aktuell.*");
 			} catch (Exception e2) {
 				System.err.println("Failed to update message with error: " + e2.getMessage());
 			}
@@ -749,7 +754,7 @@ public class ListeningEvent {
 		String message;
 		boolean hasMissedAttacks;
 		ArrayList<PlayerMissedAttacks> playersWithMissedAttacks;
-		
+
 		CWMissedAttacksResult(String message, boolean hasMissedAttacks, ArrayList<PlayerMissedAttacks> players) {
 			this.message = message;
 			this.hasMissedAttacks = hasMissedAttacks;
@@ -763,7 +768,7 @@ public class ListeningEvent {
 	private static class PlayerMissedAttacks {
 		Player player;
 		int attacks;
-		
+
 		PlayerMissedAttacks(Player player, int attacks) {
 			this.player = player;
 			this.attacks = attacks;
@@ -772,22 +777,23 @@ public class ListeningEvent {
 
 	/**
 	 * Builds the CW missed attacks message from the war data.
-	 * @param clan The clan
-	 * @param cwJson The clan war JSON data
-	 * @param requiredAttacks Required number of attacks
-	 * @param fillerTags List of filler player tags to exclude
+	 * 
+	 * @param clan                The clan
+	 * @param cwJson              The clan war JSON data
+	 * @param requiredAttacks     Required number of attacks
+	 * @param fillerTags          List of filler player tags to exclude
 	 * @param isVerificationPhase Whether this is the 5-minute verification phase
 	 * @return CWMissedAttacksResult containing the message and list of players
 	 */
-	private CWMissedAttacksResult buildCWMissedAttacksMessage(Clan clan, org.json.JSONObject cwJson, 
+	private CWMissedAttacksResult buildCWMissedAttacksMessage(Clan clan, org.json.JSONObject cwJson,
 			int requiredAttacks, ArrayList<String> fillerTags, boolean isVerificationPhase) {
-		
+
 		org.json.JSONObject clanData = cwJson.getJSONObject("clan");
 		org.json.JSONArray members = clanData.getJSONArray("members");
 
 		StringBuilder message = new StringBuilder();
 		message.append("## " + clan.getNameAPI() + " Clankrieg - ");
-		
+
 		if (!isVerificationPhase && getDurationUntilEnd() > 0) {
 			int secondsLeft = (int) (getDurationUntilEnd() / 1000);
 			int minutesLeft = secondsLeft / 60;
@@ -813,7 +819,7 @@ public class ListeningEvent {
 
 		boolean hasMissedAttacks = false;
 		ArrayList<PlayerMissedAttacks> playersWithMissedAttacks = new ArrayList<>();
-		
+
 		for (int i = 0; i < members.length(); i++) {
 			org.json.JSONObject member = members.getJSONObject(i);
 			String tag = member.getString("tag");
@@ -836,8 +842,11 @@ public class ListeningEvent {
 				hasMissedAttacks = true;
 				Player p = new Player(tag);
 				message.append("- ");
-				if (p.getUser() != null) {
-					message.append("(<@").append(p.getUser().getUserID()).append(">) ");
+
+				if (!isVerificationPhase && getDurationUntilEnd() > 0) {
+					if (p.getUser() != null) {
+						message.append("(<@").append(p.getUser().getUserID()).append(">) ");
+					}
 				}
 				message.append(name).append(" (").append(attacks).append("/").append(requiredAttacks).append(")");
 				message.append("\n");
@@ -850,7 +859,8 @@ public class ListeningEvent {
 	}
 
 	/**
-	 * Sends a message to the channel and returns the Message object for later editing.
+	 * Sends a message to the channel and returns the Message object for later
+	 * editing.
 	 */
 	private Message sendMessageToChannelAndReturn(String message) {
 		String channelId = getChannelID();
@@ -877,9 +887,9 @@ public class ListeningEvent {
 				MessageChannelUnion channel = Bot.getJda().getChannelById(MessageChannelUnion.class, channelId);
 				if (channel != null) {
 					channel.editMessageById(messageId, newContent).queue(
-						success -> System.out.println("Successfully edited message " + messageId),
-						error -> System.err.println("Failed to edit message " + messageId + ": " + error.getMessage())
-					);
+							_ -> System.out.println("Successfully edited message " + messageId),
+							error -> System.err
+									.println("Failed to edit message " + messageId + ": " + error.getMessage()));
 				}
 			} catch (Exception e) {
 				System.err.println("Failed to edit message in channel " + channelId + ": " + e.getMessage());
@@ -1403,7 +1413,7 @@ public class ListeningEvent {
 			}
 		}
 	}
-	
+
 	/**
 	 * Initialize and synchronize cwdonator lists for a clan (for listening events)
 	 */
@@ -1412,14 +1422,14 @@ public class ListeningEvent {
 			// Check if lists exist
 			String checkSql = "SELECT list_a, list_b FROM cwdonator_lists WHERE clan_tag = ?";
 			try (java.sql.Connection conn = dbutil.Connection.getConnection();
-				 java.sql.PreparedStatement stmt = conn.prepareStatement(checkSql)) {
+					java.sql.PreparedStatement stmt = conn.prepareStatement(checkSql)) {
 				stmt.setString(1, clanTag);
 				java.sql.ResultSet rs = stmt.executeQuery();
-				
+
 				ArrayList<String> listA = new ArrayList<>();
 				ArrayList<String> listB = new ArrayList<>();
 				boolean exists = false;
-				
+
 				if (rs.next()) {
 					exists = true;
 					java.sql.Array listAArray = rs.getArray("list_a");
@@ -1437,7 +1447,7 @@ public class ListeningEvent {
 						}
 					}
 				}
-				
+
 				// Get current clan members
 				ArrayList<Player> clanMembers = clan.getPlayersDB();
 				ArrayList<String> currentTags = new ArrayList<>();
@@ -1446,7 +1456,7 @@ public class ListeningEvent {
 						currentTags.add(p.getTag());
 					}
 				}
-				
+
 				if (!exists) {
 					// Create new lists with all current members in List A
 					listA.addAll(currentTags);
@@ -1465,11 +1475,11 @@ public class ListeningEvent {
 							listA.add(tag);
 						}
 					}
-					
+
 					// Remove players not in clan from both lists
 					listA.removeIf(tag -> !currentTags.contains(tag));
 					listB.removeIf(tag -> !currentTags.contains(tag));
-					
+
 					// Update database
 					String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
 					try (java.sql.PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
@@ -1485,18 +1495,18 @@ public class ListeningEvent {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Pick a player from List A for listening events
 	 */
-	private Player pickPlayerFromListAForEvent(String clanTag, ArrayList<Player> warMemberList, 
-											   util.Tuple<Integer, Integer> map, boolean excludeLeaders) {
+	private Player pickPlayerFromListAForEvent(String clanTag, ArrayList<Player> warMemberList,
+			util.Tuple<Integer, Integer> map, boolean excludeLeaders) {
 		try (java.sql.Connection conn = dbutil.Connection.getConnection()) {
 			// Get current lists
 			String selectSql = "SELECT list_a, list_b FROM cwdonator_lists WHERE clan_tag = ?";
 			ArrayList<String> listA = new ArrayList<>();
 			ArrayList<String> listB = new ArrayList<>();
-			
+
 			try (java.sql.PreparedStatement stmt = conn.prepareStatement(selectSql)) {
 				stmt.setString(1, clanTag);
 				java.sql.ResultSet rs = stmt.executeQuery();
@@ -1517,13 +1527,13 @@ public class ListeningEvent {
 					}
 				}
 			}
-			
+
 			// If List A is empty, swap List B to List A
 			if (listA.isEmpty()) {
 				listA.addAll(listB);
 				listB.clear();
 			}
-			
+
 			// Build a list of eligible players
 			ArrayList<Player> eligiblePlayers = new ArrayList<>();
 			for (Player p : warMemberList) {
@@ -1538,7 +1548,7 @@ public class ListeningEvent {
 					eligiblePlayers.add(p);
 				}
 			}
-			
+
 			// Pick a player
 			Player chosen = null;
 			if (!eligiblePlayers.isEmpty()) {
@@ -1564,7 +1574,7 @@ public class ListeningEvent {
 			} else {
 				listA.addAll(listB);
 				listB.clear();
-				
+
 				String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
 				try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
 					updateStmt.setArray(1, conn.createArrayOf("text", listA.toArray()));
@@ -1575,11 +1585,11 @@ public class ListeningEvent {
 				// Recursive call to pick again
 				return pickPlayerFromListAForEvent(clanTag, warMemberList, map, excludeLeaders);
 			}
-			
+
 			if (chosen != null) {
 				listA.remove(chosen.getTag());
 				listB.add(chosen.getTag());
-				
+
 				String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
 				try (java.sql.PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
 					updateStmt.setArray(1, conn.createArrayOf("text", listA.toArray()));
@@ -1588,7 +1598,7 @@ public class ListeningEvent {
 					updateStmt.executeUpdate();
 				}
 			}
-			
+
 			return chosen;
 		} catch (Exception e) {
 			System.err.println("Error picking player from List A for event: " + e.getMessage());
@@ -1600,7 +1610,7 @@ public class ListeningEvent {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Check if a player is a leader or co-leader (for listening events)
 	 */
