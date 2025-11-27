@@ -18,9 +18,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dbutil.DBUtil;
 import lostmanager.Bot;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import util.MessageUtil;
 import util.Tuple;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ListeningEvent {
 
@@ -599,12 +604,8 @@ public class ListeningEvent {
 	}
 
 	private void handleCWMissedAttacks(Clan clan, org.json.JSONObject cwJson) {
-		org.json.JSONObject clanData = cwJson.getJSONObject("clan");
-		org.json.JSONArray members = clanData.getJSONArray("members");
+		// Get required attacks from action values (default to attacksPerMember from API)
 		int attacksPerMember = cwJson.getInt("attacksPerMember");
-
-		// Get required attacks from action values (default to attacksPerMember from
-		// API)
 		int requiredAttacks = attacksPerMember;
 		for (ActionValue av : getActionValues()) {
 			if (av.getSaved() == ActionValue.kind.value && av.getValue() != null) {
@@ -624,9 +625,170 @@ public class ListeningEvent {
 		String fillerSql = "SELECT player_tag FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?";
 		ArrayList<String> fillerTags = DBUtil.getArrayListFromSQL(fillerSql, String.class, clan.getTag(), endTimeTs);
 
+		// Build initial message with missed attacks data
+		CWMissedAttacksResult result = buildCWMissedAttacksMessage(clan, cwJson, requiredAttacks, fillerTags, false);
+
+		// Determine if this is an end-of-war event (duration = 0)
+		boolean isEndOfWarEvent = getDurationUntilEnd() == 0;
+
+		if (isEndOfWarEvent && result.hasMissedAttacks) {
+			// At end of war: send initial message, then schedule 5-minute verification
+			// Don't process kickpoints yet - wait for verification
+			Message sentMessage = sendMessageToChannelAndReturn(result.message);
+			
+			if (sentMessage != null) {
+				// Store references needed for the delayed update
+				final String clanTag = clan.getTag();
+				final int finalRequiredAttacks = requiredAttacks;
+				final java.sql.Timestamp finalEndTimeTs = endTimeTs;
+				final ArrayList<String> finalFillerTags = fillerTags;
+				final long messageId = sentMessage.getIdLong();
+				final String channelId = getChannelID();
+				final ListeningEvent thisEvent = this;
+				final String originalMessage = result.message; // Store original message for fallback
+
+				// Schedule 5-minute delayed verification using Bot's scheduler
+				// Using a single-use scheduler that shuts down after execution
+				ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+				scheduler.schedule(() -> {
+					try {
+						handleCWMissedAttacksDelayedVerification(clanTag, finalRequiredAttacks, finalEndTimeTs, 
+								finalFillerTags, messageId, channelId, thisEvent, originalMessage);
+					} catch (Exception e) {
+						System.err.println("Error in delayed CW verification: " + e.getMessage());
+						e.printStackTrace();
+					} finally {
+						scheduler.shutdown();
+					}
+				}, 5, TimeUnit.MINUTES);
+
+				System.out.println("Scheduled 5-minute CW missed attacks verification for clan " + clanTag);
+			}
+		} else if (isEndOfWarEvent && !result.hasMissedAttacks) {
+			// End of war but no missed attacks - nothing to send or schedule
+			// Clean up fillers
+			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clan.getTag(), endTimeTs);
+		} else {
+			// Not end of war (e.g., reminder during war) - use original behavior
+			if (result.hasMissedAttacks) {
+				sendMessageInChunks(result.message);
+			}
+		}
+	}
+
+	/**
+	 * Handles the delayed verification of CW missed attacks after 5 minutes.
+	 * Fetches fresh data, updates the message, and processes kickpoints if appropriate.
+	 */
+	private void handleCWMissedAttacksDelayedVerification(String clanTag, int requiredAttacks, 
+			java.sql.Timestamp endTimeTs, ArrayList<String> fillerTags, long messageId, 
+			String channelId, ListeningEvent event, String originalMessage) {
+		
+		System.out.println("Starting 5-minute CW verification for clan " + clanTag);
+		
+		try {
+			// Fetch fresh clan war data
+			Clan clan = new Clan(clanTag);
+			org.json.JSONObject cwJson = clan.getCWJson();
+			String currentState = cwJson.getString("state");
+
+			// Check if war data is still available (state is notInWar or warEnded)
+			boolean dataIsReliable = currentState.equals("notInWar") || currentState.equals("warEnded");
+			
+			String updatedMessage;
+			boolean shouldProcessKickpoints = false;
+			CWMissedAttacksResult result = null;
+			
+			if (dataIsReliable) {
+				// Data is reliable - build updated message with fresh data
+				result = buildCWMissedAttacksMessage(clan, cwJson, requiredAttacks, fillerTags, true);
+				updatedMessage = result.message + "\n\n*Daten nach 5min überprüft*";
+				shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
+			} else {
+				// New war has already started - data is not reliable
+				// Use the original message content and just append a warning
+				// Don't try to build a new message as the API would return data for the new war
+				updatedMessage = originalMessage + "\n\n*Daten sind nicht zuverlässig, da Krieg direkt wieder gestartet wurde*";
+				shouldProcessKickpoints = false; // Don't process kickpoints with unreliable data
+			}
+
+			// Edit the original message
+			editMessageInChannel(channelId, messageId, updatedMessage);
+
+			// Process kickpoints if appropriate
+			if (shouldProcessKickpoints && result != null) {
+				for (PlayerMissedAttacks pma : result.playersWithMissedAttacks) {
+					addKickpointForPlayer(pma.player, "CW Angriffe verpasst (" + pma.attacks + "/" + requiredAttacks + ")");
+				}
+			}
+
+			// Clean up fillers after processing
+			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clanTag, endTimeTs);
+			
+			System.out.println("Completed 5-minute CW verification for clan " + clanTag + 
+					" (dataReliable=" + dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
+					
+		} catch (Exception e) {
+			System.err.println("Error in CW delayed verification for clan " + clanTag + ": " + e.getMessage());
+			e.printStackTrace();
+			
+			// On error, try to update the message with an error note appended to original
+			try {
+				editMessageInChannel(channelId, messageId, 
+						originalMessage + "\n\n*Fehler bei der 5-Minuten-Überprüfung. Daten möglicherweise nicht aktuell.*");
+			} catch (Exception e2) {
+				System.err.println("Failed to update message with error: " + e2.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Helper class to store missed attacks result
+	 */
+	private static class CWMissedAttacksResult {
+		String message;
+		boolean hasMissedAttacks;
+		ArrayList<PlayerMissedAttacks> playersWithMissedAttacks;
+		
+		CWMissedAttacksResult(String message, boolean hasMissedAttacks, ArrayList<PlayerMissedAttacks> players) {
+			this.message = message;
+			this.hasMissedAttacks = hasMissedAttacks;
+			this.playersWithMissedAttacks = players;
+		}
+	}
+
+	/**
+	 * Helper class to store player missed attacks info
+	 */
+	private static class PlayerMissedAttacks {
+		Player player;
+		int attacks;
+		
+		PlayerMissedAttacks(Player player, int attacks) {
+			this.player = player;
+			this.attacks = attacks;
+		}
+	}
+
+	/**
+	 * Builds the CW missed attacks message from the war data.
+	 * @param clan The clan
+	 * @param cwJson The clan war JSON data
+	 * @param requiredAttacks Required number of attacks
+	 * @param fillerTags List of filler player tags to exclude
+	 * @param isVerificationPhase Whether this is the 5-minute verification phase
+	 * @return CWMissedAttacksResult containing the message and list of players
+	 */
+	private CWMissedAttacksResult buildCWMissedAttacksMessage(Clan clan, org.json.JSONObject cwJson, 
+			int requiredAttacks, ArrayList<String> fillerTags, boolean isVerificationPhase) {
+		
+		org.json.JSONObject clanData = cwJson.getJSONObject("clan");
+		org.json.JSONArray members = clanData.getJSONArray("members");
+
 		StringBuilder message = new StringBuilder();
 		message.append("## " + clan.getNameAPI() + " Clankrieg - ");
-		if (getDurationUntilEnd() > 0) {
+		
+		if (!isVerificationPhase && getDurationUntilEnd() > 0) {
 			int secondsLeft = (int) (getDurationUntilEnd() / 1000);
 			int minutesLeft = secondsLeft / 60;
 			int hoursLeft = minutesLeft / 60;
@@ -650,6 +812,8 @@ public class ListeningEvent {
 		message.append("*abzüglich Filler, wenn abgespeichert* \n\n");
 
 		boolean hasMissedAttacks = false;
+		ArrayList<PlayerMissedAttacks> playersWithMissedAttacks = new ArrayList<>();
+		
 		for (int i = 0; i < members.length(); i++) {
 			org.json.JSONObject member = members.getJSONObject(i);
 			String tag = member.getString("tag");
@@ -675,24 +839,52 @@ public class ListeningEvent {
 				if (p.getUser() != null) {
 					message.append("(<@").append(p.getUser().getUserID()).append(">) ");
 				}
-				message.append(name).append(" (").append(attacks).append("/").append(requiredAttacks)
-						.append(")");
+				message.append(name).append(" (").append(attacks).append("/").append(requiredAttacks).append(")");
 				message.append("\n");
 
-				// Handle kickpoint action
-				if (getActionType() == ACTIONTYPE.KICKPOINT) {
-					addKickpointForPlayer(p, "CW Angriffe verpasst (" + attacks + "/" + requiredAttacks + ")");
-				}
+				playersWithMissedAttacks.add(new PlayerMissedAttacks(p, attacks));
 			}
 		}
 
-		if (hasMissedAttacks) {
-			sendMessageInChunks(message.toString());
-		}
+		return new CWMissedAttacksResult(message.toString(), hasMissedAttacks, playersWithMissedAttacks);
+	}
 
-		// Clean up old fillers after war ends
-		DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clan.getTag(),
-				endTimeTs);
+	/**
+	 * Sends a message to the channel and returns the Message object for later editing.
+	 */
+	private Message sendMessageToChannelAndReturn(String message) {
+		String channelId = getChannelID();
+		if (channelId != null && !channelId.isEmpty()) {
+			try {
+				MessageChannelUnion channel = Bot.getJda().getChannelById(MessageChannelUnion.class, channelId);
+				if (channel != null) {
+					// Use complete() instead of queue() to get the message synchronously
+					return channel.sendMessage(message).complete();
+				}
+			} catch (Exception e) {
+				System.err.println("Failed to send message to channel " + channelId + ": " + e.getMessage());
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Edits an existing message in the channel.
+	 */
+	private void editMessageInChannel(String channelId, long messageId, String newContent) {
+		if (channelId != null && !channelId.isEmpty()) {
+			try {
+				MessageChannelUnion channel = Bot.getJda().getChannelById(MessageChannelUnion.class, channelId);
+				if (channel != null) {
+					channel.editMessageById(messageId, newContent).queue(
+						success -> System.out.println("Successfully edited message " + messageId),
+						error -> System.err.println("Failed to edit message " + messageId + ": " + error.getMessage())
+					);
+				}
+			} catch (Exception e) {
+				System.err.println("Failed to edit message in channel " + channelId + ": " + e.getMessage());
+			}
+		}
 	}
 
 	private void handleCWLDayEvent(Clan clan) {
