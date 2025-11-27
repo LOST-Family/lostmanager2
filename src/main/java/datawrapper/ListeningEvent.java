@@ -1002,40 +1002,51 @@ public class ListeningEvent {
 					org.json.JSONObject ourClanData = clanData.getString("tag").equals(clan.getTag()) ? clanData
 							: opponentData;
 
-					// Process missed attacks for this war
-					StringBuilder message = new StringBuilder();
-					message.append("## CWL Day ").append(lastCompletedRound + 1).append(" - Missed Attacks\n\n");
-					boolean hasMissedAttacks = false;
+					// Build initial message with missed attacks data
+					CWMissedAttacksResult result = buildCWLDayMissedAttacksMessage(clan, ourClanData, lastCompletedRound, false);
 
-					org.json.JSONArray members = ourClanData.getJSONArray("members");
+					// Determine if this is an end-of-war event (duration = 0)
+					boolean isEndOfWarEvent = getDurationUntilEnd() <= 0;
 
-					for (int i = 0; i < members.length(); i++) {
-						org.json.JSONObject member = members.getJSONObject(i);
-						String tag = member.getString("tag");
-						String name = member.getString("name");
+					if (isEndOfWarEvent && result.hasMissedAttacks) {
+						// At end of war: send initial message, then schedule 5-minute verification
+						// Don't process kickpoints yet - wait for verification
+						Message sentMessage = sendMessageToChannelAndReturn(result.message);
 
-						int attacks = 0;
-						if (member.has("attacks")) {
-							attacks = member.getJSONArray("attacks").length();
+						if (sentMessage != null) {
+							// Store references needed for the delayed update
+							final String clanTag = clan.getTag();
+							final int finalCompletedRound = lastCompletedRound;
+							final String finalWarTag = warTag;
+							final long messageId = sentMessage.getIdLong();
+							final String channelId = getChannelID();
+							final ListeningEvent thisEvent = this;
+							final String originalMessage = result.message;
+
+							// Schedule 5-minute delayed verification
+							ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+							scheduler.schedule(() -> {
+								try {
+									handleCWLDayMissedAttacksDelayedVerification(clanTag, finalCompletedRound,
+											finalWarTag, messageId, channelId, thisEvent, originalMessage);
+								} catch (Exception e) {
+									System.err.println("Error in delayed CWL day verification: " + e.getMessage());
+									e.printStackTrace();
+								} finally {
+									scheduler.shutdown();
+								}
+							}, 5, TimeUnit.MINUTES);
+
+							System.out.println("Scheduled 5-minute CWL day missed attacks verification for clan " + clanTag);
 						}
-
-						if (attacks < 1) { // CWL has 1 attack per member
-							hasMissedAttacks = true;
-							Player p = new Player(tag);
-							message.append("- ").append(name);
-							if (p.getUser() != null) {
-								message.append(" (<@").append(p.getUser().getUserID()).append(">)");
-							}
-							message.append("\n");
-
-							if (getActionType() == ACTIONTYPE.KICKPOINT) {
-								addKickpointForPlayer(p, "CWL Angriff verpasst");
-							}
+					} else if (isEndOfWarEvent && !result.hasMissedAttacks) {
+						// End of war but no missed attacks - nothing to send or schedule
+						// Nothing to clean up for CWL (no fillers table)
+					} else {
+						// Not end of war (e.g., reminder during war) - use original behavior
+						if (result.hasMissedAttacks) {
+							sendMessageInChunks(result.message);
 						}
-					}
-
-					if (hasMissedAttacks) {
-						sendMessageToChannel(message.toString());
 					}
 
 					break; // Found our war, no need to check other wars in this round
@@ -1043,6 +1054,128 @@ public class ListeningEvent {
 			} catch (Exception e) {
 				// If war data is not available, skip
 				continue;
+			}
+		}
+	}
+
+	/**
+	 * Builds the CWL day missed attacks message from the war data.
+	 * 
+	 * @param clan                The clan
+	 * @param ourClanData         The JSON object containing our clan's war data
+	 * @param roundNumber         The round number (0-indexed)
+	 * @param isVerificationPhase Whether this is the 5-minute verification phase
+	 * @return CWMissedAttacksResult containing the message and list of players
+	 */
+	private CWMissedAttacksResult buildCWLDayMissedAttacksMessage(Clan clan, org.json.JSONObject ourClanData,
+			int roundNumber, boolean isVerificationPhase) {
+
+		org.json.JSONArray members = ourClanData.getJSONArray("members");
+
+		StringBuilder message = new StringBuilder();
+		message.append("## CWL Day ").append(roundNumber + 1).append(" - ");
+
+		if (isVerificationPhase) {
+			message.append("**Krieg beendet.**\n\n");
+		} else {
+			message.append("Missed Attacks\n\n");
+		}
+
+		boolean hasMissedAttacks = false;
+		ArrayList<PlayerMissedAttacks> playersWithMissedAttacks = new ArrayList<>();
+
+		for (int i = 0; i < members.length(); i++) {
+			org.json.JSONObject member = members.getJSONObject(i);
+			String tag = member.getString("tag");
+			String name = member.getString("name");
+
+			int attacks = 0;
+			if (member.has("attacks")) {
+				attacks = member.getJSONArray("attacks").length();
+			}
+
+			if (attacks < 1) { // CWL has 1 attack per member
+				hasMissedAttacks = true;
+				Player p = new Player(tag);
+				message.append("- ").append(name);
+
+				// Only include Discord mentions if not in verification phase
+				if (!isVerificationPhase && p.getUser() != null) {
+					message.append(" (<@").append(p.getUser().getUserID()).append(">)");
+				}
+				message.append("\n");
+
+				playersWithMissedAttacks.add(new PlayerMissedAttacks(p, attacks));
+			}
+		}
+
+		return new CWMissedAttacksResult(message.toString(), hasMissedAttacks, playersWithMissedAttacks);
+	}
+
+	/**
+	 * Handles the delayed verification of CWL day missed attacks after 5 minutes.
+	 * Fetches fresh data, updates the message, and processes kickpoints if
+	 * appropriate.
+	 */
+	private void handleCWLDayMissedAttacksDelayedVerification(String clanTag, int roundNumber, String warTag,
+			long messageId, String channelId, ListeningEvent event, String originalMessage) {
+
+		System.out.println("Starting 5-minute CWL day verification for clan " + clanTag + " round " + (roundNumber + 1));
+
+		try {
+			// Fetch fresh CWL war data
+			org.json.JSONObject warData = Clan.getCWLDayJson(warTag);
+			String currentState = warData.getString("state");
+
+			// Check if war data is still available (state is warEnded)
+			boolean dataIsReliable = currentState.equals("warEnded");
+
+			String updatedMessage;
+			boolean shouldProcessKickpoints = false;
+			CWMissedAttacksResult result = null;
+
+			if (dataIsReliable) {
+				// Data is reliable - build updated message with fresh data
+				Clan clan = new Clan(clanTag);
+
+				// Determine which object contains our clan's data
+				org.json.JSONObject clanData = warData.getJSONObject("clan");
+				org.json.JSONObject opponentData = warData.getJSONObject("opponent");
+				org.json.JSONObject ourClanData = clanData.getString("tag").equals(clanTag) ? clanData : opponentData;
+
+				result = buildCWLDayMissedAttacksMessage(clan, ourClanData, roundNumber, true);
+				updatedMessage = result.message + "\n*Daten nach 5min überprüft*";
+				shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
+			} else {
+				// War state changed (shouldn't happen in CWL but handle anyway)
+				updatedMessage = originalMessage
+						+ "\n\n*Daten sind möglicherweise nicht zuverlässig*";
+				shouldProcessKickpoints = false;
+			}
+
+			// Edit the original message
+			editMessageInChannel(channelId, messageId, updatedMessage);
+
+			// Process kickpoints if appropriate
+			if (shouldProcessKickpoints && result != null) {
+				for (PlayerMissedAttacks pma : result.playersWithMissedAttacks) {
+					addKickpointForPlayer(pma.player, "CWL Angriff verpasst (Day " + (roundNumber + 1) + ")");
+				}
+			}
+
+			System.out.println("Completed 5-minute CWL day verification for clan " + clanTag + " (dataReliable="
+					+ dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
+
+		} catch (Exception e) {
+			System.err.println("Error in CWL day delayed verification for clan " + clanTag + ": " + e.getMessage());
+			e.printStackTrace();
+
+			// On error, try to update the message with an error note appended to original
+			try {
+				editMessageInChannel(channelId, messageId, originalMessage
+						+ "\n\n*Fehler bei der 5-Minuten-Überprüfung. Daten möglicherweise nicht aktuell.*");
+			} catch (Exception e2) {
+				System.err.println("Failed to update message with error: " + e2.getMessage());
 			}
 		}
 	}
