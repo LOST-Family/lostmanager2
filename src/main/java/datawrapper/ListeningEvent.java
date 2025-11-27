@@ -645,13 +645,15 @@ public class ListeningEvent {
 				final long messageId = sentMessage.getIdLong();
 				final String channelId = getChannelID();
 				final ListeningEvent thisEvent = this;
+				final String originalMessage = result.message; // Store original message for fallback
 
-				// Schedule 5-minute delayed verification
+				// Schedule 5-minute delayed verification using Bot's scheduler
+				// Using a single-use scheduler that shuts down after execution
 				ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 				scheduler.schedule(() -> {
 					try {
 						handleCWMissedAttacksDelayedVerification(clanTag, finalRequiredAttacks, finalEndTimeTs, 
-								finalFillerTags, messageId, channelId, thisEvent);
+								finalFillerTags, messageId, channelId, thisEvent, originalMessage);
 					} catch (Exception e) {
 						System.err.println("Error in delayed CW verification: " + e.getMessage());
 						e.printStackTrace();
@@ -680,7 +682,7 @@ public class ListeningEvent {
 	 */
 	private void handleCWMissedAttacksDelayedVerification(String clanTag, int requiredAttacks, 
 			java.sql.Timestamp endTimeTs, ArrayList<String> fillerTags, long messageId, 
-			String channelId, ListeningEvent event) {
+			String channelId, ListeningEvent event, String originalMessage) {
 		
 		System.out.println("Starting 5-minute CW verification for clan " + clanTag);
 		
@@ -704,9 +706,9 @@ public class ListeningEvent {
 				shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
 			} else {
 				// New war has already started - data is not reliable
-				// We can't get fresh data, so just add a warning to the existing message format
-				result = buildCWMissedAttacksMessage(clan, cwJson, requiredAttacks, fillerTags, true);
-				updatedMessage = result.message + "\n\n*Daten sind nicht zuverlässig, da Krieg direkt wieder gestartet wurde*";
+				// Use the original message content and just append a warning
+				// Don't try to build a new message as the API would return data for the new war
+				updatedMessage = originalMessage + "\n\n*Daten sind nicht zuverlässig, da Krieg direkt wieder gestartet wurde*";
 				shouldProcessKickpoints = false; // Don't process kickpoints with unreliable data
 			}
 
@@ -730,10 +732,10 @@ public class ListeningEvent {
 			System.err.println("Error in CW delayed verification for clan " + clanTag + ": " + e.getMessage());
 			e.printStackTrace();
 			
-			// On error, try to update the message with an error note
+			// On error, try to update the message with an error note appended to original
 			try {
 				editMessageInChannel(channelId, messageId, 
-						"*Fehler bei der 5-Minuten-Überprüfung. Daten möglicherweise nicht aktuell.*");
+						originalMessage + "\n\n*Fehler bei der 5-Minuten-Überprüfung. Daten möglicherweise nicht aktuell.*");
 			} catch (Exception e2) {
 				System.err.println("Failed to update message with error: " + e2.getMessage());
 			}
