@@ -39,7 +39,8 @@ public class Player {
 
 	/**
 	 * Checks if a role is elder or higher (ELDER, COLEADER, or LEADER).
-	 * ADMIN role type represents ELDER in the database.
+	 * Note: RoleType.ELDER corresponds to the "admin" clan_role in the database.
+	 * RoleType.ADMIN is used for bot administrators, not clan elders.
 	 * @param role The role type to check
 	 * @return true if the role is elder or higher, false otherwise
 	 */
