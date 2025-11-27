@@ -155,8 +155,8 @@ public class addmember extends ListenerAdapter {
 						}
 					}
 					
-					// Handle elder role assignment
-					if (role.equals("admin")) {
+					// Handle elder role assignment for elder or higher roles
+					if (role.equals("admin") || role.equals("coLeader") || role.equals("leader")) {
 						if (elderrole != null) {
 							if (member.getRoles().contains(elderrole)) {
 								desc += "\n\n**Der User <@" + userid + "> hat bereits die Rolle <@&" + elderroleid + ">.**";

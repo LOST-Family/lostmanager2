@@ -135,51 +135,52 @@ public class editmember extends ListenerAdapter {
 					String elderroleid = c.getRoleID(Clan.Role.ELDER);
 					Role elderrole = guild.getRoleById(elderroleid);
 					
-					boolean wasElder = oldRole != null && oldRole.equals("admin");
-					boolean isNowElder = role.equals("admin");
+					// wasElder tracks if old role was elder or higher (should have elder discord role)
+					boolean wasElderOrHigher = oldRole != null && (oldRole.equals("admin") || oldRole.equals("coLeader") || oldRole.equals("leader"));
+					boolean isNowElderOrHigher = role.equals("admin") || role.equals("coLeader") || role.equals("leader");
 					
 					if (elderrole != null) {
-						if (!wasElder && isNowElder) {
-							// Adding elder role
+						if (!wasElderOrHigher && isNowElderOrHigher) {
+							// Adding elder role when promoting to elder or higher
 							if (!member.getRoles().contains(elderrole)) {
 								guild.addRoleToMember(member, elderrole).queue();
 								desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + elderroleid + "> hinzugefügt.**";
 							} else {
 								desc += "\n\n**Der User <@" + userid + "> hat bereits die Rolle <@&" + elderroleid + ">.**";
 							}
-						} else if (wasElder && !isNowElder && role.equals("member")) {
-							// Removing elder role only when editing to member - check if user has other elder accounts in same clan
+						} else if (wasElderOrHigher && !isNowElderOrHigher) {
+							// Removing elder role only when demoting to member - check if user has other elder+ accounts in same clan
 							ArrayList<Player> allaccs = p.getUser().getAllLinkedAccounts();
-							boolean othereldersameclan = false;
+							boolean otherElderOrHigherSameClan = false;
 							for (Player acc : allaccs) {
 								if (!acc.getTag().equals(playertag) && acc.getClanDB() != null) {
 									if (acc.getClanDB().getTag().equals(clantag)) {
-										if (acc.getRoleDB() == Player.RoleType.ELDER) {
-											othereldersameclan = true;
-											break;
+										Player.RoleType accRole = acc.getRoleDB();
+										if (accRole == Player.RoleType.ELDER || accRole == Player.RoleType.COLEADER || accRole == Player.RoleType.LEADER) {
+											otherElderOrHigherSameClan = true;
 										}
 									}
 								}
 							}
 							if (member.getRoles().contains(elderrole)) {
-								if (!othereldersameclan) {
+								if (!otherElderOrHigherSameClan) {
 									guild.removeRoleFromMember(member, elderrole).queue();
 									desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + elderroleid + "> genommen.**";
 								} else {
 									desc += "\n\n**Der User <@" + userid
-											+ "> hat noch mindestens einen anderen Account als Ältester in dem Clan, daher behält er die Rolle <@&"
+											+ "> hat noch mindestens einen anderen Account als Ältester oder höher in dem Clan, daher behält er die Rolle <@&"
 											+ elderroleid + ">.**";
 								}
 							} else {
-								if (othereldersameclan) {
+								if (otherElderOrHigherSameClan) {
 									desc += "\n\n**Der User <@" + userid
-											+ "> hat noch mindestens einen anderen Account als Ältester in dem Clan, hat aber die Rolle <@&"
+											+ "> hat noch mindestens einen anderen Account als Ältester oder höher in dem Clan, hat aber die Rolle <@&"
 											+ elderroleid + "> nicht. Gebe sie ihm manuell, falls erwünscht.**";
 								}
 							}
 						}
 					} else {
-						if (isNowElder) {
+						if (isNowElderOrHigher) {
 							desc += "\n\n**Die Elder-Rolle für diesen Clan ist nicht konfiguriert.**";
 						}
 					}

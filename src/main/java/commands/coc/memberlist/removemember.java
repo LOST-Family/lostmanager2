@@ -117,15 +117,15 @@ public class removemember extends ListenerAdapter {
 			if (member != null) {
 				ArrayList<Player> allaccs = player.getUser().getAllLinkedAccounts();
 			boolean b = false;
-			boolean othereldersameclan = false;
+			boolean otherElderOrHigherSameClan = false;
 			for (Player acc : allaccs) {
 				if (acc.getClanDB() != null) {
 					if (acc.getClanDB().getTag().equals(clantag)) {
 						b = true;
-						if (acc.getRoleDB() == Player.RoleType.ELDER) {
-							othereldersameclan = true;
+						Player.RoleType accRole = acc.getRoleDB();
+						if (accRole == Player.RoleType.ELDER || accRole == Player.RoleType.COLEADER || accRole == Player.RoleType.LEADER) {
+							otherElderOrHigherSameClan = true;
 						}
-						break;
 					}
 				}
 			}
@@ -156,21 +156,21 @@ public class removemember extends ListenerAdapter {
 			}
 			if (elderrole != null) {
 				if (member.getRoles().contains(elderrole)) {
-					if (!othereldersameclan) {
+					if (!otherElderOrHigherSameClan) {
 						guild.removeRoleFromMember(member, elderrole).queue();
 						desc += "\n\n";
 						desc += "**Dem User <@" + userid + "> wurde die Rolle <@&" + elderroleid + "> genommen.**\n";
 					} else {
 						desc += "\n\n";
 						desc += "**Der User <@" + userid
-								+ "> hat noch mindestens einen anderen Account als Ältester in dem Clan, daher behält er die Rolle <@&"
+								+ "> hat noch mindestens einen anderen Account als Ältester oder höher in dem Clan, daher behält er die Rolle <@&"
 								+ elderroleid + ">.**\n";
 					}
 				} else {
-					if (othereldersameclan) {
+					if (otherElderOrHigherSameClan) {
 						desc += "\n\n";
 						desc += "**Der User <@" + userid
-								+ "> hat noch mindestens einen anderen Account als Ältester in dem Clan, hat aber die Rolle <@&"
+								+ "> hat noch mindestens einen anderen Account als Ältester oder höher in dem Clan, hat aber die Rolle <@&"
 								+ elderroleid + "> nicht. Gebe sie ihm manuell, falls erwünscht.**\n";
 					}
 				}
