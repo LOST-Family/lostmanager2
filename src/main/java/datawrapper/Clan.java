@@ -303,18 +303,61 @@ public class Clan {
 	public Long getCWLDayEndTimeMillis() {
 		if (CWLDayEndTimeMillis == null) {
 			if (isCWLActive()) {
-				JSONObject jsonObject = getCWLJson();
-				// Check if endTime exists and is not null
-				if (jsonObject.has("endTime") && !jsonObject.isNull("endTime")) {
-					String endTime = jsonObject.getString("endTime");
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
-							.withZone(ZoneOffset.UTC);
-					Instant instant = Instant.from(formatter.parse(endTime));
-					CWLDayEndTimeMillis = instant.toEpochMilli();
-				} else {
-					System.err.println("Warning: endTime field is missing or null in CWL API response");
-					CWLDayEndTimeMillis = null;
+				JSONObject cwlJson = getCWLJson();
+				
+				// Check if rounds exist
+				if (!cwlJson.has("rounds") || cwlJson.isNull("rounds")) {
+					System.err.println("Warning: rounds field is missing or null in CWL API response");
+					return null;
 				}
+				
+				JSONArray rounds = cwlJson.getJSONArray("rounds");
+				
+				// Iterate through rounds to find the currently active war for this clan
+				for (int r = 0; r < rounds.length(); r++) {
+					JSONArray warTags = rounds.getJSONObject(r).getJSONArray("warTags");
+					
+					// Check each war in this round to find our clan's war
+					for (int w = 0; w < warTags.length(); w++) {
+						String warTag = warTags.getString(w);
+						
+						// Skip placeholder war tags
+						if (warTag.equals("#0")) {
+							continue;
+						}
+						
+						try {
+							JSONObject warData = getCWLDayJson(warTag);
+							
+							// Check if this war involves our clan (could be in "clan" or "opponent" field)
+							JSONObject clanData = warData.getJSONObject("clan");
+							JSONObject opponentData = warData.getJSONObject("opponent");
+							boolean isOurWar = clanData.getString("tag").equals(clan_tag)
+									|| opponentData.getString("tag").equals(clan_tag);
+							
+							if (isOurWar) {
+								String state = warData.getString("state");
+								
+								// If we find an active war (inWar or preparation), get its endTime
+								if (state.equals("inWar") || state.equals("preparation")) {
+									if (warData.has("endTime") && !warData.isNull("endTime")) {
+										String endTime = warData.getString("endTime");
+										DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
+												.withZone(ZoneOffset.UTC);
+										Instant instant = Instant.from(formatter.parse(endTime));
+										CWLDayEndTimeMillis = instant.toEpochMilli();
+										return CWLDayEndTimeMillis;
+									}
+								}
+							}
+						} catch (Exception e) {
+							// If war data is not available, skip
+							continue;
+						}
+					}
+				}
+				
+				System.err.println("Warning: No active CWL war found for clan " + clan_tag);
 			}
 		}
 		return CWLDayEndTimeMillis;
