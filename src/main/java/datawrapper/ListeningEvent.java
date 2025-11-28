@@ -1515,6 +1515,12 @@ public class ListeningEvent {
 					player.getTag(), now, amount, reason, Bot.getJda().getSelfUser().getId(), now, expires,
 					clan.getTag(), now);
 
+			if (result == null) {
+				System.err.println("Error: Failed to add kickpoint for player " + player.getTag() + 
+						" in clan " + clan.getTag() + " - database error occurred");
+				return;
+			}
+
 			PreparedStatement stmt = result.getFirst();
 			int rowsAffected = result.getSecond();
 

@@ -325,6 +325,11 @@ public class listeningevent extends ListenerAdapter {
 				"INSERT INTO listening_events (clan_tag, listeningtype, listeningvalue, actiontype, channel_id, actionvalues) VALUES (?, ?, ?, ?, ?, ?::jsonb)",
 				clantag, type, duration, actionTypeStr, channelId, actionValuesJson);
 
+		if (result == null) {
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, "Fehler beim Hinzufügen des Listening Events. Bitte versuche es erneut.", MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+
 		PreparedStatement stmt = result.getFirst();
 		int rowsAffected = result.getSecond();
 
@@ -785,6 +790,11 @@ public class listeningevent extends ListenerAdapter {
 		Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(
 				"INSERT INTO listening_events (clan_tag, listeningtype, listeningvalue, actiontype, channel_id, actionvalues) VALUES (?, ?, ?, ?, ?, ?::jsonb)",
 				clantag, type, duration, actionTypeStr, channelId, actionValuesJson);
+
+		if (result == null) {
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, "Fehler beim Hinzufügen des Listening Events. Bitte versuche es erneut.", MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
 
 		PreparedStatement stmt = result.getFirst();
 		int rowsAffected = result.getSecond();
