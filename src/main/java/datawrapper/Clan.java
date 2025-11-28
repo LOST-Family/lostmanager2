@@ -267,7 +267,8 @@ public class Clan {
 			int hour = now.getHour();
 
 			// Wenn heute nach dem 28. ist oder genau am 28. nach 13 Uhr (1pm)
-			// Use 13:00 for listening events to ensure API data has propagated (1 hour after actual end)
+			// Use 13:00 for listening events to ensure API data has propagated (1 hour
+			// after actual end)
 			if (day > 28 || (day == 28 && hour >= 13)) {
 				month++;
 				if (month > 12) {
@@ -291,7 +292,8 @@ public class Clan {
 		if (cwlactive == null) {
 			JSONObject jsonObject = getCWLJson();
 			String state = jsonObject.getString("state");
-			if (state.equals("notInWar") || state.equalsIgnoreCase("groupnotfound") || state.equalsIgnoreCase("ended")) {
+			if (state.equals("notInWar") || state.equalsIgnoreCase("groupnotfound")
+					|| state.equalsIgnoreCase("ended")) {
 				cwlactive = false;
 			} else {
 				cwlactive = true;
@@ -309,49 +311,49 @@ public class Clan {
 					CWLDayEndTimeMillis = null;
 					return CWLDayEndTimeMillis;
 				}
-				
+
 				JSONObject cwlJson = getCWLJson();
-				
+
 				// Check if rounds exist
 				if (!cwlJson.has("rounds") || cwlJson.isNull("rounds")) {
 					System.err.println("Warning: rounds field is missing or null in CWL API response");
 					CWLDayEndTimeMillis = null;
 					return CWLDayEndTimeMillis;
 				}
-				
+
 				JSONArray rounds = cwlJson.getJSONArray("rounds");
-				
+
 				// Iterate through rounds to find the currently active war for this clan
 				for (int r = 0; r < rounds.length(); r++) {
 					JSONArray warTags = rounds.getJSONObject(r).getJSONArray("warTags");
-					
+
 					// Check each war in this round to find our clan's war
 					for (int w = 0; w < warTags.length(); w++) {
 						String warTag = warTags.getString(w);
-						
+
 						// Skip placeholder war tags
 						if (warTag.equals("#0")) {
 							continue;
 						}
-						
+
 						try {
 							JSONObject warData = getCWLDayJson(warTag);
-							
+
 							// Check if this war involves our clan (could be in "clan" or "opponent" field)
 							JSONObject clanData = warData.getJSONObject("clan");
 							JSONObject opponentData = warData.getJSONObject("opponent");
 							boolean isOurWar = clanData.getString("tag").equals(clan_tag)
 									|| opponentData.getString("tag").equals(clan_tag);
-							
+
 							if (isOurWar) {
 								String state = warData.getString("state");
-								
+
 								// If we find an active war (inWar or preparation), get its endTime
 								if (state.equals("inWar") || state.equals("preparation")) {
 									if (warData.has("endTime") && !warData.isNull("endTime")) {
 										String endTime = warData.getString("endTime");
-										DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
-												.withZone(ZoneOffset.UTC);
+										DateTimeFormatter formatter = DateTimeFormatter
+												.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'").withZone(ZoneOffset.UTC);
 										Instant instant = Instant.from(formatter.parse(endTime));
 										CWLDayEndTimeMillis = instant.toEpochMilli();
 										return CWLDayEndTimeMillis;
@@ -360,12 +362,13 @@ public class Clan {
 							}
 						} catch (Exception e) {
 							// Log the error for debugging and continue to next war tag
-							System.err.println("Warning: Error retrieving CWL war data for tag " + warTag + ": " + e.getMessage());
+							System.err.println(
+									"Warning: Error retrieving CWL war data for tag " + warTag + ": " + e.getMessage());
 							continue;
 						}
 					}
 				}
-				
+
 				System.err.println("Warning: No active CWL war found for clan " + clan_tag);
 			}
 		}
@@ -467,38 +470,39 @@ public class Clan {
 
 	/**
 	 * Helper method to perform HTTP requests with retry logic
-	 * @param url The URL to request
+	 * 
+	 * @param url        The URL to request
 	 * @param maxRetries Maximum number of retry attempts
 	 * @return HttpResponse or null if all retries failed
 	 */
 	private HttpResponse<String> performHttpRequestWithRetry(String url, int maxRetries) {
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
-				.header("Authorization", "Bearer " + Bot.api_key)
-				.header("Accept", "application/json")
-				.GET()
-				.build();
-		
+				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
+
 		int attempt = 0;
 		while (attempt <= maxRetries) {
 			try {
 				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-				
-				// If successful (200) or client error (4xx), return immediately (no retry for client errors)
+
+				// If successful (200) or client error (4xx), return immediately (no retry for
+				// client errors)
 				if (response.statusCode() == 200 || (response.statusCode() >= 400 && response.statusCode() < 500)) {
 					return response;
 				}
-				
+
 				// For server errors (5xx) or other errors, retry
 				if (attempt < maxRetries) {
 					long waitTime = (long) Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
-					System.err.println("Request failed with status " + response.statusCode() + ", retrying in " + waitTime + "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
+					System.err.println("Request failed with status " + response.statusCode() + ", retrying in "
+							+ waitTime + "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
 					Thread.sleep(waitTime);
 				}
 			} catch (IOException | InterruptedException e) {
 				if (attempt < maxRetries) {
 					long waitTime = (long) Math.pow(2, attempt) * 1000; // Exponential backoff
-					System.err.println("Request failed with exception: " + e.getMessage() + ", retrying in " + waitTime + "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
+					System.err.println("Request failed with exception: " + e.getMessage() + ", retrying in " + waitTime
+							+ "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
 					try {
 						Thread.sleep(waitTime);
 					} catch (InterruptedException ie) {
@@ -512,7 +516,7 @@ public class Clan {
 			}
 			attempt++;
 		}
-		
+
 		System.err.println("All retry attempts failed for URL: " + url);
 		return null;
 	}
@@ -655,7 +659,7 @@ public class Clan {
 		// Check if clan_tag is null before encoding
 		if (clan_tag == null) {
 			System.err.println("Clan tag is null, cannot retrieve CW data");
-			return new JSONObject("{\"state\":\"notInWar\"}");
+			return null;
 		}
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
@@ -684,7 +688,7 @@ public class Clan {
 			return jsonObject;
 		} else {
 			// Return a default JSONObject indicating no war
-			return new JSONObject("{\"state\":\"notInWar\"}");
+			return null;
 		}
 	}
 
@@ -769,7 +773,7 @@ public class Clan {
 			System.err.println("Clan tag is null, cannot retrieve clan data");
 			return null;
 		}
-		
+
 		// URL-kodieren des Spieler-Tags (# -> %23)
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
 		String url = "https://api.clashofclans.com/v1/clans/" + encodedTag;
@@ -792,5 +796,5 @@ public class Clan {
 			return null;
 		}
 	}
-	
+
 }
