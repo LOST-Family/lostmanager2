@@ -19,13 +19,22 @@ Creates a new listening event for a clan with inline parameters (no modal requir
   - Example: `3600000` for 1 hour before end
   - Example: `0` to trigger at event end
 - `actiontype` (required): What action to take when event fires (choice selection)
-  - `Info-Nachricht` - Send informational message only
-  - `Kickpoint` - Automatically add kickpoints to violators
-  - `CW Donator (Filler)` - Check war preferences (filler action)
+  - `Info-Nachricht` - Send informational message only (available for all types)
+  - `Kickpoint` - Automatically add kickpoints to violators (available for all types)
+  - `Benutzerdefinierte Nachricht` - Send a custom message (available for all types)
+  - `CW Donator` - CW donor selection (CW only)
+  - `Filler` - Check war preferences / filler action (CW only)
+  - `Raidfails` - District attack analysis / bad hits detection (Raid only)
 - `channel` (required): Discord channel where messages are sent (channel picker)
 - `kickpoint_reason` (optional): Kickpoint reason to use (autocomplete from clan's configured reasons)
   - **Required** when `actiontype` is `Kickpoint`
+  - **Optional** for `Raidfails` - if provided, will add kickpoints
   - Autocomplete shows reasons configured for the selected clan
+
+**Note on Action Type Availability:**
+- Action types are filtered based on the selected event type
+- `CW Donator` and `Filler` only appear when `type` is `Clan War`
+- `Raidfails` only appears when `type` is `Raid`
 
 **Example Usage:**
 ```
@@ -110,30 +119,44 @@ Tracks missed attacks for each day of Clan War League.
 ```
 
 ### Raid Weekend (RAID)
-Tracks raid participation and attacks.
+Tracks raid participation, attacks, and district performance.
 
-**Behavior:**
-- Fires based on raid end time from API
-- Reports members who didn't complete all raid attacks
-- Reports members who didn't participate at all
-- Can add kickpoints for incomplete raids
-- **NEW:** When using `infomessage` or `kickpoint` action types, analyzes district attacks:
-  - Prompts for thresholds: max attacks on Capital Peak, max attacks on other districts
-  - At raid end, identifies districts where total attacks exceeded threshold
-  - For `infomessage`: lists all attackers on over-attacked districts
-  - For `kickpoint`: penalizes player(s) with most attacks on over-attacked districts
-  - Configurable tie-breaker: penalize both players or neither when tied
+**Two Action Types:**
 
-**Example Setup:**
-```
-/listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Kickpoint channel:#raid-logs kickpoint_reason:Raid_nicht_gemacht
-```
-This will prompt for district thresholds and analyze district attacks at raid end.
+1. **Verpasste Hits (infomessage/kickpoint)**
+   - Reports members who didn't complete all raid attacks
+   - Reports members who didn't participate at all
+   - Can add kickpoints for incomplete raids
+
+   **Example Setup:**
+   ```
+   /listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Kickpoint channel:#raid-logs kickpoint_reason:Raid_nicht_gemacht
+   ```
+
+2. **Raidfails (raidfails)**
+   - Analyzes district attacks at raid end
+   - Prompts for thresholds: max attacks on Capital Peak, max attacks on other districts
+   - Identifies districts where total attacks exceeded threshold
+   - Without kickpoint_reason: lists all attackers on over-attacked districts (info only)
+   - With kickpoint_reason: penalizes player(s) with most attacks on over-attacked districts
+   - Configurable tie-breaker: penalize both players or neither when tied
+
+   **Example Setup (info only):**
+   ```
+   /listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Raidfails channel:#raid-logs
+   ```
+   
+   **Example Setup (with kickpoints):**
+   ```
+   /listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Raidfails channel:#raid-logs kickpoint_reason:Raidfail_zuviele_Angriffe
+   ```
 
 ## Action Types Explained
 
 ### infomessage
 Sends an informational message to the configured channel without taking any action.
+
+**Availability:** All event types
 
 **Use Cases:**
 - Simple notifications
@@ -147,6 +170,8 @@ Sends an informational message to the configured channel without taking any acti
 ### kickpoint
 Automatically adds kickpoints to players who violate rules.
 
+**Availability:** All event types
+
 **Configuration:**
 - Must specify `kickpoint_reason` parameter
 - Reason must be configured via `/kpaddreason` first
@@ -158,18 +183,62 @@ Automatically adds kickpoints to players who violate rules.
 /listeningevent add ... actiontype:Kickpoint channel:#penalties kickpoint_reason:CW_Missed_Attack
 ```
 
-### cwdonator (filler)
-Special action type for Clan War start events.
+### cwdonator
+Special action type for Clan War donor selection.
+
+**Availability:** CW (Clan War) events only
 
 **Behavior:**
-- Checks which clan members are opted OUT of war
+- Selects random players to donate during war
+- Can use list-based distribution
+- Can exclude leaders from selection
+
+**Usage:**
+```
+/listeningevent add clan:LOST_F2P type:Clan_War duration:start actiontype:CW_Donator channel:#war-prep
+```
+
+### filler
+Special action type for checking war fillers (opted-out members).
+
+**Availability:** CW (Clan War) events only
+
+**Behavior:**
+- Checks which clan members are opted OUT of war but still in the roster
 - Lists them in the channel
 - Does NOT add kickpoints
 - Useful for roster management
 
 **Usage:**
 ```
-/listeningevent add ... actiontype:CW_Donator_(Filler) channel:#war-prep
+/listeningevent add clan:LOST_F2P type:Clan_War duration:start actiontype:Filler channel:#war-prep
+```
+
+### raidfails
+Special action type for analyzing district attacks during Raid Weekend.
+
+**Availability:** Raid events only
+
+**Behavior:**
+- Analyzes attack distribution across districts
+- Identifies districts where total attacks exceeded configured thresholds
+- Without kickpoint_reason: lists all attackers on over-attacked districts (info only)
+- With kickpoint_reason: penalizes player(s) with most attacks on over-attacked districts
+- Configurable tie-breaker: penalize both players or neither when tied
+
+**Configuration:**
+- Prompts for Capital Peak max attacks threshold
+- Prompts for other districts max attacks threshold
+- Prompts for tie-breaker behavior
+
+**Usage (info only):**
+```
+/listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Raidfails channel:#raid-logs
+```
+
+**Usage (with kickpoints):**
+```
+/listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Raidfails channel:#raid-logs kickpoint_reason:Raidfail_zuviele_Angriffe
 ```
 
 ## Action Values JSON Format

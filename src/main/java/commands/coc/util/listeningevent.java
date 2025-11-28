@@ -132,9 +132,25 @@ public class listeningevent extends ListenerAdapter {
 		// Validate action type
 		if (!actionTypeStr.equals("infomessage") && !actionTypeStr.equals("kickpoint")
 				&& !actionTypeStr.equals("cwdonator") && !actionTypeStr.equals("custommessage")
-				&& !actionTypeStr.equals("filler")) {
+				&& !actionTypeStr.equals("filler") && !actionTypeStr.equals("raidfails")) {
 			event.replyEmbeds(MessageUtil.buildEmbed(title,
-					"Ungültiger Aktionstyp. Erlaubt: infomessage, kickpoint, cwdonator, custommessage, filler",
+					"Ungültiger Aktionstyp. Erlaubt: infomessage, kickpoint, cwdonator, custommessage, filler, raidfails",
+					MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+		
+		// Validate that cwdonator and filler are only used with CW type
+		if ((actionTypeStr.equals("cwdonator") || actionTypeStr.equals("filler")) && !type.equals("cw")) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title,
+					"CW Donator und Filler können nur bei Clan War Events verwendet werden!",
+					MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+		
+		// Validate that raidfails is only used with raid type
+		if (actionTypeStr.equals("raidfails") && !type.equals("raid")) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title,
+					"Raidfails kann nur bei Raid Events verwendet werden!",
 					MessageUtil.EmbedType.ERROR)).queue();
 			return;
 		}
@@ -177,10 +193,10 @@ public class listeningevent extends ListenerAdapter {
 			modal = Modal.create(modalId, "Benötigte Angriffe eingeben").addActionRows(ActionRow.of(attacksInput))
 					.build();
 		}
-		// RAID + (infomessage or kickpoint) => ask for district attack thresholds
-		else if (type.equals("raid") && (actionTypeStr.equals("infomessage") || actionTypeStr.equals("kickpoint"))) {
+		// RAID + raidfails => ask for district attack thresholds
+		else if (type.equals("raid") && actionTypeStr.equals("raidfails")) {
 			needsModal = true;
-			modalId = "listeningevent_raid_districts_" + clantag + "_" + duration + "_" + actionTypeStr + "_" + channelId
+			modalId = "listeningevent_raidfails_" + clantag + "_" + duration + "_" + channelId
 					+ "_" + (kickpointReasonName != null ? kickpointReasonName : "");
 
 			TextInput capitalPeakInput = TextInput.create("capital_peak_max", "Maximale Angriffe auf Capital Peak", TextInputStyle.SHORT)
@@ -192,7 +208,7 @@ public class listeningevent extends ListenerAdapter {
 			TextInput penalizeBothInput = TextInput.create("penalize_both", "Beide Spieler bestrafen? 1->Ja; 2->Nein", TextInputStyle.SHORT)
 					.setPlaceholder("1 oder 2").setRequired(true).setMinLength(1).setMaxLength(1).setValue("1").build();
 
-			modal = Modal.create(modalId, "Raid Distrikt Einstellungen")
+			modal = Modal.create(modalId, "Raidfails Distrikt Einstellungen")
 					.addActionRows(ActionRow.of(capitalPeakInput), ActionRow.of(otherDistrictsInput), ActionRow.of(penalizeBothInput))
 					.build();
 		}
@@ -251,6 +267,10 @@ public class listeningevent extends ListenerAdapter {
 			actionValues.add(new ActionValue(ActionValue.ACTIONVALUETYPE.FILLER));
 		} else if (actionTypeStr.equals("kickpoint") && kickpointReasonName != null) {
 			// Create KickpointReason with name and clan tag
+			KickpointReason kpReason = new KickpointReason(kickpointReasonName, clantag);
+			actionValues.add(new ActionValue(kpReason));
+		} else if (actionTypeStr.equals("raidfails") && kickpointReasonName != null) {
+			// raidfails with kickpoint reason - will add kickpoints
 			KickpointReason kpReason = new KickpointReason(kickpointReasonName, clantag);
 			actionValues.add(new ActionValue(kpReason));
 		}
@@ -628,6 +648,58 @@ public class listeningevent extends ListenerAdapter {
 
 			processEventCreation(event.getHook(), title, clantag, "raid", duration, actionTypeStr, channelId,
 					kickpointReasonName, null, null, raidDistrictThresholds);
+		} else if (modalId.startsWith("listeningevent_raidfails_")) {
+			event.deferReply().queue();
+			String title = "Listening Event";
+
+			// Parse: listeningevent_raidfails_{clantag}_{duration}_{channelid}_{kpreason}
+			String[] parts = modalId.split("_");
+			if (parts.length < 5) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+
+			String clantag = parts[2];
+			long duration = Long.parseLong(parts[3]);
+			String channelId = parts[4];
+			String kickpointReasonName = parts.length > 5 && !parts[5].isEmpty() ? parts[5] : null;
+
+			// Parse the three threshold values
+			String capitalPeakMaxStr = event.getValue("capital_peak_max").getAsString();
+			String otherDistrictsMaxStr = event.getValue("other_districts_max").getAsString();
+			String penalizeBothStr = event.getValue("penalize_both").getAsString();
+			
+			int capitalPeakMax, otherDistrictsMax, penalizeBoth;
+			try {
+				capitalPeakMax = Integer.parseInt(capitalPeakMaxStr);
+				otherDistrictsMax = Integer.parseInt(otherDistrictsMaxStr);
+				penalizeBoth = Integer.parseInt(penalizeBothStr);
+				
+				if (capitalPeakMax < 1 || otherDistrictsMax < 1) {
+					throw new NumberFormatException("Thresholds must be at least 1");
+				}
+				
+				if (penalizeBoth != 1 && penalizeBoth != 2) {
+					throw new NumberFormatException("Penalize both must be 1 or 2");
+				}
+			} catch (NumberFormatException e) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Ungültige Werte eingegeben. Capital Peak und Distrikte müssen >= 1 sein, 'beide bestrafen' muss 1 oder 2 sein.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
+
+			// Create map with thresholds
+			java.util.Map<String, Integer> raidDistrictThresholds = new java.util.HashMap<>();
+			raidDistrictThresholds.put("capital_peak_max", capitalPeakMax);
+			raidDistrictThresholds.put("other_districts_max", otherDistrictsMax);
+			raidDistrictThresholds.put("penalize_both", penalizeBoth);
+
+			processEventCreation(event.getHook(), title, clantag, "raid", duration, "raidfails", channelId,
+					kickpointReasonName, null, null, raidDistrictThresholds);
 		} else if (modalId.startsWith("listeningevent_cwdonator_params_")) {
 			event.deferReply().queue();
 			String title = "Listening Event";
@@ -763,19 +835,56 @@ public class listeningevent extends ListenerAdapter {
 				}, _ -> {
 				});
 			} else if (focused.equals("actiontype")) {
-				// Provide autocomplete for action types
+				// Get the event type to filter action types
+				OptionMapping typeOption = event.getOption("type");
+				String eventType = typeOption != null ? typeOption.getAsString() : "";
+				
+				// Provide autocomplete for action types based on listening type
 				List<Command.Choice> choices = new ArrayList<>();
-				String[] actionTypes = { "infomessage", "kickpoint", "cwdonator", "filler", "custommessage" };
-				String[] displayNames = { "Info-Nachricht", "Kickpoint", "CW Donator", "Filler",
-						"Benutzerdefinierte Nachricht" };
+				
+				// Common action types available for all listening types
+				String[] commonActionTypes = { "infomessage", "kickpoint", "custommessage" };
+				String[] commonDisplayNames = { "Info-Nachricht", "Kickpoint", "Benutzerdefinierte Nachricht" };
+				
+				// CW-specific action types
+				String[] cwActionTypes = { "cwdonator", "filler" };
+				String[] cwDisplayNames = { "CW Donator", "Filler" };
+				
+				// Raid-specific action types  
+				String[] raidActionTypes = { "raidfails" };
+				String[] raidDisplayNames = { "Raidfails (Distrikt-Analyse)" };
 
-				for (int i = 0; i < actionTypes.length; i++) {
-					if (actionTypes[i].toLowerCase().contains(input.toLowerCase())
-							|| displayNames[i].toLowerCase().contains(input.toLowerCase())) {
-						choices.add(new Command.Choice(displayNames[i], actionTypes[i]));
-						if (choices.size() >= 25)
-							break;
+				// Add common action types
+				for (int i = 0; i < commonActionTypes.length; i++) {
+					if (commonActionTypes[i].toLowerCase().contains(input.toLowerCase())
+							|| commonDisplayNames[i].toLowerCase().contains(input.toLowerCase())) {
+						choices.add(new Command.Choice(commonDisplayNames[i], commonActionTypes[i]));
 					}
+				}
+				
+				// Add CW-specific action types only if type is "cw"
+				if (eventType.equals("cw")) {
+					for (int i = 0; i < cwActionTypes.length; i++) {
+						if (cwActionTypes[i].toLowerCase().contains(input.toLowerCase())
+								|| cwDisplayNames[i].toLowerCase().contains(input.toLowerCase())) {
+							choices.add(new Command.Choice(cwDisplayNames[i], cwActionTypes[i]));
+						}
+					}
+				}
+				
+				// Add raid-specific action types only if type is "raid"
+				if (eventType.equals("raid")) {
+					for (int i = 0; i < raidActionTypes.length; i++) {
+						if (raidActionTypes[i].toLowerCase().contains(input.toLowerCase())
+								|| raidDisplayNames[i].toLowerCase().contains(input.toLowerCase())) {
+							choices.add(new Command.Choice(raidDisplayNames[i], raidActionTypes[i]));
+						}
+					}
+				}
+				
+				// Limit to 25 choices
+				if (choices.size() > 25) {
+					choices = choices.subList(0, 25);
 				}
 
 				event.replyChoices(choices).queue(_ -> {

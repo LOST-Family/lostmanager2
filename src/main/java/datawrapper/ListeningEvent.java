@@ -34,7 +34,7 @@ public class ListeningEvent {
 	}
 
 	public enum ACTIONTYPE {
-		INFOMESSAGE, CUSTOMMESSAGE, KICKPOINT, CWDONATOR, FILLER
+		INFOMESSAGE, CUSTOMMESSAGE, KICKPOINT, CWDONATOR, FILLER, RAIDFAILS
 	}
 
 	private Long id;
@@ -134,7 +134,8 @@ public class ListeningEvent {
 					: type.equals("custommessage") ? ACTIONTYPE.CUSTOMMESSAGE
 							: type.equals("kickpoint") ? ACTIONTYPE.KICKPOINT
 									: type.equals("cwdonator") ? ACTIONTYPE.CWDONATOR
-											: type.equals("filler") ? ACTIONTYPE.FILLER : null;
+											: type.equals("filler") ? ACTIONTYPE.FILLER
+													: type.equals("raidfails") ? ACTIONTYPE.RAIDFAILS : null;
 		}
 		return actiontype;
 	}
@@ -1199,46 +1200,47 @@ public class ListeningEvent {
 			return; // No valid raid state
 		}
 
-		// Check if we have district thresholds configured
-		boolean hasDistrictThresholds = false;
-		Integer capitalPeakMax = null;
-		Integer otherDistrictsMax = null;
-		Integer penalizeBoth = null;
+		// Handle RAIDFAILS action type - district analysis only
+		if (getActionType() == ACTIONTYPE.RAIDFAILS) {
+			if (isRaidEnded) {
+				// Parse district thresholds from action values
+				Integer capitalPeakMax = null;
+				Integer otherDistrictsMax = null;
+				Integer penalizeBoth = null;
 
-		ArrayList<ActionValue> actionValues = getActionValues();
-		if (actionValues != null && actionValues.size() >= 3) {
-			// Check if we have 3 consecutive VALUE types (district thresholds)
-			// They would be after the kickpoint reason (if exists)
-			int valueCount = 0;
-			for (ActionValue av : actionValues) {
-				if (av.getSaved() == ActionValue.kind.value) {
-					valueCount++;
-					if (valueCount == 1) {
-						capitalPeakMax = av.getValue().intValue();
-					} else if (valueCount == 2) {
-						otherDistrictsMax = av.getValue().intValue();
-					} else if (valueCount == 3) {
-						penalizeBoth = av.getValue().intValue();
-						hasDistrictThresholds = true;
+				ArrayList<ActionValue> actionValues = getActionValues();
+				if (actionValues != null) {
+					int valueCount = 0;
+					for (ActionValue av : actionValues) {
+						if (av.getSaved() == ActionValue.kind.value) {
+							valueCount++;
+							if (valueCount == 1) {
+								capitalPeakMax = av.getValue().intValue();
+							} else if (valueCount == 2) {
+								otherDistrictsMax = av.getValue().intValue();
+							} else if (valueCount == 3) {
+								penalizeBoth = av.getValue().intValue();
+							}
+						}
 					}
 				}
+
+				// Use default values if not configured
+				if (capitalPeakMax == null) capitalPeakMax = 10;
+				if (otherDistrictsMax == null) otherDistrictsMax = 6;
+				if (penalizeBoth == null) penalizeBoth = 1;
+
+				handleRaidDistrictAnalysis(clan, capitalPeakMax, otherDistrictsMax, penalizeBoth);
 			}
+			return; // RAIDFAILS only handles district analysis
 		}
 
-		// If we have district thresholds and raid has ENDED, analyze districts
-		// Only analyze districts at raid end, not during ongoing raid
-		if (hasDistrictThresholds && isRaidEnded
-				&& (getActionType() == ACTIONTYPE.INFOMESSAGE || getActionType() == ACTIONTYPE.KICKPOINT)) {
-			handleRaidDistrictAnalysis(clan, capitalPeakMax, otherDistrictsMax, penalizeBoth);
-		}
-
-		// Continue with existing missed attacks logic (for both ongoing and ended
-		// raids)
+		// Handle INFOMESSAGE and KICKPOINT - missed attacks only ("Verpasste Hits")
 		ArrayList<Player> raidMembers = clan.getRaidMemberList();
 		ArrayList<Player> dbMembers = clan.getPlayersDB();
 
 		StringBuilder message = new StringBuilder();
-		message.append("## Raid Weekend - Missed Attacks\n\n");
+		message.append("## Raid Weekend - Verpasste Hits\n\n");
 
 		boolean hasMissedAttacks = false;
 
@@ -1312,6 +1314,18 @@ public class ListeningEvent {
 
 			org.json.JSONArray attackLog = currentRaid.getJSONArray("attackLog");
 
+			// Determine if we should add kickpoints based on action type and kickpoint reason
+			boolean shouldAddKickpoints = false;
+			if (getActionType() == ACTIONTYPE.RAIDFAILS) {
+				// Check if kickpoint reason is configured
+				for (ActionValue av : getActionValues()) {
+					if (av.getSaved() == ActionValue.kind.reason && av.getReason() != null) {
+						shouldAddKickpoints = true;
+						break;
+					}
+				}
+			}
+
 			// Process each defender (enemy clan) in the attack log
 			for (int i = 0; i < attackLog.length(); i++) {
 				org.json.JSONObject defenderEntry = attackLog.getJSONObject(i);
@@ -1366,12 +1380,12 @@ public class ListeningEvent {
 
 						// Build message
 						StringBuilder message = new StringBuilder();
-						message.append("## ").append(districtName).append(" - Zu viele Angriffe\n\n");
+						message.append("## Raidfails - ").append(districtName).append("\n\n");
 						message.append("**Schwellenwert:** ").append(threshold).append("\n");
 						message.append("**Tatsächliche Angriffe:** ").append(totalAttacks).append("\n\n");
 
-						if (getActionType() == ACTIONTYPE.INFOMESSAGE) {
-							// List all attackers
+						if (!shouldAddKickpoints) {
+							// Info mode - list all attackers
 							message.append("**Alle Angreifer:**\n");
 							for (java.util.Map.Entry<String, String> entry : playerNames.entrySet()) {
 								String tag = entry.getKey();
@@ -1390,8 +1404,8 @@ public class ListeningEvent {
 								}
 								message.append("\n");
 							}
-						} else if (getActionType() == ACTIONTYPE.KICKPOINT) {
-							// Penalize top attacker(s)
+						} else {
+							// Kickpoint mode - penalize top attacker(s)
 
 							// If multiple players tied and penalizeBoth is 2 (No), skip penalizing
 							if (topAttackers.size() > 1 && penalizeBoth == 2) {
