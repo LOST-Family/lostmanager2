@@ -172,6 +172,12 @@ public class kpadd extends ListenerAdapter {
 						playertag, timestampcreated, amount, reason, userid, timestampnow, timestampexpires, c.getTag(),
 						timestampnow);
 
+				if (result == null) {
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, "Fehler beim Hinzufügen des Kickpunkts. Bitte versuche es erneut.", MessageUtil.EmbedType.ERROR))
+							.queue();
+					return;
+				}
+
 				PreparedStatement stmt = result.getFirst();
 				int rowsAffected = result.getSecond();
 
