@@ -37,6 +37,27 @@ public class Player {
 		ADMIN, LEADER, COLEADER, ELDER, MEMBER, NOTINCLAN
 	};
 
+	/**
+	 * Checks if a role is elder or higher (ELDER, COLEADER, or LEADER).
+	 * Note: RoleType.ELDER corresponds to the "admin" clan_role in the database.
+	 * RoleType.ADMIN is used for bot administrators, not clan elders.
+	 * @param role The role type to check
+	 * @return true if the role is elder or higher, false otherwise
+	 */
+	public static boolean isElderOrHigher(RoleType role) {
+		return role == RoleType.ELDER || role == RoleType.COLEADER || role == RoleType.LEADER;
+	}
+
+	/**
+	 * Checks if a role string represents elder or higher (admin, coLeader, or leader).
+	 * Note: hiddencoleader is NOT included as hidden coleaders should not have roles edited.
+	 * @param role The role string to check
+	 * @return true if the role is elder or higher, false otherwise
+	 */
+	public static boolean isElderOrHigherString(String role) {
+		return role != null && (role.equals("admin") || role.equals("coLeader") || role.equals("leader"));
+	}
+
 	private String tag;
 	private Integer currentRaidAttacks;
 	private Integer currentRaidGoldLooted;

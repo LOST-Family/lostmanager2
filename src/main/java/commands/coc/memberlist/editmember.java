@@ -106,12 +106,20 @@ public class editmember extends ListenerAdapter {
 				return;
 			}
 
-			// Get old role before update
-			Player.RoleType oldRoleType = p.getRoleDB();
-			String oldRole = oldRoleType == Player.RoleType.ELDER ? "admin" 
-					: oldRoleType == Player.RoleType.LEADER ? "leader"
-					: oldRoleType == Player.RoleType.COLEADER ? "coLeader"
-					: oldRoleType == Player.RoleType.MEMBER ? "member" : null;
+			// Get old role before update - need the actual string value, not just RoleType
+			// because hiddencoleader and coLeader both map to RoleType.COLEADER
+			String oldRole = null;
+			String sql = "SELECT clan_role FROM clan_members WHERE player_tag = ?";
+			try (java.sql.PreparedStatement pstmt = dbutil.Connection.getConnection().prepareStatement(sql)) {
+				pstmt.setString(1, playertag);
+				try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+					if (rs.next()) {
+						oldRole = rs.getString("clan_role");
+					}
+				}
+			} catch (java.sql.SQLException e) {
+				e.printStackTrace();
+			}
 
 			DBUtil.executeUpdate("UPDATE clan_members SET clan_role = ? WHERE player_tag = ?", role, playertag);
 			String rolestring = role.equals("leader") ? "Anführer"
@@ -135,51 +143,52 @@ public class editmember extends ListenerAdapter {
 					String elderroleid = c.getRoleID(Clan.Role.ELDER);
 					Role elderrole = guild.getRoleById(elderroleid);
 					
-					boolean wasElder = oldRole != null && oldRole.equals("admin");
-					boolean isNowElder = role.equals("admin");
+					// wasElder tracks if old role was elder or higher (should have elder discord role)
+					boolean wasElderOrHigher = Player.isElderOrHigherString(oldRole);
+					boolean isNowElderOrHigher = Player.isElderOrHigherString(role);
 					
 					if (elderrole != null) {
-						if (!wasElder && isNowElder) {
-							// Adding elder role
+						if (!wasElderOrHigher && isNowElderOrHigher) {
+							// Adding elder role when promoting to elder or higher
 							if (!member.getRoles().contains(elderrole)) {
 								guild.addRoleToMember(member, elderrole).queue();
 								desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + elderroleid + "> hinzugefügt.**";
 							} else {
 								desc += "\n\n**Der User <@" + userid + "> hat bereits die Rolle <@&" + elderroleid + ">.**";
 							}
-						} else if (wasElder && !isNowElder && role.equals("member")) {
-							// Removing elder role only when editing to member - check if user has other elder accounts in same clan
+						} else if (wasElderOrHigher && !isNowElderOrHigher) {
+							// Removing elder role only when demoting to member - check if user has other elder+ accounts in same clan
+							// Note: hiddencoleaders should not count as elder or higher
 							ArrayList<Player> allaccs = p.getUser().getAllLinkedAccounts();
-							boolean othereldersameclan = false;
+							boolean otherElderOrHigherSameClan = false;
 							for (Player acc : allaccs) {
 								if (!acc.getTag().equals(playertag) && acc.getClanDB() != null) {
 									if (acc.getClanDB().getTag().equals(clantag)) {
-										if (acc.getRoleDB() == Player.RoleType.ELDER) {
-											othereldersameclan = true;
-											break;
+										if (Player.isElderOrHigher(acc.getRoleDB()) && !acc.isHiddenColeader()) {
+											otherElderOrHigherSameClan = true;
 										}
 									}
 								}
 							}
 							if (member.getRoles().contains(elderrole)) {
-								if (!othereldersameclan) {
+								if (!otherElderOrHigherSameClan) {
 									guild.removeRoleFromMember(member, elderrole).queue();
 									desc += "\n\n**Dem User <@" + userid + "> wurde die Rolle <@&" + elderroleid + "> genommen.**";
 								} else {
 									desc += "\n\n**Der User <@" + userid
-											+ "> hat noch mindestens einen anderen Account als Ältester in dem Clan, daher behält er die Rolle <@&"
+											+ "> hat noch mindestens einen anderen Account als Ältester oder höher in dem Clan, daher behält er die Rolle <@&"
 											+ elderroleid + ">.**";
 								}
 							} else {
-								if (othereldersameclan) {
+								if (otherElderOrHigherSameClan) {
 									desc += "\n\n**Der User <@" + userid
-											+ "> hat noch mindestens einen anderen Account als Ältester in dem Clan, hat aber die Rolle <@&"
+											+ "> hat noch mindestens einen anderen Account als Ältester oder höher in dem Clan, hat aber die Rolle <@&"
 											+ elderroleid + "> nicht. Gebe sie ihm manuell, falls erwünscht.**";
 								}
 							}
 						}
 					} else {
-						if (isNowElder) {
+						if (isNowElderOrHigher) {
 							desc += "\n\n**Die Elder-Rolle für diesen Clan ist nicht konfiguriert.**";
 						}
 					}

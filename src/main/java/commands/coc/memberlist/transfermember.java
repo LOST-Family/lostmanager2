@@ -156,49 +156,84 @@ public class transfermember extends ListenerAdapter {
 		Member member = guild.getMemberById(userid);
 		if (member != null) {
 			ArrayList<Player> allaccs = player.getUser().getAllLinkedAccounts();
-			boolean b = false;
+			boolean hasOtherAccountInOldClan = false;
+			// Note: hiddencoleaders should not count as elder or higher
+			boolean hasOtherElderOrHigherInOldClan = false;
 			for (Player acc : allaccs) {
 				if (acc.getClanDB() != null) {
 					if (acc.getClanDB().getTag().equals(clantag)) {
-						b = true;
-						break;
+						hasOtherAccountInOldClan = true;
+						if (Player.isElderOrHigher(acc.getRoleDB()) && !acc.isHiddenColeader()) {
+							hasOtherElderOrHigherInOldClan = true;
+						}
 					}
 				}
 			}
 			String memberroleid = playerclan.getRoleID(Clan.Role.MEMBER);
 			Role memberrole = guild.getRoleById(memberroleid);
-			if (member.getRoles().contains(memberrole)) {
-				if (!b) {
-					guild.removeRoleFromMember(member, memberrole).queue();
-					desc += "\n\n";
-					desc += "**Dem User <@" + userid + "> wurde die Rolle <@&" + memberroleid + "> genommen.**\n";
+			if (memberrole != null) {
+				if (member.getRoles().contains(memberrole)) {
+					if (!hasOtherAccountInOldClan) {
+						guild.removeRoleFromMember(member, memberrole).queue();
+						desc += "\n\n";
+						desc += "**Dem User <@" + userid + "> wurde die Rolle <@&" + memberroleid + "> genommen.**\n";
+					} else {
+						desc += "\n\n";
+						desc += "**Der User <@" + userid
+								+ "> hat noch mindestens einen anderen Account in dem alten Clan, daher behält er die Rolle <@&"
+								+ memberroleid + ">.**\n";
+					}
 				} else {
-					desc += "\n\n";
-					desc += "**Der User <@" + userid
-							+ "> hat noch mindestens einen anderen Account in dem Clan, daher behält er die Rolle <@&"
-							+ memberroleid + ">.**\n";
+					if (!hasOtherAccountInOldClan) {
+						desc += "\n\n";
+						desc += "**Der User <@" + userid + "> hat die Rolle <@&" + memberroleid
+								+ "> bereits nicht mehr.**\n";
+					} else {
+						desc += "\n\n";
+						desc += "**Der User <@" + userid
+								+ "> hat noch mindestens einen anderen Account in dem alten Clan, hat aber die Rolle <@&"
+								+ memberroleid + "> nicht. Gebe sie ihm manuell, falls erwünscht.**\n";
+					}
 				}
-			} else {
-				if (!b) {
-					desc += "\n\n";
-					desc += "**Der User <@" + userid + "> hat die Rolle <@&" + memberroleid
-							+ "> bereits nicht mehr.**\n";
-				} else {
-					desc += "\n\n";
-					desc += "**Der User <@" + userid
-							+ "> hat noch mindestens einen anderen Account in dem Clan, hat aber die Rolle <@&"
-							+ memberroleid + "> nicht. Gebe sie ihm manuell, falls erwünscht.**\n";
+			}
+			// Handle elder role for old clan
+			String elderroleid = playerclan.getRoleID(Clan.Role.ELDER);
+			Role elderrole = guild.getRoleById(elderroleid);
+			// Only handle elder role if the player was elder or higher in the old clan
+			if (Player.isElderOrHigher(role)) {
+				if (elderrole != null) {
+					if (member.getRoles().contains(elderrole)) {
+						if (!hasOtherElderOrHigherInOldClan) {
+							guild.removeRoleFromMember(member, elderrole).queue();
+							desc += "\n\n";
+							desc += "**Dem User <@" + userid + "> wurde die Rolle <@&" + elderroleid + "> genommen.**\n";
+						} else {
+							desc += "\n\n";
+							desc += "**Der User <@" + userid
+									+ "> hat noch mindestens einen anderen Account als Ältester oder höher in dem alten Clan, daher behält er die Rolle <@&"
+									+ elderroleid + ">.**\n";
+						}
+					} else {
+						if (hasOtherElderOrHigherInOldClan) {
+							desc += "\n\n";
+							desc += "**Der User <@" + userid
+									+ "> hat noch mindestens einen anderen Account als Ältester oder höher in dem alten Clan, hat aber die Rolle <@&"
+									+ elderroleid + "> nicht. Gebe sie ihm manuell, falls erwünscht.**\n";
+						}
+					}
 				}
 			}
 			String newmemberroleid = newclan.getRoleID(Clan.Role.MEMBER);
 			Role newmemberrole = guild.getRoleById(newmemberroleid);
-			if (member.getRoles().contains(newmemberrole)) {
-				desc += "\n\n";
-				desc += "**Der User <@" + userid + "> hat die Rolle <@&" + newmemberroleid + "> bereits.**\n";
-			} else {
-				guild.addRoleToMember(member, newmemberrole).queue();
-				desc += "\n\n";
-				desc += "**Dem User <@" + userid + "> wurde die Rolle <@&" + newmemberroleid + "> gegeben.**\n";
+			if (newmemberrole != null) {
+				if (member.getRoles().contains(newmemberrole)) {
+					desc += "\n\n";
+					desc += "**Der User <@" + userid + "> hat die Rolle <@&" + newmemberroleid + "> bereits.**\n";
+				} else {
+					guild.addRoleToMember(member, newmemberrole).queue();
+					desc += "\n\n";
+					desc += "**Dem User <@" + userid + "> wurde die Rolle <@&" + newmemberroleid + "> gegeben.**\n";
+				}
 			}
 		} else {
 			desc += "\n\n**Der User <@" + userid
