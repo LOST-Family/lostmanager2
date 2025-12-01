@@ -46,6 +46,8 @@ public class Connection {
 		tableNames.add("kickpoint_reasons");
 		tableNames.add("kickpoints");
 		tableNames.add("cw_fillers");
+		tableNames.add("achievements");
+		tableNames.add("achievement_data");
 		try (java.sql.Connection conn = DriverManager.getConnection(url, user, password)) {
 			DatabaseMetaData dbm = conn.getMetaData();
 
@@ -96,6 +98,20 @@ public class Connection {
 									+ "war_end_time TIMESTAMP NOT NULL," + "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
 									+ "UNIQUE(clan_tag, player_tag, war_end_time))";
 							break;
+						case "achievements":
+							createTableSQL = "CREATE TABLE " + tableName + " (tag TEXT PRIMARY KEY,"
+									+ "data JSONB NOT NULL,"
+									+ "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
+							break;
+						case "achievement_data":
+							createTableSQL = "CREATE TABLE " + tableName + " (id BIGSERIAL PRIMARY KEY,"
+									+ "player_tag TEXT NOT NULL,"
+									+ "type TEXT NOT NULL,"
+									+ "time TIMESTAMP NOT NULL,"
+									+ "data JSONB NOT NULL,"
+									+ "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+									+ "UNIQUE(player_tag, type, time))";
+							break;
 						}
 
 						try (Statement stmt = conn.createStatement()) {
@@ -106,6 +122,14 @@ public class Connection {
 							if (tableName.equals("cw_fillers")) {
 								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_cw_fillers_lookup ON cw_fillers(clan_tag, war_end_time)");
 								System.out.println("Index 'idx_cw_fillers_lookup' wurde erstellt.");
+							}
+							
+							// Create indexes for achievement_data table
+							if (tableName.equals("achievement_data")) {
+								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_achievement_data_lookup ON achievement_data(player_tag, type, time)");
+								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_achievement_data_time ON achievement_data(time)");
+								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_achievement_data_type ON achievement_data(type)");
+								System.out.println("Indexes für 'achievement_data' wurden erstellt.");
 							}
 						}
 					}
