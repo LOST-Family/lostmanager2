@@ -20,8 +20,12 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import util.MessageUtil;
+import util.SeasonUtil;
 
 public class wins extends ListenerAdapter {
+
+	// Threshold for determining if a player was linked mid-season (1 day in milliseconds)
+	private static final long ONE_DAY_MS = 24 * 60 * 60 * 1000L;
 
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -225,11 +229,60 @@ public class wins extends ListenerAdapter {
 
 		if (winsDiff == null) {
 			return "Season: " + selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.GERMAN))
-					+ "\n\nnoch keine Daten, zu kurz verlinkt\n";
+					+ "\n\n⚠️ noch keine Daten, zu kurz verlinkt\n";
 		}
 
+		// Check if player was linked mid-season (first data is after season start)
+		boolean linkedMidSeason = isPlayerLinkedMidSeason(player, selectedMonth, currentMonth);
+		String warning = linkedMidSeason ? " ⚠️" : "";
+		String warningNote = linkedMidSeason ? "\n\n⚠️ *Spieler wurde mitten in der Season verlinkt - Daten unvollständig*" : "";
+
 		return "Season: " + selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.GERMAN))
-				+ "\n\n**" + winsDiff + "** Wins in dieser Season\n";
+				+ "\n\n**" + winsDiff + "** Wins in dieser Season" + warning + warningNote + "\n";
+	}
+
+	/**
+	 * Check if player was linked mid-season (their first data point is after the season start)
+	 */
+	private boolean isPlayerLinkedMidSeason(Player player, YearMonth selectedMonth, YearMonth currentMonth) {
+		HashMap<Type, ArrayList<AchievementData>> allData = player.getAchievementDatasDB();
+		
+		if (allData == null || !allData.containsKey(Type.WINS)) {
+			return true; // No data means they were just linked
+		}
+
+		ArrayList<AchievementData> winsData = allData.get(Type.WINS);
+		if (winsData == null || winsData.isEmpty()) {
+			return true;
+		}
+
+		// Get season start time from API
+		Timestamp seasonStartTime = SeasonUtil.fetchSeasonStartTime();
+		if (seasonStartTime == null) {
+			return false; // Can't determine, assume not mid-season
+		}
+
+		// Find the earliest data point for the selected month
+		Timestamp earliestData = null;
+		for (AchievementData data : winsData) {
+			Timestamp ts = data.getTimeExtracted();
+			YearMonth dataMonth = YearMonth.from(ts.toLocalDateTime());
+			
+			if (dataMonth.equals(selectedMonth) || (selectedMonth.equals(currentMonth) && dataMonth.equals(currentMonth))) {
+				if (earliestData == null || ts.before(earliestData)) {
+					earliestData = ts;
+				}
+			}
+		}
+
+		if (earliestData == null) {
+			return true; // No data for this season
+		}
+
+		// If the earliest data is more than 1 day after season start, player was linked mid-season
+		long timeDiff = earliestData.getTime() - seasonStartTime.getTime();
+		
+		return timeDiff > ONE_DAY_MS;
 	}
 
 	/**

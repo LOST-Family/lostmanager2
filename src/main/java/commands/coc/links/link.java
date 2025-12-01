@@ -1,5 +1,8 @@
 package commands.coc.links;
 
+import java.sql.Timestamp;
+
+import datawrapper.AchievementData;
 import datawrapper.Player;
 import datawrapper.User;
 import dbutil.DBManager;
@@ -76,6 +79,16 @@ public class link extends ListenerAdapter {
 					DBUtil.executeUpdate("INSERT INTO players (coc_tag, discord_id, name) VALUES (?, ?, ?)", tag, userid,
 							playername);
 					Player player = new Player(tag);
+					
+					// Save initial wins data for newly linked player
+					try {
+						// Use current time as timestamp since player was just linked
+						Timestamp now = new Timestamp(System.currentTimeMillis());
+						player.addAchievementDataToDB(AchievementData.Type.WINS, now);
+					} catch (Exception e) {
+						System.err.println("Error saving initial wins for player " + tag + ": " + e.getMessage());
+					}
+					
 					String desc = "Der Spieler " + MessageUtil.unformat(player.getInfoStringAPI())
 							+ " wurde erfolgreich mit dem User <@" + userid + "> verknüpft.";
 					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))

@@ -522,7 +522,14 @@ public class Player {
 				for (AchievementData.Type type : AchievementData.Type.values()) {
 					achievementDatasInDB.put(type, new ArrayList<>());
 				}
-				DBUtil.executeUpdate("INSERT INTO achievements (tag, data) VALUES (?, ?)", tag, achievementDatasInDB);
+				// Convert HashMap to JSON string before inserting
+				ObjectMapper insertMapper = new ObjectMapper();
+				try {
+					String jsonData = insertMapper.writeValueAsString(achievementDatasInDB);
+					DBUtil.executeUpdate("INSERT INTO achievements (tag, data) VALUES (?, ?)", tag, jsonData);
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
 				return null;
 			}
 		}
@@ -566,7 +573,7 @@ public class Player {
 		if (exists) {
 			DBUtil.executeUpdate("UPDATE achievements SET data = ? WHERE tag = ?", jsonlist, tag);
 		} else {
-			DBUtil.executeUpdate("INSERT achievements (tag, data) VALUES ", tag, jsonlist);
+			DBUtil.executeUpdate("INSERT INTO achievements (tag, data) VALUES (?, ?)", tag, jsonlist);
 		}
 		
 		// Also insert into the new achievement_data table for ListeningEvent queries

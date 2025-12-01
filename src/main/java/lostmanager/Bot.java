@@ -451,6 +451,7 @@ public class Bot extends ListenerAdapter {
 		endClanGamesSavings();
 		startClanGamesSavings();
 		scheduleSeasonEndWinsSaving();
+		scheduleSeasonStartWinsSaving();
 
 		// Start unified event polling system that checks all events periodically
 		startEventPolling();
@@ -879,6 +880,69 @@ public class Bot extends ListenerAdapter {
 			}
 			// Schedule the next season end
 			scheduleSeasonEndWinsSaving();
+		}, delay, TimeUnit.MILLISECONDS);
+	}
+
+	public static void scheduleSeasonStartWinsSaving() {
+		// Fetch the actual season start time from the API
+		Timestamp seasonStartTime = util.SeasonUtil.fetchSeasonStartTime();
+
+		if (seasonStartTime == null) {
+			System.err.println("Failed to fetch season start time from API. Retrying in 1 hour...");
+			// Retry after 1 hour if fetching fails
+			schedulertasks.schedule(() -> scheduleSeasonStartWinsSaving(), 1, TimeUnit.HOURS);
+			return;
+		}
+
+		long nowMillis = System.currentTimeMillis();
+		long seasonStartMillis = seasonStartTime.getTime();
+		
+		String sql = "SELECT coc_tag FROM players";
+		
+		// If the season start time has already passed, save wins data immediately
+		// This handles the case where the bot starts after season has begun
+		if (seasonStartMillis <= nowMillis) {
+			// Check if we already have data for this season start
+			// If not, save it immediately
+			System.out.println("Season already started at " + seasonStartTime + ", saving wins data immediately...");
+			
+			// Execute immediately in a separate thread to not block startup
+			schedulertasks.execute(() -> {
+				System.out.println("Saving all player wins for current season start...");
+				for (String tag : DBUtil.getArrayListFromSQL(sql, String.class)) {
+					try {
+						Player p = new Player(tag);
+						p.addAchievementDataToDB(Type.WINS, seasonStartTime);
+					} catch (Exception e) {
+						System.err.println("Error saving wins for player " + tag + ": " + e.getMessage());
+					}
+				}
+				System.out.println("Finished saving player wins for season start.");
+			});
+			
+			// Schedule check for next season start in 24 hours
+			long delayUntilNextCheck = 24 * 60 * 60 * 1000L;
+			System.out.println("Will check again in 24 hours for next season start");
+			schedulertasks.schedule(() -> scheduleSeasonStartWinsSaving(), delayUntilNextCheck, TimeUnit.MILLISECONDS);
+			return;
+		}
+
+		long delay = seasonStartMillis - nowMillis;
+
+		System.out.println("Season start wins tracking scheduled for: " + seasonStartTime);
+
+		schedulertasks.schedule(() -> {
+			System.out.println("Saving all player wins at season start...");
+			for (String tag : DBUtil.getArrayListFromSQL(sql, String.class)) {
+				try {
+					Player p = new Player(tag);
+					p.addAchievementDataToDB(Type.WINS, seasonStartTime);
+				} catch (Exception e) {
+					System.err.println("Error saving wins for player " + tag + ": " + e.getMessage());
+				}
+			}
+			// Schedule the next season start
+			scheduleSeasonStartWinsSaving();
 		}, delay, TimeUnit.MILLISECONDS);
 	}
 

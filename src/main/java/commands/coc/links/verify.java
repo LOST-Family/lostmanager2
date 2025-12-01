@@ -1,10 +1,12 @@
 package commands.coc.links;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import datawrapper.AchievementData;
 import datawrapper.Player;
 import datawrapper.User;
 import dbutil.DBUtil;
@@ -58,6 +60,16 @@ public class verify extends ListenerAdapter {
 						DBUtil.executeUpdate("INSERT INTO players (coc_tag, discord_id, name) VALUES (?, ?, ?)", tag,
 								userid, playername);
 						Player player = new Player(tag);
+						
+						// Save initial wins data for newly linked player
+						try {
+							// Use current time as timestamp since player was just linked
+							Timestamp now = new Timestamp(System.currentTimeMillis());
+							player.addAchievementDataToDB(AchievementData.Type.WINS, now);
+						} catch (Exception e) {
+							System.err.println("Error saving initial wins for player " + tag + ": " + e.getMessage());
+						}
+						
 						String desc = "Der Spieler " + MessageUtil.unformat(player.getInfoStringDB())
 								+ " wurde erfolgreich mit dem User <@" + userid + "> verknüpft.";
 						ArrayList<Player> linkedaccs = userexecuted.refreshData().getAllLinkedAccounts();
