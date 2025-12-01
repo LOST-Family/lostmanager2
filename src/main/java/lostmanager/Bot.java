@@ -95,7 +95,7 @@ public class Bot extends ListenerAdapter {
 			System.out.println("Verbindung zur Datenbank fehlgeschlagen.");
 		}
 
-		// sql.Connection.tablesExists();
+		dbutil.Connection.tablesExists();
 		startNameUpdates();
 		restartAllEvents();
 
