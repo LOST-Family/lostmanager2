@@ -530,7 +530,6 @@ public class Player {
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
-				return null;
 			}
 		}
 		return achievementDatasInDB;

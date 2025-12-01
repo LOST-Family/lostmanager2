@@ -2,6 +2,7 @@ package datawrapper;
 
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,7 +19,7 @@ public class AchievementData {
 	private Type type;
 
 	@JsonCreator
-	public AchievementData(@JsonProperty("time") Timestamp timeextracted, @JsonProperty("data") Integer data,
+	public AchievementData(@JsonProperty("time") @JsonAlias("timeExtracted") Timestamp timeextracted, @JsonProperty("data") Integer data,
 			@JsonProperty("type") Type type) {
 		this.timeextracted = timeextracted;
 		this.data = data;
