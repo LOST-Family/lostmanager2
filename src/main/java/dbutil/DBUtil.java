@@ -68,9 +68,10 @@ public class DBUtil {
 						return executeUpdateWithRetry(sql, retryCount + 1, params);
 					}
 					
-					// If table doesn't have an 'id' column, don't try the explicit ID fallback
-					// The duplicate key error is likely a true duplicate (e.g., duplicate tag)
-					// and should be handled by the caller - skip the fallback and let error propagate
+					// If table doesn't have an 'id' column, don't try the explicit ID fallback.
+					// This code is within the duplicate key error handler (SQLState 23505), and for
+					// tables without an 'id' column (like 'achievements' which uses 'tag'), the 
+					// duplicate key error is a true duplicate value that should be handled by the caller
 					
 					// If sequence reset fails for other reasons (e.g., permission denied), 
 					// try inserting with explicit ID (only if table has an id column)
@@ -134,7 +135,11 @@ public class DBUtil {
 	}
 
 	private static SequenceResetResult resetSequence(String tableName) {
-		// tableName is already validated by extractTableName() to contain only safe characters
+		// Defensive check: tableName must be validated by extractTableName() to contain only safe characters
+		// (alphanumeric and underscore, starting with letter or underscore)
+		if (tableName == null || !tableName.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
+			return SequenceResetResult.FAILED;
+		}
 		String sequenceName = tableName + "_id_seq";
 		String resetSql = "SELECT setval('" + sequenceName + "', COALESCE((SELECT MAX(id) FROM " + tableName + "), 0) + 1, false)";
 		try (PreparedStatement pstmt = Connection.getConnection().prepareStatement(resetSql);
