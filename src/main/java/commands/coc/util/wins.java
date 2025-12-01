@@ -157,7 +157,9 @@ public class wins extends ListenerAdapter {
 		List<Command.Choice> choices = new ArrayList<>();
 
 		// Get all unique timestamps from the achievements table for WINS type
-		String sql = "SELECT DISTINCT data->>'WINS' as wins_data FROM achievements WHERE data ? 'WINS' AND data->'WINS' != 'null'::jsonb";
+		// Note: In JDBC PreparedStatement, ? is a parameter placeholder. To use PostgreSQL's JSONB ? operator,
+		// we need to escape it as ?? (which becomes a literal ? after JDBC processing)
+		String sql = "SELECT DISTINCT data->>'WINS' as wins_data FROM achievements WHERE data ?? 'WINS' AND data->'WINS' != 'null'::jsonb";
 
 		try {
 			ArrayList<String> results = DBUtil.getArrayListFromSQL(sql, String.class);
@@ -292,6 +294,22 @@ public class wins extends ListenerAdapter {
 	private Integer getPlayerWinsDifferenceForSeason(Player player, YearMonth selectedMonth, YearMonth currentMonth) {
 		HashMap<Type, ArrayList<AchievementData>> allData = player.getAchievementDatasDB();
 
+		// If no data exists or WINS data is empty, save current data first
+		if (allData == null || !allData.containsKey(Type.WINS) || allData.get(Type.WINS) == null || allData.get(Type.WINS).isEmpty()) {
+			// Save current wins data from API
+			try {
+				Timestamp now = new Timestamp(System.currentTimeMillis());
+				player.addAchievementDataToDB(Type.WINS, now);
+				// Refresh the data after saving
+				player.refreshData();
+				allData = player.getAchievementDatasDB();
+			} catch (Exception e) {
+				System.err.println("Error saving wins data for player " + player.getTag() + ": " + e.getMessage());
+				// Continue with current allData (which may be null or empty)
+			}
+		}
+
+		// Safety check in case auto-save failed or data is still unavailable
 		if (allData == null || !allData.containsKey(Type.WINS)) {
 			return null;
 		}
