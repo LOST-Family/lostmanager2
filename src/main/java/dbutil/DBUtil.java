@@ -62,16 +62,24 @@ public class DBUtil {
 					}
 					
 					// First try to reset the sequence (preferred approach)
-					if (resetSequence(tableName)) {
+					SequenceResetResult resetResult = resetSequence(tableName);
+					if (resetResult == SequenceResetResult.SUCCESS) {
 						// Retry the insert after resetting the sequence
 						return executeUpdateWithRetry(sql, retryCount + 1, params);
 					}
 					
-					// If sequence reset fails (e.g., permission denied), try inserting with explicit ID
-					String modifiedSql = modifyInsertWithExplicitId(sql, tableName);
-					if (modifiedSql != null) {
-						System.out.println("Sequence reset failed, retrying with explicit ID for table " + tableName);
-						return executeUpdateWithRetry(modifiedSql, retryCount + 1, params);
+					// If table doesn't have an 'id' column, don't try the explicit ID fallback
+					// The duplicate key error is likely a true duplicate (e.g., duplicate tag)
+					// and should be handled by the caller - skip the fallback and let error propagate
+					
+					// If sequence reset fails for other reasons (e.g., permission denied), 
+					// try inserting with explicit ID (only if table has an id column)
+					if (resetResult == SequenceResetResult.FAILED) {
+						String modifiedSql = modifyInsertWithExplicitId(sql, tableName);
+						if (modifiedSql != null) {
+							System.out.println("Sequence reset failed, retrying with explicit ID for table " + tableName);
+							return executeUpdateWithRetry(modifiedSql, retryCount + 1, params);
+						}
 					}
 				}
 			}
@@ -115,7 +123,17 @@ public class DBUtil {
 		return null;
 	}
 
-	private static boolean resetSequence(String tableName) {
+	/**
+	 * Result of a sequence reset attempt.
+	 * SUCCESS: sequence was reset successfully
+	 * NO_ID_COLUMN: table doesn't have an 'id' column (sequence reset not applicable)
+	 * FAILED: sequence reset failed for other reasons
+	 */
+	private enum SequenceResetResult {
+		SUCCESS, NO_ID_COLUMN, FAILED
+	}
+
+	private static SequenceResetResult resetSequence(String tableName) {
 		// tableName is already validated by extractTableName() to contain only safe characters
 		String sequenceName = tableName + "_id_seq";
 		String resetSql = "SELECT setval('" + sequenceName + "', COALESCE((SELECT MAX(id) FROM " + tableName + "), 0) + 1, false)";
@@ -123,10 +141,16 @@ public class DBUtil {
 			 ResultSet rs = pstmt.executeQuery()) {
 			rs.next(); // Consume the result set - setval always returns a value
 			System.out.println("Reset sequence " + sequenceName + " for table " + tableName);
-			return true;
+			return SequenceResetResult.SUCCESS;
 		} catch (SQLException e) {
+			// PostgreSQL error code 42703 = "undefined_column" (column does not exist)
+			// This means the table doesn't have an 'id' column, so sequence reset is not applicable
+			if ("42703".equals(e.getSQLState())) {
+				System.out.println("Table " + tableName + " does not have an 'id' column, skipping sequence reset");
+				return SequenceResetResult.NO_ID_COLUMN;
+			}
 			System.err.println("Failed to reset sequence " + sequenceName + ": " + e.getMessage());
-			return false;
+			return SequenceResetResult.FAILED;
 		}
 	}
 
