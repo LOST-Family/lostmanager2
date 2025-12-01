@@ -297,13 +297,19 @@ public class wins extends ListenerAdapter {
 		// If no data exists or WINS data is empty, save current data first
 		if (allData == null || !allData.containsKey(Type.WINS) || allData.get(Type.WINS) == null || allData.get(Type.WINS).isEmpty()) {
 			// Save current wins data from API
-			Timestamp now = new Timestamp(System.currentTimeMillis());
-			player.addAchievementDataToDB(Type.WINS, now);
-			// Refresh the data after saving
-			player.refreshData();
-			allData = player.getAchievementDatasDB();
+			try {
+				Timestamp now = new Timestamp(System.currentTimeMillis());
+				player.addAchievementDataToDB(Type.WINS, now);
+				// Refresh the data after saving
+				player.refreshData();
+				allData = player.getAchievementDatasDB();
+			} catch (Exception e) {
+				System.err.println("Error saving wins data for player " + player.getTag() + ": " + e.getMessage());
+				// Continue with current allData (which may be null or empty)
+			}
 		}
 
+		// Safety check in case auto-save failed or data is still unavailable
 		if (allData == null || !allData.containsKey(Type.WINS)) {
 			return null;
 		}
