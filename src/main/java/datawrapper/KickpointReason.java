@@ -4,6 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import dbutil.Connection;
 import dbutil.DBUtil;
 
@@ -12,6 +15,18 @@ public class KickpointReason {
 	private String kpreason;
 	private String clan_tag;
 	private Long amount;
+
+	@JsonCreator
+	public KickpointReason(
+			@JsonProperty("name") String name,
+			@JsonProperty("reason") String reason,
+			@JsonProperty("clanTag") String clanTag,
+			@JsonProperty("amount") Long amount) {
+		// Use name if available, otherwise fall back to reason
+		this.kpreason = name != null ? name : reason;
+		this.clan_tag = clanTag;
+		this.amount = amount;
+	}
 
 	public KickpointReason(String reason, String clan_tag) {
 		kpreason = reason;
