@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dbutil.DBManager;
 import dbutil.DBUtil;
 import lostmanager.Bot;
 import net.dv8tion.jda.api.entities.Message;
@@ -1243,8 +1244,10 @@ public class ListeningEvent {
 		message.append("## Raid Weekend - Verpasste Hits\n\n");
 
 		boolean hasMissedAttacks = false;
+		ArrayList<Player> notFinished = new ArrayList<>();
+		ArrayList<Player> notDone = new ArrayList<>();
 
-		// Check members who didn't raid at all
+		// Check members who didn't raid at all or didn't finish
 		for (Player dbPlayer : dbMembers) {
 			// Skip hidden co-leaders as they don't need to be in clan/raid
 			if (dbPlayer.isHiddenColeader()) {
@@ -1260,33 +1263,85 @@ public class ListeningEvent {
 							+ raidPlayer.getCurrentRaidbonusAttackLimit();
 
 					if (attacks < maxAttacks) {
-						hasMissedAttacks = true;
-						message.append("- ").append(raidPlayer.getNameAPI()).append(": ").append(attacks).append("/")
-								.append(maxAttacks);
-						if (dbPlayer.getUser() != null) {
-							message.append(" (<@").append(dbPlayer.getUser().getUserID()).append(">)");
-						}
-						message.append("\n");
-
-						if (getActionType() == ACTIONTYPE.KICKPOINT) {
-							addKickpointForPlayer(dbPlayer,
-									"Raid Angriffe verpasst (" + attacks + "/" + maxAttacks + ")");
-						}
+						notFinished.add(raidPlayer);
 					}
 					break;
 				}
 			}
 
 			if (!foundInRaid) {
+				notDone.add(dbPlayer);
+			}
+		}
+
+		// Check if players not in current raid are raiding in other clans
+		if (!notDone.isEmpty()) {
+			ArrayList<String> allClantags = DBManager.getAllClans();
+			ArrayList<Clan> allClans = new ArrayList<>();
+			for (String s : allClantags) {
+				Clan c = new Clan(s);
+				c.getRaidMemberList(); // load from API
+				allClans.add(c);
+			}
+			for (int i = 0; i < notDone.size(); i++) {
+				Player p = notDone.get(i);
+				for (Clan c : allClans) {
+					ArrayList<Player> raidMemberList = c.getRaidMemberList();
+					for (Player t : raidMemberList) {
+						if (t.getTag().equals(p.getTag())) {
+							if (!message.toString().contains("In")) {
+								message.append("### In einem anderen Lost-Clan angegriffen:\n");
+							}
+							message.append(t.getNameAPI()).append(" in ").append(c.getNameDB()).append(": ")
+									.append(t.getCurrentRaidAttacks()).append("/")
+									.append(t.getCurrentRaidAttackLimit() + t.getCurrentRaidbonusAttackLimit())
+									.append("\n");
+							hasMissedAttacks = true;
+							notDone.remove(p);
+							i--;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		// Report players who didn't raid at all
+		if (!notDone.isEmpty()) {
+			if (!message.toString().contains("icht angegriffen")) {
+				message.append("### Nicht angegriffen:\n");
+			}
+			for (Player p : notDone) {
 				hasMissedAttacks = true;
-				message.append("- ").append(dbPlayer.getNameAPI()).append(": 0 attacks");
-				if (dbPlayer.getUser() != null) {
-					message.append(" (<@").append(dbPlayer.getUser().getUserID()).append(">)");
+				message.append(p.getNameAPI());
+				if (p.getUser() != null) {
+					message.append(" (<@").append(p.getUser().getUserID()).append(">)");
 				}
 				message.append("\n");
 
 				if (getActionType() == ACTIONTYPE.KICKPOINT) {
-					addKickpointForPlayer(dbPlayer, "Raid nicht teilgenommen");
+					addKickpointForPlayer(p, "Raid nicht teilgenommen");
+				}
+			}
+		}
+
+		// Report players who didn't finish their attacks
+		if (!notFinished.isEmpty()) {
+			if (!message.toString().contains("Angriffe")) {
+				message.append("### Noch offene Angriffe:\n");
+			}
+			for (Player p : notFinished) {
+				hasMissedAttacks = true;
+				int attacks = p.getCurrentRaidAttacks();
+				int maxAttacks = p.getCurrentRaidAttackLimit() + p.getCurrentRaidbonusAttackLimit();
+				message.append(p.getNameAPI());
+				if (p.getUser() != null) {
+					message.append(" (<@").append(p.getUser().getUserID()).append(">)");
+				}
+				message.append(": ").append(attacks).append("/").append(maxAttacks).append("\n");
+
+				if (getActionType() == ACTIONTYPE.KICKPOINT) {
+					addKickpointForPlayer(p, "Raid Angriffe verpasst (" + attacks + "/" + maxAttacks + ")");
 				}
 			}
 		}
