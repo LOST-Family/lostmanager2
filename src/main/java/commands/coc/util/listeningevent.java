@@ -923,6 +923,26 @@ public class listeningevent extends ListenerAdapter {
 				OptionMapping typeOption = event.getOption("type");
 				String eventType = typeOption != null ? typeOption.getAsString() : "";
 
+				// Check if the user's input is a valid duration format
+				boolean isValidInput = false;
+				if (!input.isEmpty() && !input.equalsIgnoreCase("start") && !input.equalsIgnoreCase("cwstart")) {
+					try {
+						parseDuration(input);
+						isValidInput = true;
+					} catch (IllegalArgumentException e) {
+						// Input is not a valid duration
+						isValidInput = false;
+					}
+				} else if (input.equalsIgnoreCase("start") || input.equalsIgnoreCase("cwstart")) {
+					// "start" is valid for CW events
+					isValidInput = eventType.equals("cw");
+				}
+
+				// If the user's input is valid, add it as the first choice
+				if (isValidInput && !input.isEmpty()) {
+					choices.add(new Command.Choice("✓ " + input, input));
+				}
+
 				// Common suggestions
 				choices.add(new Command.Choice("Sofort / Am Ende (0)", "0"));
 				choices.add(new Command.Choice("1 Stunde vorher (1h)", "1h"));
