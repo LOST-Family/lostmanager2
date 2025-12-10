@@ -205,12 +205,20 @@ public class listeningevent extends ListenerAdapter {
 			TextInput otherDistrictsInput = TextInput.create("other_districts_max", "Maximale Angriffe auf restliche Distrikte", TextInputStyle.SHORT)
 					.setPlaceholder("z.B. 6").setRequired(true).setMinLength(1).setMaxLength(3).setValue("6").build();
 			
-			TextInput penalizeBothInput = TextInput.create("penalize_both", "Beide Spieler bestrafen? 1->Ja; 2->Nein", TextInputStyle.SHORT)
-					.setPlaceholder("1 oder 2").setRequired(true).setMinLength(1).setMaxLength(1).setValue("1").build();
+			// Only ask for penalize_both if kickpoint_reason is provided (kickpoint mode)
+			if (kickpointReasonName != null) {
+				TextInput penalizeBothInput = TextInput.create("penalize_both", "Beide Spieler bestrafen? 1->Ja; 2->Nein", TextInputStyle.SHORT)
+						.setPlaceholder("1 oder 2").setRequired(true).setMinLength(1).setMaxLength(1).setValue("1").build();
 
-			modal = Modal.create(modalId, "Raidfails Distrikt Einstellungen")
-					.addActionRows(ActionRow.of(capitalPeakInput), ActionRow.of(otherDistrictsInput), ActionRow.of(penalizeBothInput))
-					.build();
+				modal = Modal.create(modalId, "Raidfails Distrikt Einstellungen")
+						.addActionRows(ActionRow.of(capitalPeakInput), ActionRow.of(otherDistrictsInput), ActionRow.of(penalizeBothInput))
+						.build();
+			} else {
+				// Info mode - only ask for thresholds
+				modal = Modal.create(modalId, "Raidfails Distrikt Einstellungen")
+						.addActionRows(ActionRow.of(capitalPeakInput), ActionRow.of(otherDistrictsInput))
+						.build();
+			}
 		}
 		// custommessage => ask for custom message
 		else if (actionTypeStr.equals("custommessage")) {
@@ -670,23 +678,30 @@ public class listeningevent extends ListenerAdapter {
 			String channelId = parts[4];
 			String kickpointReasonName = parts.length > 5 && !parts[5].isEmpty() ? parts[5] : null;
 
-			// Parse the three threshold values
+			// Parse the threshold values (penalize_both is only present in kickpoint mode)
 			String capitalPeakMaxStr = event.getValue("capital_peak_max").getAsString();
 			String otherDistrictsMaxStr = event.getValue("other_districts_max").getAsString();
-			String penalizeBothStr = event.getValue("penalize_both").getAsString();
 			
 			int capitalPeakMax, otherDistrictsMax, penalizeBoth;
 			try {
 				capitalPeakMax = Integer.parseInt(capitalPeakMaxStr);
 				otherDistrictsMax = Integer.parseInt(otherDistrictsMaxStr);
-				penalizeBoth = Integer.parseInt(penalizeBothStr);
+				
+				// penalize_both is only present when kickpoint_reason is provided
+				if (kickpointReasonName != null && event.getValue("penalize_both") != null) {
+					String penalizeBothStr = event.getValue("penalize_both").getAsString();
+					penalizeBoth = Integer.parseInt(penalizeBothStr);
+					
+					if (penalizeBoth != 1 && penalizeBoth != 2) {
+						throw new NumberFormatException("Penalize both must be 1 or 2");
+					}
+				} else {
+					// Info mode - default to 1 (but won't be used since no kickpoints)
+					penalizeBoth = 1;
+				}
 				
 				if (capitalPeakMax < 1 || otherDistrictsMax < 1) {
 					throw new NumberFormatException("Thresholds must be at least 1");
-				}
-				
-				if (penalizeBoth != 1 && penalizeBoth != 2) {
-					throw new NumberFormatException("Penalize both must be 1 or 2");
 				}
 			} catch (NumberFormatException e) {
 				event.getHook()

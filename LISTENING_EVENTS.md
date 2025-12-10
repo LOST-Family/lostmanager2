@@ -139,7 +139,7 @@ Tracks raid participation, attacks, and district performance.
    - Identifies districts where total attacks exceeded threshold
    - Without kickpoint_reason: lists all attackers on over-attacked districts (info only)
    - With kickpoint_reason: penalizes player(s) with most attacks on over-attacked districts
-   - Configurable tie-breaker: penalize both players or neither when tied
+   - Configurable tie-breaker (only when kickpoint_reason is provided): penalize both players or neither when tied
 
    **Example Setup (info only):**
    ```
@@ -224,12 +224,12 @@ Special action type for analyzing district attacks during Raid Weekend.
 - Identifies districts where total attacks exceeded configured thresholds
 - Without kickpoint_reason: lists all attackers on over-attacked districts (info only)
 - With kickpoint_reason: penalizes player(s) with most attacks on over-attacked districts
-- Configurable tie-breaker: penalize both players or neither when tied
+- Configurable tie-breaker (only when kickpoint_reason is provided): penalize both players or neither when tied
 
 **Configuration:**
 - Prompts for Capital Peak max attacks threshold
 - Prompts for other districts max attacks threshold
-- Prompts for tie-breaker behavior
+- Prompts for tie-breaker behavior (only when kickpoint_reason is provided)
 
 **Usage (info only):**
 ```
