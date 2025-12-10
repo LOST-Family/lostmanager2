@@ -225,7 +225,7 @@ public class listeningevent extends ListenerAdapter {
 			modal = Modal.create(modalId, "Benutzerdefinierte Nachricht eingeben")
 					.addActionRows(ActionRow.of(messageInput)).build();
 		}
-		// cwdonator => ask for use_lists and exclude_leaders
+		// cwdonator => asks for use_lists and exclude_leaders
 		else if (actionTypeStr.equals("cwdonator")) {
 			needsModal = true;
 			modalId = "listeningevent_cwdonator_params_" + clantag + "_" + type + "_" + duration + "_" + actionTypeStr + "_" + channelId;
