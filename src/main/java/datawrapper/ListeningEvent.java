@@ -1289,7 +1289,7 @@ public class ListeningEvent {
 					ArrayList<Player> raidMemberList = c.getRaidMemberList();
 					for (Player t : raidMemberList) {
 						if (t.getTag().equals(p.getTag())) {
-							if (!message.toString().contains("In einem anderen Lost-Clan angegriffen:")) {
+							if (!message.toString().contains("In")) {
 								message.append("### In einem anderen Lost-Clan angegriffen:\n");
 							}
 							message.append(t.getNameAPI()).append(" in ").append(c.getNameDB()).append(": ")
@@ -1308,8 +1308,7 @@ public class ListeningEvent {
 
 		// Report players who didn't raid at all
 		if (!notDone.isEmpty()) {
-			if (!message.toString().contains("Noch gar nicht angegriffen") && 
-				!message.toString().contains("Nicht angegriffen")) {
+			if (!message.toString().contains("icht angegriffen")) {
 				message.append("### Nicht angegriffen:\n");
 			}
 			for (Player p : notDone) {
@@ -1328,8 +1327,7 @@ public class ListeningEvent {
 
 		// Report players who didn't finish their attacks
 		if (!notFinished.isEmpty()) {
-			if (!message.toString().contains("Noch offene Angriffe") && 
-				!message.toString().contains("Teil der Angriffe gemacht")) {
+			if (!message.toString().contains("Angriffe")) {
 				message.append("### Noch offene Angriffe:\n");
 			}
 			for (Player p : notFinished) {
