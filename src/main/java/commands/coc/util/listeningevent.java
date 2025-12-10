@@ -925,20 +925,23 @@ public class listeningevent extends ListenerAdapter {
 
 				// Check if the user's input is a valid duration format
 				boolean isValidInput = false;
-				if (!input.isEmpty() && !input.equalsIgnoreCase("start") && !input.equalsIgnoreCase("cwstart")) {
-					try {
-						parseDuration(input);
-						isValidInput = true;
-					} catch (IllegalArgumentException e) {
-						// Input is not a valid duration, isValidInput remains false
+				if (!input.isEmpty()) {
+					if (input.equalsIgnoreCase("start") || input.equalsIgnoreCase("cwstart")) {
+						// "start" and "cwstart" are valid for CW events
+						isValidInput = eventType.equals("cw");
+					} else {
+						// Try to validate as a regular duration
+						try {
+							parseDuration(input);
+							isValidInput = true;
+						} catch (IllegalArgumentException e) {
+							// Input is not a valid duration, isValidInput remains false
+						}
 					}
-				} else if (input.equalsIgnoreCase("start") || input.equalsIgnoreCase("cwstart")) {
-					// "start" and "cwstart" are valid for CW events
-					isValidInput = eventType.equals("cw");
 				}
 
 				// If the user's input is valid, add it as the first choice
-				if (isValidInput && !input.isEmpty()) {
+				if (isValidInput) {
 					choices.add(new Command.Choice("✓ " + input, input));
 				}
 
