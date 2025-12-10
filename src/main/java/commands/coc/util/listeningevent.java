@@ -930,11 +930,10 @@ public class listeningevent extends ListenerAdapter {
 						parseDuration(input);
 						isValidInput = true;
 					} catch (IllegalArgumentException e) {
-						// Input is not a valid duration
-						isValidInput = false;
+						// Input is not a valid duration, isValidInput remains false
 					}
 				} else if (input.equalsIgnoreCase("start") || input.equalsIgnoreCase("cwstart")) {
-					// "start" is valid for CW events
+					// "start" and "cwstart" are valid for CW events
 					isValidInput = eventType.equals("cw");
 				}
 
