@@ -112,9 +112,34 @@ public class ListeningEvent {
 		if (listeningtype == null) {
 			String type = DBUtil.getValueFromSQL("SELECT listeningtype FROM listening_events WHERE id = ?",
 					String.class, id);
-			listeningtype = type.equals("cw") ? LISTENINGTYPE.CW
-					: type.equals("raid") ? LISTENINGTYPE.RAID
-							: type.equals("cwl") ? LISTENINGTYPE.CWLDAY : type.equals("cs") ? LISTENINGTYPE.CS : null;
+			if (type == null) {
+				System.err.println("Warning: Listening event " + id + " has null listeningtype in database");
+				return null;
+			}
+			switch (type.toLowerCase()) {
+			case "cw":
+				listeningtype = LISTENINGTYPE.CW;
+				break;
+			case "raid":
+				listeningtype = LISTENINGTYPE.RAID;
+				break;
+			case "cwl":
+			case "cwlday":
+				listeningtype = LISTENINGTYPE.CWLDAY;
+				break;
+			case "cs":
+				listeningtype = LISTENINGTYPE.CS;
+				break;
+			case "fixtimeinterval":
+				listeningtype = LISTENINGTYPE.FIXTIMEINTERVAL;
+				break;
+			case "cwlend":
+				listeningtype = LISTENINGTYPE.CWLEND;
+				break;
+			default:
+				System.err.println("Warning: Unknown listeningtype '" + type + "' for event " + id);
+				listeningtype = null;
+			}
 		}
 		return listeningtype;
 	}
@@ -172,9 +197,16 @@ public class ListeningEvent {
 				return Long.MAX_VALUE; // Return far future to prevent scheduling
 			}
 
+			// Check if listening type is null
+			LISTENINGTYPE type = getListeningType();
+			if (type == null) {
+				System.err.println("Warning: Cannot calculate timestamp for event " + id + " with null listeningtype");
+				return Long.MAX_VALUE;
+			}
+
 			Clan c = new Clan(getClanTag());
 			Long endTimeMillis = null;
-			switch (getListeningType()) {
+			switch (type) {
 			case CS:
 				endTimeMillis = c.getCGEndTimeMillis();
 				if (endTimeMillis != null) {
@@ -225,9 +257,15 @@ public class ListeningEvent {
 				+ getClanTag());
 
 		try {
+			LISTENINGTYPE type = getListeningType();
+			if (type == null) {
+				System.err.println("Error: Cannot fire event " + getId() + " with null listeningtype");
+				return;
+			}
+
 			Clan clan = new Clan(getClanTag());
 
-			switch (getListeningType()) {
+			switch (type) {
 			case CS:
 				handleClanGamesEvent(clan);
 				break;

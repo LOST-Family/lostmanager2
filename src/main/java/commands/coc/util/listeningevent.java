@@ -415,7 +415,15 @@ public class listeningevent extends ListenerAdapter {
 				Clan clan = new Clan(le.getClanTag());
 				desc.append("**ID:** ").append(id).append("\n");
 				desc.append("**Clan:** ").append(clan.getNameDB()).append(" (").append(le.getClanTag()).append(")\n");
-				desc.append("**Typ:** ").append(le.getListeningType()).append("\n");
+				
+				// Handle null listening type gracefully
+				ListeningEvent.LISTENINGTYPE listeningType = le.getListeningType();
+				if (listeningType == null) {
+					desc.append("**Typ:** UNKNOWN (Fehler in Datenbank)\n");
+				} else {
+					desc.append("**Typ:** ").append(listeningType).append("\n");
+				}
+				
 				desc.append("**Action:** ").append(le.getActionType()).append("\n");
 				desc.append("**Channel:** <#").append(le.getChannelID()).append(">\n");
 
@@ -433,7 +441,7 @@ public class listeningevent extends ListenerAdapter {
 						long minutesSinceFire = Math.abs(minutesUntilFire);
 
 						// Format based on event type for better user experience
-						if (le.getListeningType() == ListeningEvent.LISTENINGTYPE.CW) {
+						if (listeningType == ListeningEvent.LISTENINGTYPE.CW) {
 							// Check if war is actually ended
 							try {
 								Clan leclan = new Clan(le.getClanTag());
@@ -1047,6 +1055,12 @@ public class listeningevent extends ListenerAdapter {
 	 */
 	private String getFireDescriptionForEvent(ListeningEvent le) {
 		ListeningEvent.LISTENINGTYPE type = le.getListeningType();
+		
+		// Handle null type
+		if (type == null) {
+			return "Fehler: Unbekannter Event-Typ";
+		}
+		
 		long duration = le.getDurationUntilEnd();
 
 		// Check if this is a "start" trigger
