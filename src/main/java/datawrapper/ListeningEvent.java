@@ -407,7 +407,8 @@ public class ListeningEvent {
 			if (av.getSaved() == ActionValue.kind.value && av.getValue() != null) {
 				if (av.getValue() == 1L) {
 					useLists = true;
-				} else if (av.getValue() == 2L) {
+				}
+				if (av.getValue() == 2L) {
 					excludeLeaders = true;
 				}
 			}
