@@ -22,6 +22,15 @@ import util.MessageUtil;
 
 public class listmembers extends ListenerAdapter {
 
+	private static final Comparator<Player> NAME_COMPARATOR = (p1, p2) -> {
+		String name1 = p1.getNameDB();
+		String name2 = p2.getNameDB();
+		if (name1 == null && name2 == null) return 0;
+		if (name1 == null) return 1;
+		if (name2 == null) return -1;
+		return name1.compareToIgnoreCase(name2);
+	};
+
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("listmembers"))
@@ -57,37 +66,25 @@ public class listmembers extends ListenerAdapter {
 				if (p.getRoleDB() == Player.RoleType.LEADER) {
 					leaders.add(p);
 					totalMembersCount++;
-				}
-				if (p.getRoleDB() == Player.RoleType.COLEADER) {
+				} else if (p.getRoleDB() == Player.RoleType.COLEADER) {
 					coleaders.add(p);
 					if (!p.isHiddenColeader()) {
 						totalMembersCount++;
 					}
-				}
-				if (p.getRoleDB() == Player.RoleType.ELDER) {
+				} else if (p.getRoleDB() == Player.RoleType.ELDER) {
 					elders.add(p);
 					totalMembersCount++;
-				}
-				if (p.getRoleDB() == Player.RoleType.MEMBER) {
+				} else if (p.getRoleDB() == Player.RoleType.MEMBER) {
 					members.add(p);
 					totalMembersCount++;
 				}
 			}
 
 			// Sort each role list alphabetically by name
-			Comparator<Player> nameComparator = (p1, p2) -> {
-				String name1 = p1.getNameDB();
-				String name2 = p2.getNameDB();
-				if (name1 == null && name2 == null) return 0;
-				if (name1 == null) return 1;
-				if (name2 == null) return -1;
-				return name1.compareToIgnoreCase(name2);
-			};
-			
-			leaders.sort(nameComparator);
-			coleaders.sort(nameComparator);
-			elders.sort(nameComparator);
-			members.sort(nameComparator);
+			leaders.sort(NAME_COMPARATOR);
+			coleaders.sort(NAME_COMPARATOR);
+			elders.sort(NAME_COMPARATOR);
+			members.sort(NAME_COMPARATOR);
 
 			// Build display strings
 			String leaderlist = "";
@@ -189,37 +186,25 @@ public class listmembers extends ListenerAdapter {
 					if (p.getRoleDB() == Player.RoleType.LEADER) {
 						leaders.add(p);
 						totalMembersCount++;
-					}
-					if (p.getRoleDB() == Player.RoleType.COLEADER) {
+					} else if (p.getRoleDB() == Player.RoleType.COLEADER) {
 						coleaders.add(p);
 						if (!p.isHiddenColeader()) {
 							totalMembersCount++;
 						}
-					}
-					if (p.getRoleDB() == Player.RoleType.ELDER) {
+					} else if (p.getRoleDB() == Player.RoleType.ELDER) {
 						elders.add(p);
 						totalMembersCount++;
-					}
-					if (p.getRoleDB() == Player.RoleType.MEMBER) {
+					} else if (p.getRoleDB() == Player.RoleType.MEMBER) {
 						members.add(p);
 						totalMembersCount++;
 					}
 				}
 
 				// Sort each role list alphabetically by name
-				Comparator<Player> nameComparator = (p1, p2) -> {
-					String name1 = p1.getNameDB();
-					String name2 = p2.getNameDB();
-					if (name1 == null && name2 == null) return 0;
-					if (name1 == null) return 1;
-					if (name2 == null) return -1;
-					return name1.compareToIgnoreCase(name2);
-				};
-				
-				leaders.sort(nameComparator);
-				coleaders.sort(nameComparator);
-				elders.sort(nameComparator);
-				members.sort(nameComparator);
+				leaders.sort(NAME_COMPARATOR);
+				coleaders.sort(NAME_COMPARATOR);
+				elders.sort(NAME_COMPARATOR);
+				members.sort(NAME_COMPARATOR);
 
 				// Build display strings
 				String leaderlist = "";
