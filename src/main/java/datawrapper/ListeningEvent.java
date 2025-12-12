@@ -1916,7 +1916,6 @@ public class ListeningEvent {
 	/**
 	 * Get the required attacks count from the event's action values configuration.
 	 * Falls back to the API's attacksPerMember if no custom value is configured.
-	 * 
 	 * @param cwJson The clan war JSON containing the API's attacksPerMember value
 	 * @return The configured required attacks count
 	 */
