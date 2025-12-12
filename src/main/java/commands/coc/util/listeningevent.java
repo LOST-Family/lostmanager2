@@ -891,7 +891,7 @@ public class listeningevent extends ListenerAdapter {
 				String[] raidDisplayNames = { "Kickpunkte (Fails)" };
 
 				// Add common action types (use raid-specific names for raid type)
-				String[] displayNames = eventType.equals("raid") ? raidCommonDisplayNames : commonDisplayNames;
+				String[] displayNames = "raid".equals(eventType) ? raidCommonDisplayNames : commonDisplayNames;
 				for (int i = 0; i < commonActionTypes.length; i++) {
 					if (commonActionTypes[i].toLowerCase().contains(input.toLowerCase())
 							|| displayNames[i].toLowerCase().contains(input.toLowerCase())) {
@@ -900,7 +900,7 @@ public class listeningevent extends ListenerAdapter {
 				}
 				
 				// Add CW-specific action types only if type is "cw"
-				if (eventType.equals("cw")) {
+				if ("cw".equals(eventType)) {
 					for (int i = 0; i < cwActionTypes.length; i++) {
 						if (cwActionTypes[i].toLowerCase().contains(input.toLowerCase())
 								|| cwDisplayNames[i].toLowerCase().contains(input.toLowerCase())) {
@@ -910,7 +910,7 @@ public class listeningevent extends ListenerAdapter {
 				}
 				
 				// Add raid-specific action types only if type is "raid"
-				if (eventType.equals("raid")) {
+				if ("raid".equals(eventType)) {
 					for (int i = 0; i < raidActionTypes.length; i++) {
 						if (raidActionTypes[i].toLowerCase().contains(input.toLowerCase())
 								|| raidDisplayNames[i].toLowerCase().contains(input.toLowerCase())) {
