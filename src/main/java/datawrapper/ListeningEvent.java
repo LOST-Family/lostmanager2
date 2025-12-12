@@ -1604,10 +1604,17 @@ public class ListeningEvent {
 			return;
 		}
 		
+		// Verify the event's clan exists in DB before proceeding
+		if (eventClan == null || !eventClan.ExistsDB()) {
+			System.out.println("Cannot add kickpoint for player " + player.getTag() + 
+					" - event clan " + eventClanTag + " does not exist in DB");
+			return;
+		}
+		
 		// Use the event's clan for kickpoint assignment
 		Clan clan = eventClan;
 		
-		if (clan != null && clan.ExistsDB()) {
+		if (clan != null) {
 			Integer daysExpire = clan.getDaysKickpointsExpireAfter();
 			// Default to 30 days if not configured
 			if (daysExpire == null) {
