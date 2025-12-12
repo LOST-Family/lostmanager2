@@ -710,7 +710,7 @@ public class ListeningEvent {
 			}
 		} else if (isEndOfWarEvent && !result.hasMissedAttacks) {
 			// End of war but no missed attacks - nothing to send or schedule
-			// Clean up fillers
+			// Clean up fillers - safe to delete here since no verification will occur
 			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clan.getTag(),
 					endTimeTs);
 		} else {
@@ -786,6 +786,13 @@ public class ListeningEvent {
 						+ "\n\n*Fehler bei der 5-Minuten-Überprüfung. Daten möglicherweise nicht aktuell.*");
 			} catch (Exception e2) {
 				System.err.println("Failed to update message with error: " + e2.getMessage());
+			}
+			
+			// Still clean up fillers even on error
+			try {
+				DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clanTag, endTimeTs);
+			} catch (Exception e3) {
+				System.err.println("Failed to delete fillers on error: " + e3.getMessage());
 			}
 		}
 	}
@@ -1577,23 +1584,30 @@ public class ListeningEvent {
 			reason = kpReason.getName();
 		}
 
-		// Try to get the player's clan from DB first
-		Clan clan = player.getClanDB();
+		// Get the event's configured clan
+		String eventClanTag = getClanTag();
+		Clan eventClan = eventClanTag != null ? new Clan(eventClanTag) : null;
 		
-		// If player's clan is not in DB, fall back to the event's configured clan
-		// This supports external clans (e.g., CWL side clans) where players may not be in our main clan database
-		if (clan == null) {
-			String eventClanTag = getClanTag();
-			if (eventClanTag != null) {
-				Clan eventClan = new Clan(eventClanTag);
-				// Only use the event's clan if it exists in our database (has settings configured)
-				if (eventClan.ExistsDB()) {
-					clan = eventClan;
-				}
-			}
+		// Check if the player is in the clan we're checking for this event
+		// Only add kickpoints if player is in the event's clan DB
+		Clan playerClanDB = player.getClanDB();
+		boolean playerIsInEventClan = false;
+		
+		if (playerClanDB != null && eventClanTag != null) {
+			playerIsInEventClan = playerClanDB.getTag().equals(eventClanTag);
 		}
 		
-		if (clan != null) {
+		// If player is not in the event's clan DB, skip adding kickpoint
+		if (!playerIsInEventClan) {
+			System.out.println("Skipping kickpoint for player " + player.getTag() + 
+					" - not in clan DB for event clan " + eventClanTag);
+			return;
+		}
+		
+		// Use the event's clan for kickpoint assignment
+		Clan clan = eventClan;
+		
+		if (clan != null && clan.ExistsDB()) {
 			Integer daysExpire = clan.getDaysKickpointsExpireAfter();
 			// Default to 30 days if not configured
 			if (daysExpire == null) {
