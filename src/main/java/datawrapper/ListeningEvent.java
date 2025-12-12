@@ -675,7 +675,6 @@ public class ListeningEvent {
 			if (sentMessage != null) {
 				// Store references needed for the delayed update
 				final String clanTag = clan.getTag();
-				final int finalRequiredAttacks = requiredAttacks;
 				final java.sql.Timestamp finalEndTimeTs = endTimeTs;
 				final ArrayList<String> finalFillerTags = fillerTags;
 				final long messageId = sentMessage.getIdLong();
@@ -688,7 +687,7 @@ public class ListeningEvent {
 				ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 				scheduler.schedule(() -> {
 					try {
-						handleCWMissedAttacksDelayedVerification(clanTag, finalRequiredAttacks, finalEndTimeTs,
+						handleCWMissedAttacksDelayedVerification(clanTag, finalEndTimeTs,
 								finalFillerTags, messageId, channelId, thisEvent, originalMessage);
 					} catch (Exception e) {
 						System.err.println("Error in delayed CW verification: " + e.getMessage());
@@ -718,7 +717,7 @@ public class ListeningEvent {
 	 * Fetches fresh data, updates the message, and processes kickpoints if
 	 * appropriate.
 	 */
-	private void handleCWMissedAttacksDelayedVerification(String clanTag, int requiredAttacks,
+	private void handleCWMissedAttacksDelayedVerification(String clanTag,
 			java.sql.Timestamp endTimeTs, ArrayList<String> fillerTags, long messageId, String channelId,
 			ListeningEvent event, String originalMessage) {
 
