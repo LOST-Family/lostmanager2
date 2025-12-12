@@ -647,16 +647,8 @@ public class ListeningEvent {
 	}
 
 	private void handleCWMissedAttacks(Clan clan, org.json.JSONObject cwJson) {
-		// Get required attacks from action values (default to attacksPerMember from
-		// API)
-		int attacksPerMember = cwJson.getInt("attacksPerMember");
-		int requiredAttacks = attacksPerMember;
-		for (ActionValue av : getActionValues()) {
-			if (av.getSaved() == ActionValue.kind.value && av.getValue() != null) {
-				requiredAttacks = av.getValue().intValue();
-				break;
-			}
-		}
+		// Get required attacks from action values (default to attacksPerMember from API)
+		int requiredAttacks = getRequiredAttacksFromConfig(cwJson);
 
 		// Get war end time to match with fillers
 		String endTimeStr = cwJson.getString("endTime");
@@ -742,14 +734,8 @@ public class ListeningEvent {
 			boolean dataIsReliable = currentState.equals("notInWar") || currentState.equals("warEnded");
 
 			// Re-fetch required attacks from event's action values to ensure the configured setting is preserved
-			// This prevents the setting from being lost and defaulting to 2
-			int actualRequiredAttacks = cwJson.getInt("attacksPerMember"); // Default from API
-			for (ActionValue av : event.getActionValues()) {
-				if (av.getSaved() == ActionValue.kind.value && av.getValue() != null) {
-					actualRequiredAttacks = av.getValue().intValue();
-					break;
-				}
-			}
+			// This prevents the setting from being lost and reverting to the API's attacksPerMember value
+			int actualRequiredAttacks = event.getRequiredAttacksFromConfig(cwJson);
 
 			String updatedMessage;
 			boolean shouldProcessKickpoints = false;
@@ -1925,6 +1911,25 @@ public class ListeningEvent {
 	private boolean isLeaderOrCoLeaderForEvent(Player player) {
 		Player.RoleType roleDB = player.getRoleDB();
 		return roleDB == Player.RoleType.LEADER || roleDB == Player.RoleType.COLEADER;
+	}
+
+	/**
+	 * Get the required attacks count from the event's action values configuration.
+	 * Falls back to the API's attacksPerMember if no custom value is configured.
+	 * 
+	 * @param cwJson The clan war JSON containing the API's attacksPerMember value
+	 * @return The configured required attacks count
+	 */
+	private int getRequiredAttacksFromConfig(org.json.JSONObject cwJson) {
+		int attacksPerMember = cwJson.getInt("attacksPerMember");
+		int requiredAttacks = attacksPerMember;
+		for (ActionValue av : getActionValues()) {
+			if (av.getSaved() == ActionValue.kind.value && av.getValue() != null) {
+				requiredAttacks = av.getValue().intValue();
+				break;
+			}
+		}
+		return requiredAttacks;
 	}
 
 }
