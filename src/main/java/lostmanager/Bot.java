@@ -1,5 +1,9 @@
 package lostmanager;
 
+import java.io.FileReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -8,6 +12,8 @@ import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import com.google.genai.Client;
 
 import commands.coc.kickpoints.clanconfig;
 import commands.coc.kickpoints.kpadd;
@@ -77,6 +83,8 @@ public class Bot extends ListenerAdapter {
 	public static String password;
 	public static String verified_roleid;
 	public static String exmember_roleid;
+	public static Client genaiClient;
+	public static String systemInstructions;
 
 	public static void main(String[] args) throws Exception {
 		VERSION = "2.1.0";
@@ -87,7 +95,20 @@ public class Bot extends ListenerAdapter {
 		password = System.getenv("LOST_MANAGER_DB_PASSWORD");
 		verified_roleid = System.getenv("DISCORD_VERIFIED_ROLE_ID");
 		exmember_roleid = System.getenv("DISCORD_EX_MEMBER_ROLE_ID");
-
+		genaiClient = Client.builder().apiKey(System.getenv("GOOGLE_GENAI_API_KEY")).build();
+		
+        String jarPath = FileReader.class
+            .getProtectionDomain()
+            .getCodeSource()
+            .getLocation()
+            .toURI()
+            .getPath();
+        
+        Path jarDir = Paths.get(jarPath).getParent();
+        Path txtFile = jarDir.resolve("lost_manager").resolve("context.txt");
+        
+        systemInstructions = Files.readString(txtFile);
+		
 		String token = System.getenv("LOST_MANAGER_TOKEN");
 
 		if (dbutil.Connection.checkDB()) {

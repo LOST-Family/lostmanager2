@@ -1,5 +1,12 @@
 package commands.discord.util;
 
+import com.google.genai.Client;
+import com.google.genai.types.GenerateContentConfig;
+import com.google.genai.types.GenerateContentResponse;
+import com.google.genai.types.Tool;
+import com.google.genai.types.UrlContext;
+
+import lostmanager.Bot;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -28,11 +35,20 @@ public class lmagent extends ListenerAdapter {
 
 			String prompt = promptOption.getAsString();
 
-			// Dummy response that echoes the prompt
-			String response = "Du hast folgenden Prompt eingegeben:\n\n" + prompt;
+			Client client = Bot.genaiClient;
+			
+			// URL Context Tool konfigurieren
+			Tool urlContextTool = Tool.builder().urlContext(UrlContext.builder().build()).build();
+
+			GenerateContentConfig config = GenerateContentConfig.builder().tools(urlContextTool).build();
+
+			// GitHub Repository URL im Prompt angeben
+			String gemprompt = "Kontextinformationen: Github Repository: https://github.com/uniquepixel/lostmanager2, Kontextprompt: " + Bot.systemInstructions + " Anfrage des Nutzers: " + prompt;
+
+			GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash", gemprompt, config);
 
 			event.getHook()
-					.editOriginalEmbeds(MessageUtil.buildEmbed(title, response, MessageUtil.EmbedType.INFO))
+					.editOriginalEmbeds(MessageUtil.buildEmbed(title, response.text(), MessageUtil.EmbedType.INFO))
 					.queue();
 
 		}, "LMAgentCommand-" + event.getUser().getId()).start();
