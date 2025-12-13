@@ -1,6 +1,9 @@
 package lostmanager;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -96,19 +99,22 @@ public class Bot extends ListenerAdapter {
 		verified_roleid = System.getenv("DISCORD_VERIFIED_ROLE_ID");
 		exmember_roleid = System.getenv("DISCORD_EX_MEMBER_ROLE_ID");
 		genaiClient = Client.builder().apiKey(System.getenv("GOOGLE_GENAI_API_KEY")).build();
-		
-        String jarPath = FileReader.class
-            .getProtectionDomain()
-            .getCodeSource()
-            .getLocation()
-            .toURI()
-            .getPath();
-        
-        Path jarDir = Paths.get(jarPath).getParent();
-        Path txtFile = jarDir.resolve("lost_manager").resolve("context.txt");
-        
-        systemInstructions = Files.readString(txtFile);
-		
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				File folder = new File(getRunningJarDirectory(), "lost_manager");
+				Path filePath = folder.toPath().resolve("context.txt");
+				try {
+					systemInstructions = Files.readString(filePath);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+
 		String token = System.getenv("LOST_MANAGER_TOKEN");
 
 		if (dbutil.Connection.checkDB()) {
@@ -922,16 +928,16 @@ public class Bot extends ListenerAdapter {
 
 		long nowMillis = System.currentTimeMillis();
 		long seasonStartMillis = seasonStartTime.getTime();
-		
+
 		String sql = "SELECT coc_tag FROM players";
-		
+
 		// If the season start time has already passed, save wins data immediately
 		// This handles the case where the bot starts after season has begun
 		if (seasonStartMillis <= nowMillis) {
 			// Check if we already have data for this season start
 			// If not, save it immediately
 			System.out.println("Season already started at " + seasonStartTime + ", saving wins data immediately...");
-			
+
 			// Execute immediately in a separate thread to not block startup
 			schedulertasks.execute(() -> {
 				System.out.println("Saving all player wins for current season start...");
@@ -945,7 +951,7 @@ public class Bot extends ListenerAdapter {
 				}
 				System.out.println("Finished saving player wins for season start.");
 			});
-			
+
 			// Schedule check for next season start in 24 hours
 			long delayUntilNextCheck = 24 * 60 * 60 * 1000L;
 			System.out.println("Will check again in 24 hours for next season start");
@@ -1128,4 +1134,22 @@ public class Bot extends ListenerAdapter {
 		return zdt;
 	}
 
+	public static File getRunningJarDirectory() {
+		try {
+			// Der Ort, von dem die Klasse oder JAR geladen wurde
+			File jarFile = new File(Bot.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+			File dir;
+			if (jarFile.isFile()) {
+				// Wenn die Anwendung als JAR gestartet wurde, ist jarFile eine Datei
+				dir = jarFile.getParentFile();
+			} else {
+				// Wenn dies aus IDE oder als .class Datei läuft, ist es ein Verzeichnis
+				dir = jarFile;
+			}
+			return dir;
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return null; // oder Fallback
+		}
+	}
 }
