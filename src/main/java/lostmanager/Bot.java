@@ -41,6 +41,7 @@ import commands.discord.admin.deletemessages;
 import commands.discord.admin.reactionsrole;
 import commands.discord.admin.restart;
 import commands.discord.util.checkreacts;
+import commands.discord.util.lmagent;
 import commands.discord.util.teamcheck;
 import datawrapper.AchievementData.Type;
 import dbutil.DBUtil;
@@ -367,7 +368,10 @@ public class Bot extends ListenerAdapter {
 											.setAutoComplete(true))
 									.addOptions(new OptionData(OptionType.STRING, "clan",
 											"Der Clan, für den die Wins angezeigt werden sollen", false)
-											.setAutoComplete(true))
+											.setAutoComplete(true)),
+
+							Commands.slash("lmagent", "Dummy command mit einem Prompt-Parameter.")
+									.addOption(OptionType.STRING, "prompt", "Der Prompt als Text", true)
 
 					).queue();
 		}
@@ -401,6 +405,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new clanconfig());
 		classes.add(new cwdonator());
 		classes.add(new checkreacts());
+		classes.add(new lmagent());
 		classes.add(new setnick());
 		classes.add(new deletemessages());
 		classes.add(new reactionsrole());
