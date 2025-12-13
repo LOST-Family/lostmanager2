@@ -43,7 +43,7 @@ public class lmagent extends ListenerAdapter {
 			GenerateContentConfig config = GenerateContentConfig.builder().tools(urlContextTool).build();
 
 			// GitHub Repository URL im Prompt angeben
-			String gemprompt = "Kontextinformationen: Github Repository: https://github.com/uniquepixel/lostmanager2, Kontextprompt: " + Bot.systemInstructions + " Anfrage des Nutzers: " + prompt;
+			String gemprompt = "Kontextinformationen: " + Bot.systemInstructions + " Anfrage des Nutzers: " + prompt;
 
 			GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash", gemprompt, config);
 
