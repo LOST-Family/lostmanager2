@@ -99,11 +99,15 @@ Tracks clan war participation and attacks.
    - Fires when war ends
    - Reports members who didn't use all attacks
    - Can add kickpoints for missed attacks
+   - **Required Attacks**: When creating the event, you'll be prompted for the required attacks count
+     - Leave it **blank/empty** to automatically use the API's `attacksPerMember` value (recommended)
+     - Enter `1` or `2` to override with a specific value
    
    **Example Setup:**
    ```
    /listeningevent add clan:LOST_F2P type:Clan_War duration:0 actiontype:Kickpoint channel:#war-logs kickpoint_reason:CW_Angriff_verpasst
    ```
+   *(When the modal appears, leave the "Benötigte Angriffe" field empty to use the automatic API value)*
 
 ### CWL Day (CWLDAY)
 Tracks missed attacks for each day of Clan War League.

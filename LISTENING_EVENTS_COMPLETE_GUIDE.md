@@ -102,10 +102,13 @@ The Listening Events system automates monitoring and actions for Clash of Clans 
   1. Queries war data from API
   2. Gets list of fillers from `cw_fillers` table for this war
   3. For each war member:
-     - Checks attacks vs attacksPerMember
+     - Checks attacks vs required attacks (uses API's `attacksPerMember` if not explicitly configured)
      - **Skips if player is a filler**
-     - Reports if attacks < attacksPerMember
+     - Reports if attacks < required attacks
   4. Cleans up filler records after reporting
+- **Required Attacks Configuration**: 
+  - Leave blank during event creation to automatically use the API's `attacksPerMember` value (recommended)
+  - Or specify `1` or `2` to override with a fixed value
 
 **Compatible Action Types:**
 - ✅ `infomessage` - Reports missed attacks (excludes fillers)
