@@ -6,17 +6,117 @@ Complete, comprehensive documentation for the LostManager2 Discord bot - a Clash
 
 ## Documentation Overview
 
-This documentation folder contains extremely detailed summaries of EVERYTHING in the bot, designed to be fed into AI systems for perfect understanding of the bot's purpose, functionality, and implementation details.
+This documentation folder contains comprehensive documentation for EVERYTHING in the bot, with two distinct sections:
+
+**User-Friendly Guides** - Written from Discord user perspective, simple language, practical focus
+**Technical Documentation** - Developer perspective, implementation details, system architecture
+
+Designed for both human users and AI systems to provide natural, helpful support.
 
 ### Total Documentation Size
-- **7 comprehensive documents** (including this README)
-- **~200+ pages** of detailed technical documentation
-- **~228 KB** of documentation text
+- **12 comprehensive documents** (including this README)
+- **300+ pages** of documentation
+- **~340 KB** of documentation text
+- **User guides + technical docs**
 - **Every command, feature, and system fully documented**
 
 ---
 
 ## Documentation Files
+
+### User-Friendly Guides (NEW!)
+
+Perfect for Discord users and clan members who want to learn how to use the bot:
+
+#### [USER_GUIDE_GETTING_STARTED.md](USER_GUIDE_GETTING_STARTED.md)
+**Your first steps with Lost Manager 2**
+
+Everything you need to know as a new user:
+- How to link your Clash account to Discord
+- Understanding kickpoints and how they work
+- Basic commands everyone should know
+- What automated events do
+- Troubleshooting common issues
+- Quick reference cards for different roles
+
+**Read this first** if you're new to the bot!
+
+---
+
+#### [USER_GUIDE_COMMANDS.md](USER_GUIDE_COMMANDS.md)
+**Complete command guide from a user's perspective**
+
+Every command explained in simple terms:
+- What each command does
+- Exactly what to type
+- What you'll see when you run it
+- Real examples with actual values
+- Tips and warnings
+- Common use cases
+
+Commands organized by category:
+- Account Management (verify, link, playerinfo, setnick)
+- Kickpoints (kpmember, kpadd, kpremove, kpclan)
+- Clan Management (addmember, removemember, listmembers)
+- Clan Events (raidping, checkroles, wins, listeningevent)
+- Discord Admin (checkreacts, deletemessages, reactionsrole)
+
+**Use this** when you need to know how to use a specific command.
+
+---
+
+#### [USER_GUIDE_AUTOMATED_EVENTS.md](USER_GUIDE_AUTOMATED_EVENTS.md)
+**Complete guide to automated event monitoring**
+
+Everything about automated events in simple language:
+- What automated events are and how they work
+- Event types explained (Clan Games, Wars, CWL, Raids)
+- Action types explained (kickpoints, messages, donors, fillers)
+- Step-by-step setup instructions
+- Common event configurations
+- Duration calculations made easy
+- Real-world examples and scenarios
+- Troubleshooting event issues
+
+**Read this** to understand or set up automated clan monitoring.
+
+---
+
+#### [USER_GUIDE_FAQ.md](USER_GUIDE_FAQ.md)
+**Frequently asked questions and troubleshooting**
+
+Quick answers to common questions:
+- Account linking problems
+- Kickpoint questions
+- Discord role issues
+- Automated event problems
+- Clan management questions
+- Permission issues
+- Technical problems
+
+**Check this** when something isn't working or you have questions.
+
+---
+
+#### [USER_GUIDE_SCENARIOS.md](USER_GUIDE_SCENARIOS.md)
+**Real-world scenarios and workflows**
+
+Step-by-step guides for common tasks:
+- New member joins clan
+- Preparing for clan war
+- Managing raid weekend
+- Member gets promoted
+- Setting up full automation
+- Handling kickpoint appeals
+- Syncing all roles
+
+**Use this** for complete workflows and practical examples.
+
+---
+
+### Technical Documentation
+
+For developers, advanced users, and AI training:
 
 ### [00_MASTER_OVERVIEW.md](00_MASTER_OVERVIEW.md) - 40 KB
 **Complete system overview and introduction**
@@ -207,31 +307,76 @@ Condensed reference for fast lookups:
 
 ## How to Use This Documentation
 
-### For First-Time Setup
+### For Discord Users & Clan Members
+**Start here if you just want to use the bot:**
+1. Read **USER_GUIDE_GETTING_STARTED.md** - Learn the basics
+2. Check **USER_GUIDE_COMMANDS.md** - Find specific commands
+3. Use **USER_GUIDE_FAQ.md** - Troubleshoot problems
+4. Reference **USER_GUIDE_SCENARIOS.md** - Follow workflows
+5. Read **USER_GUIDE_AUTOMATED_EVENTS.md** - Understand automation
+
+**Goal**: Learn how to use the bot without needing technical knowledge.
+
+---
+
+### For Clan Leaders & Co-Leaders
+**When setting up or managing the bot:**
+1. Start with **USER_GUIDE_GETTING_STARTED.md** - Understand basics
+2. Read **USER_GUIDE_AUTOMATED_EVENTS.md** - Set up automation
+3. Follow **USER_GUIDE_SCENARIOS.md** - Common management tasks
+4. Use **USER_GUIDE_COMMANDS.md** - Reference specific commands
+5. Check **05_QUICK_REFERENCE.md** - Quick lookups
+
+**Goal**: Effectively manage your clan with the bot's features.
+
+---
+
+### For First-Time Technical Setup
+**When deploying the bot:**
 1. Read **00_MASTER_OVERVIEW.md** for complete understanding
 2. Check **03_DATABASE_SCHEMA.md** for database setup
 3. Use **02_COMMANDS_REFERENCE.md** for command details
 4. Reference **05_QUICK_REFERENCE.md** for quick lookups
 
+---
+
 ### For Bot Administration
+**Day-to-day technical management:**
 1. Use **05_QUICK_REFERENCE.md** for day-to-day tasks
 2. Reference **02_COMMANDS_REFERENCE.md** for command details
 3. Check **04_EVENT_SYSTEM_DEEP_DIVE.md** for event issues
+4. Use **USER_GUIDE_FAQ.md** for common user issues
+
+---
 
 ### For Development
+**When modifying the bot code:**
 1. Read **01_DATA_STRUCTURES.md** for data models
 2. Study **03_DATABASE_SCHEMA.md** for database structure
 3. Review **04_EVENT_SYSTEM_DEEP_DIVE.md** for event internals
 4. Reference **00_MASTER_OVERVIEW.md** for architecture
 
+---
+
 ### For AI Training/Understanding
-Feed documents in this order:
-1. **00_MASTER_OVERVIEW.md** - Get overall context
-2. **01_DATA_STRUCTURES.md** - Understand data models
-3. **02_COMMANDS_REFERENCE.md** - Learn all commands
-4. **03_DATABASE_SCHEMA.md** - Understand data storage
-5. **04_EVENT_SYSTEM_DEEP_DIVE.md** - Master automation
-6. **05_QUICK_REFERENCE.md** - Quick lookup reference
+**Feed documents in this order for natural user support:**
+
+**Priority 1 - User Guides (for answering user questions):**
+1. **USER_GUIDE_GETTING_STARTED.md** - Basic user knowledge
+2. **USER_GUIDE_COMMANDS.md** - All commands from user perspective
+3. **USER_GUIDE_AUTOMATED_EVENTS.md** - Event system for users
+4. **USER_GUIDE_FAQ.md** - Common problems and solutions
+5. **USER_GUIDE_SCENARIOS.md** - Real-world workflows
+
+**Priority 2 - Technical Docs (for technical questions):**
+6. **00_MASTER_OVERVIEW.md** - Overall system context
+7. **01_DATA_STRUCTURES.md** - Data models
+8. **02_COMMANDS_REFERENCE.md** - Technical command details
+9. **03_DATABASE_SCHEMA.md** - Database structure
+10. **04_EVENT_SYSTEM_DEEP_DIVE.md** - Event internals
+11. **05_QUICK_REFERENCE.md** - Quick lookup reference
+
+**Goal**: Answer questions naturally from user perspective, using technical docs only when needed.
 
 ---
 
@@ -298,21 +443,31 @@ Feed documents in this order:
 - **8 data structures** with complete details
 - **9 database tables** with schemas
 - **4 event types** with internals
-- **100+ usage examples**
+- **200+ real-world examples**
+- **100+ workflow scenarios**
 - **200+ code snippets**
-- **7 comprehensive documents**
+- **12 comprehensive documents**
 
 ### Size Breakdown
 ```
-00_MASTER_OVERVIEW.md          41 KB
-01_DATA_STRUCTURES.md          46 KB
-02_COMMANDS_REFERENCE.md       40 KB
-03_DATABASE_SCHEMA.md          31 KB
-04_EVENT_SYSTEM_DEEP_DIVE.md   29 KB
-05_QUICK_REFERENCE.md          14 KB
-README.md (this file)          11 KB
-─────────────────────────────────
-Total                         ~212 KB
+USER GUIDES:
+USER_GUIDE_GETTING_STARTED.md      8 KB
+USER_GUIDE_COMMANDS.md            35 KB
+USER_GUIDE_AUTOMATED_EVENTS.md    21 KB
+USER_GUIDE_FAQ.md                 19 KB
+USER_GUIDE_SCENARIOS.md           29 KB
+
+TECHNICAL DOCS:
+00_MASTER_OVERVIEW.md             41 KB
+01_DATA_STRUCTURES.md             46 KB
+02_COMMANDS_REFERENCE.md          40 KB
+03_DATABASE_SCHEMA.md             31 KB
+04_EVENT_SYSTEM_DEEP_DIVE.md      29 KB
+05_QUICK_REFERENCE.md             14 KB
+
+README.md (this file)             16 KB
+──────────────────────────────────────
+Total                           ~329 KB
 ```
 
 ---
@@ -334,7 +489,14 @@ Total                         ~212 KB
 5. Update this README if structure changes
 
 ### Version History
-- **v2.1.0** (2024-12-13): Complete documentation created
+- **v2.2.0** (2024-12-14): User-friendly guides added
+  - 5 new user-focused guides
+  - User perspective documentation
+  - Real-world scenarios and workflows
+  - FAQ and troubleshooting
+  - 300+ pages total documentation
+  
+- **v2.1.0** (2024-12-13): Complete technical documentation created
   - 7 comprehensive documents (including README)
   - 200+ pages of documentation
   - Every feature documented
@@ -391,16 +553,29 @@ This documentation is part of the LostManager2 project and follows the same lice
 
 ## Final Notes
 
-This documentation represents a complete snapshot of the LostManager2 bot as of version 2.1.0. Every feature, command, data structure, and system has been documented in extreme detail.
+This documentation represents a complete snapshot of the LostManager2 bot as of version 2.1.0, with both user-friendly and technical documentation.
 
-**Goal Achieved**: Perfect understanding of what the bot is for, how everything works in detail, and complete implementation documentation suitable for AI training and human reference.
+**Goals Achieved**: 
+- ✅ User-friendly guides for Discord users (simple language, practical focus)
+- ✅ Real-world scenarios and workflows
+- ✅ Comprehensive FAQ and troubleshooting
+- ✅ Technical documentation for developers
+- ✅ Complete implementation details
+- ✅ Suitable for AI training and natural user support
+
+**Documentation Philosophy**:
+- User guides prioritize Discord user perspective
+- Simple language, no jargon
+- Practical focus (what to type, what happens)
+- Real examples with actual values
+- Technical docs available when needed
 
 ---
 
-**Documentation Created**: 2024-12-13
+**Documentation Created**: 2024-12-13 (technical), 2024-12-14 (user guides)
 **Bot Version Documented**: 2.1.0
-**Total Documentation**: ~228 KB across 7 comprehensive files (~8,000 lines)
-**Status**: Complete and comprehensive
+**Total Documentation**: ~340 KB across 12 comprehensive files (~11,000 lines)
+**Status**: Complete and comprehensive - both user-friendly and technical
 
 ---
 
