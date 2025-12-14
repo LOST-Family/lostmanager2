@@ -124,6 +124,7 @@ public class Bot extends ListenerAdapter {
 		}
 
 		dbutil.Connection.tablesExists();
+		cleanupDuplicateWinsData();
 		startNameUpdates();
 		restartAllEvents();
 
@@ -915,6 +916,99 @@ public class Bot extends ListenerAdapter {
 		}, delay, TimeUnit.MILLISECONDS);
 	}
 
+	/**
+	 * Clean up duplicate WINS data entries, keeping only the first (earliest) entry 
+	 * per player per month. This removes duplicates that may have accumulated from 
+	 * bot restarts before the deduplication check was implemented.
+	 * 
+	 * SAFETY: Only deletes duplicates within the same player-month combination.
+	 * Always keeps at least one record (the earliest) per player per month.
+	 */
+	private static void cleanupDuplicateWinsData() {
+		try {
+			System.out.println("Checking for duplicate WINS data to clean up...");
+			
+			// SQL to delete duplicate WINS entries, keeping only the earliest timestamp per player per month
+			// This uses a CTE (Common Table Expression) to:
+			// 1. Rank all WINS records per player per month by timestamp (earliest = 1)
+			// 2. Delete all records where rank > 1 (i.e., not the earliest)
+			String cleanupSql = 
+				"WITH ranked_data AS (" +
+				"  SELECT id, " +
+				"         ROW_NUMBER() OVER (" +
+				"           PARTITION BY player_tag, DATE_TRUNC('month', time) " +
+				"           ORDER BY time ASC" +
+				"         ) as rn " +
+				"  FROM achievement_data " +
+				"  WHERE type = 'WINS'" +
+				") " +
+				"DELETE FROM achievement_data " +
+				"WHERE id IN (" +
+				"  SELECT id FROM ranked_data WHERE rn > 1" +
+				")";
+			
+			// First, check how many duplicates exist
+			String countSql = 
+				"WITH ranked_data AS (" +
+				"  SELECT id, " +
+				"         ROW_NUMBER() OVER (" +
+				"           PARTITION BY player_tag, DATE_TRUNC('month', time) " +
+				"           ORDER BY time ASC" +
+				"         ) as rn " +
+				"  FROM achievement_data " +
+				"  WHERE type = 'WINS'" +
+				") " +
+				"SELECT COUNT(*) FROM ranked_data WHERE rn > 1";
+			
+			Long duplicateCount = DBUtil.getValueFromSQL(countSql, Long.class);
+			
+			if (duplicateCount != null && duplicateCount > 0) {
+				System.out.println("Found " + duplicateCount + " duplicate WINS records to delete...");
+				
+				// Execute the cleanup
+				var result = DBUtil.executeUpdate(cleanupSql);
+				
+				if (result != null && result.getSecond() != null) {
+					System.out.println("Successfully deleted " + result.getSecond() + " duplicate WINS records");
+				} else {
+					System.out.println("Cleanup completed");
+				}
+			} else {
+				System.out.println("No duplicate WINS records found - database is clean");
+			}
+		} catch (Exception e) {
+			System.err.println("Error during duplicate WINS data cleanup: " + e.getMessage());
+			e.printStackTrace();
+			// Don't throw - allow bot to continue starting even if cleanup fails
+		}
+	}
+
+	/**
+	 * Check if season start data already exists for the given timestamp
+	 * by querying any player's achievement data
+	 * 
+	 * @param seasonStartTime The timestamp to check
+	 * @return true if data exists for this timestamp, false otherwise
+	 */
+	private static boolean hasSeasonStartData(Timestamp seasonStartTime) {
+		try {
+			// Check if any player has WINS data recorded for this exact timestamp
+			// We only need to check one entry since season start saves are done for all players at once
+			String checkSql = "SELECT COUNT(*) FROM achievement_data WHERE type = 'WINS' AND time = ?";
+			Long count = DBUtil.getValueFromSQL(checkSql, Long.class, seasonStartTime);
+			
+			if (count != null && count > 0) {
+				System.out.println("Found " + count + " existing season start records for " + seasonStartTime);
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			System.err.println("Error checking for existing season start data: " + e.getMessage());
+			// If we can't determine, return false to allow save (safer default)
+			return false;
+		}
+	}
+
 	public static void scheduleSeasonStartWinsSaving() {
 		// Fetch the actual season start time from the API
 		Timestamp seasonStartTime = util.SeasonUtil.fetchSeasonStartTime();
@@ -931,11 +1025,20 @@ public class Bot extends ListenerAdapter {
 
 		String sql = "SELECT coc_tag FROM players";
 
-		// If the season start time has already passed, save wins data immediately
+		// If the season start time has already passed, check if data already exists
 		// This handles the case where the bot starts after season has begun
 		if (seasonStartMillis <= nowMillis) {
 			// Check if we already have data for this season start
-			// If not, save it immediately
+			// If we do, skip saving and just schedule the next check
+			if (hasSeasonStartData(seasonStartTime)) {
+				System.out.println("Season start data for " + seasonStartTime + " already exists, skipping save.");
+				// Schedule check for next season start in 24 hours
+				long delayUntilNextCheck = 24 * 60 * 60 * 1000L;
+				System.out.println("Will check again in 24 hours for next season start");
+				schedulertasks.schedule(() -> scheduleSeasonStartWinsSaving(), delayUntilNextCheck, TimeUnit.MILLISECONDS);
+				return;
+			}
+
 			System.out.println("Season already started at " + seasonStartTime + ", saving wins data immediately...");
 
 			// Execute immediately in a separate thread to not block startup
