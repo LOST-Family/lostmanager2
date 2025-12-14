@@ -55,7 +55,7 @@ Real-world examples of using Lost Manager 2 for various clan management tasks.
    ```
 
 2. **Member links their Discord account** (Member)
-   - Get API token from Clash of Clans settings
+   - Get API token from Clash of Clans game settings
    - Run verify command:
    ```
    /verify tag:#ABC123 apitoken:xyz789

@@ -86,7 +86,7 @@ Use the `/verify` command with your player tag and API token:
 **Important notes:**
 - Token looks like: `abc123xyz` (random letters/numbers)
 - Token changes EVERY time you view it
-- Old tokens become invalid immediately
+- Old tokens become invalid immediately (security feature to prevent sharing)
 - Get a fresh token each time you use `/verify`
 
 ⚠️ **Can't see the option?** You need Town Hall level 8 or higher.
