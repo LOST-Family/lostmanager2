@@ -188,7 +188,7 @@ public class listeningevent extends ListenerAdapter {
 					+ "_" + (kickpointReasonName != null ? kickpointReasonName : "");
 
 			TextInput attacksInput = TextInput.create("required_attacks", "Benötigte Angriffe (leer = API-Wert)", TextInputStyle.SHORT)
-					.setPlaceholder("Leer lassen für automatisch oder 1/2 eingeben").setRequired(false).setMinLength(0).setMaxLength(1).build();
+					.setPlaceholder("Leer lassen für automatisch oder 1/2 eingeben").setRequired(false).setMaxLength(1).build();
 
 			modal = Modal.create(modalId, "Benötigte Angriffe eingeben").addActionRows(ActionRow.of(attacksInput))
 					.build();
@@ -377,6 +377,8 @@ public class listeningevent extends ListenerAdapter {
 			}
 		} else if (type.equals("cw") && (actionTypeStr.equals("infomessage") || actionTypeStr.equals("kickpoint"))) {
 			// For CW events without explicit required attacks, show that API value will be used
+			// Note: Only infomessage and kickpoint action types check missed attacks; 
+			// filler/cwdonator are for war start and don't check attacks
 			desc += "**Benötigte Angriffe:** Automatisch (API-Wert wird verwendet)\n";
 		}
 		if (raidDistrictThresholds != null && !raidDistrictThresholds.isEmpty()) {
