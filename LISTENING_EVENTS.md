@@ -125,34 +125,50 @@ Tracks missed attacks for each day of Clan War League.
 ### Raid Weekend (RAID)
 Tracks raid participation, attacks, and district performance.
 
-**Two Action Types:**
+**Three Action Type Categories:**
 
-1. **Verpasste Hits (infomessage/kickpoint)**
-   - Reports members who didn't complete all raid attacks
+1. **Verpasste Hits (Fehlende Hits / Kickpoints)**
+   - **Fehlende Hits**: Reports members who didn't complete all raid attacks (info only)
+   - **Kickpoints (Fehlende Hits)**: Same as above but also adds kickpoints to violators
    - Reports members who didn't participate at all
-   - Can add kickpoints for incomplete raids
+   - Reports members with incomplete attacks
 
-   **Example Setup:**
+   **Example Setup (info only):**
+   ```
+   /listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Info-Nachricht channel:#raid-logs
+   ```
+
+   **Example Setup (with kickpoints):**
    ```
    /listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Kickpoint channel:#raid-logs kickpoint_reason:Raid_nicht_gemacht
    ```
 
-2. **Raidfails (raidfails)**
-   - Analyzes district attacks at raid end
+2. **District-Analyse (District Analysis)**
+   - **District-Analyse (Info)**: Analyzes district attacks and reports problematic districts (info only)
+   - **District-Analyse (Kickpoints)**: Same as above but also adds kickpoints to top attackers
    - Prompts for thresholds: max attacks on Capital Peak, max attacks on other districts
    - Identifies districts where total attacks exceeded threshold
-   - Without kickpoint_reason: lists all attackers on over-attacked districts (info only)
-   - With kickpoint_reason: penalizes player(s) with most attacks on over-attacked districts
-   - Configurable tie-breaker (only when kickpoint_reason is provided): penalize both players or neither when tied
+   - Info mode: lists all attackers on over-attacked districts
+   - Kickpoint mode: penalizes player(s) with most attacks on over-attacked districts
+   - Configurable tie-breaker (only in kickpoint mode): penalize both players or neither when tied
 
    **Example Setup (info only):**
    ```
-   /listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Raidfails channel:#raid-logs
+   /listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:District-Analyse_(Info) channel:#raid-logs
    ```
    
    **Example Setup (with kickpoints):**
    ```
-   /listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Raidfails channel:#raid-logs kickpoint_reason:Raidfail_zuviele_Angriffe
+   /listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:District-Analyse_(Kickpoints) channel:#raid-logs kickpoint_reason:Raidfail_zuviele_Angriffe
+   ```
+
+3. **Benutzerdefinierte Nachricht (Custom Message)**
+   - Sends a custom user-defined message when the raid event fires
+   - Useful for reminders, motivational messages, or custom instructions
+
+   **Example Setup:**
+   ```
+   /listeningevent add clan:LOST_F2P type:Raid duration:3600000 actiontype:Benutzerdefinierte_Nachricht channel:#raid-reminders
    ```
 
 ## Action Types Explained
@@ -218,31 +234,35 @@ Special action type for checking war fillers (opted-out members).
 /listeningevent add clan:LOST_F2P type:Clan_War duration:start actiontype:Filler channel:#war-prep
 ```
 
-### raidfails
+### District-Analyse (District Analysis)
 Special action type for analyzing district attacks during Raid Weekend.
 
 **Availability:** Raid events only
 
+**Two Variants:**
+- **District-Analyse (Info)**: Information only, lists all attackers on over-attacked districts
+- **District-Analyse (Kickpoints)**: Penalizes player(s) with most attacks on over-attacked districts
+
 **Behavior:**
 - Analyzes attack distribution across districts
 - Identifies districts where total attacks exceeded configured thresholds
-- Without kickpoint_reason: lists all attackers on over-attacked districts (info only)
-- With kickpoint_reason: penalizes player(s) with most attacks on over-attacked districts
-- Configurable tie-breaker (only when kickpoint_reason is provided): penalize both players or neither when tied
+- Info mode: lists all attackers on over-attacked districts (no kickpoints)
+- Kickpoint mode: penalizes player(s) with most attacks on over-attacked districts
+- Configurable tie-breaker (only in kickpoint mode): penalize both players or neither when tied
 
 **Configuration:**
 - Prompts for Capital Peak max attacks threshold
 - Prompts for other districts max attacks threshold
-- Prompts for tie-breaker behavior (only when kickpoint_reason is provided)
+- Prompts for tie-breaker behavior (only in kickpoint mode)
 
 **Usage (info only):**
 ```
-/listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Raidfails channel:#raid-logs
+/listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:District-Analyse_(Info) channel:#raid-logs
 ```
 
 **Usage (with kickpoints):**
 ```
-/listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:Raidfails channel:#raid-logs kickpoint_reason:Raidfail_zuviele_Angriffe
+/listeningevent add clan:LOST_F2P type:Raid duration:0 actiontype:District-Analyse_(Kickpoints) channel:#raid-logs kickpoint_reason:Raidfail_zuviele_Angriffe
 ```
 
 ## Action Values JSON Format
