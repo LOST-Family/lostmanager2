@@ -132,9 +132,10 @@ public class listeningevent extends ListenerAdapter {
 		// Validate action type
 		if (!actionTypeStr.equals("infomessage") && !actionTypeStr.equals("kickpoint")
 				&& !actionTypeStr.equals("cwdonator") && !actionTypeStr.equals("custommessage")
-				&& !actionTypeStr.equals("filler") && !actionTypeStr.equals("raidfails")) {
+				&& !actionTypeStr.equals("filler") && !actionTypeStr.equals("raidfails")
+				&& !actionTypeStr.equals("raidfails_kickpoint")) {
 			event.replyEmbeds(MessageUtil.buildEmbed(title,
-					"Ungültiger Aktionstyp. Erlaubt: infomessage, kickpoint, cwdonator, custommessage, filler, raidfails",
+					"Ungültiger Aktionstyp. Erlaubt: infomessage, kickpoint, cwdonator, custommessage, filler, raidfails, raidfails_kickpoint",
 					MessageUtil.EmbedType.ERROR)).queue();
 			return;
 		}
@@ -147,8 +148,8 @@ public class listeningevent extends ListenerAdapter {
 			return;
 		}
 		
-		// Validate that raidfails is only used with raid type
-		if (actionTypeStr.equals("raidfails") && !type.equals("raid")) {
+		// Validate that raidfails and raidfails_kickpoint are only used with raid type
+		if ((actionTypeStr.equals("raidfails") || actionTypeStr.equals("raidfails_kickpoint")) && !type.equals("raid")) {
 			event.replyEmbeds(MessageUtil.buildEmbed(title,
 					"Raidfails kann nur bei Raid Events verwendet werden!",
 					MessageUtil.EmbedType.ERROR)).queue();
@@ -159,6 +160,15 @@ public class listeningevent extends ListenerAdapter {
 		if (actionTypeStr.equals("kickpoint") && kickpointReasonName == null) {
 			event.replyEmbeds(MessageUtil.buildEmbed(title,
 					"Kickpoint-Grund ist erforderlich, wenn actiontype=kickpoint!", MessageUtil.EmbedType.ERROR))
+					.queue();
+			return;
+		}
+		
+		// Check if kickpoint_reason is required for raidfails_kickpoint
+		if (actionTypeStr.equals("raidfails_kickpoint") && kickpointReasonName == null) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title,
+					"Kickpoint-Grund ist erforderlich, wenn actiontype=District-Analyse (Kickpoints)!",
+					MessageUtil.EmbedType.ERROR))
 					.queue();
 			return;
 		}
@@ -193,8 +203,8 @@ public class listeningevent extends ListenerAdapter {
 			modal = Modal.create(modalId, "Benötigte Angriffe eingeben").addActionRows(ActionRow.of(attacksInput))
 					.build();
 		}
-		// RAID + raidfails => ask for district attack thresholds
-		else if (type.equals("raid") && actionTypeStr.equals("raidfails")) {
+		// RAID + raidfails or raidfails_kickpoint => ask for district attack thresholds
+		else if (type.equals("raid") && (actionTypeStr.equals("raidfails") || actionTypeStr.equals("raidfails_kickpoint"))) {
 			needsModal = true;
 			modalId = "listeningevent_raidfails_" + clantag + "_" + duration + "_" + channelId
 					+ "_" + (kickpointReasonName != null ? kickpointReasonName : "");
@@ -268,6 +278,11 @@ public class listeningevent extends ListenerAdapter {
 	private void processEventCreation(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
 			String clantag, String type, long duration, String actionTypeStr, String channelId,
 			String kickpointReasonName, String customMessage, Integer thresholdOrAttacks, java.util.Map<String, Integer> raidDistrictThresholds) {
+
+		// Convert raidfails_kickpoint to raidfails (it's a UI-only distinction)
+		if (actionTypeStr.equals("raidfails_kickpoint")) {
+			actionTypeStr = "raidfails";
+		}
 
 		// Build action values
 		ArrayList<ActionValue> actionValues = new ArrayList<>();
@@ -891,15 +906,15 @@ public class listeningevent extends ListenerAdapter {
 				String[] commonDisplayNames = { "Info-Nachricht", "Kickpoint", "Benutzerdefinierte Nachricht" };
 				
 				// Raid-specific display names (different from common)
-				String[] raidCommonDisplayNames = { "Fehlende Hits", "Kickpoints (Fehlende Hits)", "Benutzerdefinierte Nachricht" };
+				String[] raidCommonDisplayNames = { "Hits (Info)", "Hits (Kickpoints)", "Benutzerdefinierte Nachricht" };
 				
 				// CW-specific action types
 				String[] cwActionTypes = { "cwdonator", "filler" };
 				String[] cwDisplayNames = { "CW Donator", "Filler" };
 				
 				// Raid-specific action types  
-				String[] raidActionTypes = { "raidfails" };
-				String[] raidDisplayNames = { "District-Analyse" };
+				String[] raidActionTypes = { "raidfails", "raidfails_kickpoint" };
+				String[] raidDisplayNames = { "Districts (Info)", "Districts (Kickpoints)" };
 
 				// Add common action types (use raid-specific names for raid type)
 				String[] displayNames = "raid".equals(eventType) ? raidCommonDisplayNames : commonDisplayNames;
