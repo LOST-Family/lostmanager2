@@ -242,10 +242,8 @@ public class ListeningEvent {
 			}
 
 			// If timestamptofire is still null, return a far future time to prevent
-			// scheduling errors
+			// scheduling errors (this is expected when no war/raid is active)
 			if (timestamptofire == null) {
-				System.err.println(
-						"Warning: Unable to calculate timestamp for listening event. endTime may be missing from API response.");
 				return Long.MAX_VALUE;
 			}
 		}
@@ -1242,6 +1240,12 @@ public class ListeningEvent {
 			return; // No valid raid state
 		}
 
+		// Handle CUSTOMMESSAGE action type - post custom message with raid header
+		if (getActionType() == ACTIONTYPE.CUSTOMMESSAGE) {
+			handleRaidCustomMessage(clan, isRaidActive);
+			return;
+		}
+
 		// Handle RAIDFAILS action type - district analysis only
 		if (getActionType() == ACTIONTYPE.RAIDFAILS) {
 			if (isRaidEnded) {
@@ -1277,12 +1281,36 @@ public class ListeningEvent {
 			return; // RAIDFAILS only handles district analysis
 		}
 
-		// Handle INFOMESSAGE and KICKPOINT - missed attacks only ("Verpasste Hits")
+		// Handle INFOMESSAGE and KICKPOINT - missed attacks only ("Fehlende Hits")
 		ArrayList<Player> raidMembers = clan.getRaidMemberList();
 		ArrayList<Player> dbMembers = clan.getPlayersDB();
 
 		StringBuilder message = new StringBuilder();
-		message.append("## Raid Weekend - Verpasste Hits\n\n");
+		message.append("## Raid Weekend - ");
+		
+		// Show time remaining if raid is active, or "ended" if not (like CW)
+		if (isRaidActive && getDurationUntilEnd() > 0) {
+			int secondsLeft = (int) (getDurationUntilEnd() / 1000);
+			int minutesLeft = secondsLeft / 60;
+			int hoursLeft = minutesLeft / 60;
+
+			secondsLeft = secondsLeft % 60;
+			minutesLeft = minutesLeft % 60;
+
+			if (hoursLeft > 0) {
+				message.append(" **").append(hoursLeft).append("h**");
+			}
+			if (minutesLeft > 0) {
+				message.append(" **").append(minutesLeft).append("m**");
+			}
+			if (secondsLeft > 0) {
+				message.append(" **").append(secondsLeft).append("s**");
+			}
+			message.append(" verbleibend\n");
+		} else {
+			message.append("**Raid beendet.**\n");
+		}
+		message.append("\n");
 
 		boolean hasMissedAttacks = false;
 		ArrayList<Player> notFinished = new ArrayList<>();
@@ -1392,6 +1420,56 @@ public class ListeningEvent {
 		}
 	}
 
+	private void handleRaidCustomMessage(Clan clan, boolean isRaidActive) {
+		// Get custom message from action values
+		String customMessageJson = DBUtil.getValueFromSQL("SELECT actionvalues FROM listening_events WHERE id = ?", 
+				String.class, getId());
+		
+		String customMessage = "";
+		if (customMessageJson != null && !customMessageJson.isEmpty()) {
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+				java.util.Map<String, String> messageMap = mapper.readValue(customMessageJson, 
+						new TypeReference<java.util.HashMap<String, String>>() {});
+				customMessage = messageMap.getOrDefault("message", "");
+			} catch (JsonProcessingException e) {
+				System.err.println("Error parsing custom message: " + e.getMessage());
+			}
+		}
+		
+		// Build message with raid header (like CW format)
+		StringBuilder message = new StringBuilder();
+		message.append("## Raid - ");
+		
+		// Show time remaining if raid is active (same format as CW)
+		if (isRaidActive && getDurationUntilEnd() > 0) {
+			int secondsLeft = (int) (getDurationUntilEnd() / 1000);
+			int minutesLeft = secondsLeft / 60;
+			int hoursLeft = minutesLeft / 60;
+
+			secondsLeft = secondsLeft % 60;
+			minutesLeft = minutesLeft % 60;
+
+			if (hoursLeft > 0) {
+				message.append("**").append(hoursLeft).append("h** ");
+			}
+			if (minutesLeft > 0) {
+				message.append("**").append(minutesLeft).append("m** ");
+			}
+			if (secondsLeft > 0) {
+				message.append("**").append(secondsLeft).append("s** ");
+			}
+			message.append("verbleibend\n\n");
+		} else {
+			message.append("**Raid beendet.**\n\n");
+		}
+		
+		// Append custom message
+		message.append(customMessage);
+		
+		sendMessageToChannel(message.toString());
+	}
+
 	private void handleRaidDistrictAnalysis(Clan clan, int capitalPeakMax, int otherDistrictsMax, int penalizeBoth) {
 		try {
 			// Fetch raid data with attackLog
@@ -1481,13 +1559,11 @@ public class ListeningEvent {
 						message.append("**Tatsächliche Angriffe:** ").append(totalAttacks).append("\n\n");
 
 						if (!shouldAddKickpoints) {
-							// Info mode - list all attackers
-							message.append("**Alle Angreifer:**\n");
-							for (java.util.Map.Entry<String, String> entry : playerNames.entrySet()) {
-								String tag = entry.getKey();
-								String name = entry.getValue();
-								int attackCount = attacksByPlayer.get(tag);
-								message.append("- ").append(name).append(": ").append(attackCount).append(" Angriffe");
+							// Info mode - show top attackers (always penalize same players)
+							message.append("**Spieler mit den meisten Angriffen (").append(maxAttacks).append("):**\n");
+							for (String tag : topAttackers) {
+								String name = playerNames.get(tag);
+								message.append("- ").append(name);
 
 								// Try to find discord user
 								try {

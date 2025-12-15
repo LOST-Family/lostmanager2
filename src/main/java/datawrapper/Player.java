@@ -695,10 +695,11 @@ public class Player {
 			// Einfacher JSON-Name-Parser ohne Bibliotheken:
 			return responseBody;
 		} else {
-			if (response != null) {
+			if (response != null && response.statusCode() != 404) {
+				// Only log errors for non-404 responses (404 is expected when player is not found)
 				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
 				System.err.println("Antwort: " + response.body());
-			} else {
+			} else if (response == null) {
 				System.err.println("Fehler beim Abrufen: response is null");
 			}
 			return null;

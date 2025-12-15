@@ -891,7 +891,7 @@ public class listeningevent extends ListenerAdapter {
 				String[] commonDisplayNames = { "Info-Nachricht", "Kickpoint", "Benutzerdefinierte Nachricht" };
 				
 				// Raid-specific display names (different from common)
-				String[] raidCommonDisplayNames = { "Fehlende Angriffe", "Kickpunkte (Hits)", "Benutzerdefinierte Nachricht" };
+				String[] raidCommonDisplayNames = { "Fehlende Hits", "Kickpoints (Fehlende Hits)", "Benutzerdefinierte Nachricht" };
 				
 				// CW-specific action types
 				String[] cwActionTypes = { "cwdonator", "filler" };
@@ -899,7 +899,7 @@ public class listeningevent extends ListenerAdapter {
 				
 				// Raid-specific action types  
 				String[] raidActionTypes = { "raidfails" };
-				String[] raidDisplayNames = { "Kickpunkte (Fails)" };
+				String[] raidDisplayNames = { "District-Analyse" };
 
 				// Add common action types (use raid-specific names for raid type)
 				String[] displayNames = "raid".equals(eventType) ? raidCommonDisplayNames : commonDisplayNames;
