@@ -396,6 +396,10 @@ public class cwdonator extends ListenerAdapter {
 					if (!p.getWarPreference()) {
 						continue; // Skip if opted out
 					}
+					// Skip leaders if excludeLeaders is enabled
+					if (excludeLeaders && isLeaderOrCoLeader(p)) {
+						continue;
+					}
 					eligiblePlayers.add(p);
 				}
 			}
@@ -406,7 +410,8 @@ public class cwdonator extends ListenerAdapter {
 				Collections.shuffle(eligiblePlayers);
 
 				chosen = eligiblePlayers.get(0);
-
+				
+				// Defensive check: should not happen since leaders are filtered upfront, but kept as safeguard
 				if (isLeaderOrCoLeader(chosen) && excludeLeaders) {
 					listA.remove(chosen.getTag());
 					listB.add(chosen.getTag());
@@ -457,9 +462,33 @@ public class cwdonator extends ListenerAdapter {
 		} catch (Exception e) {
 			System.err.println("Error picking player from List A: " + e.getMessage());
 			e.printStackTrace();
-			// Fallback to simple random
+			// Fallback: find an eligible player, respecting excludeLeaders if enabled
 			if (!warMemberList.isEmpty()) {
 				Collections.shuffle(warMemberList);
+				for (Player p : warMemberList) {
+					// Skip leaders if excludeLeaders is enabled
+					if (excludeLeaders && isLeaderOrCoLeader(p)) {
+						continue;
+					}
+					// Skip players in donation range or opted out
+					int mapposition = p.getWarMapPosition();
+					if (mapposition >= map.getFirst() && mapposition <= map.getSecond()) {
+						continue;
+					}
+					if (!p.getWarPreference()) {
+						continue;
+					}
+					return p;
+				}
+				// If no eligible player found, return any non-leader
+				if (excludeLeaders) {
+					for (Player p : warMemberList) {
+						if (!isLeaderOrCoLeader(p)) {
+							return p;
+						}
+					}
+				}
+				// Last resort: return first player
 				return warMemberList.get(0);
 			}
 			return null;
