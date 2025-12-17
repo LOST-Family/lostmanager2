@@ -2001,12 +2001,24 @@ public class ListeningEvent {
 	private int getRequiredAttacksFromConfig(org.json.JSONObject cwJson) {
 		int attacksPerMember = cwJson.getInt("attacksPerMember");
 		int requiredAttacks = attacksPerMember;
-		for (ActionValue av : getActionValues()) {
-			if (av.getSaved() == ActionValue.kind.value && av.getValue() != null) {
-				requiredAttacks = av.getValue().intValue();
-				break;
+		
+		// For CW events, look for the FIRST value ActionValue which contains the required attacks
+		ArrayList<ActionValue> actionValues = getActionValues();
+		if (actionValues != null) {
+			for (ActionValue av : actionValues) {
+				if (av.getSaved() == ActionValue.kind.value && av.getValue() != null) {
+					int configuredValue = av.getValue().intValue();
+					System.out.println("CW Event " + getId() + ": Using configured required attacks = " + configuredValue + " (API value was " + attacksPerMember + ")");
+					requiredAttacks = configuredValue;
+					break;
+				}
 			}
 		}
+		
+		if (requiredAttacks == attacksPerMember) {
+			System.out.println("CW Event " + getId() + ": No configured required attacks found, using API value = " + attacksPerMember);
+		}
+		
 		return requiredAttacks;
 	}
 
