@@ -410,7 +410,8 @@ public class cwdonator extends ListenerAdapter {
 				Collections.shuffle(eligiblePlayers);
 
 				chosen = eligiblePlayers.get(0);
-
+				
+				// Defensive check: should not happen since leaders are filtered upfront, but kept as safeguard
 				if (isLeaderOrCoLeader(chosen) && excludeLeaders) {
 					listA.remove(chosen.getTag());
 					listB.add(chosen.getTag());
@@ -461,7 +462,7 @@ public class cwdonator extends ListenerAdapter {
 		} catch (Exception e) {
 			System.err.println("Error picking player from List A: " + e.getMessage());
 			e.printStackTrace();
-			// Fallback: find a non-leader if excludeLeaders is true
+			// Fallback: find an eligible player, respecting excludeLeaders if enabled
 			if (!warMemberList.isEmpty()) {
 				Collections.shuffle(warMemberList);
 				for (Player p : warMemberList) {

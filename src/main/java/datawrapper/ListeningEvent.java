@@ -1924,6 +1924,7 @@ public class ListeningEvent {
 				Collections.shuffle(eligiblePlayers);
 
 				chosen = eligiblePlayers.get(0);
+				// Defensive check: should not happen since leaders are filtered upfront, but kept as safeguard
 				if (isLeaderOrCoLeaderForEvent(chosen) && excludeLeaders) {
 					listA.remove(chosen.getTag());
 					listB.add(chosen.getTag());
@@ -1972,7 +1973,7 @@ public class ListeningEvent {
 		} catch (Exception e) {
 			System.err.println("Error picking player from List A for event: " + e.getMessage());
 			e.printStackTrace();
-			// Fallback: find a non-leader if excludeLeaders is true
+			// Fallback: find an eligible player, respecting excludeLeaders if enabled
 			if (!warMemberList.isEmpty()) {
 				java.util.Collections.shuffle(warMemberList);
 				for (Player p : warMemberList) {
