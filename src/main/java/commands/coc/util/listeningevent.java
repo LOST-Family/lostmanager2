@@ -197,8 +197,8 @@ public class listeningevent extends ListenerAdapter {
 			modalId = "listeningevent_cw_attacks_" + clantag + "_" + duration + "_" + actionTypeStr + "_" + channelId
 					+ "_" + (kickpointReasonName != null ? kickpointReasonName : "");
 
-			TextInput attacksInput = TextInput.create("required_attacks", "Benötigte Angriffe (leer = API-Wert)", TextInputStyle.SHORT)
-					.setPlaceholder("Leer lassen für automatisch oder 1/2 eingeben").setRequired(false).setMaxLength(1).build();
+			TextInput attacksInput = TextInput.create("required_attacks", "Benötigte Angriffe", TextInputStyle.SHORT)
+					.setPlaceholder("1 oder 2 eingeben").setRequired(true).setMaxLength(1).build();
 
 			modal = Modal.create(modalId, "Benötigte Angriffe eingeben").addActionRows(ActionRow.of(attacksInput))
 					.build();
@@ -386,11 +386,6 @@ public class listeningevent extends ListenerAdapter {
 			} else if (type.equals("cw")) {
 				desc += "**Benötigte Angriffe:** " + thresholdOrAttacks + "\n";
 			}
-		} else if (type.equals("cw") && (actionTypeStr.equals("infomessage") || actionTypeStr.equals("kickpoint"))) {
-			// For CW events without explicit required attacks, show that API value will be used
-			// Note: Only infomessage and kickpoint action types check missed attacks; 
-			// filler/cwdonator are for war start and don't check attacks
-			desc += "**Benötigte Angriffe:** Automatisch (API-Wert wird verwendet)\n";
 		}
 		if (raidDistrictThresholds != null && !raidDistrictThresholds.isEmpty()) {
 			desc += "**Maximale Angriffe auf Capital Peak:** " + raidDistrictThresholds.get("capital_peak_max") + "\n";
@@ -614,26 +609,32 @@ public class listeningevent extends ListenerAdapter {
 			String kickpointReasonName = parts.length > 7 && !parts[7].isEmpty() ? parts[7] : null;
 
 			String requiredAttacksStr = event.getValue("required_attacks").getAsString().trim();
-			Integer requiredAttacks = null;
 			
-			// If user provided a value, validate and parse it
-			if (!requiredAttacksStr.isEmpty()) {
-				try {
-					int attacks = Integer.parseInt(requiredAttacksStr);
-					if (attacks < 1 || attacks > 2) {
-						throw new NumberFormatException();
-					}
-					requiredAttacks = attacks;
-				} catch (NumberFormatException e) {
-					event.getHook()
-							.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-									"Ungültiger Wert für Angriffe: " + requiredAttacksStr + " (Erlaubt: 1 oder 2, oder leer lassen für automatisch)",
-									MessageUtil.EmbedType.ERROR))
-							.queue();
-					return;
-				}
+			// Validate and parse the required attacks value (now required, not optional)
+			if (requiredAttacksStr.isEmpty()) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Benötigte Angriffe müssen angegeben werden (1 oder 2)",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
 			}
-			// If requiredAttacks is null, it means user left it blank and wants to use API value
+			
+			Integer requiredAttacks = null;
+			try {
+				int attacks = Integer.parseInt(requiredAttacksStr);
+				if (attacks < 1 || attacks > 2) {
+					throw new NumberFormatException();
+				}
+				requiredAttacks = attacks;
+			} catch (NumberFormatException e) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Ungültiger Wert für Angriffe: " + requiredAttacksStr + " (Erlaubt: 1 oder 2)",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
 
 			processEventCreation(event.getHook(), title, clantag, "cw", duration, actionTypeStr, channelId,
 					kickpointReasonName, null, requiredAttacks);

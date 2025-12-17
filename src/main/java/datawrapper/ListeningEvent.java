@@ -1994,32 +1994,29 @@ public class ListeningEvent {
 
 	/**
 	 * Get the required attacks count from the event's action values configuration.
-	 * Falls back to the API's attacksPerMember if no custom value is configured.
+	 * For CW events, this value is always configured via the modal and stored in action values.
+	 * Falls back to the API's attacksPerMember only if no configured value is found (legacy events).
 	 * @param cwJson The clan war JSON containing the API's attacksPerMember value
 	 * @return The configured required attacks count
 	 */
 	private int getRequiredAttacksFromConfig(org.json.JSONObject cwJson) {
-		int attacksPerMember = cwJson.getInt("attacksPerMember");
-		int requiredAttacks = attacksPerMember;
-		
-		// For CW events, look for the FIRST value ActionValue which contains the required attacks
+		// Look for the configured required attacks in action values
 		ArrayList<ActionValue> actionValues = getActionValues();
 		if (actionValues != null) {
 			for (ActionValue av : actionValues) {
 				if (av.getSaved() == ActionValue.kind.value && av.getValue() != null) {
 					int configuredValue = av.getValue().intValue();
-					System.out.println("CW Event " + getId() + ": Using configured required attacks = " + configuredValue + " (API value was " + attacksPerMember + ")");
-					requiredAttacks = configuredValue;
-					break;
+					System.out.println("CW Event " + getId() + ": Using configured required attacks = " + configuredValue);
+					return configuredValue;
 				}
 			}
 		}
 		
-		if (requiredAttacks == attacksPerMember) {
-			System.out.println("CW Event " + getId() + ": No configured required attacks found, using API value = " + attacksPerMember);
-		}
-		
-		return requiredAttacks;
+		// Fallback for legacy events that don't have a configured value
+		// (this should not happen for newly created events)
+		int attacksPerMember = cwJson.getInt("attacksPerMember");
+		System.out.println("CW Event " + getId() + ": WARNING - No configured required attacks found, falling back to API value = " + attacksPerMember);
+		return attacksPerMember;
 	}
 
 }
