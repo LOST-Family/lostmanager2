@@ -706,6 +706,14 @@ public class ListeningEvent {
 			// Not end of war (e.g., reminder during war) - use original behavior
 			if (result.hasMissedAttacks) {
 				sendMessageInChunks(result.message);
+				
+				// Add kickpoints if action type is KICKPOINT
+				if (getActionType() == ACTIONTYPE.KICKPOINT) {
+					for (PlayerMissedAttacks pma : result.playersWithMissedAttacks) {
+						addKickpointForPlayer(pma.player,
+								"CW Angriffe verpasst (" + pma.attacks + "/" + requiredAttacks + ")");
+					}
+				}
 			}
 		}
 	}
