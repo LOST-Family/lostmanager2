@@ -13,7 +13,6 @@ import datawrapper.AchievementData.Type;
 import datawrapper.Clan;
 import datawrapper.Player;
 import dbutil.DBManager;
-import dbutil.DBUtil;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -24,7 +23,8 @@ import util.SeasonUtil;
 
 public class wins extends ListenerAdapter {
 
-	// Threshold for determining if a player was linked mid-season (1 day in milliseconds)
+	// Threshold for determining if a player was linked mid-season (1 day in
+	// milliseconds)
 	private static final long ONE_DAY_MS = 24 * 60 * 60 * 1000L;
 
 	@Override
@@ -156,69 +156,38 @@ public class wins extends ListenerAdapter {
 	private List<Command.Choice> getAvailableSeasons(String input) {
 		List<Command.Choice> choices = new ArrayList<>();
 
-		// Get all unique timestamps from the achievements table for WINS type
-		// Note: In JDBC PreparedStatement, ? is a parameter placeholder. To use PostgreSQL's JSONB ? operator,
-		// we need to escape it as ?? (which becomes a literal ? after JDBC processing)
-		// The data column is explicitly cast to jsonb to handle cases where it might be stored as text
-		String sql = "SELECT DISTINCT data::jsonb->>'WINS' as wins_data FROM achievements WHERE data::jsonb ?? 'WINS' AND data::jsonb->'WINS' != 'null'::jsonb";
-
-		try {
-			ArrayList<String> results = DBUtil.getArrayListFromSQL(sql, String.class);
-			HashMap<YearMonth, Boolean> availableMonths = new HashMap<>();
-
-			for (String winsData : results) {
-				if (winsData == null || winsData.equals("[]"))
-					continue;
-
-				// Parse the wins data to extract timestamps
-				// The data is a JSON array of AchievementData objects
-				org.json.JSONArray winsArray = new org.json.JSONArray(winsData);
-				for (int i = 0; i < winsArray.length(); i++) {
-					org.json.JSONObject winData = winsArray.getJSONObject(i);
-					if (winData.has("time")) {
-						String timeStr = winData.getString("time");
-						Timestamp ts = Timestamp.valueOf(timeStr.replace("T", " ").replace("Z", ""));
-						YearMonth month = YearMonth.from(ts.toLocalDateTime());
-						availableMonths.put(month, true);
-					}
-				}
-			}
-
-			// Also add current month
-			YearMonth currentMonth = YearMonth.now();
-			availableMonths.put(currentMonth, true);
-
-			// Sort months in descending order (most recent first)
-			List<YearMonth> sortedMonths = new ArrayList<>(availableMonths.keySet());
-			sortedMonths.sort((a, b) -> b.compareTo(a));
-
-			// Format and filter
-			DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.GERMAN);
-			DateTimeFormatter valueFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
-
-			for (YearMonth month : sortedMonths) {
-				String display = month.format(displayFormatter);
-				String value = month.format(valueFormatter);
-
-				if (display.toLowerCase().contains(input.toLowerCase()) || value.contains(input)) {
-					choices.add(new Command.Choice(display, value));
-					if (choices.size() >= 25) {
-						break;
-					}
-				}
-			}
-
-		} catch (Exception e) {
-			System.err.println("Error getting available seasons: " + e.getMessage());
-			e.printStackTrace();
+		// Letzte 6 Monate inkl. aktuellem Monat
+		YearMonth currentMonth = YearMonth.now();
+		List<YearMonth> months = new ArrayList<>();
+		for (int i = 0; i < 6; i++) {
+			months.add(currentMonth.minusMonths(i));
 		}
 
-		// If no choices, at least add current month
+		// Sortiert (currentMonth ist sowieso der neueste, aber zur Sicherheit)
+		months.sort((a, b) -> b.compareTo(a));
+
+		DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.GERMAN);
+		DateTimeFormatter valueFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
+
+		for (YearMonth month : months) {
+			String display = month.format(displayFormatter);
+			String value = month.format(valueFormatter);
+
+			if (input == null || input.isEmpty() || display.toLowerCase().contains(input.toLowerCase())
+					|| value.contains(input)) {
+
+				choices.add(new Command.Choice(display, value));
+				if (choices.size() >= 25) {
+					break;
+				}
+			}
+		}
+
+		// Falls nach Filter nix übrig bleibt, trotzdem aktuellen Monat anbieten
 		if (choices.isEmpty()) {
-			YearMonth currentMonth = YearMonth.now();
-			DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.GERMAN);
-			DateTimeFormatter valueFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
-			choices.add(new Command.Choice(currentMonth.format(displayFormatter), currentMonth.format(valueFormatter)));
+			String display = currentMonth.format(displayFormatter);
+			String value = currentMonth.format(valueFormatter);
+			choices.add(new Command.Choice(display, value));
 		}
 
 		return choices;
@@ -238,18 +207,21 @@ public class wins extends ListenerAdapter {
 		// Check if player was linked mid-season (first data is after season start)
 		boolean linkedMidSeason = isPlayerLinkedMidSeason(player, selectedMonth, currentMonth);
 		String warning = linkedMidSeason ? " ⚠️" : "";
-		String warningNote = linkedMidSeason ? "\n\n⚠️ *Spieler wurde mitten in der Season verlinkt - Daten unvollständig*" : "";
+		String warningNote = linkedMidSeason
+				? "\n\n⚠️ *Spieler wurde mitten in der Season verlinkt - Daten unvollständig*"
+				: "";
 
-		return "Season: " + selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.GERMAN))
-				+ "\n\n**" + winsDiff + "** Wins in dieser Season" + warning + warningNote + "\n";
+		return "Season: " + selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.GERMAN)) + "\n\n**"
+				+ winsDiff + "** Wins in dieser Season" + warning + warningNote + "\n";
 	}
 
 	/**
-	 * Check if player was linked mid-season (their first data point is after the season start)
+	 * Check if player was linked mid-season (their first data point is after the
+	 * season start)
 	 */
 	private boolean isPlayerLinkedMidSeason(Player player, YearMonth selectedMonth, YearMonth currentMonth) {
 		HashMap<Type, ArrayList<AchievementData>> allData = player.getAchievementDatasDB();
-		
+
 		if (allData == null || !allData.containsKey(Type.WINS)) {
 			return true; // No data means they were just linked
 		}
@@ -270,8 +242,9 @@ public class wins extends ListenerAdapter {
 		for (AchievementData data : winsData) {
 			Timestamp ts = data.getTimeExtracted();
 			YearMonth dataMonth = YearMonth.from(ts.toLocalDateTime());
-			
-			if (dataMonth.equals(selectedMonth) || (selectedMonth.equals(currentMonth) && dataMonth.equals(currentMonth))) {
+
+			if (dataMonth.equals(selectedMonth)
+					|| (selectedMonth.equals(currentMonth) && dataMonth.equals(currentMonth))) {
 				if (earliestData == null || ts.before(earliestData)) {
 					earliestData = ts;
 				}
@@ -282,9 +255,10 @@ public class wins extends ListenerAdapter {
 			return true; // No data for this season
 		}
 
-		// If the earliest data is more than 1 day after season start, player was linked mid-season
+		// If the earliest data is more than 1 day after season start, player was linked
+		// mid-season
 		long timeDiff = earliestData.getTime() - seasonStartTime.getTime();
-		
+
 		return timeDiff > ONE_DAY_MS;
 	}
 
@@ -296,7 +270,8 @@ public class wins extends ListenerAdapter {
 		HashMap<Type, ArrayList<AchievementData>> allData = player.getAchievementDatasDB();
 
 		// If no data exists or WINS data is empty, save current data first
-		if (allData == null || !allData.containsKey(Type.WINS) || allData.get(Type.WINS) == null || allData.get(Type.WINS).isEmpty()) {
+		if (allData == null || !allData.containsKey(Type.WINS) || allData.get(Type.WINS) == null
+				|| allData.get(Type.WINS).isEmpty()) {
 			// Save current wins data from API
 			try {
 				Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -348,7 +323,7 @@ public class wins extends ListenerAdapter {
 				for (AchievementData data : winsData) {
 					Timestamp ts = data.getTimeExtracted();
 					YearMonth dataMonth = YearMonth.from(ts.toLocalDateTime());
-					
+
 					if (dataMonth.equals(previousMonth)) {
 						if (latestFromPrevious == null || ts.after(latestFromPrevious)) {
 							latestFromPrevious = ts;
@@ -415,7 +390,7 @@ public class wins extends ListenerAdapter {
 				for (AchievementData data : winsData) {
 					Timestamp ts = data.getTimeExtracted();
 					YearMonth dataMonth = YearMonth.from(ts.toLocalDateTime());
-					
+
 					if (dataMonth.equals(previousMonth)) {
 						if (latestBeforeStart == null || ts.after(latestBeforeStart)) {
 							latestBeforeStart = ts;
