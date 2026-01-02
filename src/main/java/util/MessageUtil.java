@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 public class MessageUtil {
 
@@ -67,6 +69,22 @@ public class MessageUtil {
 					sentMessage.editMessage("<@" + uuid + ">").queue();
 					Thread.sleep(100);
 					sentMessage.delete().queue();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}).start();
+		});
+	}
+
+	public static void sendUserPingWithDelete(MessageChannelUnion channel, String uuid) {
+		Button trashButton = Button.secondary("playerinfo_trash", "\u200B")
+				.withEmoji(Emoji.fromUnicode("🗑️"));
+		
+		channel.sendMessage(".").queue(sentMessage -> {
+			new Thread(() -> {
+				try {
+					Thread.sleep(100);
+					sentMessage.editMessage("<@" + uuid + ">").setActionRow(trashButton).queue();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

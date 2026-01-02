@@ -8,11 +8,14 @@ import datawrapper.Player;
 import datawrapper.User;
 import dbutil.DBManager;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import util.MessageUtil;
 
 public class playerinfo extends ListenerAdapter {
@@ -114,7 +117,12 @@ public class playerinfo extends ListenerAdapter {
 					}
 				}
 			}
-			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.INFO)).queue();
+			
+			Button bellButton = Button.secondary("playerinfo_bell_" + userid, "\u200B")
+					.withEmoji(Emoji.fromUnicode("🔔"));
+			
+			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.INFO))
+					.setActionRow(bellButton).queue();
 		}, "PlayerInfoCommand-" + event.getUser().getId()).start();
 
 	}
@@ -136,6 +144,28 @@ public class playerinfo extends ListenerAdapter {
 				});
 			}
 		}, "PlayerInfoAutocomplete-" + event.getUser().getId()).start();
+	}
+	
+	@Override
+	public void onButtonInteraction(ButtonInteractionEvent event) {
+		String id = event.getComponentId();
+		
+		// Handle bell button - send ping with trash button
+		if (id.startsWith("playerinfo_bell_")) {
+			String userid = id.substring("playerinfo_bell_".length());
+			MessageChannelUnion channel = event.getChannel();
+			MessageUtil.sendUserPingWithDelete(channel, userid);
+			event.deferEdit().queue();
+			return;
+		}
+		
+		// Handle trash button - delete the ping message
+		if (id.equals("playerinfo_trash")) {
+			event.getMessage().delete().queue(null, error -> {
+				// Silently ignore errors (e.g., message already deleted or insufficient permissions)
+			});
+			return;
+		}
 	}
 
 }
