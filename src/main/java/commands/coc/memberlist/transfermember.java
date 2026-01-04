@@ -106,8 +106,11 @@ public class transfermember extends ListenerAdapter {
 		
 		// If user has permission in only one clan, create approval request
 		if (!hasOldClanPermission || !hasNewClanPermission) {
-			// Create approval buttons with initiator ID to prevent self-approval
-			String buttonData = encodeButtonData(playertag, clantag, newclantag, event.getUser().getId());
+			// Determine which clan needs to approve (the one where initiator lacks permission)
+			String clanNeedingApproval = !hasOldClanPermission ? clantag : newclantag;
+			
+			// Create approval buttons with the clan that needs to approve
+			String buttonData = encodeButtonData(playertag, clantag, newclantag, clanNeedingApproval);
 			Button acceptButton = Button.success("tm_accept_" + buttonData, "Akzeptieren");
 			Button declineButton = Button.danger("tm_decline_" + buttonData, "Ablehnen");
 			
@@ -204,44 +207,28 @@ public class transfermember extends ListenerAdapter {
 			String playertag = data[0];
 			String oldclantag = data[1];
 			String newclantag = data[2];
-			String initiatorId = data[3];
+			String clanNeedingApproval = data[3];
 			
 			Player player = new Player(playertag);
 			Clan oldclan = new Clan(oldclantag);
 			Clan newclan = new Clan(newclantag);
 			
-			// Check if the approver is the same as the initiator
-			if (event.getUser().getId().equals(initiatorId)) {
-				event.getHook().editOriginalEmbeds(
-						MessageUtil.buildEmbed(title, 
-								"Du kannst deine eigene Transfer-Anfrage nicht genehmigen. Ein anderer Vize-Anführer oder höher muss dies tun.",
-								MessageUtil.EmbedType.ERROR))
-						.queue();
-				return;
-			}
-			
-			// Verify the approver has permission
+			// Verify the approver has permission in the clan that needs approval
 			User approver = new User(event.getUser().getId());
-			boolean hasOldClanPermission = false;
-			boolean hasNewClanPermission = false;
+			boolean hasApprovalClanPermission = false;
 			
-			if (approver.getClanRoles().get(oldclantag) == Player.RoleType.ADMIN
-					|| approver.getClanRoles().get(oldclantag) == Player.RoleType.LEADER
-					|| approver.getClanRoles().get(oldclantag) == Player.RoleType.COLEADER) {
-				hasOldClanPermission = true;
+			if (approver.getClanRoles().get(clanNeedingApproval) == Player.RoleType.ADMIN
+					|| approver.getClanRoles().get(clanNeedingApproval) == Player.RoleType.LEADER
+					|| approver.getClanRoles().get(clanNeedingApproval) == Player.RoleType.COLEADER) {
+				hasApprovalClanPermission = true;
 			}
 			
-			if (approver.getClanRoles().get(newclantag) == Player.RoleType.ADMIN
-					|| approver.getClanRoles().get(newclantag) == Player.RoleType.LEADER
-					|| approver.getClanRoles().get(newclantag) == Player.RoleType.COLEADER) {
-				hasNewClanPermission = true;
-			}
-			
-			// Check if approver has permission in at least one of the clans
-			if (!hasOldClanPermission && !hasNewClanPermission) {
+			// Check if approver has permission in the clan that needs to approve
+			if (!hasApprovalClanPermission) {
+				Clan approvalClan = new Clan(clanNeedingApproval);
 				event.getHook().editOriginalEmbeds(
 						MessageUtil.buildEmbed(title, 
-								"Du hast keine Berechtigung, diese Anfrage zu bearbeiten. Du musst mindestens Vize-Anführer in einem der beiden Clans sein.",
+								"Du hast keine Berechtigung, diese Anfrage zu bearbeiten. Du musst mindestens Vize-Anführer in " + approvalClan.getInfoString() + " sein.",
 								MessageUtil.EmbedType.ERROR))
 						.queue();
 				return;
@@ -312,16 +299,16 @@ public class transfermember extends ListenerAdapter {
 	/**
 	 * Encodes transfer data for button IDs.
 	 * Uses simple underscore-separated format if under 100 chars (Discord limit).
-	 * Format: playertag_oldclantag_newclantag_initiatorId
+	 * Format: playertag_oldclantag_newclantag_clanNeedingApproval
 	 */
-	private String encodeButtonData(String playertag, String oldclantag, String newclantag, String initiatorId) {
-		String basicData = playertag + "_" + oldclantag + "_" + newclantag + "_" + initiatorId;
+	private String encodeButtonData(String playertag, String oldclantag, String newclantag, String clanNeedingApproval) {
+		String basicData = playertag + "_" + oldclantag + "_" + newclantag + "_" + clanNeedingApproval;
 		
 		// Check if we need Base64 encoding (Discord button ID limit is 100 chars)
 		// We add prefix "tm_accept_" (10 chars) or "tm_decline_" (11 chars), so check against 89 chars
 		if (basicData.length() > 89) {
 			// Use Base64 encoding for long IDs
-			String data = playertag + "|" + oldclantag + "|" + newclantag + "|" + initiatorId;
+			String data = playertag + "|" + oldclantag + "|" + newclantag + "|" + clanNeedingApproval;
 			return "b64_" + Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes(StandardCharsets.UTF_8));
 		}
 		
@@ -330,7 +317,7 @@ public class transfermember extends ListenerAdapter {
 	
 	/**
 	 * Decodes button data string.
-	 * Returns array: [playertag, oldclantag, newclantag, initiatorId]
+	 * Returns array: [playertag, oldclantag, newclantag, clanNeedingApproval]
 	 * For backward compatibility, may return only 3 elements if decoding old button data.
 	 */
 	private String[] decodeButtonData(String encoded) {
