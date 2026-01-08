@@ -98,7 +98,7 @@ public class JsonUploadServer {
 		scheduler.scheduleAtFixedRate(() -> {
 			try {
 				String sql = "DELETE FROM upload_sessions WHERE expires_at < CURRENT_TIMESTAMP";
-				var result = DBUtil.executeUpdate(sql);
+				util.Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(sql);
 				if (result != null && result.getSecond() != null && result.getSecond() > 0) {
 					System.out.println("Cleaned up " + result.getSecond() + " expired upload sessions");
 				}
@@ -112,7 +112,7 @@ public class JsonUploadServer {
 		scheduler.scheduleAtFixedRate(() -> {
 			try {
 				String sql = "DELETE FROM userjsons WHERE timestamp < CURRENT_TIMESTAMP - INTERVAL '7 days'";
-				var result = DBUtil.executeUpdate(sql);
+				util.Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(sql);
 				if (result != null && result.getSecond() != null && result.getSecond() > 0) {
 					System.out.println("Cleaned up " + result.getSecond() + " old JSON entries");
 				}
