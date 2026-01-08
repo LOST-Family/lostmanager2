@@ -48,6 +48,8 @@ public class Connection {
 		tableNames.add("cw_fillers");
 		tableNames.add("achievements");
 		tableNames.add("achievement_data");
+		tableNames.add("upload_sessions");
+		tableNames.add("userjsons");
 		try (java.sql.Connection conn = DriverManager.getConnection(url, user, password)) {
 			DatabaseMetaData dbm = conn.getMetaData();
 
@@ -111,6 +113,18 @@ public class Connection {
 									+ "data JSONB NOT NULL,"
 									+ "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
 									+ "UNIQUE(player_tag, type, time))";
+							break;
+						case "upload_sessions":
+							createTableSQL = "CREATE TABLE " + tableName + " (session_key TEXT PRIMARY KEY,"
+									+ "userid TEXT NOT NULL,"
+									+ "expires_at TIMESTAMP NOT NULL)";
+							break;
+						case "userjsons":
+							createTableSQL = "CREATE TABLE " + tableName + " (userid TEXT NOT NULL,"
+									+ "tag TEXT NOT NULL,"
+									+ "json JSONB NOT NULL,"
+									+ "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+									+ "PRIMARY KEY (userid, tag))";
 							break;
 						}
 

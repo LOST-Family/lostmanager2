@@ -40,6 +40,7 @@ import commands.coc.memberlist.removemember;
 import commands.coc.memberlist.transfermember;
 import commands.coc.util.checkroles;
 import commands.coc.util.cwdonator;
+import commands.coc.util.jsonupload;
 import commands.coc.util.listeningevent;
 import commands.coc.util.raidping;
 import commands.coc.util.setnick;
@@ -86,6 +87,9 @@ public class Bot extends ListenerAdapter {
 	public static String exmember_roleid;
 	public static Client genaiClient;
 	public static String systemInstructions;
+	public static int webserver_port;
+	public static String webserver_base_url;
+	private static webserver.JsonUploadServer uploadServer;
 
 	public static void main(String[] args) throws Exception {
 		VERSION = "2.1.0";
@@ -97,6 +101,15 @@ public class Bot extends ListenerAdapter {
 		verified_roleid = System.getenv("DISCORD_VERIFIED_ROLE_ID");
 		exmember_roleid = System.getenv("DISCORD_EX_MEMBER_ROLE_ID");
 		genaiClient = Client.builder().apiKey(System.getenv("GOOGLE_GENAI_API_KEY")).build();
+		
+		// Load webserver configuration
+		try {
+			webserver_port = Integer.parseInt(System.getenv().getOrDefault("WEBSERVER_PORT", "8080"));
+		} catch (NumberFormatException e) {
+			System.err.println("Invalid WEBSERVER_PORT, using default 8080");
+			webserver_port = 8080;
+		}
+		webserver_base_url = System.getenv().getOrDefault("WEBSERVER_BASE_URL", "http://localhost:8080");
 
 		new Thread(new Runnable() {
 
@@ -123,6 +136,16 @@ public class Bot extends ListenerAdapter {
 
 		dbutil.Connection.tablesExists();
 		cleanupDuplicateWinsData();
+		
+		// Start JSON Upload Server
+		try {
+			uploadServer = new webserver.JsonUploadServer(webserver_port);
+			uploadServer.start();
+		} catch (Exception e) {
+			System.err.println("Failed to start JSON Upload Server: " + e.getMessage());
+			e.printStackTrace();
+		}
+		
 		startNameUpdates();
 		restartAllEvents();
 
@@ -397,7 +420,9 @@ public class Bot extends ListenerAdapter {
 											.setAutoComplete(true)),
 
 							Commands.slash("lmagent", "Dummy command mit einem Prompt-Parameter.")
-									.addOption(OptionType.STRING, "prompt", "Der Prompt als Text", true)
+									.addOption(OptionType.STRING, "prompt", "Der Prompt als Text", true),
+
+							Commands.slash("jsonupload", "Generiere einen Link zum Hochladen von JSON-Daten aus dem Spiel")
 
 					).queue();
 		}
@@ -441,6 +466,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new teamcheck());
 		classes.add(new checkroles());
 		classes.add(new wins());
+		classes.add(new jsonupload());
 
 		return classes.toArray();
 	}
@@ -454,6 +480,9 @@ public class Bot extends ListenerAdapter {
 	@Override
 	public void onShutdown(ShutdownEvent event) {
 		stopScheduler();
+		if (uploadServer != null) {
+			uploadServer.stop();
+		}
 	}
 
 	public static void setJda(JDA instance) {
