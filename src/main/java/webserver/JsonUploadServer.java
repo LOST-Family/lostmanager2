@@ -99,8 +99,18 @@ public class JsonUploadServer {
 			try {
 				String sql = "DELETE FROM upload_sessions WHERE expires_at < CURRENT_TIMESTAMP";
 				util.Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(sql);
-				if (result != null && result.getSecond() != null && result.getSecond() > 0) {
-					System.out.println("Cleaned up " + result.getSecond() + " expired upload sessions");
+				if (result != null) {
+					if (result.getSecond() != null && result.getSecond() > 0) {
+						System.out.println("Cleaned up " + result.getSecond() + " expired upload sessions");
+					}
+					// Close the PreparedStatement to avoid resource leaks
+					if (result.getFirst() != null) {
+						try {
+							result.getFirst().close();
+						} catch (Exception e) {
+							// Ignore close errors
+						}
+					}
 				}
 			} catch (Exception e) {
 				System.err.println("Error cleaning up expired sessions: " + e.getMessage());
@@ -113,8 +123,18 @@ public class JsonUploadServer {
 			try {
 				String sql = "DELETE FROM userjsons WHERE timestamp < CURRENT_TIMESTAMP - INTERVAL '7 days'";
 				util.Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(sql);
-				if (result != null && result.getSecond() != null && result.getSecond() > 0) {
-					System.out.println("Cleaned up " + result.getSecond() + " old JSON entries");
+				if (result != null) {
+					if (result.getSecond() != null && result.getSecond() > 0) {
+						System.out.println("Cleaned up " + result.getSecond() + " old JSON entries");
+					}
+					// Close the PreparedStatement to avoid resource leaks
+					if (result.getFirst() != null) {
+						try {
+							result.getFirst().close();
+						} catch (Exception e) {
+							// Ignore close errors
+						}
+					}
 				}
 			} catch (Exception e) {
 				System.err.println("Error cleaning up old JSON data: " + e.getMessage());
@@ -219,14 +239,18 @@ public class JsonUploadServer {
 			} catch (Exception e) {
 				System.err.println("Error processing JSON upload: " + e.getMessage());
 				e.printStackTrace();
-				sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"Invalid JSON format: " + 
-					e.getMessage().replace("\"", "'") + "\"}");
+				// Use JSONObject to properly escape the error message
+				String errorMsg = e.getMessage() != null ? e.getMessage() : "Unknown error";
+				JSONObject errorResponse = new JSONObject();
+				errorResponse.put("success", false);
+				errorResponse.put("message", "Invalid JSON format: " + errorMsg);
+				sendJsonResponse(exchange, 400, errorResponse.toString());
 			}
 		}
 	}
 	
 	/**
-	 * Extract query parameter from query string
+	 * Extract query parameter from query string (with URL decoding)
 	 */
 	private static String extractQueryParam(String query, String param) {
 		if (query == null) return null;
@@ -235,7 +259,11 @@ public class JsonUploadServer {
 		for (String pair : pairs) {
 			String[] keyValue = pair.split("=");
 			if (keyValue.length == 2 && keyValue[0].equals(param)) {
-				return keyValue[1];
+				try {
+					return java.net.URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8);
+				} catch (Exception e) {
+					return keyValue[1]; // Return raw value if decoding fails
+				}
 			}
 		}
 		return null;

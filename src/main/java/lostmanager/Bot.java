@@ -103,7 +103,12 @@ public class Bot extends ListenerAdapter {
 		genaiClient = Client.builder().apiKey(System.getenv("GOOGLE_GENAI_API_KEY")).build();
 		
 		// Load webserver configuration
-		webserver_port = Integer.parseInt(System.getenv().getOrDefault("WEBSERVER_PORT", "8080"));
+		try {
+			webserver_port = Integer.parseInt(System.getenv().getOrDefault("WEBSERVER_PORT", "8080"));
+		} catch (NumberFormatException e) {
+			System.err.println("Invalid WEBSERVER_PORT, using default 8080");
+			webserver_port = 8080;
+		}
 		webserver_base_url = System.getenv().getOrDefault("WEBSERVER_BASE_URL", "http://localhost:8080");
 
 		new Thread(new Runnable() {
