@@ -99,18 +99,8 @@ public class JsonUploadServer {
 			try {
 				String sql = "DELETE FROM upload_sessions WHERE expires_at < CURRENT_TIMESTAMP";
 				util.Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(sql);
-				if (result != null) {
-					if (result.getSecond() != null && result.getSecond() > 0) {
-						System.out.println("Cleaned up " + result.getSecond() + " expired upload sessions");
-					}
-					// Close the PreparedStatement to avoid resource leaks
-					if (result.getFirst() != null) {
-						try {
-							result.getFirst().close();
-						} catch (Exception e) {
-							// Ignore close errors
-						}
-					}
+				if (result != null && result.getSecond() != null && result.getSecond() > 0) {
+					System.out.println("Cleaned up " + result.getSecond() + " expired upload sessions");
 				}
 			} catch (Exception e) {
 				System.err.println("Error cleaning up expired sessions: " + e.getMessage());
@@ -123,18 +113,8 @@ public class JsonUploadServer {
 			try {
 				String sql = "DELETE FROM userjsons WHERE timestamp < CURRENT_TIMESTAMP - INTERVAL '7 days'";
 				util.Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(sql);
-				if (result != null) {
-					if (result.getSecond() != null && result.getSecond() > 0) {
-						System.out.println("Cleaned up " + result.getSecond() + " old JSON entries");
-					}
-					// Close the PreparedStatement to avoid resource leaks
-					if (result.getFirst() != null) {
-						try {
-							result.getFirst().close();
-						} catch (Exception e) {
-							// Ignore close errors
-						}
-					}
+				if (result != null && result.getSecond() != null && result.getSecond() > 0) {
+					System.out.println("Cleaned up " + result.getSecond() + " old JSON entries");
 				}
 			} catch (Exception e) {
 				System.err.println("Error cleaning up old JSON data: " + e.getMessage());
@@ -307,6 +287,7 @@ public class JsonUploadServer {
 	
 	/**
 	 * Generate HTML upload page
+	 * Note: sessionKey is a UUID generated internally, so no XSS risk from user input
 	 */
 	private static String getUploadPage(String sessionKey) {
 		return "<!DOCTYPE html>\n" +
@@ -497,6 +478,7 @@ public class JsonUploadServer {
 	
 	/**
 	 * Generate HTML error page
+	 * Note: title and message are hardcoded strings, not user input
 	 */
 	private static String getErrorPage(String title, String message) {
 		return "<!DOCTYPE html>\n" +
