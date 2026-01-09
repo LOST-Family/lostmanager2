@@ -872,7 +872,7 @@ public class stats extends ListenerAdapter {
 					String emojiName = rs.getString("emojiname");
 
 					boolean hasName = name != null && !name.isEmpty();
-					boolean hasEmoji = emojiId != null && !emojiId.isEmpty() && emojiName != null && !emojiName.isEmpty() && emojiId.matches("\\d+");
+					boolean hasEmoji = isValidEmoji(emojiId, emojiName);
 
 					// If both name and emoji exist, return "Name <:emojiName:emojiId>" format
 					if (hasName && hasEmoji) {
@@ -897,6 +897,15 @@ public class stats extends ListenerAdapter {
 
 		// Return raw data value if no mapping found
 		return dataValue;
+	}
+
+	/**
+	 * Check if emoji data is valid for Discord custom emoji format
+	 */
+	private boolean isValidEmoji(String emojiId, String emojiName) {
+		return emojiId != null && !emojiId.isEmpty() 
+			&& emojiName != null && !emojiName.isEmpty() 
+			&& emojiId.matches("\\d+");
 	}
 
 	/**
