@@ -572,6 +572,7 @@ public class stats extends ListenerAdapter {
 				for (ConfigGroup group : configGroups.values()) {
 					if (group.totalCount > 1) {
 						showCounts = true;
+						break;
 					}
 				}
 			}
@@ -579,8 +580,7 @@ public class stats extends ListenerAdapter {
 			// Display grouped configurations
 			for (ConfigGroup group : configGroups.values()) {
 				// Determine indentation based on whether we're showing counts
-				String attrIndent = showCounts ? "    - " : "  - ";
-				String gearUpIndent = showCounts ? "    - " : "  - ";
+				String baseIndent = showCounts ? "    - " : "  - ";
 				
 				// Only show count if there's actual grouping or multiple items
 				if (showCounts) {
@@ -617,7 +617,7 @@ public class stats extends ListenerAdapter {
 						long remainingSeconds = timerSeconds - elapsedSeconds;
 
 						if (remainingSeconds > 0) {
-							sb.append("\n").append(attrIndent);
+							sb.append("\n").append(baseIndent);
 							String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
 							sb.append(translatedKey).append(": ");
 							String timerStr = formatTimerRemaining(remainingSeconds);
@@ -625,7 +625,7 @@ public class stats extends ListenerAdapter {
 						}
 						// Skip timer if expired - don't add any output
 					} else {
-						sb.append("\n").append(attrIndent);
+						sb.append("\n").append(baseIndent);
 						String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
 						sb.append(translatedKey).append(": ");
 
@@ -659,7 +659,7 @@ public class stats extends ListenerAdapter {
 				
 				// Show geared up count if applicable
 				if (group.gearedUpCount > 0) {
-					sb.append("\n").append(gearUpIndent).append("Entwickelt: ").append(group.gearedUpCount);
+					sb.append("\n").append(baseIndent).append("Entwickelt: ").append(group.gearedUpCount);
 				}
 			}
 		}
