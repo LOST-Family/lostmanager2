@@ -50,6 +50,7 @@ public class Connection {
 		tableNames.add("achievement_data");
 		tableNames.add("upload_sessions");
 		tableNames.add("userjsons");
+		tableNames.add("datamappings");
 		try (java.sql.Connection conn = DriverManager.getConnection(url, user, password)) {
 			DatabaseMetaData dbm = conn.getMetaData();
 
@@ -125,6 +126,12 @@ public class Connection {
 									+ "json JSONB NOT NULL,"
 									+ "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
 									+ "PRIMARY KEY (userid, tag))";
+							break;
+						case "datamappings":
+							createTableSQL = "CREATE TABLE " + tableName + " (datavalue TEXT PRIMARY KEY,"
+									+ "emojiid TEXT,"
+									+ "name TEXT,"
+									+ "emojiname TEXT)";
 							break;
 						}
 
