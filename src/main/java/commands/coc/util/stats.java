@@ -72,6 +72,8 @@ public class stats extends ListenerAdapter {
 		ATTR_TRANSLATIONS.put("helper_recurrent", "Wiederholender Helfer");
 		ATTR_TRANSLATIONS.put("gear_up", "Entwicklung");
 		ATTR_TRANSLATIONS.put("helper_cooldown", "Helfer-Abklingzeit");
+		ATTR_TRANSLATIONS.put("types", "Typen");
+		ATTR_TRANSLATIONS.put("modules", "Module");
 	}
 
 	@Override
@@ -320,7 +322,7 @@ public class stats extends ListenerAdapter {
 	 */
 	private String getPlayerName(String tag) {
 		// Try players table first
-		String sql = "SELECT name FROM players WHERE cr_tag = ?";
+		String sql = "SELECT name FROM players WHERE coc_tag = ?";
 		String name = DBUtil.getValueFromSQL(sql, String.class, tag);
 		
 		if (name == null) {
@@ -468,24 +470,25 @@ public class stats extends ListenerAdapter {
 		StringBuilder sb = new StringBuilder();
 		String indentStr = "  ".repeat(indent);
 		
-		boolean first = true;
+		// First, display the "data" field if it exists (as the identifier)
+		if (obj.has("data") && obj.get("data") != null && obj.get("data") != JSONObject.NULL) {
+			String mappedValue = getMappedValue(obj.get("data").toString());
+			sb.append(indentStr).append(mappedValue);
+		}
+		
+		// Then display all other fields
 		for (String key : obj.keySet()) {
+			if (key.equals("data")) {
+				continue; // Already displayed above
+			}
+			
 			Object value = obj.get(key);
 			
 			if (value == null || value == JSONObject.NULL) {
 				continue; // Skip null values
 			}
 			
-			if (!first) {
-				sb.append("\n");
-			}
-			first = false;
-			
-			if (key.equals("data")) {
-				// Special handling for data field - use mapping
-				String mappedValue = getMappedValue(value.toString());
-				sb.append(indentStr).append(mappedValue);
-			} else if (key.equals("timer")) {
+			if (key.equals("timer")) {
 				// Special handling for timer
 				int timerSeconds = 0;
 				if (value instanceof Number) {
