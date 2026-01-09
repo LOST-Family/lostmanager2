@@ -566,21 +566,15 @@ public class stats extends ListenerAdapter {
 			}
 
 			// Determine if we need to show counts (only if multiple groups OR count > 1)
-			boolean showCounts = configGroups.size() > 1;
-			if (!showCounts) {
-				// Check if the single group has count > 1
-				for (ConfigGroup group : configGroups.values()) {
-					if (group.totalCount > 1) {
-						showCounts = true;
-						break;
-					}
-				}
-			}
+			boolean showCounts = configGroups.size() > 1 || 
+				configGroups.values().stream().anyMatch(g -> g.totalCount > 1);
 			
 			// Display grouped configurations
 			for (ConfigGroup group : configGroups.values()) {
 				// Determine indentation based on whether we're showing counts
 				String baseIndent = showCounts ? "    - " : "  - ";
+				int objIndent = showCounts ? 3 : 2;
+				String arrItemIndent = showCounts ? "      - " : "    - ";
 				
 				// Only show count if there's actual grouping or multiple items
 				if (showCounts) {
@@ -638,11 +632,9 @@ public class stats extends ListenerAdapter {
 								for (int i = 0; i < valueArr.length(); i++) {
 									Object arrItem = valueArr.get(i);
 									if (arrItem instanceof JSONObject) {
-										int objIndent = showCounts ? 3 : 2;
 										sb.append("\n").append(formatObject((JSONObject) arrItem, objIndent, jsonTimestamp));
 									} else {
 										String mappedArrValue = getMappedValue(arrItem.toString());
-										String arrItemIndent = showCounts ? "      - " : "    - ";
 										sb.append("\n").append(arrItemIndent).append(mappedArrValue);
 									}
 								}
