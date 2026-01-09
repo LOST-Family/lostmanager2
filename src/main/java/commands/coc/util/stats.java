@@ -624,7 +624,6 @@ public class stats extends ListenerAdapter {
 						sb.append(translatedKey).append(": ");
 
 						if (value instanceof JSONObject) {
-							int objIndent = showCounts ? 3 : 2;
 							sb.append("\n").append(formatObject((JSONObject) value, objIndent, jsonTimestamp));
 						} else if (value instanceof JSONArray) {
 							JSONArray valueArr = (JSONArray) value;
