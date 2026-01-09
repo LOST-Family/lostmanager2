@@ -1,7 +1,5 @@
 package commands.coc.util;
 
-import java.nio.ByteBuffer;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -425,11 +423,23 @@ public class stats extends ListenerAdapter {
 							).queue();
 						});
 			}
-		} catch (Exception e) {
-			System.err.println("Error loading stats data: " + e.getMessage());
+		} catch (java.sql.SQLException e) {
+			System.err.println("Database error loading stats data: " + e.getMessage());
 			e.printStackTrace();
 			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-					"Fehler beim Laden der Daten: " + e.getMessage(),
+					"Fehler beim Laden der Daten aus der Datenbank: " + e.getMessage(),
+					MessageUtil.EmbedType.ERROR)).queue();
+		} catch (org.json.JSONException e) {
+			System.err.println("JSON parsing error: " + e.getMessage());
+			e.printStackTrace();
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+					"Fehler beim Verarbeiten der JSON-Daten: " + e.getMessage(),
+					MessageUtil.EmbedType.ERROR)).queue();
+		} catch (Exception e) {
+			System.err.println("Unexpected error loading stats data: " + e.getMessage());
+			e.printStackTrace();
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+					"Unerwarteter Fehler beim Laden der Daten: " + e.getMessage(),
 					MessageUtil.EmbedType.ERROR)).queue();
 		}
 	}
@@ -595,9 +605,12 @@ public class stats extends ListenerAdapter {
 					String name = rs.getString("name");
 					String emojiName = rs.getString("emojiname");
 					
-					// If emoji exists, use it
+					// If emoji exists, validate and use it
 					if (emojiId != null && !emojiId.isEmpty() && emojiName != null && !emojiName.isEmpty()) {
-						return "<:" + emojiName + ":" + emojiId + ">";
+						// Validate emojiId is numeric
+						if (emojiId.matches("\\d+")) {
+							return "<:" + emojiName + ":" + emojiId + ">";
+						}
 					}
 					
 					// Otherwise use name if available
