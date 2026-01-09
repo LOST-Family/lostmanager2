@@ -5,9 +5,12 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -136,7 +139,7 @@ public class stats extends ListenerAdapter {
 				// Get available players based on permissions
 				List<Command.Choice> choices = getAvailablePlayers(userExecuted, input);
 
-				event.replyChoices(choices).queue(_ -> {
+				event.replyChoices(choices).queue(success -> {
 				}, error -> System.err.println("Error replying to autocomplete: " + error.getMessage()));
 			}
 		}, "StatsAutocomplete-" + event.getUser().getId()).start();
@@ -451,19 +454,35 @@ public class stats extends ListenerAdapter {
 				return "Keine Daten vorhanden";
 			}
 
+			// Check if array contains JSONObjects with "data" field
+			boolean hasDataField = false;
 			for (int i = 0; i < arr.length(); i++) {
 				Object item = arr.get(i);
-				if (item instanceof JSONObject) {
-					sb.append(formatObject((JSONObject) item, 0, jsonTimestamp));
-					sb.append("\n");
-				} else {
-					// Simple values (e.g., house_parts, skins, sceneries)
-					String value = getMappedValue(item.toString());
-					sb.append("- ").append(value).append("\n");
+				if (item instanceof JSONObject && ((JSONObject) item).has("data")) {
+					hasDataField = true;
+					break;
 				}
+			}
 
-				if (i < arr.length() - 1) {
-					sb.append("\n");
+			if (hasDataField) {
+				// Group by data ID and format
+				sb.append(formatGroupedData(arr, jsonTimestamp));
+			} else {
+				// Original formatting for simple arrays
+				for (int i = 0; i < arr.length(); i++) {
+					Object item = arr.get(i);
+					if (item instanceof JSONObject) {
+						sb.append(formatObject((JSONObject) item, 0, jsonTimestamp));
+						sb.append("\n");
+					} else {
+						// Simple values (e.g., house_parts, skins, sceneries)
+						String value = getMappedValue(item.toString());
+						sb.append("- ").append(value).append("\n");
+					}
+
+					if (i < arr.length() - 1) {
+						sb.append("\n");
+					}
 				}
 			}
 		} else if (data instanceof JSONObject) {
@@ -473,6 +492,231 @@ public class stats extends ListenerAdapter {
 		}
 
 		return sb.toString();
+	}
+
+	/**
+	 * Format grouped data by data ID
+	 */
+	private String formatGroupedData(JSONArray arr, java.sql.Timestamp jsonTimestamp) {
+		// Group objects by their data ID
+		Map<String, List<JSONObject>> groupedByData = new LinkedHashMap<>();
+
+		for (int i = 0; i < arr.length(); i++) {
+			Object item = arr.get(i);
+			if (item instanceof JSONObject) {
+				JSONObject obj = (JSONObject) item;
+				if (obj.has("data")) {
+					String dataId = obj.get("data").toString();
+					groupedByData.computeIfAbsent(dataId, k -> new ArrayList<>()).add(obj);
+				}
+			}
+		}
+
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+
+		// Process each data ID group
+		for (Map.Entry<String, List<JSONObject>> entry : groupedByData.entrySet()) {
+			if (!first) {
+				sb.append("\n\n");
+			}
+			first = false;
+
+			String dataId = entry.getKey();
+			List<JSONObject> objects = entry.getValue();
+
+			// Get the name for this data ID
+			String mappedValue = getMappedValue(dataId);
+			sb.append(mappedValue);
+
+			// Group by attributes (excluding "data", "cnt", and "gear_up")
+			Map<String, ConfigGroup> configGroups = new TreeMap<>(new AttributeComparator());
+
+			for (JSONObject obj : objects) {
+				// Create a key from all attributes except "data", "cnt", and "gear_up"
+				String configKey = createConfigKey(obj);
+				
+				ConfigGroup group = configGroups.computeIfAbsent(configKey, k -> new ConfigGroup(obj));
+				
+				// Add count
+				int cnt = obj.has("cnt") ? obj.optInt("cnt", 1) : 1;
+				group.totalCount += cnt;
+				
+				// Track gear_up
+				if (obj.has("gear_up")) {
+					int gearUp = obj.optInt("gear_up", 0);
+					if (gearUp > 0) {
+						group.gearedUpCount += cnt;
+					}
+				}
+			}
+
+			// Display grouped configurations
+			for (ConfigGroup group : configGroups.values()) {
+				sb.append("\n").append("Anzahl: ").append(group.totalCount);
+				
+				// Get and sort keys for consistent display order
+				List<String> sortedKeys = new ArrayList<>();
+				for (String key : group.representative.keySet()) {
+					if (!key.equals("data") && !key.equals("cnt") && !key.equals("gear_up")) {
+						sortedKeys.add(key);
+					}
+				}
+				// Sort keys: lvl first, then supercharge, then alphabetically
+				sortedKeys.sort((k1, k2) -> {
+					if (k1.equals("lvl")) return -1;
+					if (k2.equals("lvl")) return 1;
+					if (k1.equals("supercharge")) return -1;
+					if (k2.equals("supercharge")) return 1;
+					return k1.compareTo(k2);
+				});
+				
+				// Display attributes
+				for (String key : sortedKeys) {
+					Object value = group.representative.get(key);
+					if (value == null || value == JSONObject.NULL) {
+						continue;
+					}
+
+					sb.append("\n  - ");
+					String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
+					sb.append(translatedKey).append(": ");
+
+					if (key.equals("timer") || key.equals("helper_cooldown")) {
+						// Special handling for timer
+						int timerSeconds = 0;
+						if (value instanceof Number) {
+							timerSeconds = ((Number) value).intValue();
+						}
+
+						// Calculate remaining time
+						long elapsedSeconds = (System.currentTimeMillis() - jsonTimestamp.getTime()) / 1000;
+						long remainingSeconds = timerSeconds - elapsedSeconds;
+
+						if (remainingSeconds > 0) {
+							String timerStr = formatTimerRemaining(remainingSeconds);
+							sb.append(timerStr);
+						} else {
+							// Timer expired, skip this attribute
+							sb.setLength(sb.length() - translatedKey.length() - 6); // Remove the line we just added
+						}
+					} else if (value instanceof JSONObject) {
+						sb.append("\n").append(formatObject((JSONObject) value, 2, jsonTimestamp));
+					} else if (value instanceof JSONArray) {
+						JSONArray valueArr = (JSONArray) value;
+						if (valueArr.length() > 0) {
+							for (int i = 0; i < valueArr.length(); i++) {
+								Object arrItem = valueArr.get(i);
+								if (arrItem instanceof JSONObject) {
+									sb.append("\n").append(formatObject((JSONObject) arrItem, 2, jsonTimestamp));
+								} else {
+									String mappedArrValue = getMappedValue(arrItem.toString());
+									sb.append("\n    - ").append(mappedArrValue);
+								}
+							}
+						}
+					} else {
+						String valueStr = value.toString();
+						if (value instanceof Boolean) {
+							valueStr = (Boolean) value ? "Ja" : "Nein";
+						}
+						sb.append(valueStr);
+					}
+				}
+				
+				// Show geared up count if applicable
+				if (group.gearedUpCount > 0) {
+					sb.append("\n  - Entwickelt: ").append(group.gearedUpCount);
+				}
+			}
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * Create a configuration key from a JSON object (excluding data, cnt, and gear_up)
+	 */
+	private String createConfigKey(JSONObject obj) {
+		StringBuilder key = new StringBuilder();
+		
+		// Get all keys except "data", "cnt", and "gear_up", sort them for consistent ordering
+		List<String> keys = new ArrayList<>();
+		for (String k : obj.keySet()) {
+			if (!k.equals("data") && !k.equals("cnt") && !k.equals("gear_up")) {
+				keys.add(k);
+			}
+		}
+		keys.sort(String::compareTo);
+		
+		// Build key from sorted attributes
+		for (String k : keys) {
+			Object value = obj.get(k);
+			if (value != null && value != JSONObject.NULL) {
+				if (key.length() > 0) {
+					key.append("|");
+				}
+				key.append(k).append("=").append(value.toString());
+			}
+		}
+		
+		return key.toString();
+	}
+
+	/**
+	 * Helper class to group configurations
+	 */
+	private static class ConfigGroup {
+		JSONObject representative;
+		int totalCount = 0;
+		int gearedUpCount = 0;
+		
+		ConfigGroup(JSONObject obj) {
+			this.representative = obj;
+		}
+	}
+
+	/**
+	 * Comparator to sort configuration groups by their attributes
+	 */
+	private static class AttributeComparator implements Comparator<String> {
+		@Override
+		public int compare(String key1, String key2) {
+			// Parse and compare configuration keys
+			// Priority: lvl (descending), then other attributes
+			
+			Map<String, String> attrs1 = parseConfigKey(key1);
+			Map<String, String> attrs2 = parseConfigKey(key2);
+			
+			// Compare by level first (descending)
+			String lvl1 = attrs1.get("lvl");
+			String lvl2 = attrs2.get("lvl");
+			if (lvl1 != null && lvl2 != null) {
+				try {
+					int lvlCmp = Integer.compare(Integer.parseInt(lvl2), Integer.parseInt(lvl1));
+					if (lvlCmp != 0) {
+						return lvlCmp;
+					}
+				} catch (NumberFormatException e) {
+					// If not numeric, compare as strings
+				}
+			}
+			
+			// Fall back to string comparison
+			return key1.compareTo(key2);
+		}
+		
+		private Map<String, String> parseConfigKey(String key) {
+			Map<String, String> attrs = new HashMap<>();
+			String[] parts = key.split("\\|");
+			for (String part : parts) {
+				String[] kv = part.split("=", 2);
+				if (kv.length == 2) {
+					attrs.put(kv[0], kv[1]);
+				}
+			}
+			return attrs;
+		}
 	}
 
 	/**
