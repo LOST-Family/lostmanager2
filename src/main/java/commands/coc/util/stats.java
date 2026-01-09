@@ -1,0 +1,692 @@
+package commands.coc.util;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import datawrapper.Player;
+import datawrapper.User;
+import dbutil.DBManager;
+import dbutil.DBUtil;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import util.MessageUtil;
+
+public class stats extends ListenerAdapter {
+
+	// Constants for button and select menu ID prefixes
+	private static final String BUTTON_PREFIX = "stats_refresh_";
+	private static final String SELECT_PREFIX = "stats_select_";
+	
+	// Mapping of stat options to JSON field names
+	private static final Map<String, String> STAT_TO_FIELD = new HashMap<>();
+	
+	static {
+		STAT_TO_FIELD.put("Helpers", "helpers");
+		STAT_TO_FIELD.put("Guardians", "guardians");
+		STAT_TO_FIELD.put("Buildings", "buildings");
+		STAT_TO_FIELD.put("Buildings (BB)", "buildings2");
+		STAT_TO_FIELD.put("Traps", "traps");
+		STAT_TO_FIELD.put("Traps (BB)", "traps2");
+		STAT_TO_FIELD.put("Decos", "decos");
+		STAT_TO_FIELD.put("Decos (BB)", "decos2");
+		STAT_TO_FIELD.put("Obstacles", "obstacles");
+		STAT_TO_FIELD.put("Obstacles (BB)", "obstacles2");
+		STAT_TO_FIELD.put("Units", "units");
+		STAT_TO_FIELD.put("Units (BB)", "units2");
+		STAT_TO_FIELD.put("Sieges", "siege_machines");
+		STAT_TO_FIELD.put("Heroes", "heroes");
+		STAT_TO_FIELD.put("Heroes (BB)", "heroes2");
+		STAT_TO_FIELD.put("Spells", "spells");
+		STAT_TO_FIELD.put("Pets", "pets");
+		STAT_TO_FIELD.put("Equips", "equipment");
+		STAT_TO_FIELD.put("House Parts", "house_parts");
+		STAT_TO_FIELD.put("Skins", "skins");
+		STAT_TO_FIELD.put("Skins (BB)", "skins2");
+		STAT_TO_FIELD.put("Sceneries", "sceneries");
+		STAT_TO_FIELD.put("Sceneries (BB)", "sceneries2");
+	}
+	
+	// German translations for attributes
+	private static final Map<String, String> ATTR_TRANSLATIONS = new HashMap<>();
+	
+	static {
+		ATTR_TRANSLATIONS.put("cnt", "Anzahl");
+		ATTR_TRANSLATIONS.put("lvl", "Level");
+		ATTR_TRANSLATIONS.put("supercharge", "Supercharge-Level");
+		ATTR_TRANSLATIONS.put("timer", "Abklingzeit");
+		ATTR_TRANSLATIONS.put("helper_recurrent", "Wiederholender Helfer");
+		ATTR_TRANSLATIONS.put("gear_up", "Entwicklung");
+		ATTR_TRANSLATIONS.put("helper_cooldown", "Helfer-Abklingzeit");
+		ATTR_TRANSLATIONS.put("types", "Typen");
+		ATTR_TRANSLATIONS.put("modules", "Module");
+	}
+
+	@Override
+	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+		if (!event.getName().equals("stats"))
+			return;
+
+		String title = "Spieler Stats";
+		event.deferReply().queue();
+
+		new Thread(() -> {
+			// Get parameters
+			OptionMapping playerOption = event.getOption("player");
+			OptionMapping statOption = event.getOption("stat");
+
+			if (playerOption == null || statOption == null) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Die Parameter 'player' und 'stat' sind erforderlich.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
+
+			String playerTag = playerOption.getAsString();
+			String statType = statOption.getAsString();
+
+			// Check permissions and access
+			User userExecuted = new User(event.getUser().getId());
+			if (!canAccessPlayer(userExecuted, playerTag)) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Du hast keine Berechtigung, die Daten dieses Spielers anzusehen.",
+						MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+
+			// Create button ID with encoded data
+			String buttonId = encodeButtonId(playerTag, statType);
+
+			performStatsDisplay(event.getHook(), title, playerTag, statType, buttonId);
+
+		}, "StatsCommand-" + event.getUser().getId()).start();
+	}
+
+	@Override
+	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
+		if (!event.getName().equals("stats"))
+			return;
+
+		new Thread(() -> {
+			String focused = event.getFocusedOption().getName();
+
+			if (focused.equals("player")) {
+				String input = event.getFocusedOption().getValue();
+				User userExecuted = new User(event.getUser().getId());
+				
+				// Get available players based on permissions
+				List<Command.Choice> choices = getAvailablePlayers(userExecuted, input);
+				
+				event.replyChoices(choices).queue(
+					success -> {},
+					error -> System.err.println("Error replying to autocomplete: " + error.getMessage())
+				);
+			}
+		}, "StatsAutocomplete-" + event.getUser().getId()).start();
+	}
+
+	@Override
+	public void onButtonInteraction(ButtonInteractionEvent event) {
+		String id = event.getComponentId();
+		if (!id.startsWith(BUTTON_PREFIX))
+			return;
+
+		event.deferEdit().queue();
+
+		String title = "Spieler Stats";
+
+		new Thread(() -> {
+			// Check permissions
+			User userExecuted = new User(event.getUser().getId());
+
+			// Decode button ID to extract parameters
+			try {
+				String[] params = decodeButtonId(id);
+				if (params == null || params.length < 2) {
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Fehler: Button-Daten konnten nicht dekodiert werden.", MessageUtil.EmbedType.ERROR))
+							.queue();
+					return;
+				}
+
+				String playerTag = params[0];
+				String statType = params[1];
+
+				// Verify access
+				if (!canAccessPlayer(userExecuted, playerTag)) {
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Du hast keine Berechtigung, die Daten dieses Spielers anzusehen.",
+							MessageUtil.EmbedType.ERROR)).queue();
+					return;
+				}
+
+				performStatsDisplay(event.getHook(), title, playerTag, statType, id);
+
+			} catch (Exception e) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Fehler: Button-Daten konnten nicht dekodiert werden.", MessageUtil.EmbedType.ERROR))
+						.queue();
+			}
+
+		}, "StatsRefresh-" + event.getUser().getId()).start();
+	}
+
+	@Override
+	public void onStringSelectInteraction(StringSelectInteractionEvent event) {
+		String id = event.getComponentId();
+		if (!id.startsWith(SELECT_PREFIX))
+			return;
+
+		event.deferEdit().queue();
+
+		String title = "Spieler Stats";
+
+		new Thread(() -> {
+			// Check permissions
+			User userExecuted = new User(event.getUser().getId());
+
+			// Decode select menu ID to extract player tag
+			try {
+				String playerTag = decodeSelectMenuId(id);
+				if (playerTag == null) {
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Fehler: Select-Daten konnten nicht dekodiert werden.", MessageUtil.EmbedType.ERROR))
+							.queue();
+					return;
+				}
+
+				// Get selected stat
+				String newStatType = event.getValues().get(0);
+
+				// Verify access
+				if (!canAccessPlayer(userExecuted, playerTag)) {
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Du hast keine Berechtigung, die Daten dieses Spielers anzusehen.",
+							MessageUtil.EmbedType.ERROR)).queue();
+					return;
+				}
+
+				// Create new button ID
+				String buttonId = encodeButtonId(playerTag, newStatType);
+
+				performStatsDisplay(event.getHook(), title, playerTag, newStatType, buttonId);
+
+			} catch (Exception e) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Fehler: Select-Daten konnten nicht dekodiert werden.", MessageUtil.EmbedType.ERROR))
+						.queue();
+			}
+
+		}, "StatsSelectMenu-" + event.getUser().getId()).start();
+	}
+
+	/**
+	 * Check if a user can access a specific player's data
+	 */
+	private boolean canAccessPlayer(User user, String playerTag) {
+		// Check if user is at least coleader in any clan
+		boolean hasPermission = false;
+		for (String clantag : DBManager.getAllClans()) {
+			Player.RoleType role = user.getClanRoles().get(clantag);
+			if (role == Player.RoleType.ADMIN || role == Player.RoleType.LEADER
+					|| role == Player.RoleType.COLEADER) {
+				hasPermission = true;
+				break;
+			}
+		}
+
+		if (hasPermission) {
+			// Can see all players
+			return true;
+		}
+
+		// Check if player is linked to this user
+		ArrayList<Player> linkedAccounts = user.getAllLinkedAccounts();
+		for (Player player : linkedAccounts) {
+			if (player.getTag().equals(playerTag)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get list of available players for autocomplete based on permissions
+	 */
+	private List<Command.Choice> getAvailablePlayers(User user, String input) {
+		List<Command.Choice> choices = new ArrayList<>();
+		
+		// Check if user is at least coleader in any clan
+		boolean hasPermission = false;
+		for (String clantag : DBManager.getAllClans()) {
+			Player.RoleType role = user.getClanRoles().get(clantag);
+			if (role == Player.RoleType.ADMIN || role == Player.RoleType.LEADER
+					|| role == Player.RoleType.COLEADER) {
+				hasPermission = true;
+				break;
+			}
+		}
+
+		if (hasPermission) {
+			// Get all players with uploaded JSONs
+			String sql = "SELECT DISTINCT tag FROM userjsons WHERE tag ILIKE ? ORDER BY tag LIMIT 25";
+			List<String> tags = DBUtil.getArrayListFromSQL(sql, String.class, "%" + input + "%");
+			
+			for (String tag : tags) {
+				// Try to get player name for better display
+				String playerName = getPlayerName(tag);
+				String displayName = playerName != null ? playerName + " (" + tag + ")" : tag;
+				choices.add(new Command.Choice(displayName, tag));
+			}
+		} else {
+			// Get only linked accounts with uploaded JSONs
+			ArrayList<Player> linkedAccounts = user.getAllLinkedAccounts();
+			String inputLower = input.toLowerCase();
+			
+			for (Player player : linkedAccounts) {
+				String tag = player.getTag();
+				// Check if this player has any JSON uploaded
+				String sql = "SELECT COUNT(*) FROM userjsons WHERE tag = ?";
+				Integer count = DBUtil.getValueFromSQL(sql, Integer.class, tag);
+				
+				if (count != null && count > 0) {
+					// Filter by input
+					if (tag.toLowerCase().contains(inputLower) || 
+						player.getName().toLowerCase().contains(inputLower)) {
+						String displayName = player.getName() + " (" + tag + ")";
+						choices.add(new Command.Choice(displayName, tag));
+					}
+				}
+			}
+		}
+
+		return choices;
+	}
+
+	/**
+	 * Get player name from database or JSON
+	 */
+	private String getPlayerName(String tag) {
+		// Try players table first
+		String sql = "SELECT name FROM players WHERE coc_tag = ?";
+		String name = DBUtil.getValueFromSQL(sql, String.class, tag);
+		
+		if (name == null) {
+			// Try to get from JSON
+			sql = "SELECT json->>'name' FROM userjsons WHERE tag = ? LIMIT 1";
+			name = DBUtil.getValueFromSQL(sql, String.class, tag);
+		}
+		
+		return name;
+	}
+
+	/**
+	 * Display stats for a player
+	 */
+	private void performStatsDisplay(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
+			String playerTag, String statType, String buttonId) {
+
+		// Get JSON data from database
+		String sql = "SELECT json, timestamp FROM userjsons WHERE tag = ? LIMIT 1";
+		
+		try (java.sql.PreparedStatement pstmt = dbutil.Connection.getConnection().prepareStatement(sql)) {
+			pstmt.setString(1, playerTag);
+			
+			try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+				if (!rs.next()) {
+					hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Keine JSON-Daten für diesen Spieler gefunden.",
+							MessageUtil.EmbedType.ERROR)).queue();
+					return;
+				}
+
+				String jsonStr = rs.getString("json");
+				java.sql.Timestamp timestamp = rs.getTimestamp("timestamp");
+				
+				JSONObject json = new JSONObject(jsonStr);
+				
+				// Get the field name for this stat
+				String fieldName = STAT_TO_FIELD.get(statType);
+				if (fieldName == null) {
+					hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Ungültiger Stat-Typ.",
+							MessageUtil.EmbedType.ERROR)).queue();
+					return;
+				}
+
+				// Check if field exists in JSON
+				if (!json.has(fieldName)) {
+					hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Keine Daten für **" + statType + "** gefunden.",
+							MessageUtil.EmbedType.INFO)).queue();
+					return;
+				}
+
+				Object fieldData = json.get(fieldName);
+				
+				// Format the data
+				String formattedData = formatData(fieldData, timestamp);
+				
+				// Build description
+				StringBuilder description = new StringBuilder();
+				String playerName = getPlayerName(playerTag);
+				description.append("**Spieler:** ").append(playerName != null ? playerName : playerTag).append("\n");
+				description.append("**Stat:** ").append(statType).append("\n\n");
+				description.append("```\n");
+				description.append(formattedData);
+				description.append("\n```");
+
+				// Create buttons
+				Button refreshButton = Button.secondary(buttonId, "\u200B").withEmoji(Emoji.fromUnicode("🔁"));
+				
+				String selectMenuId = encodeSelectMenuId(playerTag);
+				StringSelectMenu selectMenu = StringSelectMenu.create(selectMenuId)
+						.setPlaceholder("Anderes Feld")
+						.addOptions(createStatOptions(statType))
+						.build();
+
+				// Add timestamp
+				ZonedDateTime jetzt = ZonedDateTime.now(ZoneId.of("Europe/Berlin"));
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
+				String formatiert = jetzt.format(formatter);
+
+				hook.editOriginal("")
+						.setEmbeds(MessageUtil.buildEmbed(title, description.toString(),
+								MessageUtil.EmbedType.INFO, "Zuletzt aktualisiert am " + formatiert))
+						.setActionRow(refreshButton)
+						.queue(message -> {
+							// Add select menu in second row
+							message.editMessageComponents(
+								net.dv8tion.jda.api.interactions.components.ActionRow.of(refreshButton),
+								net.dv8tion.jda.api.interactions.components.ActionRow.of(selectMenu)
+							).queue();
+						});
+			}
+		} catch (java.sql.SQLException e) {
+			System.err.println("Database error loading stats data: " + e.getMessage());
+			e.printStackTrace();
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+					"Fehler beim Laden der Daten aus der Datenbank: " + e.getMessage(),
+					MessageUtil.EmbedType.ERROR)).queue();
+		} catch (org.json.JSONException e) {
+			System.err.println("JSON parsing error: " + e.getMessage());
+			e.printStackTrace();
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+					"Fehler beim Verarbeiten der JSON-Daten: " + e.getMessage(),
+					MessageUtil.EmbedType.ERROR)).queue();
+		} catch (Exception e) {
+			System.err.println("Unexpected error loading stats data: " + e.getMessage());
+			e.printStackTrace();
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+					"Unerwarteter Fehler beim Laden der Daten: " + e.getMessage(),
+					MessageUtil.EmbedType.ERROR)).queue();
+		}
+	}
+
+	/**
+	 * Format data for display
+	 */
+	private String formatData(Object data, java.sql.Timestamp jsonTimestamp) {
+		if (data == null || data == JSONObject.NULL) {
+			return "Keine Daten vorhanden";
+		}
+
+		StringBuilder sb = new StringBuilder();
+		
+		if (data instanceof JSONArray) {
+			JSONArray arr = (JSONArray) data;
+			if (arr.length() == 0) {
+				return "Keine Daten vorhanden";
+			}
+			
+			for (int i = 0; i < arr.length(); i++) {
+				Object item = arr.get(i);
+				if (item instanceof JSONObject) {
+					sb.append(formatObject((JSONObject) item, 0, jsonTimestamp));
+				} else {
+					// Simple values (e.g., house_parts, skins, sceneries)
+					String value = getMappedValue(item.toString());
+					sb.append("- ").append(value).append("\n");
+				}
+				
+				if (i < arr.length() - 1) {
+					sb.append("\n");
+				}
+			}
+		} else if (data instanceof JSONObject) {
+			sb.append(formatObject((JSONObject) data, 0, jsonTimestamp));
+		} else {
+			sb.append(data.toString());
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * Format a JSON object with indentation
+	 */
+	private String formatObject(JSONObject obj, int indent, java.sql.Timestamp jsonTimestamp) {
+		StringBuilder sb = new StringBuilder();
+		String indentStr = "  ".repeat(indent);
+		
+		// First, display the "data" field if it exists (as the identifier)
+		if (obj.has("data") && obj.get("data") != null && obj.get("data") != JSONObject.NULL) {
+			String mappedValue = getMappedValue(obj.get("data").toString());
+			sb.append(indentStr).append(mappedValue);
+		}
+		
+		// Then display all other fields
+		for (String key : obj.keySet()) {
+			if (key.equals("data")) {
+				continue; // Already displayed above
+			}
+			
+			Object value = obj.get(key);
+			
+			if (value == null || value == JSONObject.NULL) {
+				continue; // Skip null values
+			}
+			
+			if (key.equals("timer")) {
+				// Special handling for timer
+				int timerSeconds = 0;
+				if (value instanceof Number) {
+					timerSeconds = ((Number) value).intValue();
+				}
+				
+				// Calculate remaining time
+				long elapsedSeconds = (System.currentTimeMillis() - jsonTimestamp.getTime()) / 1000;
+				long remainingSeconds = timerSeconds - elapsedSeconds;
+				
+				if (remainingSeconds > 0) {
+					String timerStr = formatTimerRemaining(remainingSeconds);
+					String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
+					sb.append("\n").append(indentStr).append(translatedKey).append(": ").append(timerStr);
+				}
+				// Don't show timer if it has already expired
+			} else if (value instanceof JSONObject) {
+				String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
+				sb.append("\n").append(indentStr).append(translatedKey).append(":");
+				sb.append("\n").append(formatObject((JSONObject) value, indent + 1, jsonTimestamp));
+			} else if (value instanceof JSONArray) {
+				String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
+				JSONArray arr = (JSONArray) value;
+				if (arr.length() > 0) {
+					sb.append("\n").append(indentStr).append(translatedKey).append(":");
+					for (int i = 0; i < arr.length(); i++) {
+						Object item = arr.get(i);
+						if (item instanceof JSONObject) {
+							sb.append("\n").append(formatObject((JSONObject) item, indent + 1, jsonTimestamp));
+						} else {
+							String mappedValue = getMappedValue(item.toString());
+							sb.append("\n").append("  ".repeat(indent + 1)).append("- ").append(mappedValue);
+						}
+					}
+				}
+			} else {
+				String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
+				String valueStr = value.toString();
+				
+				// Handle boolean values
+				if (value instanceof Boolean) {
+					valueStr = (Boolean) value ? "Ja" : "Nein";
+				}
+				
+				sb.append("\n").append(indentStr).append(translatedKey).append(": ").append(valueStr);
+			}
+		}
+		
+		return sb.toString();
+	}
+
+	/**
+	 * Format remaining timer duration
+	 */
+	private String formatTimerRemaining(long seconds) {
+		long days = seconds / 86400;
+		seconds %= 86400;
+		long hours = seconds / 3600;
+		seconds %= 3600;
+		long minutes = seconds / 60;
+		seconds %= 60;
+
+		StringBuilder sb = new StringBuilder();
+		if (days > 0) {
+			sb.append(days).append("d ");
+		}
+		if (hours > 0) {
+			sb.append(hours).append("h ");
+		}
+		if (minutes > 0) {
+			sb.append(minutes).append("m ");
+		}
+		if (seconds > 0 || sb.length() == 0) {
+			sb.append(seconds).append("s");
+		}
+		sb.append(" verbleibend");
+
+		return sb.toString().trim();
+	}
+
+	/**
+	 * Get mapped value from datamappings table or return raw value
+	 */
+	private String getMappedValue(String dataValue) {
+		// Query datamappings table
+		String sql = "SELECT emojiid, name, emojiname FROM datamappings WHERE datavalue = ?";
+		
+		try (java.sql.PreparedStatement pstmt = dbutil.Connection.getConnection().prepareStatement(sql)) {
+			pstmt.setString(1, dataValue);
+			
+			try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					String emojiId = rs.getString("emojiid");
+					String name = rs.getString("name");
+					String emojiName = rs.getString("emojiname");
+					
+					// If emoji exists, validate and use it
+					if (emojiId != null && !emojiId.isEmpty() && emojiName != null && !emojiName.isEmpty()) {
+						// Validate emojiId is numeric
+						if (emojiId.matches("\\d+")) {
+							return "<:" + emojiName + ":" + emojiId + ">";
+						}
+					}
+					
+					// Otherwise use name if available
+					if (name != null && !name.isEmpty()) {
+						return name;
+					}
+				}
+			}
+		} catch (java.sql.SQLException e) {
+			// Database query failed, log and return raw value
+			System.err.println("Error querying datamappings for value '" + dataValue + "': " + e.getMessage());
+		}
+		
+		// Return raw data value if no mapping found
+		return dataValue;
+	}
+
+	/**
+	 * Create stat options for select menu
+	 */
+	private List<net.dv8tion.jda.api.interactions.components.selections.SelectOption> createStatOptions(String currentStat) {
+		List<net.dv8tion.jda.api.interactions.components.selections.SelectOption> options = new ArrayList<>();
+		
+		for (String stat : STAT_TO_FIELD.keySet()) {
+			net.dv8tion.jda.api.interactions.components.selections.SelectOption option = 
+				net.dv8tion.jda.api.interactions.components.selections.SelectOption.of(stat, stat);
+			
+			// Mark current stat as default
+			if (stat.equals(currentStat)) {
+				option = option.withDefault(true);
+			}
+			
+			options.add(option);
+		}
+		
+		return options;
+	}
+
+	/**
+	 * Encode parameters into a Base64 string for button ID
+	 */
+	private String encodeButtonId(String playerTag, String statType) {
+		// Format: playerTag|statType
+		String data = playerTag + "|" + statType;
+		return BUTTON_PREFIX + Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
+	}
+
+	/**
+	 * Decode a Base64-encoded button ID
+	 */
+	private String[] decodeButtonId(String buttonId) {
+		// Remove prefix
+		String encoded = buttonId.substring(BUTTON_PREFIX.length());
+
+		// Decode Base64
+		String data = new String(Base64.getUrlDecoder().decode(encoded));
+
+		// Split by |
+		return data.split("\\|", -1);
+	}
+
+	/**
+	 * Encode player tag into select menu ID
+	 */
+	private String encodeSelectMenuId(String playerTag) {
+		return SELECT_PREFIX + Base64.getUrlEncoder().withoutPadding().encodeToString(playerTag.getBytes());
+	}
+
+	/**
+	 * Decode select menu ID
+	 */
+	private String decodeSelectMenuId(String selectMenuId) {
+		// Remove prefix
+		String encoded = selectMenuId.substring(SELECT_PREFIX.length());
+
+		// Decode Base64
+		return new String(Base64.getUrlDecoder().decode(encoded));
+	}
+}

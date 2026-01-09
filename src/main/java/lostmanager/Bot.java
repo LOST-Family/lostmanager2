@@ -44,6 +44,7 @@ import commands.coc.util.jsonupload;
 import commands.coc.util.listeningevent;
 import commands.coc.util.raidping;
 import commands.coc.util.setnick;
+import commands.coc.util.stats;
 import commands.coc.util.wins;
 import commands.discord.admin.deletemessages;
 import commands.discord.admin.reactionsrole;
@@ -422,7 +423,34 @@ public class Bot extends ListenerAdapter {
 							Commands.slash("lmagent", "Dummy command mit einem Prompt-Parameter.")
 									.addOption(OptionType.STRING, "prompt", "Der Prompt als Text", true),
 
-							Commands.slash("jsonupload", "Generiere einen Link zum Hochladen von JSON-Daten aus dem Spiel")
+							Commands.slash("jsonupload", "Generiere einen Link zum Hochladen von JSON-Daten aus dem Spiel"),
+
+							Commands.slash("stats", "Zeige Spieler-Statistiken aus hochgeladenen JSON-Daten an")
+									.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
+									.addOptions(new OptionData(OptionType.STRING, "stat", "Die anzuzeigende Statistik", true)
+											.addChoice("Helpers", "Helpers")
+											.addChoice("Guardians", "Guardians")
+											.addChoice("Buildings", "Buildings")
+											.addChoice("Buildings (BB)", "Buildings (BB)")
+											.addChoice("Traps", "Traps")
+											.addChoice("Traps (BB)", "Traps (BB)")
+											.addChoice("Decos", "Decos")
+											.addChoice("Decos (BB)", "Decos (BB)")
+											.addChoice("Obstacles", "Obstacles")
+											.addChoice("Obstacles (BB)", "Obstacles (BB)")
+											.addChoice("Units", "Units")
+											.addChoice("Units (BB)", "Units (BB)")
+											.addChoice("Sieges", "Sieges")
+											.addChoice("Heroes", "Heroes")
+											.addChoice("Heroes (BB)", "Heroes (BB)")
+											.addChoice("Spells", "Spells")
+											.addChoice("Pets", "Pets")
+											.addChoice("Equips", "Equips")
+											.addChoice("House Parts", "House Parts")
+											.addChoice("Skins", "Skins")
+											.addChoice("Skins (BB)", "Skins (BB)")
+											.addChoice("Sceneries", "Sceneries")
+											.addChoice("Sceneries (BB)", "Sceneries (BB)"))
 
 					).queue();
 		}
@@ -467,6 +495,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new checkroles());
 		classes.add(new wins());
 		classes.add(new jsonupload());
+		classes.add(new stats());
 
 		return classes.toArray();
 	}
