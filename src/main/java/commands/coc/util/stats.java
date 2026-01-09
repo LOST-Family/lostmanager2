@@ -95,6 +95,10 @@ public class stats extends ListenerAdapter {
 		GROUPING_EXCLUDED_ATTRS.add("helper_cooldown");
 	}
 
+	// Indentation level for flattened hierarchy to avoid Discord's deep indent handling
+	// All nested levels use this same indent value to keep indentation at maximum 1 level
+	private static final int FLATTENED_INDENT_LEVEL = 1;
+
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("stats"))
@@ -763,15 +767,36 @@ public class stats extends ListenerAdapter {
 
 	/**
 	 * Format a JSON object with indentation
+	 * Uses fixed indentation levels to avoid Discord's special formatting for deep indents
+	 * Discord treats indentation deeper than 1 level differently, so we flatten all attributes
+	 * to use the same 2-space indentation level
 	 */
 	private String formatObject(JSONObject obj, int indent, java.sql.Timestamp jsonTimestamp) {
 		StringBuilder sb = new StringBuilder();
-		String indentStr = "  ".repeat(indent);
+		// To avoid Discord's special handling of deep indentation, we use a flat system:
+		// - Data fields: 4 spaces (visual sub-item, no dash)
+		// - Attributes: 2 spaces + dash (all at same level regardless of nesting)
+		// This keeps indentation at maximum 1 level (2 spaces) for attributes
+		
+		String dataIndentStr;
+		String attrIndentStr;
+		
+		if (indent == 0) {
+			// Top-level objects have no indentation
+			dataIndentStr = "";
+			attrIndentStr = "";
+		} else {
+			// All nested objects use flat indentation:
+			// - Data fields always use 4 spaces (no dash)
+			// - Attributes always use 2 spaces + dash (added separately)
+			dataIndentStr = "    ";
+			attrIndentStr = "  ";
+		}
 
 		// First, display the "data" field if it exists (as the identifier)
 		if (obj.has("data") && obj.get("data") != null && obj.get("data") != JSONObject.NULL) {
 			String mappedValue = getMappedValue(obj.get("data").toString());
-			sb.append(indentStr).append(mappedValue);
+			sb.append(dataIndentStr).append(mappedValue);
 		}
 
 		// Then display all other fields
@@ -800,25 +825,28 @@ public class stats extends ListenerAdapter {
 				if (remainingSeconds > 0) {
 					String timerStr = formatTimerRemaining(remainingSeconds);
 					String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
-					sb.append("\n").append(indentStr).append(translatedKey).append(": ").append(timerStr);
+					sb.append("\n").append(attrIndentStr).append("- ").append(translatedKey).append(": ").append(timerStr);
 				}
 				// Don't show timer if it has already expired
 			} else if (value instanceof JSONObject) {
 				String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
-				sb.append("\n").append(indentStr).append(translatedKey).append(":");
-				sb.append("\n").append(formatObject((JSONObject) value, indent + 1, jsonTimestamp));
+				sb.append("\n").append(attrIndentStr).append("- ").append(translatedKey).append(":");
+				// Nested objects use flattened indent to avoid Discord's deep indent handling
+				sb.append("\n").append(formatObject((JSONObject) value, FLATTENED_INDENT_LEVEL, jsonTimestamp));
 			} else if (value instanceof JSONArray) {
 				String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
 				JSONArray arr = (JSONArray) value;
 				if (arr.length() > 0) {
-					sb.append("\n").append(indentStr).append("- ").append(translatedKey).append(":");
+					sb.append("\n").append(attrIndentStr).append("- ").append(translatedKey).append(":");
 					for (int i = 0; i < arr.length(); i++) {
 						Object item = arr.get(i);
 						if (item instanceof JSONObject) {
-							sb.append("\n").append(formatObject((JSONObject) item, indent + 1, jsonTimestamp));
+							// Array item objects use flattened indent
+							sb.append("\n").append(formatObject((JSONObject) item, FLATTENED_INDENT_LEVEL, jsonTimestamp));
 						} else {
 							String mappedValue = getMappedValue(item.toString());
-							sb.append("\n").append("  ".repeat(indent + 1)).append("- ").append(mappedValue);
+							// Simple values use data indentation (4 spaces, no dash) for visual nesting
+							sb.append("\n").append(dataIndentStr).append(mappedValue);
 						}
 					}
 				}
@@ -831,7 +859,7 @@ public class stats extends ListenerAdapter {
 					valueStr = (Boolean) value ? "Ja" : "Nein";
 				}
 
-				sb.append("\n").append(indentStr).append("- ").append(translatedKey).append(": ").append(valueStr);
+				sb.append("\n").append(attrIndentStr).append("- ").append(translatedKey).append(": ").append(valueStr);
 			}
 		}
 
