@@ -32,6 +32,10 @@ import util.MessageUtil;
 
 public class stats extends ListenerAdapter {
 
+	// Constants for button and select menu ID prefixes
+	private static final String BUTTON_PREFIX = "stats_refresh_";
+	private static final String SELECT_PREFIX = "stats_select_";
+	
 	// Mapping of stat options to JSON field names
 	private static final Map<String, String> STAT_TO_FIELD = new HashMap<>();
 	
@@ -133,7 +137,10 @@ public class stats extends ListenerAdapter {
 				// Get available players based on permissions
 				List<Command.Choice> choices = getAvailablePlayers(userExecuted, input);
 				
-				event.replyChoices(choices).queue(success -> {}, error -> {});
+				event.replyChoices(choices).queue(
+					success -> {},
+					error -> System.err.println("Error replying to autocomplete: " + error.getMessage())
+				);
 			}
 		}, "StatsAutocomplete-" + event.getUser().getId()).start();
 	}
@@ -141,7 +148,7 @@ public class stats extends ListenerAdapter {
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();
-		if (!id.startsWith("stats_refresh_"))
+		if (!id.startsWith(BUTTON_PREFIX))
 			return;
 
 		event.deferEdit().queue();
@@ -188,7 +195,7 @@ public class stats extends ListenerAdapter {
 	@Override
 	public void onStringSelectInteraction(StringSelectInteractionEvent event) {
 		String id = event.getComponentId();
-		if (!id.startsWith("stats_select_"))
+		if (!id.startsWith(SELECT_PREFIX))
 			return;
 
 		event.deferEdit().queue();
@@ -297,6 +304,8 @@ public class stats extends ListenerAdapter {
 		} else {
 			// Get only linked accounts with uploaded JSONs
 			ArrayList<Player> linkedAccounts = user.getAllLinkedAccounts();
+			String inputLower = input.toLowerCase();
+			
 			for (Player player : linkedAccounts) {
 				String tag = player.getTag();
 				// Check if this player has any JSON uploaded
@@ -305,8 +314,8 @@ public class stats extends ListenerAdapter {
 				
 				if (count != null && count > 0) {
 					// Filter by input
-					if (tag.toLowerCase().contains(input.toLowerCase()) || 
-						player.getName().toLowerCase().contains(input.toLowerCase())) {
+					if (tag.toLowerCase().contains(inputLower) || 
+						player.getName().toLowerCase().contains(inputLower)) {
 						String displayName = player.getName() + " (" + tag + ")";
 						choices.add(new Command.Choice(displayName, tag));
 					}
@@ -417,6 +426,7 @@ public class stats extends ListenerAdapter {
 						});
 			}
 		} catch (Exception e) {
+			System.err.println("Error loading stats data: " + e.getMessage());
 			e.printStackTrace();
 			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 					"Fehler beim Laden der Daten: " + e.getMessage(),
@@ -596,8 +606,9 @@ public class stats extends ListenerAdapter {
 					}
 				}
 			}
-		} catch (Exception e) {
-			// Silently fail and return raw value
+		} catch (java.sql.SQLException e) {
+			// Database query failed, log and return raw value
+			System.err.println("Error querying datamappings for value '" + dataValue + "': " + e.getMessage());
 		}
 		
 		// Return raw data value if no mapping found
@@ -631,15 +642,15 @@ public class stats extends ListenerAdapter {
 	private String encodeButtonId(String playerTag, String statType) {
 		// Format: playerTag|statType
 		String data = playerTag + "|" + statType;
-		return "stats_refresh_" + Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
+		return BUTTON_PREFIX + Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
 	}
 
 	/**
 	 * Decode a Base64-encoded button ID
 	 */
 	private String[] decodeButtonId(String buttonId) {
-		// Remove "stats_refresh_" prefix
-		String encoded = buttonId.substring(14);
+		// Remove prefix
+		String encoded = buttonId.substring(BUTTON_PREFIX.length());
 
 		// Decode Base64
 		String data = new String(Base64.getUrlDecoder().decode(encoded));
@@ -652,15 +663,15 @@ public class stats extends ListenerAdapter {
 	 * Encode player tag into select menu ID
 	 */
 	private String encodeSelectMenuId(String playerTag) {
-		return "stats_select_" + Base64.getUrlEncoder().withoutPadding().encodeToString(playerTag.getBytes());
+		return SELECT_PREFIX + Base64.getUrlEncoder().withoutPadding().encodeToString(playerTag.getBytes());
 	}
 
 	/**
 	 * Decode select menu ID
 	 */
 	private String decodeSelectMenuId(String selectMenuId) {
-		// Remove "stats_select_" prefix
-		String encoded = selectMenuId.substring(13);
+		// Remove prefix
+		String encoded = selectMenuId.substring(SELECT_PREFIX.length());
 
 		// Decode Base64
 		return new String(Base64.getUrlDecoder().decode(encoded));
