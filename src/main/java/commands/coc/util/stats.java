@@ -903,9 +903,11 @@ public class stats extends ListenerAdapter {
 	 * Check if emoji data is valid for Discord custom emoji format
 	 */
 	private boolean isValidEmoji(String emojiId, String emojiName) {
-		return emojiId != null && !emojiId.isEmpty() 
-			&& emojiName != null && !emojiName.isEmpty() 
-			&& emojiId.matches("\\d+");
+		boolean hasEmojiId = emojiId != null && !emojiId.isEmpty();
+		boolean hasEmojiName = emojiName != null && !emojiName.isEmpty();
+		boolean isNumericId = hasEmojiId && emojiId.matches("\\d+");
+		
+		return hasEmojiId && hasEmojiName && isNumericId;
 	}
 
 	/**
