@@ -239,6 +239,17 @@ curl http://localhost:8070/api/users/123456789012345678
 
 ---
 
+## CORS Support
+
+The API includes CORS (Cross-Origin Resource Sharing) headers to allow access from web applications:
+- `Access-Control-Allow-Origin: *`
+- `Access-Control-Allow-Methods: GET, OPTIONS`
+- `Access-Control-Allow-Headers: Content-Type`
+
+This allows the API to be accessed from browser-based applications on different domains.
+
+---
+
 ## Support
 
 For issues or questions about the API, please contact the development team.
