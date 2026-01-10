@@ -110,7 +110,7 @@ public class JsonUploadServer {
 		// Cleanup old JSON data every hour
 		scheduler.scheduleAtFixedRate(() -> {
 			try {
-				String sql = "DELETE FROM userjsons WHERE timestamp < CURRENT_TIMESTAMP - INTERVAL '7 days'";
+				String sql = "DELETE FROM userjsons WHERE timestamp < CURRENT_TIMESTAMP - INTERVAL '60 days'";
 				lostmanager.util.Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(sql);
 				if (result != null && result.getSecond() != null && result.getSecond() > 0) {
 					System.out.println("Cleaned up " + result.getSecond() + " old JSON entries");
