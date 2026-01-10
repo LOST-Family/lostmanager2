@@ -14,6 +14,12 @@ public class ClanDTO {
     @JsonProperty("nameDB")
     private String nameDB;
     
+    @JsonProperty("badgeUrl")
+    private String badgeUrl;
+    
+    @JsonProperty("description")
+    private String description;
+    
     public ClanDTO() {
         // Default constructor for Jackson
     }
@@ -29,6 +35,18 @@ public class ClanDTO {
             this.nameDB = clan.getNameDB();
         } catch (Exception e) {
             this.nameDB = null;
+        }
+        
+        try {
+            this.badgeUrl = clan.getIconDB();
+        } catch (Exception e) {
+            this.badgeUrl = null;
+        }
+        
+        try {
+            this.description = clan.getDescriptionDB();
+        } catch (Exception e) {
+            this.description = null;
         }
     }
     
@@ -47,5 +65,21 @@ public class ClanDTO {
     
     public void setNameDB(String nameDB) {
         this.nameDB = nameDB;
+    }
+    
+    public String getBadgeUrl() {
+        return badgeUrl;
+    }
+    
+    public void setBadgeUrl(String badgeUrl) {
+        this.badgeUrl = badgeUrl;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

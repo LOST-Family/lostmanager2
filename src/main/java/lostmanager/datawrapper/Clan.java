@@ -32,6 +32,12 @@ public class Clan {
 	// Names
 	private String namedb;
 	private String nameapi;
+	
+	// Icon and Description
+	private String icondb;
+	private String iconapi;
+	private String descriptiondb;
+	private String descriptionapi;
 
 	// Playerlists
 	private ArrayList<Player> playerlistdb;
@@ -74,6 +80,12 @@ public class Clan {
 		// Names
 		namedb = null;
 		nameapi = null;
+		
+		// Icon and Description
+		icondb = null;
+		iconapi = null;
+		descriptiondb = null;
+		descriptionapi = null;
 
 		// Playerlists
 		playerlistdb = null;
@@ -173,6 +185,67 @@ public class Clan {
 			nameapi = jsonobject.getString("name");
 		}
 		return nameapi;
+	}
+
+	// Icon
+
+	public String getIconDB() {
+		if (icondb == null) {
+			String sql = "SELECT badgeUrl FROM clans WHERE tag = ?";
+			try (PreparedStatement pstmt = Connection.getConnection().prepareStatement(sql)) {
+				pstmt.setString(1, clan_tag);
+				try (ResultSet rs = pstmt.executeQuery()) {
+					if (rs.next()) {
+						icondb = rs.getString("badgeUrl");
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return icondb;
+	}
+
+	public String getIconAPI() {
+		if (iconapi == null) {
+			JSONObject jsonobject = new JSONObject(getJson());
+			if (jsonobject.has("badgeUrls") && !jsonobject.isNull("badgeUrls")) {
+				JSONObject badgeUrls = jsonobject.getJSONObject("badgeUrls");
+				if (badgeUrls.has("large") && !badgeUrls.isNull("large")) {
+					iconapi = badgeUrls.getString("large");
+				}
+			}
+		}
+		return iconapi;
+	}
+
+	// Description
+
+	public String getDescriptionDB() {
+		if (descriptiondb == null) {
+			String sql = "SELECT description FROM clans WHERE tag = ?";
+			try (PreparedStatement pstmt = Connection.getConnection().prepareStatement(sql)) {
+				pstmt.setString(1, clan_tag);
+				try (ResultSet rs = pstmt.executeQuery()) {
+					if (rs.next()) {
+						descriptiondb = rs.getString("description");
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return descriptiondb;
+	}
+
+	public String getDescriptionAPI() {
+		if (descriptionapi == null) {
+			JSONObject jsonobject = new JSONObject(getJson());
+			if (jsonobject.has("description") && !jsonobject.isNull("description")) {
+				descriptionapi = jsonobject.getString("description");
+			}
+		}
+		return descriptionapi;
 	}
 
 	// Playerlists

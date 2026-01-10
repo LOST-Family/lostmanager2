@@ -13,6 +13,9 @@ public class PlayerDTO {
     @JsonProperty("tag")
     private String tag;
     
+    @JsonProperty("nameDB")
+    private String nameDB;
+    
     @JsonProperty("userId")
     private String userId;
     
@@ -20,7 +23,7 @@ public class PlayerDTO {
     private String roleInClan;
     
     @JsonProperty("clanDB")
-    private String clanDB;
+    private ClanDTO clanDB;
     
     public PlayerDTO() {
         // Default constructor for Jackson
@@ -32,6 +35,13 @@ public class PlayerDTO {
      */
     public PlayerDTO(Player player) {
         this.tag = player.getTag();
+        
+        // Get nameDB
+        try {
+            this.nameDB = player.getNameDB();
+        } catch (Exception e) {
+            this.nameDB = null;
+        }
         
         // Get user ID if player is linked
         User user = player.getUser();
@@ -47,7 +57,7 @@ public class PlayerDTO {
         
         // Get clan from DB
         Clan clanDbObj = player.getClanDB();
-        this.clanDB = clanDbObj != null ? clanDbObj.getTag() : null;
+        this.clanDB = clanDbObj != null ? new ClanDTO(clanDbObj) : null;
     }
     
     // Getters and setters
@@ -57,6 +67,14 @@ public class PlayerDTO {
     
     public void setTag(String tag) {
         this.tag = tag;
+    }
+    
+    public String getNameDB() {
+        return nameDB;
+    }
+    
+    public void setNameDB(String nameDB) {
+        this.nameDB = nameDB;
     }
     
     public String getUserId() {
@@ -75,11 +93,11 @@ public class PlayerDTO {
         this.roleInClan = roleInClan;
     }
     
-    public String getClanDB() {
+    public ClanDTO getClanDB() {
         return clanDB;
     }
     
-    public void setClanDB(String clanDB) {
+    public void setClanDB(ClanDTO clanDB) {
         this.clanDB = clanDB;
     }
 }

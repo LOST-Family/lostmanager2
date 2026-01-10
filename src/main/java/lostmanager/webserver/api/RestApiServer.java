@@ -100,8 +100,8 @@ public class RestApiServer {
     }
     
     /**
-     * Handler for GET /api/clans/{tag}/members
-     * Returns memberlist of a clan with player objects including player data
+     * Handler for GET /api/clans/{tag} and /api/clans/{tag}/members
+     * Returns either clan info or memberlist of a clan with player objects including player data
      */
     private class ClanMembersHandler implements HttpHandler {
         @Override
@@ -112,13 +112,13 @@ public class RestApiServer {
             }
             
             try {
-                // Extract clan tag from path
+                // Extract path
                 String path = exchange.getRequestURI().getPath();
-                // Path format: /api/clans/{tag}/members
                 String[] parts = path.split("/");
                 
-                if (parts.length < 5 || !"members".equals(parts[4])) {
-                    sendResponse(exchange, 400, "{\"error\":\"Invalid path format. Expected /api/clans/{tag}/members\"}");
+                // Need at least /api/clans/{tag}
+                if (parts.length < 4) {
+                    sendResponse(exchange, 400, "{\"error\":\"Invalid path format. Expected /api/clans/{tag} or /api/clans/{tag}/members\"}");
                     return;
                 }
                 
@@ -131,28 +131,36 @@ public class RestApiServer {
                     return;
                 }
                 
-                // Get members from database
-                ArrayList<Player> members = clan.getPlayersDB();
-                
-                if (members == null) {
-                    sendJsonResponse(exchange, 200, "[]");
-                    return;
-                }
-                
-                // Convert to DTOs - include player data here so not every one needs to be checked
-                List<PlayerDTO> playerDTOs = new ArrayList<>();
-                for (Player player : members) {
-                    try {
-                        playerDTOs.add(new PlayerDTO(player));
-                    } catch (Exception e) {
-                        System.err.println("Error processing player " + player.getTag() + ": " + e.getMessage());
-                        // Continue with other players
+                // Check if this is a members request
+                if (parts.length >= 5 && "members".equals(parts[4])) {
+                    // Return members list
+                    ArrayList<Player> members = clan.getPlayersDB();
+                    
+                    if (members == null) {
+                        sendJsonResponse(exchange, 200, "[]");
+                        return;
                     }
+                    
+                    // Convert to DTOs - include player data here so not every one needs to be checked
+                    List<PlayerDTO> playerDTOs = new ArrayList<>();
+                    for (Player player : members) {
+                        try {
+                            playerDTOs.add(new PlayerDTO(player));
+                        } catch (Exception e) {
+                            System.err.println("Error processing player " + player.getTag() + ": " + e.getMessage());
+                            // Continue with other players
+                        }
+                    }
+                    
+                    // Serialize to JSON
+                    String json = objectMapper.writeValueAsString(playerDTOs);
+                    sendJsonResponse(exchange, 200, json);
+                } else {
+                    // Return clan info
+                    ClanDTO clanDTO = new ClanDTO(clan);
+                    String json = objectMapper.writeValueAsString(clanDTO);
+                    sendJsonResponse(exchange, 200, json);
                 }
-                
-                // Serialize to JSON
-                String json = objectMapper.writeValueAsString(playerDTOs);
-                sendJsonResponse(exchange, 200, json);
                 
             } catch (Exception e) {
                 System.err.println("Error in ClanMembersHandler: " + e.getMessage());

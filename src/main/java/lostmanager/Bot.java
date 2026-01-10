@@ -1146,6 +1146,7 @@ public class Bot extends ListenerAdapter {
 	public static void startNameUpdates() {
 		System.out.println("Alle 2h werden nun die Namen aktualisiert. " + System.currentTimeMillis());
 		Runnable task = () -> {
+			// Update player names
 			String sql = "SELECT coc_tag FROM players";
 			for (String tag : DBUtil.getArrayListFromSQL(sql, String.class)) {
 				try {
@@ -1153,6 +1154,20 @@ public class Bot extends ListenerAdapter {
 							tag);
 				} catch (Exception e) {
 					System.out.println("Fehler beim Namenupdate von Tag " + tag);
+				}
+			}
+			
+			// Update clan badges and descriptions
+			String clanSql = "SELECT tag FROM clans";
+			for (String clanTag : DBUtil.getArrayListFromSQL(clanSql, String.class)) {
+				try {
+					Clan clan = new Clan(clanTag);
+					String badgeUrl = clan.getIconAPI();
+					String description = clan.getDescriptionAPI();
+					DBUtil.executeUpdate("UPDATE clans SET badgeUrl = ?, description = ? WHERE tag = ?", 
+							badgeUrl, description, clanTag);
+				} catch (Exception e) {
+					System.out.println("Fehler beim Badge/Description Update von Clan " + clanTag + ": " + e.getMessage());
 				}
 			}
 			
