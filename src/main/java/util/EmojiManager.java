@@ -51,8 +51,14 @@ public class EmojiManager {
       return null;
     }
     
+    // Extract folder structure from imagePath to differentiate items with same name
+    String folderPrefix = extractFolderPrefix(imagePath);
+    
+    // Combine folder prefix with emoji name
+    String nameWithPath = folderPrefix.isEmpty() ? emojiName : folderPrefix + "_" + emojiName;
+    
     // Sanitize emoji name (Discord requires alphanumeric + underscores)
-    String sanitizedName = sanitizeEmojiName(emojiName);
+    String sanitizedName = sanitizeEmojiName(nameWithPath);
     String fullEmojiName = BOT_EMOJI_PREFIX + sanitizedName;
     
     // Check cache first
@@ -542,6 +548,48 @@ public class EmojiManager {
   }
   
   /**
+   * Extract folder structure from image path to create unique emoji names
+   * Takes the path between "assets" and the filename, excluding "assets" itself
+   * Example: "/home-base/buildings/wall/wall-1.png" -> "home_base_buildings"
+   * Example: "/builder-base/buildings/wall/wall-2.png" -> "builder_base_buildings"
+   * 
+   * @param imagePath The relative image path (e.g., "/home-base/buildings/wall/wall-1.png")
+   * @return The folder structure as underscore-separated string
+   */
+  private static String extractFolderPrefix(String imagePath) {
+    if (imagePath == null || imagePath.isEmpty()) {
+      return "";
+    }
+    
+    // Remove leading slash if present
+    String path = imagePath.startsWith("/") ? imagePath.substring(1) : imagePath;
+    
+    // Split by slash to get path components
+    String[] parts = path.split("/");
+    
+    // Build folder prefix from all parts except the filename (last part)
+    // Stop before the filename
+    StringBuilder prefix = new StringBuilder();
+    for (int i = 0; i < parts.length - 1; i++) {
+      String part = parts[i];
+      
+      // Skip "assets" if present (though it shouldn't be in relative paths)
+      if (part.equalsIgnoreCase("assets")) {
+        continue;
+      }
+      
+      if (prefix.length() > 0) {
+        prefix.append("_");
+      }
+      
+      // Replace hyphens with underscores for consistency
+      prefix.append(part.replace("-", "_"));
+    }
+    
+    return prefix.toString();
+  }
+  
+  /**
    * Sanitize emoji name for Discord (alphanumeric + underscores only)
    * @param name The name to sanitize
    * @return Sanitized name
@@ -560,8 +608,11 @@ public class EmojiManager {
     if (sanitized.length() < 2) {
       sanitized = "item_" + sanitized;
     }
-    if (sanitized.length() > 32) {
-      sanitized = sanitized.substring(0, 32);
+    // Account for the BOT_EMOJI_PREFIX length (4 chars: "lm2_")
+    // Maximum allowed is 32 chars total, so sanitized part should be max 28 chars
+    int maxLength = 32 - BOT_EMOJI_PREFIX.length();
+    if (sanitized.length() > maxLength) {
+      sanitized = sanitized.substring(0, maxLength);
     }
     
     return sanitized.toLowerCase();
