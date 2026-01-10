@@ -124,7 +124,8 @@
       "15": "/home-base/buildings/gold-storage/gold-storage-15.png",
       "16": "/home-base/buildings/gold-storage/gold-storage-16.png",
       "17": "/home-base/buildings/gold-storage/gold-storage-17.png",
-      "18": "/home-base/buildings/gold-storage/gold-storage-18.png"
+      "18": "/home-base/buildings/gold-storage/gold-storage-18.png",
+      "19": "/home-base/buildings/gold-storage/gold-storage-19.png"
     }
   },
   "1000006": {
@@ -2268,7 +2269,7 @@
     "icon": ""
   },
   "18000097": {
-    "name": "\\qFriendly\\q Clown",
+    "name": "Friendly Clown",
     "icon": ""
   },
   "18000098": {
