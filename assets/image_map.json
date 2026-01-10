@@ -3747,7 +3747,7 @@
   },
   "52000149": {
     "name": "Archer Satyr",
-    "icon": "/home-base/skins/149.png",
+    "icon": "/home-base/skins/test.png",
     "full": ""
   },
   "52000150": {
@@ -4475,5 +4475,73 @@
   "82000149": {
     "name": "Meltdown Roof",
     "icon": ""
+  },
+  "26000000": {
+    "name": "Lightning Spell",
+    "icon": "/home-base/spells/0.png"
+  },
+  "26000001": {
+    "name": "Heal Spell",
+    "icon": "/home-base/spells/1.png"
+  },
+  "26000002": {
+    "name": "Rage Spell",
+    "icon": "/home-base/spells/2.png"
+  },
+  "26000003": {
+    "name": "Jump Spell",
+    "icon": "/home-base/spells/3.png"
+  },
+  "26000005": {
+    "name": "Freeze Spell",
+    "icon": "/home-base/spells/5.png"
+  },
+  "26000009": {
+    "name": "Poison Spell",
+    "icon": "/home-base/spells/9.png"
+  },
+  "26000010": {
+    "name": "Earthquake Spell",
+    "icon": "/home-base/spells/10.png"
+  },
+  "26000011": {
+    "name": "Haste Spell",
+    "icon": "/home-base/spells/11.png"
+  },
+  "26000016": {
+    "name": "Clone Spell",
+    "icon": "/home-base/spells/16.png"
+  },
+  "26000017": {
+    "name": "Skeleton Spell",
+    "icon": "/home-base/spells/17.png"
+  },
+  "26000028": {
+    "name": "Bat Spell",
+    "icon": "/home-base/spells/28.png"
+  },
+  "26000035": {
+    "name": "Invisibility Spell",
+    "icon": "/home-base/spells/35.png"
+  },
+  "26000053": {
+    "name": "Recall Spell",
+    "icon": "/home-base/spells/53.png"
+  },
+  "26000070": {
+    "name": "Overgrowth Spell",
+    "icon": "/home-base/spells/170.png"
+  },
+  "26000098": {
+    "name": "Revive Spell",
+    "icon": "/home-base/spells/98.png"
+  },
+  "26000109": {
+    "name": "Iceblock Spell",
+    "icon": "/home-base/spells/109.png"
+  },
+  "26000120": {
+    "name": "Totem Spell",
+    "icon": "/home-base/spells/120.png"
   }
 }
