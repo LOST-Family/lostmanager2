@@ -204,8 +204,38 @@ Full setup guide: [Automated Events](documentation/USER_GUIDE_AUTOMATED_EVENTS.m
 - **Framework:** JDA (Java Discord API) 5.0.0-alpha.14
 - **Database:** PostgreSQL 42.7.7
 - **CoC API:** Clash of Clans Official API
+- **REST API:** Built-in HTTP Server (Port 8070)
 - **AI:** Google Gemini API
 - **Build Tool:** Maven
+
+---
+
+## 🌐 REST API
+
+Lost Manager 2 includes a REST API for programmatic access to Clans, Players, and Users data.
+
+**Key Features:**
+- JSON endpoints for clans, players, and users
+- CORS support for web applications
+- Runs on port 8070 (configurable)
+- Zero security vulnerabilities (CodeQL verified)
+
+**Documentation:**
+- **[REST API Documentation](REST_API_DOCUMENTATION.md)** - Complete API reference
+- **[REST API Test Plan](REST_API_TEST_PLAN.md)** - Manual testing guide
+- **[Implementation Summary](REST_API_IMPLEMENTATION_SUMMARY.md)** - Technical details
+
+**Quick Example:**
+```bash
+# Get all clans
+curl http://localhost:8070/api/clans
+
+# Get clan members
+curl http://localhost:8070/api/clans/%232P0LRJP9V/members
+
+# Get user info
+curl http://localhost:8070/api/users/123456789012345678
+```
 
 ---
 
@@ -214,6 +244,9 @@ Full setup guide: [Automated Events](documentation/USER_GUIDE_AUTOMATED_EVENTS.m
 ### Root Directory Guides
 - [LISTENING_EVENTS.md](LISTENING_EVENTS.md) - Event system user guide
 - [LISTENING_EVENTS_COMPLETE_GUIDE.md](LISTENING_EVENTS_COMPLETE_GUIDE.md) - Comprehensive event guide
+- **[REST_API_DOCUMENTATION.md](REST_API_DOCUMENTATION.md)** - REST API reference ✨
+- **[REST_API_TEST_PLAN.md](REST_API_TEST_PLAN.md)** - API testing guide ✨
+- **[REST_API_IMPLEMENTATION_SUMMARY.md](REST_API_IMPLEMENTATION_SUMMARY.md)** - Technical details ✨
 
 ### Documentation Folder
 - **5 User-Friendly Guides** - Simple language, practical focus
