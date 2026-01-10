@@ -43,6 +43,7 @@ import commands.coc.util.cwdonator;
 import commands.coc.util.jsonupload;
 import commands.coc.util.listeningevent;
 import commands.coc.util.raidping;
+import commands.coc.util.reloadmappings;
 import commands.coc.util.setnick;
 import commands.coc.util.stats;
 import commands.coc.util.wins;
@@ -442,7 +443,10 @@ public class Bot extends ListenerAdapter {
 											.addChoice("Equips", "Equips").addChoice("House Parts", "House Parts")
 											.addChoice("Skins", "Skins").addChoice("Skins (BB)", "Skins (BB)")
 											.addChoice("Sceneries", "Sceneries")
-											.addChoice("Sceneries (BB)", "Sceneries (BB)"))
+											.addChoice("Sceneries (BB)", "Sceneries (BB)")),
+
+							Commands.slash("reloadmappings",
+									"Lade die Mappings (image_map.json) manuell neu. Wird automatisch alle 2h durchgeführt.")
 
 					).queue();
 		}
@@ -488,6 +492,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new wins());
 		classes.add(new jsonupload());
 		classes.add(new stats());
+		classes.add(new reloadmappings());
 
 		return classes.toArray();
 	}
