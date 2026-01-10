@@ -14,8 +14,6 @@ public class ClanDTO {
     @JsonProperty("nameDB")
     private String nameDB;
     
-    @JsonProperty("nameAPI")
-    private String nameAPI;
     
     public ClanDTO() {
         // Default constructor for Jackson
@@ -32,12 +30,6 @@ public class ClanDTO {
             this.nameDB = clan.getNameDB();
         } catch (Exception e) {
             this.nameDB = null;
-        }
-        
-        try {
-            this.nameAPI = clan.getNameAPI();
-        } catch (Exception e) {
-            this.nameAPI = null;
         }
     }
     
@@ -56,13 +48,5 @@ public class ClanDTO {
     
     public void setNameDB(String nameDB) {
         this.nameDB = nameDB;
-    }
-    
-    public String getNameAPI() {
-        return nameAPI;
-    }
-    
-    public void setNameAPI(String nameAPI) {
-        this.nameAPI = nameAPI;
     }
 }

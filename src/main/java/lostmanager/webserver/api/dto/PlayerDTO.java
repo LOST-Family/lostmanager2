@@ -19,14 +19,8 @@ public class PlayerDTO {
     @JsonProperty("roleInClan")
     private String roleInClan;
     
-    @JsonProperty("nameAPI")
-    private String nameAPI;
-    
     @JsonProperty("clanDB")
     private String clanDB;
-    
-    @JsonProperty("clanAPI")
-    private String clanAPI;
     
     public PlayerDTO() {
         // Default constructor for Jackson
@@ -51,20 +45,9 @@ public class PlayerDTO {
             this.roleInClan = "NOTINCLAN";
         }
         
-        // Get name from API
-        try {
-            this.nameAPI = player.getNameAPI();
-        } catch (Exception e) {
-            this.nameAPI = null;
-        }
-        
         // Get clan from DB
         Clan clanDbObj = player.getClanDB();
         this.clanDB = clanDbObj != null ? clanDbObj.getTag() : null;
-        
-        // Get clan from API
-        Clan clanApiObj = player.getClanAPI();
-        this.clanAPI = clanApiObj != null ? clanApiObj.getTag() : null;
     }
     
     // Getters and setters
@@ -92,27 +75,11 @@ public class PlayerDTO {
         this.roleInClan = roleInClan;
     }
     
-    public String getNameAPI() {
-        return nameAPI;
-    }
-    
-    public void setNameAPI(String nameAPI) {
-        this.nameAPI = nameAPI;
-    }
-    
     public String getClanDB() {
         return clanDB;
     }
     
     public void setClanDB(String clanDB) {
         this.clanDB = clanDB;
-    }
-    
-    public String getClanAPI() {
-        return clanAPI;
-    }
-    
-    public void setClanAPI(String clanAPI) {
-        this.clanAPI = clanAPI;
     }
 }
