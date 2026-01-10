@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -118,7 +119,7 @@ public class EmojiManager {
       String appId = lostmanager.Bot.getJda().getSelfUser().getApplicationId();
       String token = System.getenv("LOST_MANAGER_TOKEN");
       
-      URL url = new URL(DISCORD_API_BASE + "/applications/" + appId + "/emojis");
+      URL url = URI.create(DISCORD_API_BASE + "/applications/" + appId + "/emojis").toURL();
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("GET");
       conn.setRequestProperty("Authorization", "Bot " + token);
@@ -168,7 +169,7 @@ public class EmojiManager {
       String appId = lostmanager.Bot.getJda().getSelfUser().getApplicationId();
       String token = System.getenv("LOST_MANAGER_TOKEN");
       
-      URL url = new URL(DISCORD_API_BASE + "/applications/" + appId + "/emojis");
+      URL url = URI.create(DISCORD_API_BASE + "/applications/" + appId + "/emojis").toURL();
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("GET");
       conn.setRequestProperty("Authorization", "Bot " + token);
@@ -229,7 +230,7 @@ public class EmojiManager {
       payload.put("name", name);
       payload.put("image", base64Image);
       
-      URL url = new URL(DISCORD_API_BASE + "/applications/" + appId + "/emojis");
+      URL url = URI.create(DISCORD_API_BASE + "/applications/" + appId + "/emojis").toURL();
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("POST");
       conn.setRequestProperty("Authorization", "Bot " + token);
@@ -291,7 +292,7 @@ public class EmojiManager {
   private static byte[] downloadAndProcessImage(String imageUrl) {
     try {
       // Download image
-      URL url = new URL(imageUrl);
+      URL url = URI.create(imageUrl).toURL();
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("GET");
       conn.setConnectTimeout(10000);
@@ -470,7 +471,7 @@ public class EmojiManager {
       String token = System.getenv("LOST_MANAGER_TOKEN");
       
       // Get list of bot emojis
-      URL url = new URL(DISCORD_API_BASE + "/applications/" + appId + "/emojis");
+      URL url = URI.create(DISCORD_API_BASE + "/applications/" + appId + "/emojis").toURL();
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("GET");
       conn.setRequestProperty("Authorization", "Bot " + token);
@@ -519,7 +520,7 @@ public class EmojiManager {
       System.out.println("Deleting emoji to make room: " + emojiName + " (ID: " + emojiId + ")");
       
       // Delete via REST API
-      URL deleteUrl = new URL(DISCORD_API_BASE + "/applications/" + appId + "/emojis/" + emojiId);
+      URL deleteUrl = URI.create(DISCORD_API_BASE + "/applications/" + appId + "/emojis/" + emojiId).toURL();
       HttpURLConnection deleteConn = (HttpURLConnection) deleteUrl.openConnection();
       deleteConn.setRequestMethod("DELETE");
       deleteConn.setRequestProperty("Authorization", "Bot " + token);

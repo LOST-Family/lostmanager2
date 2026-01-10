@@ -3,6 +3,7 @@ package util;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class ImageMapCache {
     try {
       System.out.println("Loading image_map.json from GitHub...");
       
-      URL url = new URL(IMAGE_MAP_URL);
+      URL url = URI.create(IMAGE_MAP_URL).toURL();
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("GET");
       conn.setConnectTimeout(10000);
