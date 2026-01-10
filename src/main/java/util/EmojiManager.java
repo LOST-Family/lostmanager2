@@ -550,8 +550,8 @@ public class EmojiManager {
   /**
    * Extract folder structure from image path to create unique emoji names
    * Uses only the first letter (initial) of each folder name to keep emoji names short
-   * Example: "/home-base/buildings/wall/wall-1.png" -> "h_b_w"
-   * Example: "/builder-base/buildings/wall/wall-2.png" -> "b_b_w"
+   * Example: "/home-base/buildings/wall/wall-1.png" -> "hb_b_w"
+   * Example: "/builder-base/buildings/wall/wall-2.png" -> "bb_b_w"
    * 
    * @param imagePath The relative image path (e.g., "/home-base/buildings/wall/wall-1.png")
    * @return The folder structure as underscore-separated initials
