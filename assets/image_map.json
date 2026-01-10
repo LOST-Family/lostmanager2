@@ -1768,885 +1768,957 @@
   },
   "28000000": {
     "name": "Barbarian King",
-    "icon": "/home-base/heroes/barbarian-king/barbarian-king-icon.png",
-    "character": "/home-base/heroes/barbarian-king/barbarian-king-character.png"
+    "icon": "/home-base/heroes/barbarian-king-icon.png",
+    "character": "/home-base/heroes/barbarian-king-character.png"
   },
   "28000001": {
     "name": "Archer Queen",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/heroes/archer-queen-icon.png",
+    "character": "/home-base/heroes/archer-queen-character.png"
   },
   "28000002": {
     "name": "Grand Warden",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/heroes/grand-warden-icon.png",
+    "character": "/home-base/heroes/grand-warden-character.png"
   },
   "28000003": {
     "name": "Battle Machine",
-    "icon": "",
-    "character": ""
+    "icon": "/builder-base/heroes/battle-machine-icon.png",
+    "character": "/builder-base/heroes/battle-machine-character.png"
   },
   "28000004": {
     "name": "Royal Champion",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/heroes/royal-champion-icon.png",
+    "character": "/home-base/heroes/royal-champion-character.png"
   },
   "28000005": {
     "name": "Battle Copter",
-    "icon": "",
-    "character": ""
+    "icon": "/builder-base/heroes/battle-copter-icon.png",
+    "character": "/builder-base/heroes/battle-copter-character.png"
   },
   "28000006": {
     "name": "Minion Prince",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/heroes/minion-prince-icon.png",
+    "character": "/home-base/heroes/minion-prince-character.png"
   },
   "73000000": {
     "name": "L.A.S.S.I",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/pets/lassi-icon.png",
+    "character": "/home-base/pets/lassi-character.png"
   },
   "73000001": {
     "name": "Mighty Yak",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/pets/yal-icon.png",
+    "character": "/home-base/pets/yak-character.png"
   },
   "73000002": {
     "name": "Electro Owl",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/pets/owl-icon.png",
+    "character": "/home-base/pets/owl-character.png"
   },
   "73000003": {
     "name": "Unicorn",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/pets/unicorn-icon.png",
+    "character": "/home-base/pets/unicorn-character.png"
   },
   "73000004": {
     "name": "Phoenix",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/pets/phoenix-icon.png",
+    "character": "/home-base/pets/phoenix-character.png"
   },
   "73000007": {
     "name": "Poison Lizard",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/pets/lizard-icon.png",
+    "character": "/home-base/pets/lizard-character.png"
   },
   "73000008": {
     "name": "Diggy",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/pets/diggy-icon.png",
+    "character": "/home-base/pets/diggy-character.png"
   },
   "73000009": {
     "name": "Frosty",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/pets/frosty-icon.png",
+    "character": "/home-base/pets/frosty-character.png"
   },
   "73000010": {
     "name": "Spirit Fox",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/pets/fox-icon.png",
+    "character": "/home-base/pets/fox-character.png"
   },
   "73000011": {
     "name": "Angry Jelly",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/pets/jelly-icon.png",
+    "character": "/home-base/pets/jelly-character.png"
   },
   "73000016": {
     "name": "Sneezy",
-    "icon": "",
-    "character": ""
+    "icon": "/home-base/pets/sneezy-icon.png",
+    "character": "/home-base/pets/sneezy-character.png"
   },
   "90000000": {
     "name": "Barbarian Puppet",
-    "icon": ""
+    "icon": "/home-base/equipments/0.png"
   },
   "90000001": {
     "name": "Rage Vial",
-    "icon": ""
+    "icon": "/home-base/equipments/1.png"
   },
   "90000002": {
     "name": "Archer Puppet",
-    "icon": ""
+    "icon": "/home-base/equipments/2.png"
   },
   "90000003": {
     "name": "Invisibility Vial",
-    "icon": ""
+    "icon": "/home-base/equipments/3.png"
   },
   "90000004": {
     "name": "Eternal Tome",
-    "icon": ""
+    "icon": "/home-base/equipments/4.png"
   },
   "90000005": {
     "name": "Life Gem",
-    "icon": ""
+    "icon": "/home-base/equipments/5.png"
   },
   "90000006": {
     "name": "Seeking Shield",
-    "icon": ""
+    "icon": "/home-base/equipments/6.png"
   },
   "90000007": {
     "name": "Royal Gem",
-    "icon": ""
+    "icon": "/home-base/equipments/7.png"
   },
   "90000008": {
     "name": "Earthquake Boots",
-    "icon": ""
+    "icon": "/home-base/equipments/8.png"
   },
   "90000009": {
     "name": "Hog Rider Puppet",
-    "icon": ""
+    "icon": "/home-base/equipments/9.png"
   },
   "90000010": {
     "name": "Giant Gauntlet",
-    "icon": ""
+    "icon": "/home-base/equipments/10.png"
   },
   "90000011": {
     "name": "Vampstache",
-    "icon": ""
+    "icon": "/home-base/equipments/11.png"
   },
   "90000012": {
     "name": "Haste Vial",
-    "icon": ""
+    "icon": "/home-base/equipments/12.png"
   },
   "90000013": {
     "name": "Rocket Spear",
-    "icon": ""
+    "icon": "/home-base/equipments/13.png"
   },
   "90000014": {
     "name": "Spiky Ball",
-    "icon": ""
+    "icon": "/home-base/equipments/14.png"
   },
   "90000015": {
     "name": "Frozen Arrow",
-    "icon": ""
+    "icon": "/home-base/equipments/15.png"
   },
   "90000017": {
     "name": "Giant Arrow",
-    "icon": ""
+    "icon": "/home-base/equipments/17.png"
   },
   "90000019": {
     "name": "Heroic Torch",
-    "icon": ""
+    "icon": "/home-base/equipments/19.png"
   },
   "90000020": {
     "name": "Healer Puppet",
-    "icon": ""
+    "icon": "/home-base/equipments/20.png"
   },
   "90000022": {
     "name": "Fireball",
-    "icon": ""
+    "icon": "/home-base/equipments/22.png"
   },
   "90000024": {
     "name": "Rage Gem",
-    "icon": ""
+    "icon": "/home-base/equipments/24.png"
   },
   "90000032": {
     "name": "Snake Bracelet",
-    "icon": ""
+    "icon": "/home-base/equipments/32.png"
   },
   "90000034": {
     "name": "Healing Tome",
-    "icon": ""
+    "icon": "/home-base/equipments/34.png"
   },
   "90000035": {
     "name": "Dark Crown",
-    "icon": ""
+    "icon": "/home-base/equipments/35.png"
   },
   "90000039": {
     "name": "Magic Mirror",
-    "icon": ""
+    "icon": "/home-base/equipments/39.png"
   },
   "90000040": {
     "name": "Electro Boots",
-    "icon": ""
+    "icon": "/home-base/equipments/40.png"
   },
   "90000041": {
     "name": "Lavaloon Puppet",
-    "icon": ""
+    "icon": "/home-base/equipments/41.png"
   },
   "90000042": {
     "name": "Henchmen Puppet",
-    "icon": ""
+    "icon": "/home-base/equipments/42.png"
   },
   "90000043": {
     "name": "Dark Orb",
-    "icon": ""
+    "icon": "/home-base/equipments/43.png"
   },
   "90000044": {
     "name": "Metal Pants",
-    "icon": ""
+    "icon": "/home-base/equipments/44.png"
   },
   "90000045": {
     "name": "Snow Flake",
-    "icon": ""
-  },
-  "90000046": {
-    "name": "Stick Horse",
-    "icon": ""
+    "icon": "/home-base/equipments/45.png"
   },
   "90000047": {
     "name": "Noble Iron",
-    "icon": ""
+    "icon": "/home-base/equipments/47.png"
   },
   "90000048": {
     "name": "Action Figure",
+    "icon": "/home-base/equipments/48.png"
+  },
+  "90000049": {
+    "name": "Meteor Staff",
+    "icon": "/home-base/equipments/49.png"
+  },
+  "90000050": {
+    "name": "Frost Flake",
+    "icon": "/home-base/equipments/50.png"
+  },
+  "90000051": {
+    "name": "Stick Horse",
     "icon": ""
   },
   "18000000": {
     "name": "Mighty Statue",
-    "icon": "/home-base/decorations/mighty-statue.png"
+    "icon": "/home-base/decorations/0.png"
   },
   "18000004": {
     "name": "Pirate Flag",
-    "icon": "/home-base/decorations/pirate-flag.png"
+    "icon": "/home-base/decorations/4.png"
   },
   "18000033": {
     "name": "Statue of P.E.K.K.A",
-    "icon": ""
+    "icon": "/home-base/decorations/33.png"
   },
   "18000037": {
     "name": "Barbarian King Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/37.png"
   },
   "18000041": {
-    "name": "Ancient Barbarian Statue",
-    "icon": ""
+    "name": "Ancient Barbarian Statue (BB)",
+    "icon": "/home-base/decorations/41.png"
   },
   "18000043": {
-    "name": "Archer Queen Statue",
-    "icon": ""
+    "name": "Archer Queen Statue (BB)",
+    "icon": "/home-base/decorations/43.png"
   },
   "18000046": {
     "name": "Builder Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/46.png"
   },
   "18000047": {
     "name": "The Champion Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/47.png"
   },
   "18000048": {
     "name": "The Master Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/48.png"
   },
   "18000049": {
     "name": "The Contender Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/49.png"
   },
   "18000050": {
     "name": "The Challenger Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/50.png"
   },
   "18000051": {
     "name": "The Warrior Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/51.png"
   },
   "18000052": {
     "name": "Golden Hog",
-    "icon": ""
+    "icon": "/home-base/decorations/52.png"
   },  
   "18000053": {
-    "name": "Festive Firecrackers",
-    "icon": ""
+    "name": "Festive Firecrackers (BB)",
+    "icon": "/home-base/decorations/53.png"
   },
   "18000055": {
     "name": "Snowman",
-    "icon": ""
+    "icon": "/home-base/decorations/55.png"
   },
   "18000056": {
     "name": "Battle Machine Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/56.png"
   },
   "18000057": {
     "name": "Dragon Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/57.png"
   },
   "18000058": {
     "name": "Golden Poet",
-    "icon": ""
+    "icon": "/home-base/decorations/58.png"
   },
   "18000059": {
     "name": "Super Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/59.png"
   },
   "18000060": {
     "name": "Storied Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/60.png"
   },
   "18000061": {
     "name": "Anniversary Fountain",
-    "icon": ""
+    "icon": "/home-base/decorations/61.png"
   },
   "18000062": {
     "name": "Clockwork Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/62.png"
   },
   "18000063": {
     "name": "A Piece of Birthday Cake",
-    "icon": ""
+    "icon": "/home-base/decorations/63.png"
   },
   "18000064": {
     "name": "Retired Anchor",
-    "icon": ""
+    "icon": "/home-base/decorations/64.png"
   },
   "18000065": {
     "name": "Logmas Tree",
-    "icon": ""
+    "icon": "/home-base/decorations/65.png"
   },
   "18000066": {
     "name": "Firework Fanboy",
-    "icon": "/home-base/decorations/firework-fanboy.png"
+    "icon": "/home-base/decorations/66.png"
   },
   "18000067": {
     "name": "Flowing Fountain",
-    "icon": ""
+    "icon": "/home-base/decorations/67.png"
   },
   "18000068": {
     "name": "Fiery Figure",
-    "icon": ""
+    "icon": "/home-base/decorations/68.png"
   },
   "18000069": {
     "name": "Wizard Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/69.png"
   },
   "18000070": {
     "name": "Goblin King Tribute",
-    "icon": ""
+    "icon": "/home-base/decorations/70.png"
   },
   "18000071": {
     "name": "Eternal Flame",
-    "icon": ""
+    "icon": "/home-base/decorations/71.png"
   },
   "18000072": {
     "name": "Clashmas Sleigh",
-    "icon": ""
+    "icon": "/home-base/decorations/72.png"
   },
   "18000073": {
     "name": "Magic Show Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/73.png"
   },
   "18000074": {
     "name": "Decorated Dragon Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/74.png"
   },
   "18000075": {
     "name": "Dragon Trophy",
-    "icon": ""
+    "icon": "/home-base/decorations/75.png"
   },
   "18000079": {
     "name": "Books of Clash",
-    "icon": ""
+    "icon": "/home-base/decorations/79.png"
   },
   "18000080": {
-    "name": "Master Builder's Return",
-    "icon": ""
+    "name": "Master Builder's Return (BB)",
+    "icon": "/home-base/decorations/80.png"
   },
   "18000089": {
     "name": "Goblin Pit",
-    "icon": ""
+    "icon": "/home-base/decorations/89.png"
   },
   "18000090": {
     "name": "Goblin Dragon Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/90.png"
   },
   "18000096": {
     "name": "Cosy Coffin",
-    "icon": ""
+    "icon": "/home-base/decorations/96.png"
   },
   "18000097": {
     "name": "Friendly Clown",
-    "icon": ""
+    "icon": "/home-base/decorations/97.png"
   },
   "18000098": {
     "name": "Spooky Spa",
-    "icon": ""
+    "icon": "/home-base/decorations/98.png"
   },
   "18000099": {
     "name": "Pumpkin Scarecrow",
-    "icon": ""
+    "icon": "/home-base/decorations/99.png"
   },
   "18000100": {
     "name": "Sour Elixir Cauldron",
-    "icon": ""
+    "icon": "/home-base/decorations/100.png"
   },
   "18000101": {
     "name": "World Finals 23 Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/101.png"
   },
   "18000103": {
     "name": "Duck Bath",
-    "icon": ""
+    "icon": "/home-base/decorations/103.png"
   },
   "18000109": {
     "name": "Hog Pen",
-    "icon": ""
+    "icon": "/home-base/decorations/109.png"
   },
   "18000114": {
     "name": "Cozy Clam",
-    "icon": ""
+    "icon": "/home-base/decorations/114.png"
   },
   "18000115": {
     "name": "Gingerbread Bakery",
-    "icon": ""
+    "icon": "/home-base/decorations/115.png"
   },
   "18000116": {
     "name": "Jingle Bell",
-    "icon": ""
+    "icon": "/home-base/decorations/116.png"
   },
   "18000117": {
     "name": "Barbarian Santa",
-    "icon": ""
+    "icon": "/home-base/decorations/117.png"
   },
   "18000118": {
     "name": "Skeleton Sock",
-    "icon": ""
+    "icon": "/home-base/decorations/118.png"
   },
   "18000119": {
     "name": "Lucky Anchor",
-    "icon": ""
+    "icon": "/home-base/decorations/119.png"
   },
   "18000120": {
     "name": "Crab at home",
-    "icon": ""
+    "icon": "/home-base/decorations/120.png"
   },
   "18000121": {
     "name": "Baby Dragon Statue",
-    "icon": ""
+    "icon": "/home-base/decorations/121.png"
   },
   "18000122": {
     "name": "Dragon Pinata",
-    "icon": ""
+    "icon": "/home-base/decorations/122.png"
   },
   "18000123": {
     "name": "Clashy Crater",
-    "icon": ""
+    "icon": "/home-base/decorations/123.png"
   },
   "18000124": {
     "name": "Stone Globe",
-    "icon": ""
+    "icon": "/home-base/decorations/124.png"
   },
   "18000125": {
     "name": "Goblin Explorer",
-    "icon": ""
+    "icon": "/home-base/decorations/125.png"
   },
   "18000126": {
     "name": "Baby Ptah",
-    "icon": ""
+    "icon": "/home-base/decorations/126.png"
   },
   "18000127": {
     "name": "Goblin Pharaoh",
-    "icon": ""
+    "icon": "/home-base/decorations/127.png"
   },
   "18000128": {
     "name": "Hog Sphinx",
-    "icon": ""
+    "icon": "/home-base/decorations/128.png"
   },
   "18000129": {
     "name": "Crown Sword",
-    "icon": ""
+    "icon": "/home-base/decorations/129.png"
   },
   "18000130": {
     "name": "Surprising Squad",
-    "icon": ""
+    "icon": "/home-base/decorations/130.png"
   },
   "18000131": {
     "name": "Golden Boot",
-    "icon": ""
+    "icon": "/home-base/decorations/131.png"
   },
   "18000132": {
     "name": "Bestest Ball",
-    "icon": ""
+    "icon": "/home-base/decorations/132.png"
   },
   "18000133": {
     "name": "Haaland Statue",
-    "icon": "/home-base/decorations/haaland-statue.png"
+    "icon": "/home-base/decorations/133.png"
   },
   "18000134": {
     "name": "Triumphant Trophy",
-    "icon": ""
+    "icon": "/home-base/decorations/134.png"
   },
   "18000135": {
     "name": "Celebration Cup",
-    "icon": ""
+    "icon": "/home-base/decorations/135.png"
   },
   "18000136": {
     "name": "Victory Milk",
-    "icon": ""
+    "icon": "/home-base/decorations/136.png"
   },
   "18000137": {
     "name": "Cactus Guy",
-    "icon": ""
+    "icon": "/home-base/decorations/137.png"
   },
   "18000138": {
     "name": "Cowboy Skeleton",
-    "icon": ""
+    "icon": "/home-base/decorations/138.png"
   },
   "18000139": {
     "name": "Dragon Totem",
-    "icon": ""
+    "icon": "/home-base/decorations/139.png"
   },
   "18000140": {
     "name": "Football Camp",
-    "icon": ""
+    "icon": "/home-base/decorations/140.png"
   },
   "18000141": {
     "name": "Wizard Vendor",
-    "icon": ""
+    "icon": "/home-base/decorations/141.png"
   },
   "18000143": {
     "name": "Cherry Bonsai",
-    "icon": ""
+    "icon": "/home-base/decorations/142.png"
   },
   "18000144": {
     "name": "Chibi Archer",
-    "icon": ""
+    "icon": "/home-base/decorations/144.png"
   },
   "18000145": {
     "name": "Kawaii Giant",
-    "icon": ""
+    "icon": "/home-base/decorations/145.png"
   },
   "18000146": {
     "name": "Beach Break",
-    "icon": ""
+    "icon": "/home-base/decorations/146.png"
   },
   "18000147": {
     "name": "Brawl's Star",
-    "icon": ""
+    "icon": "/home-base/decorations/147.png"
   },
   "18000148": {
     "name": "Gargantuan Gauntlet",
-    "icon": ""
+    "icon": "/home-base/decorations/148.png"
   },
   "18000150": {
     "name": "Sleepy King",
-    "icon": ""
+    "icon": "/home-base/decorations/150.png"
   },
   "18000151": {
     "name": "Champion's Flame",
-    "icon": ""
+    "icon": "/home-base/decorations/151.png"
   },
   "18000152": {
     "name": "Goblin High Dive",
-    "icon": ""
+    "icon": "/home-base/decorations/152.png"
   },
   "18000153": {
     "name": "Foot Tribute",
-    "icon": "153.png"
+    "icon": "/home-base/decorations/153.png"
   },
   "18000154": {
     "name": "Pretty Portal",
-    "icon": ""
+    "icon": "/home-base/decorations/154.png"
   },
   "18000155": {
     "name": "Decision Dice",
-    "icon": ""
+    "icon": "/home-base/decorations/155.png"
   },
   "18000156": {
     "name": "Cuddly Chest",
-    "icon": ""
+    "icon": "/home-base/decorations/156.png"
   },
   "18000157": {
     "name": "Hydra Headstone",
-    "icon": ""
+    "icon": "/home-base/decorations/157.png"
   },
   "18000158": {
     "name": "Jailbroken Box",
-    "icon": ""
+    "icon": "/home-base/decorations/158.png"
   },
   "18000159": {
     "name": "Bubble Boil Cauldron",
-    "icon": ""
+    "icon": "/home-base/decorations/159.png"
   },
   "18000160": {
     "name": "Abra-Cada-Brewer",
-    "icon": ""
+    "icon": "/home-base/decorations/160.png"
   },
   "18000161": {
     "name": "Festival Lantern",
-    "icon": ""
+    "icon": "/home-base/decorations/161.png"
   },
   "18000162": {
     "name": "Rocking Reindeer",
-    "icon": ""
+    "icon": "/home-base/decorations/162.png"
   },
   "18000163": {
     "name": "Clockwork Choir",
-    "icon": ""
+    "icon": "/home-base/decorations/163.png"
   },
   "18000164": {
     "name": "Snow Globe",
-    "icon": ""
+    "icon": "/home-base/decorations/164.png"
   },
   "18000165": {
     "name": "Gift Bag",
-    "icon": ""
+    "icon": "/home-base/decorations/165.png"
   },
   "18000166": {
     "name": "Snake Shrine",
-    "icon": ""
+    "icon": "/home-base/decorations/166.png"
   },
   "18000167": {
     "name": "Monk Statue",
-    "icon": "167.png"    
+    "icon": "/home-base/decorations/167.png"
   },
   "18000168": {
     "name": "Cozy Sauna",
-    "icon": ""
+    "icon": "/home-base/decorations/168.png"
   },
   "18000169": {
     "name": "Lucky Cookies",
-    "icon": ""
+    "icon": "/home-base/decorations/169.png"
   },
   "18000170": {
     "name": "Shooting Range",
-    "icon": ""
+    "icon": "/home-base/decorations/170.png"
   },
   "18000171": {
     "name": "WWE Title",
-    "icon": ""
+    "icon": "/home-base/decorations/171.png"
   },
   "18000172": {
     "name": "Rumbling Goblins",
-    "icon": ""
+    "icon": "/home-base/decorations/172.png"
   },
   "18000173": {
     "name": "Golden Giant",
-    "icon": ""
+    "icon": "/home-base/decorations/173.png"
   },
   "18000174": {
     "name": "Creator Fountain",
-    "icon": ""
+    "icon": "/home-base/decorations/174.png"
   },
   "18000175": {
     "name": "Surprise Wheel",
-    "icon": ""
+    "icon": "/home-base/decorations/175.png"
   },
   "18000176": {
     "name": "Sacred Gate",
-    "icon": ""
+    "icon": "/home-base/decorations/176.png"
   },
   "18000177": {
     "name": "Jingle Maker",
-    "icon": ""
+    "icon": "/home-base/decorations/177.png"
   },
   "18000178": {
     "name": "Looter Wagon",
-    "icon": ""
+    "icon": "/home-base/decorations/178.png"
   },
   "18000179": {
     "name": "Frozen Wizard",
-    "icon": ""
+    "icon": "/home-base/decorations/179.png"
   },
   "18000180": {
     "name": "Clashy Carving",
-    "icon": ""
+    "icon": "/home-base/decorations/180.png"
   },
   "18000181": {
     "name": "Sketch Summoner",
-    "icon": ""
+    "icon": "/home-base/decorations/181.png"
   },
   "18000182": {
     "name": "Cyber Hologram",
-    "icon": ""
+    "icon": "/home-base/decorations/182.png"
   },
   "18000183": {
     "name": "Soda Stand",
-    "icon": ""
+    "icon": "/home-base/decorations/183.png"
   },
   "18000184": {
     "name": "Party Bench",
-    "icon": ""
+    "icon": "/home-base/decorations/184.png"
   },
   "18000185": {
     "name": "Justice Crown",
-    "icon": ""
+    "icon": "/home-base/decorations/185.png"
+  },
+  "18000186": {
+    "name": "Cosmic Lantern",
+    "icon": "/home-base/decorations/186.png"
+  },
+  "18000187": {
+    "name": "Electro Skull",
+    "icon": "/home-base/decorations/187.png"
+  },
+  "18000189": {
+    "name": "Fortune Printer",
+    "icon": "/home-base/decorations/189.png"
+  },
+  "18000190": {
+    "name": "Boom Box",
+    "icon": "/home-base/decorations/190.png"
+  },
+  "18000191": {
+    "name": "Cursed Tome",
+    "icon": "/home-base/decorations/191.png"
+  },
+  "18000192": {
+    "name": "Eagle Monument",
+    "icon": "/home-base/decorations/192.png"
+  },
+  "18000196": {
+    "name": "Smokey Stove",
+    "icon": "/home-base/decorations/196.png"
+  },
+  "18000197": {
+    "name": "Wish Lamp",
+    "icon": "/home-base/decorations/197.png"
+  },
+  "18000199": {
+    "name": "Brawny Battleaxe",
+    "icon": "/home-base/decorations/199.png"
+  },
+  "18000200": {
+    "name": "Crafted Statue",
+    "icon": "/home-base/decorations/200.png"
+  },
+  "18000203": {
+    "name": "Hungry Hound",
+    "icon": "/home-base/decorations/203.png"
+  },
+  "18000204": {
+    "name": "Frozen Stone",
+    "icon": "/home-base/decorations/204.png"
+  },
+  "8000015": {
+    "name": "2012 Stone",
+    "icon": "/home-base/obstacles/15.png"
   },
   "8000021": {
     "name": "2012 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/21.png"
   },
   "8000028": {
     "name": "2013 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/28.png"
   },
   "8000031": {
     "name": "2014 Halloween Headstone",
-    "icon": ""
+    "icon": "/home-base/obstacles/31.png"
   },
   "8000032": {
     "name": "2014 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/32.png"
   },
   "8000036": {
     "name": "2015 Halloween Cauldron",
-    "icon": ""
+    "icon": "/home-base/obstacles/36.png"
   },
   "8000037": {
     "name": "2015 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/37.png"
   },
   "8000039": {
     "name": "2016 Scary Pumpkin",
-    "icon": ""
+    "icon": "/home-base/obstacles/39.png"
   },
   "8000040": {
     "name": "2016 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/40.png"
   },
   "8000055": {
     "name": "Old Barbarian Statue",
-    "icon": ""
+    "icon": "/home-base/obstacles/55.png"
   },
   "8000065": {
     "name": "2017 Anniversary Cake",
-    "icon": ""
+    "icon": "/home-base/obstacles/65.png"
   },
   "8000067": {
     "name": "2017 Halloween Obstacle",
-    "icon": ""
+    "icon": "/home-base/obstacles/67.png"
   },
   "8000068": {
     "name": "2018 Fireworks Stash",
-    "icon": ""
+    "icon": "/home-base/obstacles/68.png"
   },
   "8000069": {
     "name": "2017 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/69.png"
   },
   "8000070": {
     "name": "2018 Fortune Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/70.png"
   },
   "8000071": {
     "name": "2018 Anniversary Cake",
-    "icon": ""
+    "icon": "/home-base/obstacles/71.png"
   },
   "8000072": {
     "name": "2018 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/72.png"
   },
   "8000073": {
     "name": "2018 Witch's Hat",
-    "icon": ""
+    "icon": "/home-base/obstacles/73.png"
   },
   "8000074": {
     "name": "2018 Spike-y Cactus",
-    "icon": ""
+    "icon": "/home-base/obstacles/74.png"
   },
   "8000075": {
     "name": "2020 Glowy Lantern (BB)",
-    "icon": ""
+    "icon": "/home-base/obstacles/75.png"
   },
   "8000076": {
     "name": "2019 Birthday Surprise",
-    "icon": ""
+    "icon": "/home-base/obstacles/76.png"
   },
   "8000077": {
     "name": "2019 Spooky Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/77.png"
   },
   "8000078": {
     "name": "2019 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/78.png"
   },
   "8000079": {
     "name": "2020 Glowy Lantern",
-    "icon": ""
+    "icon": "/home-base/obstacles/79.png"
   },
   "8000080": {
     "name": "2020 Anniversary Cake",
-    "icon": ""
+    "icon": "/home-base/obstacles/80.png"
   },
   "8000081": {
     "name": "2020 Vacant Tomb",
-    "icon": ""
+    "icon": "/home-base/obstacles/81.png"
   },
   "8000082": {
     "name": "2020 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/82.png"
   },
   "8000083": {
     "name": "2021 Lucky Shrub",
-    "icon": ""
+    "icon": "/home-base/obstacles/83.png"
   },
   "8000084": {
     "name": "2021 Anniversary Cake",
-    "icon": ""
+    "icon": "/home-base/obstacles/84.png"
   },
   "8000085": {
     "name": "2021 Friendly Flower",
-    "icon": ""
+    "icon": "/home-base/obstacles/85.png"
   },
   "8000086": {
     "name": "2021 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/86.png"
   },
   "8000087": {
     "name": "2022 Anniversary Cake",
-    "icon": ""
+    "icon": "/home-base/obstacles/87.png"
   },
   "8000088": {
     "name": "2022 Trick or Treat?",
-    "icon": ""
+    "icon": "/home-base/obstacles/88.png"
   },
   "8000089": {
     "name": "2022 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/89.png"
   },
   "8000090": {
     "name": "2023 Rabbit Lantern",
-    "icon": ""
+    "icon": "/home-base/obstacles/90.png"
   },
   "8000108": {
     "name": "2023 Anniversary Cake",
-    "icon": ""
+    "icon": "/home-base/obstacles/108.png"
   },
   "8000110": {
     "name": "2023 Sinister Sapling",
-    "icon": ""
+    "icon": "/home-base/obstacles/110.png"
   },
   "8000111": {
     "name": "2023 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/111.png"
   },
   "8000113": {
     "name": "2024 Lucky Letterbox",
-    "icon": ""
+    "icon": "/home-base/obstacles/113.png"
   },
   "8000115": {
     "name": "2024 Mysterious Object",
-    "icon": ""
+    "icon": "/home-base/obstacles/115.png"
   },
   "8000116": {
     "name": "2024 Anniversary Cake",
-    "icon": ""
+    "icon": "/home-base/obstacles/116.png"
   },
   "8000117": {
     "name": "2024 Ghost Post",
-    "icon": ""
+    "icon": "/home-base/obstacles/117.png"
   },
   "8000127": {
     "name": "2024 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/127.png"
   },
   "8000128": {
     "name": "2025 Snake Sculpture",
-    "icon": ""
+    "icon": "/home-base/obstacles/128.png"
   },
   "8000129": {
     "name": "2025 Money in the Bank",
-    "icon": ""
+    "icon": "/home-base/obstacles/129.png"
   },
   "8000131": {
     "name": "2025 Anniversary Cake",
-    "icon": ""
+    "icon": "/home-base/obstacles/131.png"
+  },
+  "8000132": {
+    "name": "Shiny Ore Meteorite",
+    "icon": "/home-base/obstacles/132.png"
+  },
+  "8000133": {
+    "name": "Glowy Ore Meteorite",
+    "icon": "/home-base/obstacles/133.png"
+  },
+  "8000134": {
+    "name": "Starry Ore Meteorite",
+    "icon": "/home-base/obstacles/134.png"
   },
   "8000135": {
     "name": "2025 Cursed Seedling",
-    "icon": ""
+    "icon": "/home-base/obstacles/135.png"
   },
   "8000137": {
     "name": "2025 Clashmas Tree",
-    "icon": ""
+    "icon": "/home-base/obstacles/137.png"
   },
   "60000000": {
     "name": "Classic Scenery",
@@ -2665,1237 +2737,1248 @@
   },
   "60000004": {
     "name": "Clashy Constructs Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/4.png",
     "full": ""
   },
   "60000005": {
     "name": "Pirate Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/5.png",
     "full": ""
   },
   "60000006": {
     "name": "Epic Winter Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/6.png",
     "full": ""
   },
   "60000007": {
     "name": "Hog Mountain Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/7.png",
     "full": ""
   },
   "60000008": {
     "name": "Jungle Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/8.png",
     "full": ""
   },
   "60000009": {
     "name": "Epic Jungle Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/9.png",
     "full": ""
   },
   "60000010": {
     "name": "Inferno War Base Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/10.png",
     "full": ""
   },
   "60000011": {
     "name": "9th Clashiversary Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/11.png",
     "full": ""
   },
   "60000012": {
     "name": "Pumpkin Graveyard",
-    "icon": "",
+    "icon": "/home-base/sceneries/12.png",
     "full": ""
   },
   "60000013": {
     "name": "Snow Day",
-    "icon": "",
+    "icon": "/home-base/sceneries/13.png",
     "full": ""
   },
   "60000014": {
     "name": "Tiger Mountain",
-    "icon": "",
+    "icon": "/home-base/sceneries/14.png",
     "full": ""
   },
   "60000015": {
     "name": "Pixel Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/15.png",
     "full": ""
   },
   "60000016": {
     "name": "Primal Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/16.png",
     "full": ""
   },
   "60000017": {
     "name": "Shadow Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/17.png",
     "full": ""
   },
   "60000018": {
     "name": "Royale Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/18.png",
     "full": ""
   },
   "60000019": {
     "name": "Summer Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/19.png",
     "full": ""
   },
   "60000020": {
     "name": "10th Clashiversary Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/20.png",
     "full": ""
   },
   "60000021": {
     "name": "Clash Fest Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/21.png",
     "full": ""
   },
   "60000022": {
     "name": "Magic Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/22.png",
     "full": ""
   },
   "60000023": {
     "name": "Epic Magic Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/23.png",
     "full": ""
   },
   "60000034": {
     "name": "Spooky Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/34.png",
     "full": ""
   },
   "60000035": {
     "name": "Jolly Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/35.png",
     "full": ""
   },
   "60000036": {
     "name": "Magic Theatre Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/36.png",
     "full": ""
   },
   "60000037": {
     "name": "Painter Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/37.png",
     "full": ""
   },
   "60000038": {
     "name": "Classic Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/4.png",
     "full": ""
   },
   "60000040": {
     "name": "Dark Ages Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/40.png",
     "full": ""
   },
   "60000041": {
     "name": "Books of Clash Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/41.png",
     "full": ""
   },
   "60000042": {
     "name": "War Arena Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/42.png",
     "full": ""
   },
   "60000043": {
     "name": "Goblin Caves Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/43.png",
     "full": ""
   },
   "60000046": {
     "name": "Chess Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/46.png",
     "full": ""
   },
   "60000047": {
     "name": "Crystal Caverns Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/47.png",
     "full": ""
   },
   "60000048": {
     "name": "Future Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/48.png",
     "full": ""
   },
   "60000049": {
     "name": "Ghost Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/49.png",
     "full": ""
   },
   "60000052": {
     "name": "Champion Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/52.png",
     "full": ""
   },
   "60000053": {
     "name": "Gingerbread Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/53.png",
     "full": ""
   },
   "60000054": {
     "name": "Of the North Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/54.png",
     "full": ""
   },
   "60000055": {
     "name": "Dragon Palace Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/55.png",
     "full": ""
   },
   "60000056": {
     "name": "Space Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/56.png",
     "full": ""
   },
   "60000057": {
     "name": "Egypt Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/57.png",
     "full": ""
   },
   "60000058": {
     "name": "Football Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/58.png",
     "full": ""
   },
   "60000059": {
     "name": "Wild West Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/59.png",
     "full": ""
   },
   "60000060": {
     "name": "Clash Games Stadium",
-    "icon": "",
+    "icon": "/home-base/sceneries/60.png",
     "full": ""
   },
   "60000061": {
     "name": "Anime Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/61.png",
     "full": ""
   },
   "60000062": {
     "name": "Crossover Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/62.png",
     "full": ""
   },
   "60000063": {
     "name": "Clash of Dragons",
-    "icon": "",
+    "icon": "/home-base/sceneries/63.png",
     "full": ""
   },
   "60000064": {
     "name": "Doomed Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/64.png",
     "full": ""
   },
   "60000065": {
     "name": "Justice Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/65.png",
     "full": ""
   },
   "60000066": {
     "name": "War Machine Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/66.png",
     "full": ""
   },
   "60000067": {
     "name": "Toy Workshop Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/67.png",
     "full": ""
   },
   "60000068": {
     "name": "Fire and Ice Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/68.png",
+    "full": ""
+  },
+  "60000069": {
+    "name": "Clash-A-Rama Scenery",
+    "icon": "/home-base/sceneries/67.png",
     "full": ""
   },
   "60000070": {
     "name": "Year of the Snake",
-    "icon": "",
+    "icon": "/home-base/sceneries/70.png",
     "full": ""
   },
   "60000071": {
     "name": "Military Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/71.png",
     "full": ""
   },
   "60000072": {
     "name": "ClashaMania Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/2.png",
     "full": ""
   },
   "60000073": {
     "name": "High Seas Scenery",
-    "icon": "",
+    "icon": "/home-base/sceneries/73.png",
     "full": ""
   },
   "60000074": {
     "name": "Dark Days Scenery",
-    "icon": "/home-base/sceneries/dark-days/dark-days-icon.png",
-    "full": "/home-base/sceneries/dark-days/dark-days-full.jpg"
+    "icon": "/home-base/sceneries/74.png",
+    "full": ""
+  },
+  "60000075": {
+    "name": "Cyber Scenery",
+    "icon": "/home-base/sceneries/75.png",
+    "full": ""
+  },
+  "60000076": {
+    "name": "Clash-A-Rama Scenery",
+    "icon": "/home-base/sceneries/76.png",
+    "full": ""
+  },
+  "60000077": {
+    "name": "Mash-A-Rama Scenery",
+    "icon": "/home-base/sceneries/77.png",
+    "full": ""
+  },
+  "60000078": {
+    "name": "Cosmic Scenery",
+    "icon": "/home-base/sceneries/78.png",
+    "full": ""
+  },
+  "60000079": {
+    "name": "Ruined Kingdom War Scenery",
+    "icon": "/home-base/sceneries/79.png",
+    "full": ""
+  },
+  "60000080": {
+    "name": "Wasteland Scenery",
+    "icon": "/home-base/sceneries/80.png",
+    "full": ""
+  },
+  "60000081": {
+    "name": "Frost Age Scenery",
+    "icon": "/home-base/sceneries/81.png",
+    "full": ""
+  },
+  "60000082": {
+    "name": "Desert Nights Scenery",
+    "icon": "/home-base/sceneries/82.png",
+    "full": ""
+  },
+  "60000083": {
+    "name": "Classic Meteor Scenery",
+    "icon": "/home-base/sceneries/83.png",
+    "full": ""
   },
   "52000000": {
     "name": "Barbarian King",
-    "icon": "",
+    "icon": "/home-base/heroes/barbarian-king-icon.png",
     "full": ""
   },
   "52000001": {
     "name": "Gladiator King",
-    "icon": "",
+    "icon": "/home-base/skins/1.png",
     "full": ""
   },
   "52000002": {
     "name": "Archer Queen",
-    "icon": "",
+    "icon": "/home-base/heroes/archer-queen-icon.png",
     "full": ""
   },
   "52000003": {
     "name": "Grand Warden",
-    "icon": "",
+    "icon": "/home-base/heroes/grand-warden-icon.png",
     "full": ""
   },
   "52000004": {
     "name": "P.E.K.K.A King",
-    "icon": "",
+    "icon": "/home-base/skins/4.png",
     "full": ""
   },
   "52000005": {
     "name": "Skeleton King",
-    "icon": "",
+    "icon": "/home-base/skins/5.png",
     "full": ""
   },
   "52000006": {
     "name": "Jolly King",
-    "icon": "",
+    "icon": "/home-base/skins/6.png",
     "full": ""
   },
   "52000007": {
     "name": "Primal King",
-    "icon": "",
+    "icon": "/home-base/skins/7.png",
     "full": ""
   },
   "52000008": {
     "name": "Clockwork King",
-    "icon": "",
+    "icon": "/home-base/skins/8.png",
     "full": ""
   },
   "52000009": {
     "name": "Party King",
-    "icon": "",
+    "icon": "/home-base/skins/9.png",
     "full": ""
   },
   "52000010": {
     "name": "Champion King",
-    "icon": "",
+    "icon": "/home-base/skins/10.png",
     "full": ""
   },
   "52000011": {
     "name": "Pirate King",
-    "icon": "",
+    "icon": "/home-base/skins/11.png",
     "full": ""
   },
   "52000012": {
     "name": "Gladiator Queen",
-    "icon": "",
+    "icon": "/home-base/skins/12.png",
     "full": ""
   },
   "52000013": {
     "name": "Valkyrie Queen",
-    "icon": "",
+    "icon": "/home-base/skins/13.png",
     "full": ""
   },
   "52000014": {
     "name": "Autumn Queen",
-    "icon": "",
+    "icon": "/home-base/skins/14.png",
     "full": ""
   },
   "52000015": {
     "name": "Ice Queen",
-    "icon": "",
+    "icon": "/home-base/skins/15.png",
     "full": ""
   },
   "52000016": {
     "name": "Warrior Queen",
-    "icon": "",
+    "icon": "/home-base/skins/16.png",
     "full": ""
   },
   "52000017": {
     "name": "Primal Queen",
-    "icon": "",
+    "icon": "/home-base/skins/17.png",
     "full": ""
   },
   "52000018": {
     "name": "Clockwork Queen",
-    "icon": "",
+    "icon": "/home-base/skins/18.png",
     "full": ""
   },
   "52000019": {
     "name": "Pirate Queen",
-    "icon": "",
+    "icon": "/home-base/skins/19.png",
     "full": ""
   },
   "52000020": {
     "name": "Party Warden",
-    "icon": "",
+    "icon": "/home-base/skins/20.png",
     "full": ""
   },
   "52000021": {
     "name": "Primal Warden",
-    "icon": "",
+    "icon": "/home-base/skins/21.png",
     "full": ""
   },
   "52000022": {
     "name": "Clockwork Warden",
-    "icon": "",
+    "icon": "/home-base/skins/22.png",
     "full": ""
   },
   "52000023": {
     "name": "Gladiator Warden",
-    "icon": "",
+    "icon": "/home-base/skins/23.png",
     "full": ""
   },
   "52000024": {
     "name": "Pirate Warden",
-    "icon": "",
+    "icon": "/home-base/skins/24.png",
     "full": ""
   },
   "52000025": {
     "name": "Warden of the North",
-    "icon": "",
+    "icon": "/home-base/skins/25.png",
     "full": ""
   },
   "52000026": {
     "name": "Jungle Warden",
-    "icon": "",
+    "icon": "/home-base/skins/26.png",
     "full": ""
   },
   "52000027": {
     "name": "Warden Master",
-    "icon": "",
+    "icon": "/home-base/skins/27.png",
     "full": ""
   },
   "52000028": {
     "name": "Royal Champion",
-    "icon": "",
+    "icon": "/home-base/heroes/royal-champion-icon.png",
     "full": ""
   },
   "52000029": {
     "name": "Winter Champion",
-    "icon": "",
+    "icon": "/home-base/skins/29.png",
     "full": ""
   },
   "52000030": {
     "name": "Rogue Champion",
-    "icon": "",
+    "icon": "/home-base/skins/30.png",
     "full": ""
   },
   "52000031": {
     "name": "Jungle Champion",
-    "icon": "",
+    "icon": "/home-base/skins/31.png",
     "full": ""
   },
   "52000032": {
     "name": "Gladiator Champion",
-    "icon": "",
+    "icon": "/home-base/skins/32.png",
     "full": ""
   },
   "52000033": {
     "name": "Shadow Champion",
-    "icon": "",
+    "icon": "/home-base/skins/33.png",
     "full": ""
   },
   "52000034": {
     "name": "Primal Champion",
-    "icon": "",
+    "icon": "/home-base/skins/34.png",
     "full": ""
   },
   "52000035": {
     "name": "Summer Champion",
-    "icon": "",
+    "icon": "/home-base/skins/35.png",
     "full": ""
   },
   "52000036": {
     "name": "Pixel Champion",
-    "icon": "",
+    "icon": "/home-base/skins/36.png",
     "full": ""
   },
   "52000037": {
     "name": "Party Champion",
-    "icon": "",
+    "icon": "/home-base/skins/37.png",
     "full": ""
   },
   "52000038": {
     "name": "Magic Champion",
-    "icon": "",
+    "icon": "/home-base/skins/38.png",
     "full": ""
   },
   "52000039": {
     "name": "Pirate Champion",
-    "icon": "",
+    "icon": "/home-base/skins/39.png",
     "full": ""
   },
   "52000040": {
     "name": "Jolly Champion",
-    "icon": "",
+    "icon": "/home-base/skins/40.png",
     "full": ""
   },
   "52000041": {
     "name": "Warrior Champion",
-    "icon": "",
+    "icon": "/home-base/skins/41.png",
     "full": ""
   },
   "52000042": {
     "name": "Painter Champion",
-    "icon": "",
+    "icon": "/home-base/skins/42.png",
     "full": ""
   },
   "52000043": {
     "name": "Dark Ages Champion",
-    "icon": "",
+    "icon": "/home-base/skins/43.png",
     "full": ""
   },
   "52000044": {
     "name": "Ghost Champion",
-    "icon": "",
+    "icon": "/home-base/skins/44.png",
     "full": ""
   },
   "52000045": {
     "name": "Warrior King",
-    "icon": "",
+    "icon": "/home-base/skins/45.png",
     "full": ""
   },
   "52000046": {
     "name": "Rogue King",
-    "icon": "",
+    "icon": "/home-base/skins/46.png",
     "full": ""
   },
   "52000047": {
     "name": "Fierce King",
-    "icon": "",
+    "icon": "/home-base/skins/47.png",
     "full": ""
   },
   "52000048": {
     "name": "Jungle King",
-    "icon": "",
+    "icon": "/home-base/skins/48.png",
     "full": ""
   },
   "52000049": {
     "name": "Beat King",
-    "icon": "",
+    "icon": "/home-base/skins/49.png",
     "full": ""
   },
   "52000050": {
     "name": "Golem King",
-    "icon": "",
+    "icon": "/home-base/skins/50.png",
     "full": ""
   },
   "52000051": {
     "name": "Ice King",
-    "icon": "",
+    "icon": "/home-base/skins/51.png",
     "full": ""
   },
   "52000052": {
     "name": "Lunar King",
-    "icon": "",
+    "icon": "/home-base/skins/52.png",
     "full": ""
   },
   "52000053": {
     "name": "Shadow King",
-    "icon": "",
+    "icon": "/home-base/skins/53.png",
     "full": ""
   },
   "52000054": {
     "name": "Summer King",
-    "icon": "",
+    "icon": "/home-base/skins/54.png",
     "full": ""
   },
   "52000055": {
     "name": "Pixel King",
-    "icon": "",
+    "icon": "/home-base/skins/55.png",
     "full": ""
   },
   "52000056": {
     "name": "Clash Fest King",
-    "icon": "",
+    "icon": "/home-base/skins/56.png",
     "full": ""
   },
   "52000057": {
     "name": "Rogue Queen",
-    "icon": "",
+    "icon": "/home-base/skins/57.png",
     "full": ""
   },
   "52000058": {
     "name": "Jungle Queen",
-    "icon": "",
+    "icon": "/home-base/skins/58.png",
     "full": ""
   },
   "52000059": {
     "name": "Party Queen",
-    "icon": "",
+    "icon": "/home-base/skins/59.png",
     "full": ""
   },
   "52000060": {
     "name": "Champion Queen",
-    "icon": "",
+    "icon": "/home-base/skins/60.png",
     "full": ""
   },
   "52000061": {
     "name": "Shadow Queen",
-    "icon": "",
+    "icon": "/home-base/skins/61.png",
     "full": ""
   },
   "52000062": {
     "name": "Miner Queen",
-    "icon": "",
+    "icon": "/home-base/skins/62.png",
     "full": ""
   },
   "52000063": {
     "name": "Summer Queen",
-    "icon": "",
+    "icon": "/home-base/skins/63.png",
     "full": ""
   },
   "52000064": {
     "name": "Pixel Queen",
-    "icon": "",
+    "icon": "/home-base/skins/64.png",
     "full": ""
   },
   "52000065": {
     "name": "Spooky Queen",
-    "icon": "",
+    "icon": "/home-base/skins/65.png",
     "full": ""
   },
   "52000066": {
     "name": "Magic Queen",
-    "icon": "",
+    "icon": "/home-base/skins/66.png",
     "full": ""
   },
   "52000067": {
     "name": "Jolly Queen",
-    "icon": "",
+    "icon": "/home-base/skins/67.png",
     "full": ""
   },
   "52000068": {
     "name": "Dark Ages Queen",
-    "icon": "",
+    "icon": "/home-base/skins/68.png",
     "full": ""
   },
   "52000069": {
     "name": "Jolly Warden",
-    "icon": "",
+    "icon": "/home-base/skins/69.png",
     "full": ""
   },
   "52000070": {
     "name": "Warrior Warden",
-    "icon": "",
+    "icon": "/home-base/skins/70.png",
     "full": ""
   },
   "52000071": {
     "name": "Shadow Warden",
-    "icon": "",
+    "icon": "/home-base/skins/71.png",
     "full": ""
   },
   "52000072": {
     "name": "Summer Warden",
-    "icon": "",
+    "icon": "/home-base/skins/72.png",
     "full": ""
   },
   "52000073": {
     "name": "Pixel Warden",
-    "icon": "",
+    "icon": "/home-base/skins/73.png",
     "full": ""
   },
   "52000074": {
     "name": "Champion Warden",
-    "icon": "",
+    "icon": "/home-base/skins/74.png",
     "full": ""
   },
   "52000075": {
     "name": "Magic Warden",
-    "icon": "",
+    "icon": "/home-base/skins/75.png",
     "full": ""
   },
   "52000076": {
     "name": "Painter Warden",
-    "icon": "",
+    "icon": "/home-base/skins/76.png",
     "full": ""
   },
   "52000077": {
     "name": "Dark Ages Warden",
-    "icon": "",
+    "icon": "/home-base/skins/77.png",
     "full": ""
   },
   "52000078": {
     "name": "Ghost Warden",
-    "icon": "",
+    "icon": "/home-base/skins/78.png",
     "full": ""
   },
   "52000079": {
     "name": "Goblin Warden",
-    "icon": "",
+    "icon": "/home-base/skins/79.png",
     "full": ""
   },
   "52000080": {
     "name": "League Warden",
-    "icon": "",
+    "icon": "/home-base/skins/80.png",
     "full": ""
   },
   "52000087": {
     "name": "Magic King",
-    "icon": "",
+    "icon": "/home-base/skins/87.png",
     "full": ""
   },
   "52000088": {
     "name": "Dark Ages King",
-    "icon": "",
+    "icon": "/home-base/skins/88.png",
     "full": ""
   },
   "52000089": {
     "name": "Painter King",
-    "icon": "",
+    "icon": "/home-base/skins/89.png",
     "full": ""
   },
   "52000090": {
     "name": "Beast King",
-    "icon": "",
+    "icon": "/home-base/skins/90.png",
     "full": ""
   },
   "52000091": {
     "name": "League King",
-    "icon": "",
+    "icon": "/home-base/skins/90.png",
     "full": ""
   },
   "52000092": {
     "name": "Goblin King",
-    "icon": "",
+    "icon": "/home-base/skins/92.png",
     "full": ""
   },
   "52000093": {
     "name": "Future King",
-    "icon": "",
+    "icon": "/home-base/skins/93.png",
     "full": ""
   },
   "52000094": {
     "name": "Gingerbread King",
-    "icon": "",
+    "icon": "/home-base/skins/94.png",
     "full": ""
   },
   "52000095": {
     "name": "Ghost King",
-    "icon": "",
+    "icon": "/home-base/skins/95.png",
     "full": ""
   },
   "52000096": {
     "name": "Chess King",
-    "icon": "",
+    "icon": "/home-base/skins/96.png",
     "full": ""
   },
   "52000097": {
     "name": "Lunar Queen",
-    "icon": "",
+    "icon": "/home-base/skins/97.png",
     "full": ""
   },
   "52000098": {
     "name": "Painter Queen",
-    "icon": "",
+    "icon": "/home-base/skins/98.png",
     "full": ""
   },
   "52000099": {
     "name": "Heart Hunter Queen",
-    "icon": "",
+    "icon": "/home-base/skins/99.png",
     "full": ""
   },
   "52000100": {
     "name": "Goblin Queen",
-    "icon": "",
+    "icon": "/home-base/skins/100.png",
     "full": ""
   },
   "52000101": {
     "name": "Ghost Queen",
-    "icon": "",
+    "icon": "/home-base/skins/101.png",
     "full": ""
   },
   "52000102": {
     "name": "League Queen",
-    "icon": "",
+    "icon": "/home-base/skins/102.png",
     "full": ""
   },
   "52000103": {
     "name": "Future Queen",
-    "icon": "",
+    "icon": "/home-base/skins/103.png",
     "full": ""
   },
   "52000104": {
     "name": "Gingerbread Queen",
-    "icon": "",
+    "icon": "/home-base/skins/104.png",
     "full": ""
   },
   "52000105": {
     "name": "Chess Queen",
-    "icon": "",
+    "icon": "/home-base/skins/105.png",
     "full": ""
   },
   "52000106": {
     "name": "Queen of the North",
-    "icon": "",
+    "icon": "/home-base/skins/106.png",
     "full": ""
   },
   "52000112": {
     "name": "League Champion",
-    "icon": "",
+    "icon": "/home-base/skins/112.png",
     "full": ""
   },
   "52000113": {
     "name": "Goblin Champion",
-    "icon": "",
+    "icon": "/home-base/skins/113.png",
     "full": ""
   },
   "52000114": {
     "name": "Future Champion",
-    "icon": "",
+    "icon": "/home-base/skins/114.png",
     "full": ""
   },
   "52000115": {
     "name": "Gingerbread Champion",
-    "icon": "",
+    "icon": "/home-base/skins/115.png",
     "full": ""
   },
   "52000116": {
     "name": "Champions' Champion",
-    "icon": "",
+    "icon": "/home-base/skins/116.png",
     "full": ""
   },
   "52000117": {
     "name": "Dragon Champion",
-    "icon": "",
+    "icon": "/home-base/skins/117.png",
     "full": ""
   },
   "52000118": {
     "name": "Space Champion",
-    "icon": "",
+    "icon": "/home-base/skins/118.png",
     "full": ""
   },
   "52000119": {
     "name": "Egypt Champion",
-    "icon": "",
+    "icon": "/home-base/skins/119.png",
     "full": ""
   },
   "52000120": {
     "name": "Football Champion",
-    "icon": "",
+    "icon": "/home-base/skins/120.png",
     "full": ""
   },
   "52000121": {
     "name": "Wild West Champion",
-    "icon": "",
+    "icon": "/home-base/skins/121.png",
     "full": ""
   },
   "52000122": {
     "name": "Future Warden",
-    "icon": "",
+    "icon": "/home-base/skins/122.png",
     "full": ""
   },
   "52000123": {
     "name": "Gingerbread Warden",
-    "icon": "",
+    "icon": "/home-base/skins/123.png",
     "full": ""
   },
   "52000124": {
     "name": "Dragon Warden",
-    "icon": "",
+    "icon": "/home-base/skins/124.png",
     "full": ""
   },
   "52000125": {
     "name": "Space Warden",
-    "icon": "",
+    "icon": "/home-base/skins/125.png",
     "full": ""
   },
   "52000126": {
     "name": "Egypt Warden",
-    "icon": "",
+    "icon": "/home-base/skins/126.png",
     "full": ""
   },
   "52000127": {
     "name": "Football Warden",
-    "icon": "",
+    "icon": "/home-base/skins/127.png",
     "full": ""
   },
   "52000128": {
     "name": "Wild West Warden",
-    "icon": "",
+    "icon": "/home-base/skins/128.png",
     "full": ""
   },
   "52000129": {
     "name": "Clash Games Warden",
-    "icon": "",
+    "icon": "/home-base/skins/129.png",
     "full": ""
   },
   "52000130": {
     "name": "Anime Warden",
-    "icon": "",
+    "icon": "/home-base/skins/130.png",
     "full": ""
   },
   "52000131": {
     "name": "Grand Dwarf",
-    "icon": "",
+    "icon": "/home-base/skins/131.png",
     "full": ""
   },
   "52000132": {
     "name": "Dragon King",
-    "icon": "",
+    "icon": "/home-base/skins/132.png",
     "full": ""
   },
   "52000133": {
     "name": "King of the North",
-    "icon": "",
+    "icon": "/home-base/skins/133.png",
     "full": ""
   },
   "52000134": {
     "name": "Egypt King",
-    "icon": "",
+    "icon": "/home-base/skins/134.png",
     "full": ""
   },
   "52000135": {
     "name": "Space King",
-    "icon": "",
+    "icon": "/home-base/skins/135.png",
     "full": ""
   },
   "52000136": {
     "name": "Super Squad King",
-    "icon": "",
+    "icon": "/home-base/skins/136.png",
     "full": ""
   },
   "52000137": {
     "name": "King Haaland",
-    "icon": "",
+    "icon": "/home-base/skins/137.png",
     "full": ""
   },
   "52000138": {
     "name": "Football King",
-    "icon": "",
+    "icon": "/home-base/skins/138.png",
     "full": ""
   },
   "52000139": {
     "name": "Wild West King",
-    "icon": "",
+    "icon": "/home-base/skins/139.png",
     "full": ""
   },
   "52000141": {
     "name": "Clash Games King",
-    "icon": "",
+    "icon": "/home-base/skins/141.png",
     "full": ""
   },
   "52000142": {
     "name": "Dragon Queen",
-    "icon": "",
+    "icon": "/home-base/skins/142.png",
     "full": ""
   },
   "52000143": {
     "name": "Space Queen",
-    "icon": "",
+    "icon": "/home-base/skins/143.png",
     "full": ""
   },
   "52000144": {
     "name": "Egypt Queen",
-    "icon": "",
+    "icon": "/home-base/skins/144.png",
     "full": ""
   },
   "52000145": {
     "name": "Football Queen",
-    "icon": "",
+    "icon": "/home-base/skins/145.png",
     "full": ""
   },
   "52000146": {
     "name": "Wild West Queen",
-    "icon": "",
+    "icon": "/home-base/skins/146.png",
     "full": ""
   },
   "52000147": {
     "name": "Clash Games Queen",
-    "icon": "",
+    "icon": "/home-base/skins/147.png",
     "full": ""
   },
   "52000148": {
     "name": "Anime Queen",
-    "icon": "",
+    "icon": "/home-base/skins/148.png",
     "full": ""
   },
   "52000149": {
     "name": "Archer Satyr",
-    "icon": "",
+    "icon": "/home-base/skins/149.png",
     "full": ""
   },
   "52000150": {
     "name": "Dark Minion Queen",
-    "icon": "",
+    "icon": "/home-base/skins/150.png",
     "full": ""
   },
   "52000151": {
     "name": "Justice Queen",
-    "icon": "",
+    "icon": "/home-base/skins/151.png",
     "full": ""
   },
   "52000152": {
     "name": "Battle Machine",
-    "icon": "",
+    "icon": "/builder-base/heroes/battle-machine-icon.png",
     "full": ""
   },
   "52000153": {
     "name": "Armored Machine",
-    "icon": "",
-    "full": ""
-  },
-  "52000154": {
-    "name": "Goblin Machine",
-    "icon": "",
+    "icon": "/builder-base/skins/153.png",
     "full": ""
   },
   "52000155": {
     "name": "Steampunk Machine",
-    "icon": "",
+    "icon": "/builder-base/skins/155.png",
     "full": ""
   },
   "52000156": {
     "name": "Battle Machine of the North",
-    "icon": "",
+    "icon": "/builder-base/skins/156.png",
     "full": ""
   },
   "52000163": {
     "name": "Battle Copter",
-    "icon": "",
+    "icon": "/builder-base/heroes/battle-copter-icon.png",
     "full": ""
   },
   "52000164": {
     "name": "SteamPunk Copter",
-    "icon": "",
-    "full": ""
-  },
-  "52000165": {
-    "name": "Hotrod Copter",
-    "icon": "",
+    "icon": "/builder-base/skins/164.png",
     "full": ""
   },
   "52000166": {
     "name": "Boat Copter",
-    "icon": "",
+    "icon": "/builder-base/skins/166.png",
     "full": ""
   },
   "52000174": {
     "name": "Anime Champion",
-    "icon": "",
+    "icon": "/home-base/skins/175.png",
     "full": ""
   },
   "52000175": {
     "name": "Paladin Champion",
-    "icon": "",
+    "icon": "/home-base/skins/175.png",
     "full": ""
   },
   "52000176": {
     "name": "Ice Champion",
-    "icon": "",
+    "icon": "/home-base/skins/176.png",
     "full": ""
   },
   "52000177": {
     "name": "Snake Champion",
-    "icon": "",
+    "icon": "/home-base/skins/177.png",
     "full": ""
   },
   "52000178": {
     "name": "Sniper Champion",
-    "icon": "",
+    "icon": "/home-base/skins/178.png",
     "full": ""
   },
   "52000179": {
     "name": "The RoyalEST",
-    "icon": "",
+    "icon": "/home-base/skins/179.png",
     "full": ""
   },
   "52000180": {
     "name": "Royal Ninja",
-    "icon": "",
+    "icon": "/home-base/skins/180.png",
     "full": ""
   },
   "52000181": {
     "name": "Showtime Champion",
-    "icon": "",
+    "icon": "/home-base/skins/181.png",
     "full": ""
   },
   "52000191": {
     "name": "Anime King",
-    "icon": "",
+    "icon": "/home-base/skins/191.png",
     "full": ""
   },
   "52000192": {
     "name": "Barbarian Orc",
-    "icon": "",
+    "icon": "/home-base/skins/192.png",
     "full": ""
   },
   "52000193": {
     "name": "Dark Minion King",
-    "icon": "",
+    "icon": "/home-base/skins/193.png",
     "full": ""
   },
   "52000194": {
     "name": "Judgment King",
-    "icon": "",
+    "icon": "/home-base/skins/194.png",
     "full": ""
   },
   "52000195": {
     "name": "Robo King",
-    "icon": "",
+    "icon": "/home-base/skins/195.png",
     "full": ""
   },
   "52000196": {
     "name": "Fire King",
-    "icon": "",
+    "icon": "/home-base/skins/196.png",
     "full": ""
   },
   "52000197": {
     "name": "Snake King",
-    "icon": "",
+    "icon": "/home-base/skins/197.png",
     "full": ""
   },
   "52000198": {
     "name": "Combat King",
-    "icon": "",
+    "icon": "/home-base/skins/198.png",
     "full": ""
   },
   "52000199": {
     "name": "King Cody",
-    "icon": "",
+    "icon": "/home-base/skins/199.png",
     "full": ""
   },
   "52000200": {
     "name": "Samurai King",
-    "icon": "",
+    "icon": "/home-base/skins/200.png",
     "full": ""
   },
   "52000201": {
     "name": "Barbarian Butcher",
-    "icon": "",
+    "icon": "/home-base/skins/201.png",
     "full": ""
   },
   "52000210": {
     "name": "Puppet Queen",
-    "icon": "",
+    "icon": "/home-base/skins/210.png",
     "full": ""
   },
   "52000211": {
     "name": "Fire Queen",
-    "icon": "",
+    "icon": "/home-base/skins/211.png",
     "full": ""
   },
   "52000212": {
     "name": "Snake Queen",
-    "icon": "",
+    "icon": "/home-base/skins/212.png",
     "full": ""
   },
   "52000213": {
     "name": "Quickfire Queen",
-    "icon": "",
+    "icon": "/home-base/skins/213.png",
     "full": ""
   },
   "52000214": {
     "name": "Brutality Queen",
-    "icon": "",
+    "icon": "/home-base/skins/214.png",
     "full": ""
   },
   "52000215": {
     "name": "Kyudo Queen",
-    "icon": "",
+    "icon": "/home-base/skins/215.png",
     "full": ""
   },
   "52000216": {
     "name": "Queen Fatale",
-    "icon": "",
+    "icon": "/home-base/skins/215.png",
     "full": ""
   },
   "52000230": {
     "name": "Dark Minion Warden",
-    "icon": "",
+    "icon": "/home-base/skins/230.png",
     "full": ""
   },
   "52000231": {
     "name": "Grand Judge",
-    "icon": "",
+    "icon": "/home-base/skins/231.png",
     "full": ""
   },
   "52000232": {
     "name": "Ice Warden",
-    "icon": "",
+    "icon": "/home-base/skins/232.png",
     "full": ""
   },
   "52000233": {
     "name": "Snake Warden",
-    "icon": "",
+    "icon": "/home-base/skins/233.png",
     "full": ""
   },
   "52000234": {
     "name": "Jetpack Warden",
-    "icon": "",
+    "icon": "/home-base/skins/234.png",
     "full": ""
   },
   "52000235": {
     "name": "Darkness Warden",
-    "icon": "",
+    "icon": "/home-base/skins/235.png",
     "full": ""
   },
   "52000236": {
     "name": "Grand Monk",
-    "icon": "",
+    "icon": "/home-base/skins/236.png",
     "full": ""
   },
   "52000237": {
     "name": "Grand Godfather",
-    "icon": "",
+    "icon": "/home-base/skins/237.png",
     "full": ""
   },
   "52000250": {
     "name": "Minion Prince",
-    "icon": "",
+    "icon": "/home-base/heroes/minion-prince-icon.png",
     "full": ""
   },
   "52000251": {
     "name": "Snake Prince",
-    "icon": "",
+    "icon": "/home-base/skins/251.png",
     "full": ""
   },
   "52000252": {
     "name": "Minion General",
-    "icon": "",
+    "icon": "/home-base/skins/252.png",
     "full": ""
-  },
-  "52000253": {
-    "poses": {
-      "1": "/home-base/skins/prince-mysterio/prince-mysterio-pose-1.png",
-      "2": "/home-base/skins/prince-mysterio/prince-mysterio-pose-2.png",
-      "3": "/home-base/skins/prince-mysterio/prince-mysterio-pose-3.png"
-    },
-    "icon": "/home-base/skins/prince-mysterio/prince-mysterio-icon.png",
-    "name": "Prince Mysterio"
-  },
-  "52000254": {
-    "poses": {
-      "1": "/home-base/skins/cyclone-prince/cyclone-prince-pose-1.png",
-      "2": "/home-base/skins/cyclone-prince/cyclone-prince-pose-2.png"
-    },
-    "icon": "/home-base/skins/cyclone-prince/cyclone-prince-icon.png",
-    "name": "Cyclone Prince"
-  },
-  "52000255": {
-    "poses": {
-      "1": "/home-base/skins/minion-cop/minion-cop-pose-1.png",
-      "2": "/home-base/skins/minion-cop/minion-cop-pose-2.png",
-      "3": "/home-base/skins/minion-cop/minion-cop-pose-3.png",
-      "4": "/home-base/skins/minion-cop/minion-cop-pose-4.png",
-      "5": "/home-base/skins/minion-cop/minion-cop-pose-5.png",
-      "6": "/home-base/skins/minion-cop/minion-cop-pose-6.png"
-    },
-    "icon": "/home-base/skins/minion-cop/minion-cop-icon.png",
-    "name": "Minion Cop"
   },
   "82000000": {
     "name": "Brown Fence",
