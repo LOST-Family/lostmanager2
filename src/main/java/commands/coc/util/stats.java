@@ -973,13 +973,7 @@ public class stats extends ListenerAdapter {
 	 */
 	private String getOrCreateEmojiForPath(String imagePath, String baseName) {
 		try {
-			// Get guild
-			net.dv8tion.jda.api.entities.Guild guild = lostmanager.Bot.getJda().getGuildById(lostmanager.Bot.guild_id);
-			if (guild == null) {
-				return null;
-			}
-			
-			return util.EmojiManager.getOrCreateEmoji(guild, imagePath, baseName);
+			return util.EmojiManager.getOrCreateEmoji(imagePath, baseName);
 		} catch (Exception e) {
 			System.err.println("Error creating emoji for path '" + imagePath + "': " + e.getMessage());
 			return null;

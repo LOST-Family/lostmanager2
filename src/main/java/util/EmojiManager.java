@@ -3,13 +3,13 @@ package util;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,13 +19,13 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.RichCustomEmoji;
-import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import net.coobird.thumbnailator.Thumbnails;
 
 /**
- * Manages app emojis for the bot
+ * Manages app emojis for the bot using Discord's Application Emoji REST API
  * Handles downloading PNGs from GitHub, processing them, and uploading as Discord app emojis
  */
 public class EmojiManager {
@@ -34,19 +34,19 @@ public class EmojiManager {
   private static final int MAX_EMOJI_SIZE = 256 * 1024; // 256 KB
   private static final int EMOJI_DIMENSION = 128; // 128x128 pixels
   private static final String BOT_EMOJI_PREFIX = "lm2_"; // Prefix to identify bot-created emojis
+  private static final String DISCORD_API_BASE = "https://discord.com/api/v10";
   
   // Cache of emoji names to IDs to avoid repeated API calls
   private static final ConcurrentHashMap<String, String> emojiCache = new ConcurrentHashMap<>();
   
   /**
-   * Get or create an app emoji for the given image
-   * @param guild The guild to create emoji in
+   * Get or create an app emoji for the given image using Discord's Application Emoji REST API
    * @param imagePath The relative path from image_map.json
    * @param emojiName The base name for the emoji (without prefix)
    * @return The emoji in Discord format <:name:id> or null if failed
    */
-  public static String getOrCreateEmoji(Guild guild, String imagePath, String emojiName) {
-    if (guild == null || imagePath == null || imagePath.isEmpty() || emojiName == null || emojiName.isEmpty()) {
+  public static String getOrCreateEmoji(String imagePath, String emojiName) {
+    if (imagePath == null || imagePath.isEmpty() || emojiName == null || emojiName.isEmpty()) {
       return null;
     }
     
@@ -60,34 +60,24 @@ public class EmojiManager {
       return "<:" + fullEmojiName + ":" + emojiId + ">";
     }
     
-    // Check if emoji already exists in guild
+    // Check if emoji already exists via REST API
     try {
-      List<RichCustomEmoji> emojis = guild.retrieveEmojis().complete();
-      for (RichCustomEmoji emoji : emojis) {
-        if (emoji.getName().equals(fullEmojiName)) {
-          emojiCache.put(fullEmojiName, emoji.getId());
-          return "<:" + fullEmojiName + ":" + emoji.getId() + ">";
-        }
+      String existingEmojiId = findExistingEmoji(fullEmojiName);
+      if (existingEmojiId != null) {
+        emojiCache.put(fullEmojiName, existingEmojiId);
+        return "<:" + fullEmojiName + ":" + existingEmojiId + ">";
       }
     } catch (Exception e) {
-      System.err.println("Error retrieving emojis: " + e.getMessage());
-      return null;
+      System.err.println("Error checking existing emojis: " + e.getMessage());
+      // Continue to creation if check fails
     }
     
     // Emoji doesn't exist, create it
     try {
-      // Check emoji limit
-      List<RichCustomEmoji> currentEmojis = guild.retrieveEmojis().complete();
-      int botEmojiCount = 0;
-      for (RichCustomEmoji emoji : currentEmojis) {
-        if (emoji.getName().startsWith(BOT_EMOJI_PREFIX)) {
-          botEmojiCount++;
-        }
-      }
-      
-      // If at limit, delete a random bot emoji
+      // Check emoji limit and clean up if needed
+      int botEmojiCount = countBotEmojis();
       if (botEmojiCount >= MAX_BOT_EMOJIS) {
-        deleteRandomBotEmoji(guild, currentEmojis);
+        deleteRandomBotEmoji();
       }
       
       // Download and process image
@@ -99,16 +89,193 @@ public class EmojiManager {
         return null;
       }
       
-      // Upload as app emoji
-      RichCustomEmoji newEmoji = guild.createEmoji(fullEmojiName, net.dv8tion.jda.api.entities.Icon.from(processedImage)).complete();
-      emojiCache.put(fullEmojiName, newEmoji.getId());
+      // Upload as app emoji via REST API
+      String newEmojiId = createApplicationEmoji(fullEmojiName, processedImage);
+      if (newEmojiId == null) {
+        return null;
+      }
       
-      System.out.println("Created new app emoji: " + fullEmojiName + " (ID: " + newEmoji.getId() + ")");
+      emojiCache.put(fullEmojiName, newEmojiId);
       
-      return "<:" + fullEmojiName + ":" + newEmoji.getId() + ">";
+      System.out.println("Created new app emoji: " + fullEmojiName + " (ID: " + newEmojiId + ")");
+      
+      return "<:" + fullEmojiName + ":" + newEmojiId + ">";
       
     } catch (Exception e) {
       System.err.println("Error creating emoji " + fullEmojiName + ": " + e.getMessage());
+      e.printStackTrace();
+      return null;
+    }
+  }
+  
+  /**
+   * Find an existing application emoji by name using REST API
+   * @param emojiName The emoji name to search for
+   * @return The emoji ID if found, null otherwise
+   */
+  private static String findExistingEmoji(String emojiName) {
+    try {
+      String appId = lostmanager.Bot.getJda().getSelfUser().getApplicationId();
+      String token = System.getenv("LOST_MANAGER_TOKEN");
+      
+      URL url = new URL(DISCORD_API_BASE + "/applications/" + appId + "/emojis");
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("GET");
+      conn.setRequestProperty("Authorization", "Bot " + token);
+      conn.setRequestProperty("Content-Type", "application/json");
+      conn.setConnectTimeout(10000);
+      conn.setReadTimeout(10000);
+      
+      int responseCode = conn.getResponseCode();
+      if (responseCode != 200) {
+        System.err.println("Failed to list application emojis: HTTP " + responseCode);
+        return null;
+      }
+      
+      StringBuilder response = new StringBuilder();
+      try (InputStream is = conn.getInputStream()) {
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = is.read(buffer)) != -1) {
+          response.append(new String(buffer, 0, bytesRead, StandardCharsets.UTF_8));
+        }
+      }
+      
+      JSONObject jsonResponse = new JSONObject(response.toString());
+      JSONArray items = jsonResponse.getJSONArray("items");
+      
+      for (int i = 0; i < items.length(); i++) {
+        JSONObject emoji = items.getJSONObject(i);
+        if (emoji.getString("name").equals(emojiName)) {
+          return emoji.getString("id");
+        }
+      }
+      
+      return null;
+      
+    } catch (Exception e) {
+      System.err.println("Error finding existing emoji: " + e.getMessage());
+      return null;
+    }
+  }
+  
+  /**
+   * Count bot-created application emojis
+   * @return Number of emojis with bot prefix
+   */
+  private static int countBotEmojis() {
+    try {
+      String appId = lostmanager.Bot.getJda().getSelfUser().getApplicationId();
+      String token = System.getenv("LOST_MANAGER_TOKEN");
+      
+      URL url = new URL(DISCORD_API_BASE + "/applications/" + appId + "/emojis");
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("GET");
+      conn.setRequestProperty("Authorization", "Bot " + token);
+      conn.setRequestProperty("Content-Type", "application/json");
+      conn.setConnectTimeout(10000);
+      conn.setReadTimeout(10000);
+      
+      int responseCode = conn.getResponseCode();
+      if (responseCode != 200) {
+        System.err.println("Failed to list application emojis for counting: HTTP " + responseCode);
+        return 0;
+      }
+      
+      StringBuilder response = new StringBuilder();
+      try (InputStream is = conn.getInputStream()) {
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = is.read(buffer)) != -1) {
+          response.append(new String(buffer, 0, bytesRead, StandardCharsets.UTF_8));
+        }
+      }
+      
+      JSONObject jsonResponse = new JSONObject(response.toString());
+      JSONArray items = jsonResponse.getJSONArray("items");
+      
+      int count = 0;
+      for (int i = 0; i < items.length(); i++) {
+        JSONObject emoji = items.getJSONObject(i);
+        if (emoji.getString("name").startsWith(BOT_EMOJI_PREFIX)) {
+          count++;
+        }
+      }
+      
+      return count;
+      
+    } catch (Exception e) {
+      System.err.println("Error counting bot emojis: " + e.getMessage());
+      return 0;
+    }
+  }
+  
+  /**
+   * Create an application emoji via REST API
+   * @param name The emoji name
+   * @param imageData The processed image bytes
+   * @return The new emoji ID or null if failed
+   */
+  private static String createApplicationEmoji(String name, byte[] imageData) {
+    try {
+      String appId = lostmanager.Bot.getJda().getSelfUser().getApplicationId();
+      String token = System.getenv("LOST_MANAGER_TOKEN");
+      
+      // Encode image as base64 data URI
+      String base64Image = "data:image/png;base64," + Base64.getEncoder().encodeToString(imageData);
+      
+      // Build JSON payload
+      JSONObject payload = new JSONObject();
+      payload.put("name", name);
+      payload.put("image", base64Image);
+      
+      URL url = new URL(DISCORD_API_BASE + "/applications/" + appId + "/emojis");
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("POST");
+      conn.setRequestProperty("Authorization", "Bot " + token);
+      conn.setRequestProperty("Content-Type", "application/json");
+      conn.setDoOutput(true);
+      conn.setConnectTimeout(15000);
+      conn.setReadTimeout(15000);
+      
+      // Send payload
+      try (OutputStream os = conn.getOutputStream()) {
+        byte[] input = payload.toString().getBytes(StandardCharsets.UTF_8);
+        os.write(input, 0, input.length);
+      }
+      
+      int responseCode = conn.getResponseCode();
+      if (responseCode != 201 && responseCode != 200) {
+        // Read error response
+        StringBuilder errorResponse = new StringBuilder();
+        try (InputStream is = conn.getErrorStream()) {
+          if (is != null) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+              errorResponse.append(new String(buffer, 0, bytesRead, StandardCharsets.UTF_8));
+            }
+          }
+        }
+        System.err.println("Failed to create application emoji: HTTP " + responseCode + " - " + errorResponse.toString());
+        return null;
+      }
+      
+      // Parse response to get emoji ID
+      StringBuilder response = new StringBuilder();
+      try (InputStream is = conn.getInputStream()) {
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = is.read(buffer)) != -1) {
+          response.append(new String(buffer, 0, bytesRead, StandardCharsets.UTF_8));
+        }
+      }
+      
+      JSONObject jsonResponse = new JSONObject(response.toString());
+      return jsonResponse.getString("id");
+      
+    } catch (Exception e) {
+      System.err.println("Error creating application emoji: " + e.getMessage());
       e.printStackTrace();
       return null;
     }
@@ -296,15 +463,46 @@ public class EmojiManager {
   
   /**
    * Delete a random bot-created emoji to make room for new ones
-   * @param guild The guild
-   * @param currentEmojis Current emoji list
    */
-  private static void deleteRandomBotEmoji(Guild guild, List<RichCustomEmoji> currentEmojis) {
+  private static void deleteRandomBotEmoji() {
     try {
-      List<RichCustomEmoji> botEmojis = new ArrayList<>();
-      for (RichCustomEmoji emoji : currentEmojis) {
-        if (emoji.getName().startsWith(BOT_EMOJI_PREFIX)) {
-          botEmojis.add(emoji);
+      String appId = lostmanager.Bot.getJda().getSelfUser().getApplicationId();
+      String token = System.getenv("LOST_MANAGER_TOKEN");
+      
+      // Get list of bot emojis
+      URL url = new URL(DISCORD_API_BASE + "/applications/" + appId + "/emojis");
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("GET");
+      conn.setRequestProperty("Authorization", "Bot " + token);
+      conn.setRequestProperty("Content-Type", "application/json");
+      conn.setConnectTimeout(10000);
+      conn.setReadTimeout(10000);
+      
+      int responseCode = conn.getResponseCode();
+      if (responseCode != 200) {
+        System.err.println("Failed to list application emojis for deletion: HTTP " + responseCode);
+        return;
+      }
+      
+      StringBuilder response = new StringBuilder();
+      try (InputStream is = conn.getInputStream()) {
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = is.read(buffer)) != -1) {
+          response.append(new String(buffer, 0, bytesRead, StandardCharsets.UTF_8));
+        }
+      }
+      
+      JSONObject jsonResponse = new JSONObject(response.toString());
+      JSONArray items = jsonResponse.getJSONArray("items");
+      
+      // Collect bot emojis
+      java.util.List<String[]> botEmojis = new java.util.ArrayList<>();
+      for (int i = 0; i < items.length(); i++) {
+        JSONObject emoji = items.getJSONObject(i);
+        String name = emoji.getString("name");
+        if (name.startsWith(BOT_EMOJI_PREFIX)) {
+          botEmojis.add(new String[]{emoji.getString("id"), name});
         }
       }
       
@@ -314,12 +512,27 @@ public class EmojiManager {
       
       // Select random emoji to delete
       Random random = new Random();
-      RichCustomEmoji toDelete = botEmojis.get(random.nextInt(botEmojis.size()));
+      String[] toDelete = botEmojis.get(random.nextInt(botEmojis.size()));
+      String emojiId = toDelete[0];
+      String emojiName = toDelete[1];
       
-      System.out.println("Deleting emoji to make room: " + toDelete.getName() + " (ID: " + toDelete.getId() + ")");
+      System.out.println("Deleting emoji to make room: " + emojiName + " (ID: " + emojiId + ")");
       
-      toDelete.delete().complete();
-      emojiCache.remove(toDelete.getName());
+      // Delete via REST API
+      URL deleteUrl = new URL(DISCORD_API_BASE + "/applications/" + appId + "/emojis/" + emojiId);
+      HttpURLConnection deleteConn = (HttpURLConnection) deleteUrl.openConnection();
+      deleteConn.setRequestMethod("DELETE");
+      deleteConn.setRequestProperty("Authorization", "Bot " + token);
+      deleteConn.setConnectTimeout(10000);
+      deleteConn.setReadTimeout(10000);
+      
+      int deleteResponseCode = deleteConn.getResponseCode();
+      if (deleteResponseCode == 204 || deleteResponseCode == 200) {
+        emojiCache.remove(emojiName);
+        System.out.println("Successfully deleted emoji: " + emojiName);
+      } else {
+        System.err.println("Failed to delete emoji: HTTP " + deleteResponseCode);
+      }
       
     } catch (Exception e) {
       System.err.println("Error deleting random emoji: " + e.getMessage());
