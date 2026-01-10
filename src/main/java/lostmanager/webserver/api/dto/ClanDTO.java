@@ -14,7 +14,6 @@ public class ClanDTO {
     @JsonProperty("nameDB")
     private String nameDB;
     
-    
     public ClanDTO() {
         // Default constructor for Jackson
     }
