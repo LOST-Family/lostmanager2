@@ -308,19 +308,24 @@ public class stats extends ListenerAdapter {
 
 		if (hasPermission) {
 			// Get all players with uploaded JSONs
-			String sql = "SELECT DISTINCT tag FROM userjsons WHERE tag ILIKE ? ORDER BY tag LIMIT 25";
-			List<String> tags = DBUtil.getArrayListFromSQL(sql, String.class, "%" + input + "%");
-
-			String inputLower = input.toLowerCase();
+			String sql = "SELECT DISTINCT tag FROM userjsons ORDER BY tag";
+			List<String> tags = DBUtil.getArrayListFromSQL(sql, String.class);
 			for (String tag : tags) {
 				// Try to get player name for better display
 				Player player = new Player(tag);
-				String playerName = player.getNameDB() != null ? player.getNameDB() : player.getNameAPI();
-				String displayName = playerName != null ? playerName + " (" + tag + ")" : tag;
-				if (tag.toLowerCase().contains(inputLower) || playerName.toLowerCase().contains(inputLower)) {
-					choices.add(new Command.Choice(displayName, tag));
-					if (choices.size() >= 25)
-						break;
+				String clanName = player.getClanDB() != null ? player.getClanDB().getNameDB() : null;
+				String display = new Player(tag).getInfoStringDB();
+				if (clanName != null && !clanName.isEmpty()) {
+					display += " - " + clanName;
+				}
+
+				// Filter mit Eingabe (input ist String mit aktuell eingegebenem Text)
+				if (display.toLowerCase().contains(input.toLowerCase())
+						|| tag.toLowerCase().startsWith(input.toLowerCase())) {
+					choices.add(new Command.Choice(display, tag));
+					if (choices.size() == 25) {
+						break; // Max 25 Vorschläge
+					}
 				}
 			}
 		} else {
@@ -332,7 +337,7 @@ public class stats extends ListenerAdapter {
 				String tag = player.getTag();
 				// Check if this player has any JSON uploaded
 				String sql = "SELECT COUNT(*) FROM userjsons WHERE tag = ?";
-				Integer count = DBUtil.getValueFromSQL(sql, Integer.class, tag);
+				Long count = DBUtil.getValueFromSQL(sql, Long.class, tag);
 				String playerName = player.getNameDB() != null ? player.getNameDB() : player.getNameAPI();
 
 				if (count != null && count > 0) {
@@ -622,7 +627,7 @@ public class stats extends ListenerAdapter {
 						String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
 						sb.append(translatedKey).append(": ");
 						sb.append(value.toString());
-						
+
 						// Add emoji if this item has levels
 						if (util.ImageMapCache.hasLevels(dataId)) {
 							try {
@@ -822,7 +827,8 @@ public class stats extends ListenerAdapter {
 				if (remainingSeconds > 0) {
 					String timerStr = formatTimerRemaining(remainingSeconds);
 					String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
-					sb.append("\n").append(indentStr).append(bulletPrefix).append(translatedKey).append(": ").append(timerStr);
+					sb.append("\n").append(indentStr).append(bulletPrefix).append(translatedKey).append(": ")
+							.append(timerStr);
 				}
 				// Don't show timer if it has already expired
 			} else if (value instanceof JSONObject) {
@@ -854,7 +860,8 @@ public class stats extends ListenerAdapter {
 					valueStr = (Boolean) value ? "Ja" : "Nein";
 				}
 
-				sb.append("\n").append(indentStr).append(bulletPrefix).append(translatedKey).append(": ").append(valueStr);
+				sb.append("\n").append(indentStr).append(bulletPrefix).append(translatedKey).append(": ")
+						.append(valueStr);
 			}
 		}
 
@@ -891,9 +898,10 @@ public class stats extends ListenerAdapter {
 	}
 
 	/**
-	 * Get mapped value from image_map.json cache
-	 * For items without levels: returns "Name Emoji" if icon exists, or just "Name" if no icon
-	 * For items with levels: returns just "Name" (emoji will be shown on Level line)
+	 * Get mapped value from image_map.json cache For items without levels: returns
+	 * "Name Emoji" if icon exists, or just "Name" if no icon For items with levels:
+	 * returns just "Name" (emoji will be shown on Level line)
+	 * 
 	 * @param dataValue The data ID
 	 * @return Formatted string with name and emoji (if applicable)
 	 */
@@ -903,23 +911,24 @@ public class stats extends ListenerAdapter {
 
 	/**
 	 * Get mapped value from image_map.json cache with optional level
+	 * 
 	 * @param dataValue The data ID
-	 * @param level The level (null if not applicable)
+	 * @param level     The level (null if not applicable)
 	 * @return Formatted string with name and emoji (if applicable)
 	 */
 	private String getMappedValue(String dataValue, Integer level) {
 		try {
 			// Get item data from cache
 			String name = util.ImageMapCache.getName(dataValue);
-			
+
 			// If no name in cache, return raw data value
 			if (name == null) {
 				return dataValue;
 			}
-			
+
 			// Check if item has levels
 			boolean hasLevels = util.ImageMapCache.hasLevels(dataValue);
-			
+
 			if (hasLevels) {
 				// For items with levels, don't show emoji here (will be shown on Level line)
 				return name;
@@ -935,18 +944,19 @@ public class stats extends ListenerAdapter {
 				// No icon available, just return name
 				return name;
 			}
-			
+
 		} catch (Exception e) {
 			System.err.println("Error getting mapped value for '" + dataValue + "': " + e.getMessage());
 			return dataValue;
 		}
 	}
-	
+
 	/**
-	 * Get emoji for a level-based item
-	 * This should be called when displaying the "Level: XX" line for items with levels
+	 * Get emoji for a level-based item This should be called when displaying the
+	 * "Level: XX" line for items with levels
+	 * 
 	 * @param dataValue The data ID
-	 * @param level The level number
+	 * @param level     The level number
 	 * @return The emoji string or null if not available
 	 */
 	private String getEmojiForLevel(String dataValue, int level) {
@@ -964,11 +974,12 @@ public class stats extends ListenerAdapter {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get or create an app emoji for the given image path
+	 * 
 	 * @param imagePath The relative image path from image_map.json
-	 * @param baseName The base name for the emoji
+	 * @param baseName  The base name for the emoji
 	 * @return The emoji in Discord format or null
 	 */
 	private String getOrCreateEmojiForPath(String imagePath, String baseName) {
