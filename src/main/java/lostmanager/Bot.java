@@ -1128,6 +1128,14 @@ public class Bot extends ListenerAdapter {
 					System.out.println("Fehler beim Namenupdate von Tag " + tag);
 				}
 			}
+			
+			// Also reload image_map.json cache every 2 hours
+			try {
+				util.ImageMapCache.loadImageMap();
+			} catch (Exception e) {
+				System.err.println("Fehler beim Laden der image_map.json: " + e.getMessage());
+				e.printStackTrace();
+			}
 		};
 		schedulernames.scheduleAtFixedRate(task, 0, 2, TimeUnit.HOURS);
 	}

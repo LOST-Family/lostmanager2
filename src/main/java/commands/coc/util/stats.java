@@ -153,7 +153,7 @@ public class stats extends ListenerAdapter {
 				// Get available players based on permissions
 				List<Command.Choice> choices = getAvailablePlayers(userExecuted, input);
 
-				event.replyChoices(choices).queue(_ -> {
+				event.replyChoices(choices).queue(success -> {
 				}, error -> System.err.println("Error replying to autocomplete: " + error.getMessage()));
 			}
 		}, "StatsAutocomplete-" + event.getUser().getId()).start();
@@ -514,7 +514,7 @@ public class stats extends ListenerAdapter {
 				JSONObject obj = (JSONObject) item;
 				if (obj.has("data")) {
 					String dataId = obj.get("data").toString();
-					groupedByData.computeIfAbsent(dataId, _ -> new ArrayList<>()).add(obj);
+					groupedByData.computeIfAbsent(dataId, k -> new ArrayList<>()).add(obj);
 				}
 			}
 		}
@@ -545,7 +545,7 @@ public class stats extends ListenerAdapter {
 				// and "helper_cooldown"
 				String configKey = createConfigKey(obj);
 
-				ConfigGroup group = configGroups.computeIfAbsent(configKey, _ -> new ConfigGroup(obj));
+				ConfigGroup group = configGroups.computeIfAbsent(configKey, k -> new ConfigGroup(obj));
 
 				// Add count
 				int cnt = obj.has("cnt") ? obj.optInt("cnt", 1) : 1;
@@ -567,11 +567,11 @@ public class stats extends ListenerAdapter {
 			// Display grouped configurations
 			for (ConfigGroup group : configGroups.values()) {
 				// Determine indentation based on whether we're showing counts
-				// For consistency, always use fixed indent strings that don't accumulate
-				String countIndent = "  - "; // Fixed indent for Anzahl
-				String baseIndent = showCounts ? "    - " : "  - ";
+				// Use 2 spaces per indent level and "· " for indented items
+				String countIndent = "  · "; // 1 indent level
+				String baseIndent = showCounts ? "    · " : "  · "; // 2 or 1 indent levels
 				int objIndent = showCounts ? 3 : 2;
-				String arrItemIndent = showCounts ? "      - " : "    - ";
+				String arrItemIndent = showCounts ? "      · " : "    · "; // 3 or 2 indent levels
 
 				// Only show count if there's actual grouping or multiple items
 				if (showCounts) {
@@ -616,6 +616,25 @@ public class stats extends ListenerAdapter {
 							sb.append(timerStr);
 						}
 						// Skip timer if expired - don't add any output
+					} else if (key.equals("lvl")) {
+						// Special handling for level - add emoji for items with levels
+						sb.append("\n").append(baseIndent);
+						String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
+						sb.append(translatedKey).append(": ");
+						sb.append(value.toString());
+						
+						// Add emoji if this item has levels
+						if (util.ImageMapCache.hasLevels(dataId)) {
+							try {
+								int levelNum = Integer.parseInt(value.toString());
+								String levelEmoji = getEmojiForLevel(dataId, levelNum);
+								if (levelEmoji != null) {
+									sb.append(" ").append(levelEmoji);
+								}
+							} catch (NumberFormatException e) {
+								// Level is not a number, skip emoji
+							}
+						}
 					} else {
 						sb.append("\n").append(baseIndent);
 						String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
@@ -769,11 +788,12 @@ public class stats extends ListenerAdapter {
 	private String formatObject(JSONObject obj, int indent, java.sql.Timestamp jsonTimestamp) {
 		StringBuilder sb = new StringBuilder();
 		String indentStr = "  ".repeat(indent);
+		String bulletPrefix = indent > 0 ? "· " : "";
 
 		// First, display the "data" field if it exists (as the identifier)
 		if (obj.has("data") && obj.get("data") != null && obj.get("data") != JSONObject.NULL) {
 			String mappedValue = getMappedValue(obj.get("data").toString());
-			sb.append(indentStr).append(mappedValue);
+			sb.append(indentStr).append(bulletPrefix).append(mappedValue);
 		}
 
 		// Then display all other fields
@@ -802,25 +822,26 @@ public class stats extends ListenerAdapter {
 				if (remainingSeconds > 0) {
 					String timerStr = formatTimerRemaining(remainingSeconds);
 					String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
-					sb.append("\n").append(indentStr).append(translatedKey).append(": ").append(timerStr);
+					sb.append("\n").append(indentStr).append(bulletPrefix).append(translatedKey).append(": ").append(timerStr);
 				}
 				// Don't show timer if it has already expired
 			} else if (value instanceof JSONObject) {
 				String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
-				sb.append("\n").append(indentStr).append(translatedKey).append(":");
+				sb.append("\n").append(indentStr).append(bulletPrefix).append(translatedKey).append(":");
 				sb.append("\n").append(formatObject((JSONObject) value, indent + 1, jsonTimestamp));
 			} else if (value instanceof JSONArray) {
 				String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
 				JSONArray arr = (JSONArray) value;
 				if (arr.length() > 0) {
-					sb.append("\n").append(indentStr).append("- ").append(translatedKey).append(":");
+					sb.append("\n").append(indentStr).append(bulletPrefix).append(translatedKey).append(":");
 					for (int i = 0; i < arr.length(); i++) {
 						Object item = arr.get(i);
 						if (item instanceof JSONObject) {
 							sb.append("\n").append(formatObject((JSONObject) item, indent + 1, jsonTimestamp));
 						} else {
 							String mappedValue = getMappedValue(item.toString());
-							sb.append("\n").append("  ".repeat(indent + 1)).append("- ").append(mappedValue);
+							String nextIndentStr = "  ".repeat(indent + 1);
+							sb.append("\n").append(nextIndentStr).append("· ").append(mappedValue);
 						}
 					}
 				}
@@ -833,7 +854,7 @@ public class stats extends ListenerAdapter {
 					valueStr = (Boolean) value ? "Ja" : "Nein";
 				}
 
-				sb.append("\n").append(indentStr).append("- ").append(translatedKey).append(": ").append(valueStr);
+				sb.append("\n").append(indentStr).append(bulletPrefix).append(translatedKey).append(": ").append(valueStr);
 			}
 		}
 
@@ -870,60 +891,93 @@ public class stats extends ListenerAdapter {
 	}
 
 	/**
-	 * Get mapped value from datamappings table or return raw value Format: Name
-	 * (space) Emoji (if both available), or Name (if no emoji), or dataValue (if no
-	 * name) Example: "Walls <:walls:123456789>"
+	 * Get mapped value from image_map.json cache
+	 * For items without levels: returns "Name Emoji" if icon exists, or just "Name" if no icon
+	 * For items with levels: returns just "Name" (emoji will be shown on Level line)
+	 * @param dataValue The data ID
+	 * @return Formatted string with name and emoji (if applicable)
 	 */
 	private String getMappedValue(String dataValue) {
-		// Query datamappings table
-		String sql = "SELECT emojiid, name, emojiname FROM datamappings WHERE datavalue = ?";
-
-		try (java.sql.PreparedStatement pstmt = dbutil.Connection.getConnection().prepareStatement(sql)) {
-			pstmt.setString(1, dataValue);
-
-			try (java.sql.ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					String emojiId = rs.getString("emojiid");
-					String name = rs.getString("name");
-					String emojiName = rs.getString("emojiname");
-
-					boolean hasName = name != null && !name.isEmpty();
-					boolean hasEmoji = isValidEmoji(emojiId, emojiName);
-
-					// If both name and emoji exist, return "Name <:emojiName:emojiId>" format
-					if (hasName && hasEmoji) {
-						return name + " <:" + emojiName + ":" + emojiId + ">";
-					}
-
-					// If only emoji exists, return emoji
-					if (hasEmoji) {
-						return "<:" + emojiName + ":" + emojiId + ">";
-					}
-
-					// If only name exists, return name
-					if (hasName) {
-						return name;
-					}
-				}
-			}
-		} catch (java.sql.SQLException e) {
-			// Database query failed, log and return raw value
-			System.err.println("Error querying datamappings for value '" + dataValue + "': " + e.getMessage());
-		}
-
-		// Return raw data value if no mapping found
-		return dataValue;
+		return getMappedValue(dataValue, null);
 	}
 
 	/**
-	 * Check if emoji data is valid for Discord custom emoji format
+	 * Get mapped value from image_map.json cache with optional level
+	 * @param dataValue The data ID
+	 * @param level The level (null if not applicable)
+	 * @return Formatted string with name and emoji (if applicable)
 	 */
-	private boolean isValidEmoji(String emojiId, String emojiName) {
-		boolean hasEmojiId = emojiId != null && !emojiId.isEmpty();
-		boolean hasEmojiName = emojiName != null && !emojiName.isEmpty();
-		boolean isNumericId = hasEmojiId && emojiId.matches("\\d+");
-
-		return hasEmojiId && hasEmojiName && isNumericId;
+	private String getMappedValue(String dataValue, Integer level) {
+		try {
+			// Get item data from cache
+			String name = util.ImageMapCache.getName(dataValue);
+			
+			// If no name in cache, return raw data value
+			if (name == null) {
+				return dataValue;
+			}
+			
+			// Check if item has levels
+			boolean hasLevels = util.ImageMapCache.hasLevels(dataValue);
+			
+			if (hasLevels) {
+				// For items with levels, don't show emoji here (will be shown on Level line)
+				return name;
+			} else {
+				// For items without levels, try to get and create emoji from icon
+				String iconPath = util.ImageMapCache.getIconPath(dataValue);
+				if (iconPath != null && !iconPath.isEmpty()) {
+					String emoji = getOrCreateEmojiForPath(iconPath, name);
+					if (emoji != null) {
+						return name + " " + emoji;
+					}
+				}
+				// No icon available, just return name
+				return name;
+			}
+			
+		} catch (Exception e) {
+			System.err.println("Error getting mapped value for '" + dataValue + "': " + e.getMessage());
+			return dataValue;
+		}
+	}
+	
+	/**
+	 * Get emoji for a level-based item
+	 * This should be called when displaying the "Level: XX" line for items with levels
+	 * @param dataValue The data ID
+	 * @param level The level number
+	 * @return The emoji string or null if not available
+	 */
+	private String getEmojiForLevel(String dataValue, int level) {
+		try {
+			String levelPath = util.ImageMapCache.getLevelPath(dataValue, level);
+			if (levelPath != null && !levelPath.isEmpty()) {
+				String name = util.ImageMapCache.getName(dataValue);
+				if (name == null) {
+					name = dataValue;
+				}
+				return getOrCreateEmojiForPath(levelPath, name + "_" + level);
+			}
+		} catch (Exception e) {
+			System.err.println("Error getting emoji for level " + level + " of '" + dataValue + "': " + e.getMessage());
+		}
+		return null;
+	}
+	
+	/**
+	 * Get or create an app emoji for the given image path
+	 * @param imagePath The relative image path from image_map.json
+	 * @param baseName The base name for the emoji
+	 * @return The emoji in Discord format or null
+	 */
+	private String getOrCreateEmojiForPath(String imagePath, String baseName) {
+		try {
+			return util.EmojiManager.getOrCreateEmoji(imagePath, baseName);
+		} catch (Exception e) {
+			System.err.println("Error creating emoji for path '" + imagePath + "': " + e.getMessage());
+			return null;
+		}
 	}
 
 	/**
