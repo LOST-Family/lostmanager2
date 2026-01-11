@@ -3870,6 +3870,11 @@
     "icon": "/builder-base/skins/156.png",
     "full": ""
   },
+  "52000157": {
+    "name": "",
+    "icon": "/home-base/decorations/157.png",
+    "full": ""
+  },
   "52000163": {
     "name": "Battle Copter",
     "icon": "/builder-base/heroes/battle-copter-icon.png",
@@ -4645,5 +4650,13 @@
   "93000002": {
     "name": "Granny",
     "icon": "/home-base/apprentice/apprentice-granny.png"
+  },
+  "107000000": {
+    "name": "Granny",
+    "icon": "/home-base/guardians/longshot.png"
+  },
+  "107000001": {
+    "name": "Granny",
+    "icon": "/home-base/guardians/smasher.png"
   }  
 }
