@@ -19,8 +19,8 @@ import org.json.JSONObject;
  */
 public class ImageMapCache {
   
-  private static final String IMAGE_MAP_URL = "https://raw.githubusercontent.com/uniquepixel/lostmanager2/main/image_map.json";
-  private static final String GITHUB_ASSETS_BASE_URL = "https://raw.githubusercontent.com/uniquepixel/lostmanager2/main/assets";
+  private static final String IMAGE_MAP_URL = "https://raw.githubusercontent.com/LOST-Family/lostmanager2/main/image_map.json";
+  private static final String GITHUB_ASSETS_BASE_URL = "https://raw.githubusercontent.com/LOST-Family/lostmanager2/main/assets";
   
   /**
    * Fetch the image_map.json from GitHub
@@ -192,22 +192,7 @@ public class ImageMapCache {
           batchObj.put("objects", objects);
           String batchJson = batchObj.toString();
           
-          String repoPath;
-          try {
-            URI uri = URI.create(imageRawUrl);
-            String hostPath = uri.getHost() + uri.getPath(); // raw.githubusercontent.com/uniquepixel/lostmanager2/main/assets/foo.png
-            // Splitte bis /main/ und ersetze .git falls nötig
-            String[] parts = hostPath.split("/main/");
-            if (parts.length >= 1) {
-              repoPath = parts[0].replace("raw.githubusercontent.com/", "").replace(".git", "") + ".git";
-            } else {
-              // Fallback zu Konstante
-              repoPath = "uniquepixel/lostmanager2.git";
-            }
-          } catch (Exception e) {
-            repoPath = "uniquepixel/lostmanager2.git"; // Safe fallback
-          }
-          String batchUrl = "https://github.com/_lfs/" + repoPath + "/info/lfs/objects/batch";
+          String batchUrl = "https://github.com/_lfs/LOST-Family/lostmanager2/info/lfs/objects/batch";
           
           HttpRequest batchReq = HttpRequest.newBuilder()
               .uri(URI.create(batchUrl))
