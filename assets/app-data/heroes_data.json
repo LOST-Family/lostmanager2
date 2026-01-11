@@ -1,32 +1,3 @@
-{
-    "heroes": {
-        "Barbarian King": {
-            "url": "https://assets.clashk.ing/home-base/hero-pics/Icon_HV_Hero_Barbarian_King.png",
-            "type": "hero"
-        },
-        "Archer Queen": {
-            "url": "https://assets.clashk.ing/home-base/hero-pics/Icon_HV_Hero_Archer_Queen.png",
-            "type": "hero"
-        },
-        "Grand Warden": {
-            "url": "https://assets.clashk.ing/home-base/hero-pics/Icon_HV_Hero_Grand_Warden.png",
-            "type": "hero"
-        },
-        "Minion Prince": {
-            "url": "https://assets.clashk.ing/home-base/hero-pics/Icon_HV_Hero_Minion_Prince.png",
-            "type": "hero"
-        },
-        "Royal Champion": {
-            "url": "https://assets.clashk.ing/home-base/hero-pics/Icon_HV_Hero_Royal_Champion.png",
-            "type": "hero"
-        },
-        "Battle Machine": {
-            "url": "https://assets.clashk.ing/builder-base/hero-pics/Icon_BB_Hero_Battle_Machine.png",
-            "type": "bb-hero"
-        },
-        "Battle Copter": {
-            "url": "https://assets.clashk.ing/builder-base/hero-pics/Icon_BB_Hero_Battle_Copter.png",
-            "type": "bb-hero"
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:dd6f35740fffa6b92b4281135822a306193d26edc47b75ddc6e71270a60958c7
+size 1217

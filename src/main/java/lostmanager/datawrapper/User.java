@@ -14,6 +14,7 @@ public class User {
 	private String userid;
 	private ArrayList<Player> linkedaccounts;
 	private Boolean isadmin;
+	private String nickname;
 
 	public User(String userid) {
 		this.userid = userid;
@@ -23,6 +24,7 @@ public class User {
 		clanroles = null;
 		linkedaccounts = null;
 		isadmin = null;
+		nickname = null;
 		return this;
 	}
 
@@ -72,7 +74,7 @@ public class User {
 			if (DBUtil.getValueFromSQL("SELECT is_admin FROM users WHERE discord_id = ?", Boolean.class,
 					userid) == null) {
 				DBUtil.executeUpdate("INSERT INTO users (discord_id, name, is_admin) VALUES (?, ?, ?)", userid,
-						Bot.getJda().getGuildById(Bot.guild_id).getMemberById(userid).getEffectiveName(), false);
+						getNickname(), false);
 			}
 			if (DBUtil.getValueFromSQL("SELECT is_admin FROM users WHERE discord_id = ?", Boolean.class, userid)) {
 				admin = true;
@@ -99,6 +101,18 @@ public class User {
 			}
 		}
 		return clanroles;
+	}
+
+	public String getNickname() {
+		if (nickname == null) {
+			try {
+				nickname = Bot.getJda().getGuildById(Bot.guild_id).retrieveMemberById(userid).submit().get()
+						.getEffectiveName();
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+		return nickname;
 	}
 
 }

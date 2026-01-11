@@ -22,6 +22,9 @@ public class UserDTO {
 	@JsonProperty("highestRole")
 	private String highestRole;
 
+	@JsonProperty("nickname")
+	private String nickname;
+
 	public UserDTO() {
 		// Default constructor for Jackson
 		this.linkedPlayers = new ArrayList<>();
@@ -77,6 +80,8 @@ public class UserDTO {
 			}
 		}
 
+		this.nickname = user.getNickname();
+
 	}
 
 	public boolean isAdmin() {
@@ -101,5 +106,13 @@ public class UserDTO {
 
 	public void setHighestRole(String role) {
 		highestRole = role;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 }

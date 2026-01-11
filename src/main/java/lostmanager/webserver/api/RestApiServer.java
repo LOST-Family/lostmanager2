@@ -12,6 +12,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import lostmanager.Bot;
 import lostmanager.datawrapper.Clan;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
@@ -23,6 +24,8 @@ import lostmanager.webserver.api.dto.UserDTO;
 import lostmanager.webserver.api.dto.KickpointReasonDTO;
 
 import java.util.concurrent.Executors;
+
+import org.json.JSONObject;
 
 /**
  * REST API Server for Clans, Players, and Users
@@ -54,6 +57,7 @@ public class RestApiServer {
         server.createContext("/api/clans", new ClansHandler());
         server.createContext("/api/players/", new PlayerHandler());
         server.createContext("/api/users/", new UserHandler());
+        server.createContext("/api/guild", new GuildHandler());
         
         server.setExecutor(Executors.newFixedThreadPool(10));
         server.start();
@@ -420,7 +424,7 @@ public class RestApiServer {
                 
                 // Check if user has any linked accounts
                 ArrayList<Player> linkedPlayers = user.getAllLinkedAccounts();
-                if (linkedPlayers == null || linkedPlayers.isEmpty()) {
+                if ((linkedPlayers == null || linkedPlayers.isEmpty()) && !user.isAdmin()) {
                     sendResponse(exchange, 404, "{\"error\":\"User not found or has no linked accounts\"}");
                     return;
                 }
@@ -434,6 +438,40 @@ public class RestApiServer {
                 
             } catch (Exception e) {
                 System.err.println("Error in UserHandler: " + e.getMessage());
+                e.printStackTrace();
+                sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");
+            }
+        }
+    }
+    
+    private class GuildHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                addCorsHeaders(exchange);
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+            
+            if (!"GET".equals(exchange.getRequestMethod())) {
+                sendResponse(exchange, 405, "{\"error\":\"Method Not Allowed\"}");
+                return;
+            }
+            
+            // Validate API token
+            if (!validateApiToken(exchange)) {
+                sendResponse(exchange, 401, "{\"error\":\"Unauthorized - Invalid or missing API token\"}");
+                return;
+            }
+            
+            try {
+            	JSONObject object = new JSONObject();
+            	object.put("membercount", Bot.getJda().getGuildById(Bot.guild_id).getMemberCount());
+                String json = object.toString();
+                sendJsonResponse(exchange, 200, json);
+                
+            } catch (Exception e) {
+                System.err.println("Error in GuildHandler: " + e.getMessage());
                 e.printStackTrace();
                 sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");
             }
