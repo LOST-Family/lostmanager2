@@ -3946,8 +3946,13 @@
     "full": ""
   },
   "52000184": {
-    "name": "Test",
+    "name": "Yeti Champion",
     "icon": "/home-base/skins/184.png",
+    "full": ""
+  },
+  "52000185": {
+    "name": "Mirage Champion",
+    "icon": "/home-base/skins/185.png",
     "full": ""
   },
   "52000191": {
