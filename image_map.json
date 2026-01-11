@@ -3870,11 +3870,6 @@
     "icon": "/builder-base/skins/156.png",
     "full": ""
   },
-  "52000157": {
-    "name": "",
-    "icon": "/home-base/skins/157.png",
-    "full": ""
-  },
   "52000162": {
     "name": "Yeti Champion",
     "icon": "/home-base/skins/162.png",
@@ -4013,6 +4008,36 @@
   "52000202": {
     "name": "Renegade King",
     "icon": "/home-base/skins/202.png",
+    "full": ""
+  },
+  "52000203": {
+    "name": "Clash-A-Rama King",
+    "icon": "/home-base/skins/203.png",
+    "full": ""
+  },
+  "52000204": {
+    "name": "Jelly King",
+    "icon": "/home-base/skins/204.png",
+    "full": ""
+  },
+  "52000205": {
+    "name": "Berserker King",
+    "icon": "/home-base/skins/205.png",
+    "full": ""
+  },
+  "52000206": {
+    "name": "Awakened King",
+    "icon": "/home-base/skins/206.png",
+    "full": ""
+  },
+  "52000207": {
+    "name": "Bruiser King",
+    "icon": "/home-base/skins/207.png",
+    "full": ""
+  },
+  "52000208": {
+    "name": "Desert King",
+    "icon": "/home-base/skins/208.png",
     "full": ""
   },
   "52000210": {
@@ -4223,21 +4248,6 @@
   "52000262": {
     "name": "Genie Prince",
     "icon": "/home-base/skins/262.png",
-    "full": ""
-  },
-  "52000285": {
-    "name": "Bruiser King",
-    "icon": "/home-base/skins/285.png",
-    "full": ""
-  },
-  "52000286": {
-    "name": "Awakened King",
-    "icon": "/home-base/skins/286.png",
-    "full": ""
-  },
-  "52000287": {
-    "name": "Desert King",
-    "icon": "/home-base/skins/287.png",
     "full": ""
   },
   "82000000": {
