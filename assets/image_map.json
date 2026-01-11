@@ -4652,11 +4652,11 @@
     "icon": "/home-base/apprentice/apprentice-granny.png"
   },
   "107000000": {
-    "name": "Granny",
+    "name": "Longshot",
     "icon": "/home-base/guardians/longshot.png"
   },
   "107000001": {
-    "name": "Granny",
+    "name": "Smasher",
     "icon": "/home-base/guardians/smasher.png"
   }  
 }
