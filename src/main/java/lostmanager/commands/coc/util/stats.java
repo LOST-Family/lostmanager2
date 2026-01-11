@@ -1137,6 +1137,7 @@ public class stats extends ListenerAdapter {
 		}
 		
 		// Split by lines to avoid breaking in the middle of an item
+		// Using -1 as limit preserves trailing empty strings for consistent formatting
 		String[] lines = formattedData.split("\n", -1);
 		StringBuilder currentPage = new StringBuilder();
 		
@@ -1161,7 +1162,7 @@ public class stats extends ListenerAdapter {
 			pages.add(currentPage.toString());
 		}
 		
-		// If no pages were created (shouldn't happen), add one empty page
+		// Defensive fallback: If no pages were created (should not happen with valid input), add one page
 		if (pages.isEmpty()) {
 			pages.add("Keine Daten vorhanden");
 		}
