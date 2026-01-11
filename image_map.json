@@ -3875,11 +3875,6 @@
     "icon": "/home-base/skins/162.png",
     "full": ""
   },
-  "52000163": {
-    "name": "Cursed Champion",
-    "icon": "/home-base/skins/163.png",
-    "full": ""
-  },
   "52000164": {
     "name": "Nomad Champion",
     "icon": "/home-base/skins/163.png",
@@ -3951,7 +3946,7 @@
     "full": ""
   },
   "52000185": {
-    "name": "Mirage Champion",
+    "name": "Cursed Champion",
     "icon": "/home-base/skins/185.png",
     "full": ""
   },
@@ -4252,6 +4247,11 @@
   },
   "52000262": {
     "name": "Genie Prince",
+    "icon": "/home-base/skins/262.png",
+    "full": ""
+  },
+  "52000295": {
+    "name": "Mirage Champion",
     "icon": "/home-base/skins/262.png",
     "full": ""
   },
