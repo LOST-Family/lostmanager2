@@ -39,6 +39,11 @@ public class stats extends ListenerAdapter {
 	// Constants for button and select menu ID prefixes
 	private static final String BUTTON_PREFIX = "stats_refresh_";
 	private static final String SELECT_PREFIX = "stats_select_";
+	private static final String BUTTON_FORWARD_PREFIX = "stats_forward_";
+	private static final String BUTTON_BACKWARD_PREFIX = "stats_backward_";
+	
+	// Maximum characters per page (Discord embed description limit is ~4096, we use 4000 for safety)
+	private static final int MAX_PAGE_LENGTH = 4000;
 
 	// Mapping of stat options to JSON field names
 	private static final Map<String, String> STAT_TO_FIELD = new HashMap<>();
@@ -132,9 +137,9 @@ public class stats extends ListenerAdapter {
 			}
 
 			// Create button ID with encoded data
-			String buttonId = encodeButtonId(playerTag, statType);
+			String buttonId = encodeButtonId(playerTag, statType, 0);
 
-			performStatsDisplay(event.getHook(), title, playerTag, statType, buttonId);
+			performStatsDisplay(event.getHook(), title, playerTag, statType, 0);
 
 		}, "StatsCommand-" + event.getUser().getId()).start();
 	}
@@ -154,7 +159,7 @@ public class stats extends ListenerAdapter {
 				// Get available players based on permissions
 				List<Command.Choice> choices = getAvailablePlayers(userExecuted, input);
 
-				event.replyChoices(choices).queue(_ -> {
+				event.replyChoices(choices).queue(success -> {
 				}, error -> System.err.println("Error replying to autocomplete: " + error.getMessage()));
 			}
 		}, "StatsAutocomplete-" + event.getUser().getId()).start();
@@ -163,7 +168,7 @@ public class stats extends ListenerAdapter {
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();
-		if (!id.startsWith(BUTTON_PREFIX))
+		if (!id.startsWith(BUTTON_PREFIX) && !id.startsWith(BUTTON_FORWARD_PREFIX) && !id.startsWith(BUTTON_BACKWARD_PREFIX))
 			return;
 
 		event.deferEdit().queue();
@@ -176,7 +181,26 @@ public class stats extends ListenerAdapter {
 
 			// Decode button ID to extract parameters
 			try {
-				String[] params = decodeButtonId(id);
+				String[] params = null;
+				int pageNumber = 0;
+				
+				if (id.startsWith(BUTTON_FORWARD_PREFIX)) {
+					params = decodeNavigationButtonId(id, BUTTON_FORWARD_PREFIX);
+					if (params != null && params.length >= 3) {
+						pageNumber = Integer.parseInt(params[2]) + 1; // Move forward
+					}
+				} else if (id.startsWith(BUTTON_BACKWARD_PREFIX)) {
+					params = decodeNavigationButtonId(id, BUTTON_BACKWARD_PREFIX);
+					if (params != null && params.length >= 3) {
+						pageNumber = Integer.parseInt(params[2]) - 1; // Move backward
+					}
+				} else {
+					params = decodeButtonId(id);
+					if (params != null && params.length >= 3) {
+						pageNumber = Integer.parseInt(params[2]);
+					}
+				}
+				
 				if (params == null || params.length < 2) {
 					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
 							"Fehler: Button-Daten konnten nicht dekodiert werden.", MessageUtil.EmbedType.ERROR))
@@ -197,7 +221,7 @@ public class stats extends ListenerAdapter {
 					return;
 				}
 
-				performStatsDisplay(event.getHook(), title, playerTag, statType, id);
+				performStatsDisplay(event.getHook(), title, playerTag, statType, pageNumber);
 
 			} catch (Exception e) {
 				event.getHook()
@@ -247,9 +271,9 @@ public class stats extends ListenerAdapter {
 				}
 
 				// Create new button ID
-				String buttonId = encodeButtonId(playerTag, newStatType);
+				String buttonId = encodeButtonId(playerTag, newStatType, 0);
 
-				performStatsDisplay(event.getHook(), title, playerTag, newStatType, buttonId);
+				performStatsDisplay(event.getHook(), title, playerTag, newStatType, 0);
 
 			} catch (Exception e) {
 				event.getHook()
@@ -358,10 +382,10 @@ public class stats extends ListenerAdapter {
 	}
 
 	/**
-	 * Display stats for a player
+	 * Display stats for a player with pagination support
 	 */
 	private void performStatsDisplay(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
-			String playerTag, String statType, String buttonId) {
+			String playerTag, String statType, int pageNumber) {
 
 		// Get JSON data from database
 		String sql = "SELECT json, timestamp FROM userjsons WHERE tag = ? LIMIT 1";
@@ -401,17 +425,47 @@ public class stats extends ListenerAdapter {
 				// Format the data
 				String formattedData = formatData(fieldData, timestamp);
 
-				// Build description
-				StringBuilder description = new StringBuilder();
+				// Build description header
 				Player p = new Player(playerTag);
 				String playerName = p.getNameDB() != null ? p.getNameDB() : p.getNameAPI();
-				description.append("**Spieler:** ").append(playerName != null ? playerName : playerTag).append("\n");
-				description.append("**Stat:** ").append(statType).append("\n\n");
-				description.append(formattedData);
-				description.append("\n");
+				String headerText = "**Spieler:** " + (playerName != null ? playerName : playerTag) + "\n"
+						+ "**Stat:** " + statType + "\n\n";
+
+				// Split into pages if needed
+				List<String> pages = splitIntoPages(formattedData, headerText);
+				
+				// Ensure pageNumber is valid
+				if (pageNumber < 0) pageNumber = 0;
+				if (pageNumber >= pages.size()) pageNumber = pages.size() - 1;
+				
+				// Build description for current page
+				StringBuilder description = new StringBuilder();
+				description.append(headerText);
+				description.append(pages.get(pageNumber));
+				
+				// Add page indicator if multiple pages
+				if (pages.size() > 1) {
+					description.append("\n\n**Seite ").append(pageNumber + 1).append("/").append(pages.size()).append("**");
+				}
 
 				// Create buttons
-				Button refreshButton = Button.secondary(buttonId, "\u200B").withEmoji(Emoji.fromUnicode("🔁"));
+				List<Button> buttons = new ArrayList<>();
+				
+				// Add backward button if not on first page
+				if (pageNumber > 0) {
+					String backwardButtonId = encodeNavigationButtonId(playerTag, statType, pageNumber, BUTTON_BACKWARD_PREFIX);
+					buttons.add(Button.primary(backwardButtonId, "\u200B").withEmoji(Emoji.fromUnicode("⬅️")));
+				}
+				
+				// Add refresh button
+				String refreshButtonId = encodeButtonId(playerTag, statType, pageNumber);
+				buttons.add(Button.secondary(refreshButtonId, "\u200B").withEmoji(Emoji.fromUnicode("🔁")));
+				
+				// Add forward button if not on last page
+				if (pageNumber < pages.size() - 1) {
+					String forwardButtonId = encodeNavigationButtonId(playerTag, statType, pageNumber, BUTTON_FORWARD_PREFIX);
+					buttons.add(Button.primary(forwardButtonId, "\u200B").withEmoji(Emoji.fromUnicode("➡️")));
+				}
 
 				String selectMenuId = encodeSelectMenuId(playerTag);
 				StringSelectMenu selectMenu = StringSelectMenu.create(selectMenuId).setPlaceholder("Anderes Feld")
@@ -424,10 +478,10 @@ public class stats extends ListenerAdapter {
 
 				hook.editOriginal("").setEmbeds(MessageUtil.buildEmbed(title, description.toString(),
 						MessageUtil.EmbedType.INFO, "Zuletzt aktualisiert am " + formatiert))
-						.setActionRow(refreshButton).queue(message -> {
+						.setActionRow(buttons).queue(message -> {
 							// Add select menu in second row
 							message.editMessageComponents(
-									net.dv8tion.jda.api.interactions.components.ActionRow.of(refreshButton),
+									net.dv8tion.jda.api.interactions.components.ActionRow.of(buttons),
 									net.dv8tion.jda.api.interactions.components.ActionRow.of(selectMenu)).queue();
 						});
 			}
@@ -486,15 +540,16 @@ public class stats extends ListenerAdapter {
 					Object item = arr.get(i);
 					if (item instanceof JSONObject) {
 						sb.append(formatObject((JSONObject) item, 0, jsonTimestamp));
-						sb.append("\n");
+						if (i < arr.length() - 1) {
+							sb.append("\n");
+						}
 					} else {
 						// Simple values (e.g., house_parts, skins, sceneries)
 						String value = getMappedValue(item.toString());
 						sb.append("- ").append(value);
-					}
-
-					if (i < arr.length() - 1) {
-						sb.append("\n");
+						if (i < arr.length() - 1) {
+							sb.append("\n");
+						}
 					}
 				}
 			}
@@ -520,7 +575,7 @@ public class stats extends ListenerAdapter {
 				JSONObject obj = (JSONObject) item;
 				if (obj.has("data")) {
 					String dataId = obj.get("data").toString();
-					groupedByData.computeIfAbsent(dataId, _ -> new ArrayList<>()).add(obj);
+					groupedByData.computeIfAbsent(dataId, k -> new ArrayList<>()).add(obj);
 				}
 			}
 		}
@@ -551,7 +606,7 @@ public class stats extends ListenerAdapter {
 				// and "helper_cooldown"
 				String configKey = createConfigKey(obj);
 
-				ConfigGroup group = configGroups.computeIfAbsent(configKey, _ -> new ConfigGroup(obj));
+				ConfigGroup group = configGroups.computeIfAbsent(configKey, k -> new ConfigGroup(obj));
 
 				// Add count
 				int cnt = obj.has("cnt") ? obj.optInt("cnt", 1) : 1;
@@ -1021,8 +1076,15 @@ public class stats extends ListenerAdapter {
 	 * Encode parameters into a Base64 string for button ID
 	 */
 	private String encodeButtonId(String playerTag, String statType) {
-		// Format: playerTag|statType
-		String data = playerTag + "|" + statType;
+		return encodeButtonId(playerTag, statType, 0);
+	}
+
+	/**
+	 * Encode parameters into a Base64 string for button ID with page number
+	 */
+	private String encodeButtonId(String playerTag, String statType, int pageNumber) {
+		// Format: playerTag|statType|pageNumber
+		String data = playerTag + "|" + statType + "|" + pageNumber;
 		return BUTTON_PREFIX + Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
 	}
 
@@ -1056,5 +1118,78 @@ public class stats extends ListenerAdapter {
 
 		// Decode Base64
 		return new String(Base64.getUrlDecoder().decode(encoded));
+	}
+
+	/**
+	 * Split formatted data into pages of maximum MAX_PAGE_LENGTH characters
+	 */
+	private List<String> splitIntoPages(String formattedData, String headerText) {
+		List<String> pages = new ArrayList<>();
+		
+		// Reserve space for header and page indicator (e.g., "\n\nSeite 99/99")
+		int reservedSpace = headerText.length() + 20;
+		int availableSpace = MAX_PAGE_LENGTH - reservedSpace;
+		
+		if (formattedData.length() <= availableSpace) {
+			// No pagination needed
+			pages.add(formattedData);
+			return pages;
+		}
+		
+		// Split by lines to avoid breaking in the middle of an item
+		// Using -1 as limit preserves trailing empty strings for consistent formatting
+		String[] lines = formattedData.split("\n", -1);
+		StringBuilder currentPage = new StringBuilder();
+		
+		for (String line : lines) {
+			// Check if adding this line would exceed the limit
+			int lineLength = line.length() + 1; // +1 for newline
+			if (currentPage.length() + lineLength > availableSpace && currentPage.length() > 0) {
+				// Start a new page
+				pages.add(currentPage.toString());
+				currentPage = new StringBuilder();
+			}
+			
+			// Add line to current page
+			if (currentPage.length() > 0) {
+				currentPage.append("\n");
+			}
+			currentPage.append(line);
+		}
+		
+		// Add the last page if it has content
+		if (currentPage.length() > 0) {
+			pages.add(currentPage.toString());
+		}
+		
+		// Defensive fallback: If no pages were created (should not happen with valid input), add one page
+		if (pages.isEmpty()) {
+			pages.add("Keine Daten vorhanden");
+		}
+		
+		return pages;
+	}
+
+	/**
+	 * Encode navigation button ID (forward/backward)
+	 */
+	private String encodeNavigationButtonId(String playerTag, String statType, int pageNumber, String prefix) {
+		// Format: playerTag|statType|pageNumber
+		String data = playerTag + "|" + statType + "|" + pageNumber;
+		return prefix + Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
+	}
+
+	/**
+	 * Decode navigation button ID
+	 */
+	private String[] decodeNavigationButtonId(String buttonId, String prefix) {
+		// Remove prefix
+		String encoded = buttonId.substring(prefix.length());
+
+		// Decode Base64
+		String data = new String(Base64.getUrlDecoder().decode(encoded));
+
+		// Split by |
+		return data.split("\\|", -1);
 	}
 }
