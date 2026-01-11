@@ -36,7 +36,8 @@
       "14": "/home-base/buildings/town-hall/town-hall-14.png",
       "15": "/home-base/buildings/town-hall/town-hall-15.png",
       "16": "/home-base/buildings/town-hall/town-hall-16.png",
-      "17": "/home-base/buildings/town-hall/town-hall-17.png"
+      "17": "/home-base/buildings/town-hall/town-hall-17.png",
+      "18": "/home-base/buildings/town-hall/town-hall-18.png"
     }
   },
   "1000002": {
@@ -57,7 +58,8 @@
       "13": "/home-base/buildings/elixir-collector/elixir-collector-13.png",
       "14": "/home-base/buildings/elixir-collector/elixir-collector-14.png",
       "15": "/home-base/buildings/elixir-collector/elixir-collector-15.png",
-      "16": "/home-base/buildings/elixir-collector/elixir-collector-16.png"
+      "16": "/home-base/buildings/elixir-collector/elixir-collector-16.png",
+      "17": "/home-base/buildings/elixir-collector/elixir-collector-17.png"
     }
   },
   "1000003": {
@@ -80,7 +82,8 @@
       "15": "/home-base/buildings/elixir-storage/elixir-storage-15.png",
       "16": "/home-base/buildings/elixir-storage/elixir-storage-16.png",
       "17": "/home-base/buildings/elixir-storage/elixir-storage-17.png",
-      "18": "/home-base/buildings/elixir-storage/elixir-storage-18.png"
+      "18": "/home-base/buildings/elixir-storage/elixir-storage-18.png",
+      "19": "/home-base/buildings/elixir-storage/elixir-storage-19.png"
     }
   },
   "1000004": {
@@ -101,7 +104,8 @@
       "13": "/home-base/buildings/gold-mine/gold-mine-13.png",
       "14": "/home-base/buildings/gold-mine/gold-mine-14.png",
       "15": "/home-base/buildings/gold-mine/gold-mine-15.png",
-      "16": "/home-base/buildings/gold-mine/gold-mine-16.png"
+      "16": "/home-base/buildings/gold-mine/gold-mine-16.png",
+      "17": "/home-base/buildings/gold-mine/gold-mine-17.png"
     }
   },
   "1000005": {
@@ -148,7 +152,8 @@
       "15": "/home-base/buildings/barracks/barracks-15.png",
       "16": "/home-base/buildings/barracks/barracks-16.png",
       "17": "/home-base/buildings/barracks/barracks-17.png",
-      "18": "/home-base/buildings/barracks/barracks-18.png"
+      "18": "/home-base/buildings/barracks/barracks-18.png",
+      "19": "/home-base/buildings/barracks/barracks-19.png"
     }
   },
   "1000007": {
@@ -168,7 +173,8 @@
       "12": "/home-base/buildings/laboratory/laboratory-12.png",
       "13": "/home-base/buildings/laboratory/laboratory-13.png",
       "14": "/home-base/buildings/laboratory/laboratory-14.png",
-      "15": "/home-base/buildings/laboratory/laboratory-15.png"
+      "15": "/home-base/buildings/laboratory/laboratory-15.png",
+      "16": "/home-base/buildings/laboratory/laboratory-16.png"
     }
   },
   "1000008": {
@@ -243,7 +249,8 @@
       "15": "/home-base/buildings/wall/wall-15.png",
       "16": "/home-base/buildings/wall/wall-16.png",
       "17": "/home-base/buildings/wall/wall-17.png",
-      "18": "/home-base/buildings/wall/wall-18.png"
+      "18": "/home-base/buildings/wall/wall-18.png",
+      "19": "/home-base/buildings/wall/wall-19.png"
     }
   },
   "1000011": {
@@ -285,7 +292,8 @@
       "12": "/home-base/buildings/air-defense/air-defense-12.png",
       "13": "/home-base/buildings/air-defense/air-defense-13.png",
       "14": "/home-base/buildings/air-defense/air-defense-14.png",
-      "15": "/home-base/buildings/air-defense/air-defense-15.png"
+      "15": "/home-base/buildings/air-defense/air-defense-15.png",
+      "16": "/home-base/buildings/air-defense/air-defense-16.png"
     }
   },
   "1000013": {
@@ -307,7 +315,8 @@
       "14": "/home-base/buildings/mortar/mortar-14.png",
       "15": "/home-base/buildings/mortar/mortar-15.png",
       "16": "/home-base/buildings/mortar/mortar-16.png",
-      "17": "/home-base/buildings/mortar/mortar-17.png"
+      "17": "/home-base/buildings/mortar/mortar-17.png",
+      "18": "/home-base/buildings/mortar/mortar-18.png"
     }
   },
   "1000014": {
@@ -325,7 +334,8 @@
       "10": "/home-base/buildings/clan-castle/clan-castle-10.png",
       "11": "/home-base/buildings/clan-castle/clan-castle-11.png",
       "12": "/home-base/buildings/clan-castle/clan-castle-12.png",
-      "13": "/home-base/buildings/clan-castle/clan-castle-13.png"
+      "13": "/home-base/buildings/clan-castle/clan-castle-13.png",
+      "14": "/home-base/buildings/clan-castle/clan-castle-14.png"
     }
   },
   "1000015": {
@@ -337,7 +347,8 @@
       "4": "/home-base/buildings/builders-hut/builders-hut-4.png",
       "5": "/home-base/buildings/builders-hut/builders-hut-5.png",
       "6": "/home-base/buildings/builders-hut/builders-hut-6.png",
-      "7": "/home-base/buildings/builders-hut/builders-hut-7.png"
+      "7": "/home-base/buildings/builders-hut/builders-hut-7.png",
+      "8": "/home-base/buildings/builders-hut/builders-hut-8.png"
     }
   },
   "1000019": {
@@ -358,7 +369,8 @@
       "13": "/home-base/buildings/hidden-tesla/hidden-tesla-13.png",
       "14": "/home-base/buildings/hidden-tesla/hidden-tesla-14.png",
       "15": "/home-base/buildings/hidden-tesla/hidden-tesla-15.png",
-      "16": "/home-base/buildings/hidden-tesla/hidden-tesla-16.png"
+      "16": "/home-base/buildings/hidden-tesla/hidden-tesla-16.png",
+      "17": "/home-base/buildings/hidden-tesla/hidden-tesla-17.png"
     }
   },
   "1000020": {
@@ -371,7 +383,8 @@
       "5": "/home-base/buildings/spell-factory/spell-factory-5.png",
       "6": "/home-base/buildings/spell-factory/spell-factory-6.png",
       "7": "/home-base/buildings/spell-factory/spell-factory-7.png",
-      "8": "/home-base/buildings/spell-factory/spell-factory-8.png"
+      "8": "/home-base/buildings/spell-factory/spell-factory-8.png",
+      "9": "/home-base/buildings/spell-factory/spell-factory-9.png"
     }
   },
   "1000021": {
@@ -388,7 +401,8 @@
       "9": "/home-base/buildings/x-bow/x-bow-9.png",
       "10": "/home-base/buildings/x-bow/x-bow-10.png",
       "11": "/home-base/buildings/x-bow/x-bow-11.png",
-      "12": "/home-base/buildings/x-bow/x-bow-12.png"
+      "12": "/home-base/buildings/x-bow/x-bow-12.png",
+      "13": "/home-base/buildings/x-bow/x-bow-13.png"
     }
   },
   "1000023": {
@@ -403,7 +417,8 @@
       "7": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-7.png",
       "8": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-8.png",
       "9": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-9.png",
-      "10": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-10.png"
+      "10": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-10.png",
+      "11": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-11.png"
     }
   },
   "1000024": {
@@ -420,7 +435,8 @@
       "9": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-9.png",
       "10": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-10.png",
       "11": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-11.png",
-      "12": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-12.png"
+      "12": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-12.png",
+      "13": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-13.png"
     }
   },
   "1000026": {
@@ -453,7 +469,8 @@
       "8": "/home-base/buildings/inferno-tower/inferno-tower-8.png",
       "9": "/home-base/buildings/inferno-tower/inferno-tower-9.png",
       "10": "/home-base/buildings/inferno-tower/inferno-tower-10.png",
-      "11": "/home-base/buildings/inferno-tower/inferno-tower-11.png"
+      "11": "/home-base/buildings/inferno-tower/inferno-tower-11.png",
+      "12": "/home-base/buildings/inferno-tower/inferno-tower-12.png"
     }
   },
   "1000028": {
@@ -506,7 +523,8 @@
       "9": "/home-base/buildings/bomb-tower/bomb-tower-9.png",
       "10": "/home-base/buildings/bomb-tower/bomb-tower-10.png",
       "11": "/home-base/buildings/bomb-tower/bomb-tower-11.png",
-      "12": "/home-base/buildings/bomb-tower/bomb-tower-12.png"
+      "12": "/home-base/buildings/bomb-tower/bomb-tower-12.png",
+      "13": "/home-base/buildings/bomb-tower/bomb-tower-13.png"
     }
   },
   "1000033": {
@@ -933,7 +951,8 @@
       "8": "/home-base/buildings/pet-house/pet-house-8.png",
       "9": "/home-base/buildings/pet-house/pet-house-9.png",
       "10": "/home-base/buildings/pet-house/pet-house-10.png",
-      "11": "/home-base/buildings/pet-house/pet-house-11.png"
+      "11": "/home-base/buildings/pet-house/pet-house-11.png",
+      "12": "/home-base/buildings/pet-house/pet-house-12.png"
     }
   },
   "1000070": {
@@ -963,7 +982,8 @@
       "8": "/home-base/buildings/hero-hall/hero-hall-8.png",
       "9": "/home-base/buildings/hero-hall/hero-hall-9.png",
       "10": "/home-base/buildings/hero-hall/hero-hall-10.png",
-      "11": "/home-base/buildings/hero-hall/hero-hall-11.png"
+      "11": "/home-base/buildings/hero-hall/hero-hall-11.png",
+      "12": "/home-base/buildings/hero-hall/hero-hall-12.png"
     }
   },
   "1000072": {
@@ -986,7 +1006,8 @@
       "1": "/home-base/buildings/monolith/monolith-1.png",
       "2": "/home-base/buildings/monolith/monolith-2.png",
       "3": "/home-base/buildings/monolith/monolith-3.png",
-      "4": "/home-base/buildings/monolith/monolith-4.png"
+      "4": "/home-base/buildings/monolith/monolith-4.png",
+      "5": "/home-base/buildings/monolith/monolith-5.png"
     }
   },
   "1000078": {
@@ -1010,7 +1031,9 @@
       "1": "/home-base/buildings/multi-gear-tower/multi-gear-tower-1.png",
       "1b": "/home-base/buildings/multi-gear-tower/multi-gear-tower-1b.png",
       "2": "/home-base/buildings/multi-gear-tower/multi-gear-tower-2.png",
-      "2b": "/home-base/buildings/multi-gear-tower/multi-gear-tower-2b.png"
+      "2b": "/home-base/buildings/multi-gear-tower/multi-gear-tower-2b.png",
+      "3": "/home-base/buildings/multi-gear-tower/multi-gear-tower-3.png",
+      "3b": "/home-base/buildings/multi-gear-tower/multi-gear-tower-3b.png"
     }
   },
   "1000080": {
@@ -1040,18 +1063,13 @@
       "6": "/builder-base/buildings/healing-hut/healing-hut-6.png"
     }
   },
-  "1000083": {
-    "name": "Sour Elixir Cauldron",
-    "levels": {
-      "1": "/home-base/buildings/sour-elixir-cauldron/sour-elixir-cauldron-1.png"
-    }
-  },
   "1000084": {
     "name": "Multi-Archer Tower",
     "levels": {
       "1": "/home-base/buildings/multi-archer-tower/multi-archer-tower-1.png",
       "2": "/home-base/buildings/multi-archer-tower/multi-archer-tower-2.png",
-      "3": "/home-base/buildings/multi-archer-tower/multi-archer-tower-3.png"
+      "3": "/home-base/buildings/multi-archer-tower/multi-archer-tower-3.png",
+      "4": "/home-base/buildings/multi-archer-tower/multi-archer-tower-4.png"
     }
   },
   "1000085": {
@@ -1059,14 +1077,16 @@
     "levels": {
       "1": "/home-base/buildings/ricochet-cannon/ricochet-cannon-1.png",
       "2": "/home-base/buildings/ricochet-cannon/ricochet-cannon-2.png",
-      "3": "/home-base/buildings/ricochet-cannon/ricochet-cannon-3.png"
+      "3": "/home-base/buildings/ricochet-cannon/ricochet-cannon-3.png",
+      "4": "/home-base/buildings/ricochet-cannon/ricochet-cannon-4.png"
     }
   },
   "1000089": {
     "name": "Firespitter",
     "levels": {
       "1": "/home-base/buildings/firespitter/firespitter-1.png",
-      "2": "/home-base/buildings/firespitter/firespitter-2.png"
+      "2": "/home-base/buildings/firespitter/firespitter-2.png",
+      "3": "/home-base/buildings/firespitter/firespitter-3.png"
     }
   },
   "1000093": {
@@ -1082,26 +1102,28 @@
     }
   },
   "855814416": {
-    "name": "Hook Tower",
-    "icon": "/home-base/seasonal-defenses/hook-tower/hook-tower-icon.png",
-    "tier_1": "/home-base/seasonal-defenses/hook-tower/hook-tower-1.png",
-    "tier_2": "/home-base/seasonal-defenses/hook-tower/hook-tower-2.png",
-    "tier_3": "/home-base/seasonal-defenses/hook-tower/hook-tower-3.png",
-    "tier_4": "/home-base/seasonal-defenses/hook-tower/hook-tower-4.png"
+    "name": "Hero Bell",
+    "icon": "/home-base/seasonal-defenses/hero-bell/hero-bell-icon.png",
+    "tier_1": "/home-base/seasonal-defenses/hero-bell/hero-bell-1.png",
+    "tier_2": "/home-base/seasonal-defenses/hero-bell/hero-bell-2.png",
+    "tier_3": "/home-base/seasonal-defenses/hero-bell/hero-bell-3.png",
+    "tier_4": "/home-base/seasonal-defenses/hero-bell/hero-bell-4.png"
   },
   "3616099271": {
-    "name": "Flame Spinner",
-    "icon": "",
-    "tier_1": "",
-    "tier_2": "",
-    "tier_3": ""
+    "name": "Bomb Hive",
+    "icon": "/home-base/seasonal-defenses/bomb-hive/bomb-hive-icon.png",
+    "tier_1": "/home-base/seasonal-defenses/bomb-hive/bomb-hive-1.png",
+    "tier_2": "/home-base/seasonal-defenses/bomb-hive/bomb-hive-2.png",
+    "tier_3": "/home-base/seasonal-defenses/bomb-hive/bomb-hive-3.png",
+    "tier_4": "/home-base/seasonal-defenses/bomb-hive/bomb-hive-4.png"
   },
   "3765015657": {
-    "name": "Crusher Mortar",
-    "icon": "",
-    "tier_1": "",
-    "tier_2": "",
-    "tier_3": ""
+    "name": "Light Beam",
+    "icon": "/home-base/seasonal-defenses/light-beam/light-beam-icon.png",
+    "tier_1": "/home-base/seasonal-defenses/light-beam/light-beam-1.png",
+    "tier_2": "/home-base/seasonal-defenses/light-beam/light-beam-2.png",
+    "tier_3": "/home-base/seasonal-defenses/light-beam/light-beam-3.png",
+    "tier_4": "/home-base/seasonal-defenses/light-beam/light-beam-4.png"
   },
   "12000000": {
     "name": "Bomb",
@@ -1118,7 +1140,8 @@
       "10": "/home-base/traps/bomb/bomb-10.png",
       "11": "/home-base/traps/bomb/bomb-11.png",
       "12": "/home-base/traps/bomb/bomb-12.png",
-      "13": "/home-base/traps/bomb/bomb-13.png"
+      "13": "/home-base/traps/bomb/bomb-13.png",
+      "14": "/home-base/traps/bomb/bomb-14.png"
     }
   },
   "12000001": {
@@ -1128,7 +1151,16 @@
       "2": "/home-base/traps/spring-trap/spring-trap-2.png",
       "3": "/home-base/traps/spring-trap/spring-trap-3.png",
       "4": "/home-base/traps/spring-trap/spring-trap-4.png",
-      "5": "/home-base/traps/spring-trap/spring-trap-5.png"
+      "5": "/home-base/traps/spring-trap/spring-trap-5.png",
+      "6": "/home-base/traps/spring-trap/spring-trap-6.png",
+      "7": "/home-base/traps/spring-trap/spring-trap-7.png",
+      "8": "/home-base/traps/spring-trap/spring-trap-8.png",
+      "9": "/home-base/traps/spring-trap/spring-trap-9.png",
+      "10": "/home-base/traps/spring-trap/spring-trap-10.png",
+      "11": "/home-base/traps/spring-trap/spring-trap-11.png",
+      "12": "/home-base/traps/spring-trap/spring-trap-12.png",
+      "13": "/home-base/traps/spring-trap/spring-trap-13.png",
+      "14": "/home-base/traps/spring-trap/spring-trap-14.png"
     }
   },
   "12000002": {
@@ -1161,7 +1193,8 @@
       "9": "/home-base/traps/air-bomb/air-bomb-9.png",
       "10": "/home-base/traps/air-bomb/air-bomb-10.png",
       "11": "/home-base/traps/air-bomb/air-bomb-11.png",
-      "12": "/home-base/traps/air-bomb/air-bomb-12.png"
+      "12": "/home-base/traps/air-bomb/air-bomb-12.png",
+      "13": "/home-base/traps/air-bomb/air-bomb-13.png"
     }
   },
   "12000006": {
@@ -1182,7 +1215,8 @@
       "1": "/home-base/traps/skeleton-trap/skeleton-trap-1.png",
       "2": "/home-base/traps/skeleton-trap/skeleton-trap-2.png",
       "3": "/home-base/traps/skeleton-trap/skeleton-trap-3.png",
-      "4": "/home-base/traps/skeleton-trap/skeleton-trap-4.png"
+      "4": "/home-base/traps/skeleton-trap/skeleton-trap-4.png",
+      "5": "/home-base/traps/skeleton-trap/skeleton-trap-5.png"
     }
   },
   "12000010": {
@@ -1191,7 +1225,8 @@
       "1": "/builder-base/traps/spring-trap/spring-trap-1.png",
       "2": "/builder-base/traps/spring-trap/spring-trap-2.png",
       "3": "/builder-base/traps/spring-trap/spring-trap-3.png",
-      "4": "/builder-base/traps/spring-trap/spring-trap-4.png"
+      "4": "/builder-base/traps/spring-trap/spring-trap-4.png",
+      "5": "/builder-base/traps/spring-trap/spring-trap-5.png"
     }
   },
   "12000011": {
@@ -4543,5 +4578,17 @@
   "26000120": {
     "name": "Totem Spell",
     "icon": "/home-base/spells/120.png"
-  }
+  },
+  "93000000": {
+    "name": "Kinderarbeit",
+    "icon": "/home-base/apprentice/apprentice-builder.png"
+  },
+  "93000001": {
+    "name": "Schwarzarbeiter",
+    "icon": "/home-base/apprentice/apprentice-laboratory.png"
+  },
+  "93000002": {
+    "name": "Granny",
+    "icon": "/home-base/apprentice/apprentice-granny.png"
+  }  
 }
