@@ -38,18 +38,6 @@ public class ClanDTO {
     @JsonProperty("kickpointReasons")
     private List<KickpointReasonDTO> kickpointReasons;
     
-    @JsonProperty("cwEndTimeMillis")
-    private Long cwEndTimeMillis;
-    
-    @JsonProperty("raidEndTimeMillis")
-    private Long raidEndTimeMillis;
-    
-    @JsonProperty("cwlDayEndTimeMillis")
-    private Long cwlDayEndTimeMillis;
-    
-    @JsonProperty("cgEndTimeMillis")
-    private Long cgEndTimeMillis;
-    
     public ClanDTO() {
         // Default constructor for Jackson
     }
@@ -113,30 +101,6 @@ public class ClanDTO {
             }
         } catch (Exception e) {
             this.kickpointReasons = null;
-        }
-        
-        try {
-            this.cwEndTimeMillis = clan.getCWEndTimeMillis();
-        } catch (Exception e) {
-            this.cwEndTimeMillis = null;
-        }
-        
-        try {
-            this.raidEndTimeMillis = clan.getRaidEndTimeMillis();
-        } catch (Exception e) {
-            this.raidEndTimeMillis = null;
-        }
-        
-        try {
-            this.cwlDayEndTimeMillis = clan.getCWLDayEndTimeMillis();
-        } catch (Exception e) {
-            this.cwlDayEndTimeMillis = null;
-        }
-        
-        try {
-            this.cgEndTimeMillis = clan.getCGEndTimeMillis();
-        } catch (Exception e) {
-            this.cgEndTimeMillis = null;
         }
     }
     
@@ -211,37 +175,5 @@ public class ClanDTO {
     
     public void setKickpointReasons(List<KickpointReasonDTO> kickpointReasons) {
         this.kickpointReasons = kickpointReasons;
-    }
-    
-    public Long getCwEndTimeMillis() {
-        return cwEndTimeMillis;
-    }
-    
-    public void setCwEndTimeMillis(Long cwEndTimeMillis) {
-        this.cwEndTimeMillis = cwEndTimeMillis;
-    }
-    
-    public Long getRaidEndTimeMillis() {
-        return raidEndTimeMillis;
-    }
-    
-    public void setRaidEndTimeMillis(Long raidEndTimeMillis) {
-        this.raidEndTimeMillis = raidEndTimeMillis;
-    }
-    
-    public Long getCwlDayEndTimeMillis() {
-        return cwlDayEndTimeMillis;
-    }
-    
-    public void setCwlDayEndTimeMillis(Long cwlDayEndTimeMillis) {
-        this.cwlDayEndTimeMillis = cwlDayEndTimeMillis;
-    }
-    
-    public Long getCgEndTimeMillis() {
-        return cgEndTimeMillis;
-    }
-    
-    public void setCgEndTimeMillis(Long cgEndTimeMillis) {
-        this.cgEndTimeMillis = cgEndTimeMillis;
     }
 }

@@ -6,7 +6,7 @@
 	<artifactId>lostcrmanager</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>LostCRManager</name>
-	<description>Discord Bot for Clash Royale Clan Management in Lost Family</description>
+	<description>Discord Bot for Clash of Clans Clan Management in Lost Family</description>
 	<dependencies>
 		<dependency>
 			<groupId>net.dv8tion</groupId>

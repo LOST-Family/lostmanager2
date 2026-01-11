@@ -91,5 +91,41 @@ public class MessageUtil {
 			}).start();
 		});
 	}
+	
+	public static MessageChannelUnion getChannelById(String channelId) {
+		MessageChannelUnion channel = null;
+		if (channelId != null) {
+			int i = 0;
+			while (channel == null) {
+				switch (i) {
+				case 0:
+					channel = (MessageChannelUnion) Bot.getJda().getTextChannelById(channelId);
+					break;
+				case 1:
+					channel = (MessageChannelUnion) Bot.getJda().getNewsChannelById(channelId);
+					break;
+				case 2:
+					channel = (MessageChannelUnion) Bot.getJda().getVoiceChannelById(channelId);
+					break;
+				case 3:
+					channel = (MessageChannelUnion) Bot.getJda().getStageChannelById(channelId);
+					break;
+				case 4:
+					channel = (MessageChannelUnion) Bot.getJda().getThreadChannelById(channelId);
+					break;
+				case 5:
+					channel = (MessageChannelUnion) Bot.getJda().getPrivateChannelById(channelId);
+					break;
+				default:
+					break;
+				}
+				i++;
+				if (i > 5)
+					break;
+
+			}
+		}
+		return channel;
+	}
 
 }

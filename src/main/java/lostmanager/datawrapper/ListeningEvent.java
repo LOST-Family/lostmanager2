@@ -909,7 +909,7 @@ public class ListeningEvent {
 		String channelId = getChannelID();
 		if (channelId != null && !channelId.isEmpty()) {
 			try {
-				MessageChannelUnion channel = Bot.getJda().getChannelById(MessageChannelUnion.class, channelId);
+				MessageChannelUnion channel = MessageUtil.getChannelById(channelId);
 				if (channel != null) {
 					// Use complete() instead of queue() to get the message synchronously
 					return channel.sendMessage(message).complete();
@@ -927,7 +927,7 @@ public class ListeningEvent {
 	private void editMessageInChannel(String channelId, long messageId, String newContent) {
 		if (channelId != null && !channelId.isEmpty()) {
 			try {
-				MessageChannelUnion channel = Bot.getJda().getChannelById(MessageChannelUnion.class, channelId);
+				MessageChannelUnion channel = MessageUtil.getChannelById(channelId);
 				if (channel != null) {
 					channel.editMessageById(messageId, newContent).queue(
 							_ -> System.out.println("Successfully edited message " + messageId),
@@ -1742,7 +1742,7 @@ public class ListeningEvent {
 		String channelId = getChannelID();
 		if (channelId != null && !channelId.isEmpty()) {
 			try {
-				MessageChannelUnion channel = Bot.getJda().getChannelById(MessageChannelUnion.class, channelId);
+				MessageChannelUnion channel = MessageUtil.getChannelById(channelId);
 				if (channel != null) {
 					channel.sendMessage(message).queue();
 				}
@@ -1756,7 +1756,7 @@ public class ListeningEvent {
 		String channelId = getChannelID();
 		if (channelId != null && !channelId.isEmpty()) {
 			try {
-				MessageChannelUnion channel = Bot.getJda().getChannelById(MessageChannelUnion.class, channelId);
+				MessageChannelUnion channel = MessageUtil.getChannelById(channelId);
 				if (channel != null) {
 					// Split message into chunks of max 3900 characters to be safe
 					int chunkSize = 1900;

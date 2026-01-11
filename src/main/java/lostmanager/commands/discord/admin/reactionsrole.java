@@ -55,7 +55,7 @@ public class reactionsrole extends ListenerAdapter {
 
 			MessageChannelUnion channel = null;
 			if (channelId != null) {
-				channel = event.getJDA().getChannelById(MessageChannelUnion.class, channelId);
+				channel = MessageUtil.getChannelById(channelId);
 				if (channel == null) {
 					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
 							"Channel mit dieser ID nicht gefunden.", MessageUtil.EmbedType.ERROR)).queue();
