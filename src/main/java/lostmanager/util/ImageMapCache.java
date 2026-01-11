@@ -5,7 +5,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.regex.Pattern;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -14,7 +19,7 @@ import org.json.JSONObject;
  */
 public class ImageMapCache {
   
-  private static final String IMAGE_MAP_URL = "https://raw.githubusercontent.com/uniquepixel/lostmanager2/main/assets/image_map.json";
+  private static final String IMAGE_MAP_URL = "https://raw.githubusercontent.com/uniquepixel/lostmanager2/main/image_map.json";
   private static final String GITHUB_ASSETS_BASE_URL = "https://raw.githubusercontent.com/uniquepixel/lostmanager2/main/assets";
   
   /**
@@ -134,7 +139,102 @@ public class ImageMapCache {
     if (relativePath == null || relativePath.isEmpty()) {
       return null;
     }
-    return GITHUB_ASSETS_BASE_URL + relativePath;
+    return getLfsDownloadUrl(GITHUB_ASSETS_BASE_URL + relativePath);
   }
+  
+  /**
+   * Check if response is LFS pointer
+   */
+  private static boolean isLfsPointer(String content) {
+    return content.contains("git-lfs.github.com/spec/v1") && content.contains("oid sha256:");
+  }
+
+  /**
+   * Parse OID and size from LFS pointer
+   */
+  private static String[] parseLfsPointer(String pointer) {
+    Pattern oidPat = Pattern.compile("oid sha256:([0-9a-f]{64})");
+    Pattern sizePat = Pattern.compile("size (\\d+)");
+    var oidMatcher = oidPat.matcher(pointer);
+    var sizeMatcher = sizePat.matcher(pointer);
+    if (oidMatcher.find() && sizeMatcher.find()) {
+      return new String[]{oidMatcher.group(1), sizeMatcher.group(1)};
+    }
+    return null;
+  }
+
+  /**
+   * Get LFS download URL (returns href or null)
+   */
+  public static String getLfsDownloadUrl(String imageRawUrl) {
+    try {
+      HttpClient client = HttpClient.newHttpClient();
+      HttpRequest req = HttpRequest.newBuilder()
+          .uri(URI.create(imageRawUrl))
+          .GET()
+          .build();
+      HttpResponse<String> resp = client.send(req, HttpResponse.BodyHandlers.ofString());
+      
+      if (resp.statusCode() == 200 && isLfsPointer(resp.body())) {
+        String[] lfsInfo = parseLfsPointer(resp.body());
+        if (lfsInfo != null) {
+          String oid = lfsInfo[0];
+          long size = Long.parseLong(lfsInfo[1]);
+          
+          // Build batch request
+          JSONObject batchObj = new JSONObject();
+          batchObj.put("operation", "download");
+          JSONObject obj = new JSONObject();
+          obj.put("oid", oid);
+          obj.put("size", size);
+          JSONArray objects = new JSONArray();
+          objects.put(obj);
+          batchObj.put("objects", objects);
+          String batchJson = batchObj.toString();
+          
+          String repoPath;
+          try {
+            URI uri = URI.create(imageRawUrl);
+            String hostPath = uri.getHost() + uri.getPath(); // raw.githubusercontent.com/uniquepixel/lostmanager2/main/assets/foo.png
+            // Splitte bis /main/ und ersetze .git falls nötig
+            String[] parts = hostPath.split("/main/");
+            if (parts.length >= 1) {
+              repoPath = parts[0].replace("raw.githubusercontent.com/", "").replace(".git", "") + ".git";
+            } else {
+              // Fallback zu Konstante
+              repoPath = "uniquepixel/lostmanager2.git";
+            }
+          } catch (Exception e) {
+            repoPath = "uniquepixel/lostmanager2.git"; // Safe fallback
+          }
+          String batchUrl = "https://github.com/_lfs/" + repoPath + "/info/lfs/objects/batch";
+          
+          HttpRequest batchReq = HttpRequest.newBuilder()
+              .uri(URI.create(batchUrl))
+              .header("Content-Type", "application/json")
+              .POST(HttpRequest.BodyPublishers.ofString(batchJson))
+              .build();
+          HttpResponse<String> batchResp = client.send(batchReq, HttpResponse.BodyHandlers.ofString());
+          
+          if (batchResp.statusCode() == 200) {
+            JSONObject batch = new JSONObject(batchResp.body());
+            JSONArray objs = batch.getJSONArray("objects");
+            if (!objs.isEmpty()) {
+              JSONObject firstObj = objs.getJSONObject(0);
+              if (firstObj.has("actions") && firstObj.getJSONObject("actions").has("download")) {
+                return firstObj.getJSONObject("actions").getJSONObject("download").getString("href");
+              }
+            }
+          }
+        }
+      } else {
+        return imageRawUrl; // Not LFS, return original
+      }
+    } catch (Exception e) {
+      System.err.println("LFS resolution failed: " + e.getMessage());
+    }
+    return null;
+  }
+
   
 }
