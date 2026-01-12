@@ -3875,16 +3875,6 @@
     "icon": "/home-base/skins/162.png",
     "full": ""
   },
-  "52000164": {
-    "name": "Nomad Champion",
-    "icon": "/home-base/skins/163.png",
-    "full": ""
-  },
-  "52000165": {
-    "name": "Explorer Champion",
-    "icon": "/home-base/skins/165.png",
-    "full": ""
-  },
   "52000166": {
     "name": "Boat Copter",
     "icon": "/builder-base/skins/166.png",
@@ -3948,6 +3938,16 @@
   "52000185": {
     "name": "Cursed Champion",
     "icon": "/home-base/skins/185.png",
+    "full": ""
+  },
+  "52000186": {
+    "name": "Nomad Champion",
+    "icon": "/home-base/skins/186.png",
+    "full": ""
+  },
+  "52000187": {
+    "name": "Explorer Champion",
+    "icon": "/home-base/skins/187.png",
     "full": ""
   },
   "52000191": {
@@ -4185,11 +4185,6 @@
     "icon": "/home-base/skins/244.png",
     "full": ""
   },
-  "52000250": {
-    "name": "Minion Prince",
-    "icon": "/home-base/heroes/minion-prince-icon.png",
-    "full": ""
-  },
   "52000251": {
     "name": "Snake Prince",
     "icon": "/home-base/skins/251.png",
@@ -4253,6 +4248,11 @@
   "52000295": {
     "name": "Mirage Champion",
     "icon": "/home-base/skins/262.png",
+    "full": ""
+  },
+  "52000306": {
+    "name": "Meteorite Builder",
+    "icon": "/home-base/skins/306.png",
     "full": ""
   },
   "82000000": {
