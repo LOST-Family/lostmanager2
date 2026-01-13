@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Maven Wrapper: clean package",
+      "type": "shell",
+      "command": "${workspaceFolder}\\mvnw.cmd",
+      "args": ["-f", "${workspaceFolder}\\pom.xml", "clean", "package"],
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "reveal": "always" },
+      "problemMatcher": ["$maven"]
+    },
+    {
+      "label": "Maven Wrapper: compile (skip tests)",
+      "type": "shell",
+      "command": "${workspaceFolder}\\mvnw.cmd",
+      "args": ["-f", "${workspaceFolder}\\pom.xml", "-DskipTests=true", "compile"],
+      "group": "none",
+      "presentation": { "reveal": "always" },
+      "problemMatcher": ["$maven"]
+    }
+  ]
+}

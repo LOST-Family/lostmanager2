@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch lostmanager Bot",
+      "request": "launch",
+      "mainClass": "lostmanager.Bot",
+      "projectName": "lostmanager",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
