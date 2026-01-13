@@ -705,4 +705,189 @@ public class Player {
 			return null;
 		}
 	}
+
+	// ============================================================
+	// Wins calculation helpers (moved from commands)
+	// ============================================================
+
+	private static final long ONE_DAY_MS = 24 * 60 * 60 * 1000L;
+
+	public static class WinsData {
+		public final Integer wins;
+		public final boolean hasWarning;
+
+		public WinsData(Integer wins, boolean hasWarning) {
+			this.wins = wins;
+			this.hasWarning = hasWarning;
+		}
+	}
+
+	public static class WinsRecord {
+		public final int wins;
+		public final java.time.OffsetDateTime recordedAt;
+
+		public WinsRecord(int wins, java.time.OffsetDateTime recordedAt) {
+			this.wins = wins;
+			this.recordedAt = recordedAt;
+		}
+	}
+
+	public WinsData getMonthlyWins(int year, int month, boolean isCurrentMonth,
+			java.time.ZonedDateTime startOfMonth, java.time.ZonedDateTime startOfNextMonth,
+			java.time.ZoneId zone) {
+
+		HashMap<AchievementData.Type, ArrayList<AchievementData>> allData = getAchievementDatasDB();
+
+		// If no data exists or WINS data is empty, save current data first
+		if (allData == null || !allData.containsKey(AchievementData.Type.WINS)
+				|| allData.get(AchievementData.Type.WINS) == null || allData.get(AchievementData.Type.WINS).isEmpty()) {
+			try {
+				java.sql.Timestamp now = new java.sql.Timestamp(System.currentTimeMillis());
+				addAchievementDataToDB(AchievementData.Type.WINS, now);
+				// Refresh and re-fetch
+				refreshData();
+				allData = getAchievementDatasDB();
+			} catch (Exception e) {
+				System.err.println("Error saving wins data for player " + tag + ": " + e.getMessage());
+			}
+		}
+
+		if (allData == null || !allData.containsKey(AchievementData.Type.WINS)) {
+			return null;
+		}
+
+		ArrayList<AchievementData> winsData = allData.get(AchievementData.Type.WINS);
+		if (winsData == null || winsData.isEmpty()) {
+			return null;
+		}
+
+		if (isCurrentMonth) {
+			// find earliest data from startOfMonth
+			AchievementData startData = null;
+			for (AchievementData data : winsData) {
+				java.sql.Timestamp ts = data.getTimeExtracted();
+				if (ts == null)
+					continue;
+				java.time.ZonedDateTime dataZ = ts.toInstant().atZone(zone);
+				if (!dataZ.isBefore(startOfMonth)) {
+					if (startData == null || ts.before(startData.getTimeExtracted())) {
+						startData = data;
+					}
+				}
+			}
+
+			// fallback: latest from previous month
+			if (startData == null) {
+				java.time.YearMonth previousMonth = java.time.YearMonth.from(startOfMonth).minusMonths(1);
+				AchievementData latestFromPrevious = null;
+				for (AchievementData data : winsData) {
+					java.sql.Timestamp ts = data.getTimeExtracted();
+					if (ts == null)
+						continue;
+					java.time.YearMonth dataMonth = java.time.YearMonth.from(ts.toLocalDateTime());
+					if (dataMonth.equals(previousMonth)) {
+						if (latestFromPrevious == null || ts.after(latestFromPrevious.getTimeExtracted())) {
+							latestFromPrevious = data;
+						}
+					}
+				}
+				startData = latestFromPrevious;
+			}
+
+			if (startData == null) {
+				return null;
+			}
+
+			// Get current wins from API
+			try {
+				java.sql.Timestamp now = new java.sql.Timestamp(System.currentTimeMillis());
+				AchievementData currentData = getAchievementDataAPI(AchievementData.Type.WINS, now);
+
+				if (currentData == null || currentData.getData() == null) {
+					return null;
+				}
+
+				Integer startWins = (Integer) startData.getData();
+				Integer currentWins = (Integer) currentData.getData();
+
+				// determine if linked mid-season using season start time
+				java.sql.Timestamp seasonStart = null;
+				try {
+					seasonStart = lostmanager.util.SeasonUtil.fetchSeasonStartTime();
+				} catch (Throwable t) {
+					seasonStart = null;
+				}
+
+				boolean linkedMid = false;
+				if (seasonStart != null) {
+					long timeDiff = startData.getTimeExtracted().getTime() - seasonStart.getTime();
+					linkedMid = timeDiff > ONE_DAY_MS;
+				}
+
+				return new WinsData(Math.max(currentWins - startWins, 0), linkedMid);
+			} catch (Exception e) {
+				System.err.println("Error fetching current wins for player " + tag + ": " + e.getMessage());
+				return null;
+			}
+		} else {
+			// past months: find start and end records
+			AchievementData startData = null;
+			AchievementData endData = null;
+			java.time.YearMonth startMonth = java.time.YearMonth.of(year, month);
+			java.time.YearMonth endMonth = startMonth.plusMonths(1);
+
+			for (AchievementData data : winsData) {
+				java.sql.Timestamp ts = data.getTimeExtracted();
+				if (ts == null)
+					continue;
+				java.time.YearMonth dataMonth = java.time.YearMonth.from(ts.toLocalDateTime());
+				if (dataMonth.equals(startMonth)) {
+					if (startData == null || ts.before(startData.getTimeExtracted())) {
+						startData = data;
+					}
+				}
+				if (dataMonth.equals(endMonth)) {
+					if (endData == null || ts.before(endData.getTimeExtracted())) {
+						endData = data;
+					}
+				}
+			}
+
+			// fallback lookups
+			if (startData == null) {
+				java.time.YearMonth previousMonth = startMonth.minusMonths(1);
+				AchievementData latestBeforeStart = null;
+				for (AchievementData data : winsData) {
+					java.sql.Timestamp ts = data.getTimeExtracted();
+					if (ts == null)
+						continue;
+					java.time.YearMonth dataMonth = java.time.YearMonth.from(ts.toLocalDateTime());
+					if (dataMonth.equals(previousMonth)) {
+						if (latestBeforeStart == null || ts.after(latestBeforeStart.getTimeExtracted())) {
+							latestBeforeStart = data;
+						}
+					}
+				}
+				startData = latestBeforeStart;
+			}
+
+			if (startData == null || endData == null) {
+				return null;
+			}
+
+			Integer startWins = (Integer) startData.getData();
+			Integer endWins = (Integer) endData.getData();
+
+			boolean startIsMonthStart = isStartOfMonth(startData.getTimeExtracted(), startOfMonth);
+			boolean endIsMonthStart = isStartOfMonth(endData.getTimeExtracted(), startOfNextMonth);
+			boolean hasWarning = !startIsMonthStart || !endIsMonthStart;
+			return new WinsData(endWins - startWins, hasWarning);
+		}
+	}
+
+	private boolean isStartOfMonth(java.sql.Timestamp ts, java.time.ZonedDateTime expectedStart) {
+		java.time.OffsetDateTime recorded = ts.toInstant().atOffset(java.time.ZoneOffset.UTC).atZoneSameInstant(expectedStart.getZone()).toOffsetDateTime();
+		java.time.ZonedDateTime recordedZ = recorded.atZoneSameInstant(expectedStart.getZone());
+		return recordedZ.toLocalDate().equals(expectedStart.toLocalDate());
+	}
 }
