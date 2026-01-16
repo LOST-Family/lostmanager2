@@ -77,6 +77,19 @@ public class ImageMapCache {
     }
     return null;
   }
+
+  /**
+   * Get the price for a data ID
+   * @param dataId The data ID to lookup
+   * @return The price or null if not found
+   */
+  public static String getPrice(String dataId) {
+    JSONObject itemData = getItemData(dataId);
+    if (itemData != null && itemData.has("price")) {
+      return itemData.getString("price");
+    }
+    return null;
+  }
   
   /**
    * Get the icon path for a data ID (for items without levels)

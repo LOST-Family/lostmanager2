@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 public class cwlmemberstatus extends ListenerAdapter {
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("cwlmemberstatus"))
@@ -80,6 +81,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 		}, "CWLMemberstatusCommand-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("cwlmemberstatus"))
@@ -104,6 +106,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 		}, "CWLMemberstatusAutocomplete-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();
@@ -196,6 +199,7 @@ public class cwlmemberstatus extends ListenerAdapter {
 		}, "CWLMemberstatusRefresh-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	private void performCWLMemberStatusCheck(net.dv8tion.jda.api.interactions.InteractionHook hook, Guild guild,
 			String title, Role discordRole, String searchClantag, String buttonId) {
 

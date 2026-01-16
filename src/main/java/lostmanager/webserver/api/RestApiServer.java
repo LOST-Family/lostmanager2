@@ -445,6 +445,7 @@ public class RestApiServer {
     }
     
     private class GuildHandler implements HttpHandler {
+        @SuppressWarnings("null")
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if ("OPTIONS".equals(exchange.getRequestMethod())) {

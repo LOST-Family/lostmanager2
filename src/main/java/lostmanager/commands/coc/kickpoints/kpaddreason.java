@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class kpaddreason extends ListenerAdapter {
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("kpaddreason"))
@@ -84,6 +85,7 @@ public class kpaddreason extends ListenerAdapter {
 		}, "KpaddreasonCommand-" + event.getUser().getId()).start();
 
 	}
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("kpaddreason"))

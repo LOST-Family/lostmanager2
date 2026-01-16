@@ -31,6 +31,7 @@ public class listmembers extends ListenerAdapter {
 		return name1.compareToIgnoreCase(name2);
 	};
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("listmembers"))
@@ -133,6 +134,7 @@ public class listmembers extends ListenerAdapter {
 
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("listmembers"))
@@ -151,6 +153,7 @@ public class listmembers extends ListenerAdapter {
 	}
 
 	
+	@SuppressWarnings("null")
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();

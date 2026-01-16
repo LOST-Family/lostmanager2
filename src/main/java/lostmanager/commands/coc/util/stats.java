@@ -22,6 +22,7 @@ import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
 import lostmanager.dbutil.DBUtil;
 import lostmanager.util.MessageUtil;
+import lostmanager.util.FilteredIdsCache;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -41,8 +42,9 @@ public class stats extends ListenerAdapter {
 	private static final String SELECT_PREFIX = "stats_select_";
 	private static final String BUTTON_FORWARD_PREFIX = "stats_forward_";
 	private static final String BUTTON_BACKWARD_PREFIX = "stats_backward_";
-	
-	// Maximum characters per page (Discord embed description limit is ~4096, we use 4000 for safety)
+
+	// Maximum characters per page (Discord embed description limit is ~4096, we use
+	// 4000 for safety)
 	private static final int MAX_PAGE_LENGTH = 4000;
 
 	// Mapping of stat options to JSON field names
@@ -101,6 +103,7 @@ public class stats extends ListenerAdapter {
 		GROUPING_EXCLUDED_ATTRS.add("helper_cooldown");
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("stats"))
@@ -141,6 +144,7 @@ public class stats extends ListenerAdapter {
 		}, "StatsCommand-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("stats"))
@@ -162,10 +166,12 @@ public class stats extends ListenerAdapter {
 		}, "StatsAutocomplete-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();
-		if (!id.startsWith(BUTTON_PREFIX) && !id.startsWith(BUTTON_FORWARD_PREFIX) && !id.startsWith(BUTTON_BACKWARD_PREFIX))
+		if (!id.startsWith(BUTTON_PREFIX) && !id.startsWith(BUTTON_FORWARD_PREFIX)
+				&& !id.startsWith(BUTTON_BACKWARD_PREFIX))
 			return;
 
 		event.deferEdit().queue();
@@ -180,7 +186,7 @@ public class stats extends ListenerAdapter {
 			try {
 				String[] params = null;
 				int pageNumber = 0;
-				
+
 				if (id.startsWith(BUTTON_FORWARD_PREFIX)) {
 					params = decodeNavigationButtonId(id, BUTTON_FORWARD_PREFIX);
 					if (params != null && params.length >= 3) {
@@ -197,7 +203,7 @@ public class stats extends ListenerAdapter {
 						pageNumber = Integer.parseInt(params[2]);
 					}
 				}
-				
+
 				if (params == null || params.length < 2) {
 					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
 							"Fehler: Button-Daten konnten nicht dekodiert werden.", MessageUtil.EmbedType.ERROR))
@@ -230,6 +236,7 @@ public class stats extends ListenerAdapter {
 		}, "StatsRefresh-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onStringSelectInteraction(StringSelectInteractionEvent event) {
 		String id = event.getComponentId();
@@ -312,6 +319,7 @@ public class stats extends ListenerAdapter {
 	/**
 	 * Get list of available players for autocomplete based on permissions
 	 */
+	@SuppressWarnings("null")
 	private List<Command.Choice> getAvailablePlayers(User user, String input) {
 		List<Command.Choice> choices = new ArrayList<>();
 
@@ -378,6 +386,7 @@ public class stats extends ListenerAdapter {
 	/**
 	 * Display stats for a player with pagination support
 	 */
+	@SuppressWarnings("null")
 	private void performStatsDisplay(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
 			String playerTag, String statType, int pageNumber) {
 
@@ -427,37 +436,42 @@ public class stats extends ListenerAdapter {
 
 				// Split into pages if needed
 				List<String> pages = splitIntoPages(formattedData, headerText);
-				
+
 				// Ensure pageNumber is valid
-				if (pageNumber < 0) pageNumber = 0;
-				if (pageNumber >= pages.size()) pageNumber = pages.size() - 1;
-				
+				if (pageNumber < 0)
+					pageNumber = 0;
+				if (pageNumber >= pages.size())
+					pageNumber = pages.size() - 1;
+
 				// Build description for current page
 				StringBuilder description = new StringBuilder();
 				description.append(headerText);
 				description.append(pages.get(pageNumber));
-				
+
 				// Add page indicator if multiple pages
 				if (pages.size() > 1) {
-					description.append("\n\n**Seite ").append(pageNumber + 1).append("/").append(pages.size()).append("**");
+					description.append("\n\n**Seite ").append(pageNumber + 1).append("/").append(pages.size())
+							.append("**");
 				}
 
 				// Create buttons
 				List<Button> buttons = new ArrayList<>();
-				
+
 				// Add backward button if not on first page
 				if (pageNumber > 0) {
-					String backwardButtonId = encodeNavigationButtonId(playerTag, statType, pageNumber, BUTTON_BACKWARD_PREFIX);
+					String backwardButtonId = encodeNavigationButtonId(playerTag, statType, pageNumber,
+							BUTTON_BACKWARD_PREFIX);
 					buttons.add(Button.primary(backwardButtonId, "\u200B").withEmoji(Emoji.fromUnicode("⬅️")));
 				}
-				
+
 				// Add refresh button
 				String refreshButtonId = encodeButtonId(playerTag, statType, pageNumber);
 				buttons.add(Button.secondary(refreshButtonId, "\u200B").withEmoji(Emoji.fromUnicode("🔁")));
-				
+
 				// Add forward button if not on last page
 				if (pageNumber < pages.size() - 1) {
-					String forwardButtonId = encodeNavigationButtonId(playerTag, statType, pageNumber, BUTTON_FORWARD_PREFIX);
+					String forwardButtonId = encodeNavigationButtonId(playerTag, statType, pageNumber,
+							BUTTON_FORWARD_PREFIX);
 					buttons.add(Button.primary(forwardButtonId, "\u200B").withEmoji(Emoji.fromUnicode("➡️")));
 				}
 
@@ -539,7 +553,12 @@ public class stats extends ListenerAdapter {
 						}
 					} else {
 						// Simple values (e.g., house_parts, skins, sceneries)
-						String value = getMappedValue(item.toString());
+						String rawVal = item.toString();
+						if (FilteredIdsCache.isFiltered(rawVal)) {
+							// skip filtered ids
+							continue;
+						}
+						String value = getMappedValue(rawVal);
 						sb.append("- ").append(value);
 						if (i < arr.length() - 1) {
 							sb.append("\n");
@@ -569,6 +588,10 @@ public class stats extends ListenerAdapter {
 				JSONObject obj = (JSONObject) item;
 				if (obj.has("data")) {
 					String dataId = obj.get("data").toString();
+					if (FilteredIdsCache.isFiltered(dataId)) {
+						// skip filtered data ids entirely
+						continue;
+					}
 					groupedByData.computeIfAbsent(dataId, _ -> new ArrayList<>()).add(obj);
 				}
 			}
@@ -577,8 +600,24 @@ public class stats extends ListenerAdapter {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
 
+		// Process each data ID group — sort entries by image_map `index` when available
+		List<Map.Entry<String, List<JSONObject>>> entryList = new ArrayList<>(groupedByData.entrySet());
+		entryList.sort((e1, e2) -> {
+			try {
+				JSONObject d1 = lostmanager.util.ImageMapCache.getItemData(e1.getKey());
+				JSONObject d2 = lostmanager.util.ImageMapCache.getItemData(e2.getKey());
+				int i1 = d1 != null && d1.has("index") ? d1.optInt("index", Integer.MAX_VALUE) : Integer.MAX_VALUE;
+				int i2 = d2 != null && d2.has("index") ? d2.optInt("index", Integer.MAX_VALUE) : Integer.MAX_VALUE;
+				if (i1 != i2)
+					return Integer.compare(i1, i2);
+			} catch (Exception ex) {
+				// ignore and fallback
+			}
+			return e1.getKey().compareTo(e2.getKey());
+		});
+
 		// Process each data ID group
-		for (Map.Entry<String, List<JSONObject>> entry : groupedByData.entrySet()) {
+		for (Map.Entry<String, List<JSONObject>> entry : entryList) {
 			if (!first) {
 				sb.append("\n\n");
 			}
@@ -845,76 +884,84 @@ public class stats extends ListenerAdapter {
 	 */
 	private String formatObject(JSONObject obj, int indent, java.sql.Timestamp jsonTimestamp) {
 		StringBuilder sb = new StringBuilder();
-		String indentStr = "  ".repeat(indent);
-		String bulletPrefix = indent > 0 ? "· " : "";
+		String prefix = indent > 0 ? "· ".repeat(indent) : "";
 
-		// First, display the "data" field if it exists (as the identifier)
+		// Show identifier if present
 		if (obj.has("data") && obj.get("data") != null && obj.get("data") != JSONObject.NULL) {
-			String mappedValue = getMappedValue(obj.get("data").toString());
-			sb.append(indentStr).append(bulletPrefix).append(mappedValue);
+			String dataId = obj.get("data").toString();
+			if (FilteredIdsCache.isFiltered(dataId)) {
+				return ""; // whole object is filtered
+			}
+			String mappedValue = getMappedValue(dataId);
+			sb.append(prefix).append(mappedValue);
 		}
 
-		// Then display all other fields
 		for (String key : obj.keySet()) {
-			if (key.equals("data")) {
-				continue; // Already displayed above
-			}
+			if (key.equals("data"))
+				continue;
 
 			Object value = obj.get(key);
+			if (value == null || value == JSONObject.NULL)
+				continue;
 
-			if (value == null || value == JSONObject.NULL) {
-				continue; // Skip null values
-			}
+			String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
 
 			if (key.equals("timer") || key.equals("helper_cooldown")) {
-				// Special handling for timer
-				int timerSeconds = 0;
-				if (value instanceof Number) {
-					timerSeconds = ((Number) value).intValue();
-				}
-
-				// Calculate remaining time
-				long elapsedSeconds = (System.currentTimeMillis() - jsonTimestamp.getTime()) / 1000;
-				long remainingSeconds = timerSeconds - elapsedSeconds;
-
-				if (remainingSeconds > 0) {
-					String timerStr = formatTimerRemaining(remainingSeconds);
-					String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
-					sb.append("\n").append(indentStr).append(bulletPrefix).append(translatedKey).append(": ")
-							.append(timerStr);
-				}
-				// Don't show timer if it has already expired
-			} else if (value instanceof JSONObject) {
-				String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
-				sb.append("\n").append(indentStr).append(bulletPrefix).append(translatedKey).append(":");
-				sb.append("\n").append(formatObject((JSONObject) value, indent + 1, jsonTimestamp));
-			} else if (value instanceof JSONArray) {
-				String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
-				JSONArray arr = (JSONArray) value;
-				if (arr.length() > 0) {
-					sb.append("\n").append(indentStr).append(bulletPrefix).append(translatedKey).append(":");
+				if (value instanceof JSONObject) {
+					sb.append("\n").append(prefix).append(translatedKey).append(":");
+					sb.append("\n").append(formatObject((JSONObject) value, indent + 1, jsonTimestamp));
+				} else if (value instanceof JSONArray) {
+					JSONArray arr = (JSONArray) value;
+					String nextIndent = "· ".repeat(indent + 1);
 					for (int i = 0; i < arr.length(); i++) {
 						Object item = arr.get(i);
 						if (item instanceof JSONObject) {
 							sb.append("\n").append(formatObject((JSONObject) item, indent + 1, jsonTimestamp));
 						} else {
-							String mappedValue = getMappedValue(item.toString());
-							String nextIndentStr = "  ".repeat(indent + 1);
-							sb.append("\n").append(nextIndentStr).append("· ").append(mappedValue);
+							String raw = item.toString();
+							if (FilteredIdsCache.isFiltered(raw))
+								continue;
+							sb.append("\n").append(nextIndent).append(getMappedValue(raw));
 						}
 					}
+				} else if (value instanceof Number) {
+					int timerSeconds = ((Number) value).intValue();
+					long elapsedSeconds = (System.currentTimeMillis() - jsonTimestamp.getTime()) / 1000;
+					long remainingSeconds = timerSeconds - elapsedSeconds;
+					if (remainingSeconds > 0) {
+						sb.append("\n").append(prefix).append(translatedKey).append(": ")
+								.append(formatTimerRemaining(remainingSeconds));
+					}
+				} else {
+					String valueStr = value.toString();
+					if (value instanceof Boolean)
+						valueStr = (Boolean) value ? "Ja" : "Nein";
+					sb.append("\n").append(prefix).append(translatedKey).append(": ").append(valueStr);
 				}
 			} else {
-				String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
-				String valueStr = value.toString();
-
-				// Handle boolean values
-				if (value instanceof Boolean) {
-					valueStr = (Boolean) value ? "Ja" : "Nein";
+				if (value instanceof JSONObject) {
+					sb.append("\n").append(prefix).append(translatedKey).append(":");
+					sb.append("\n").append(formatObject((JSONObject) value, indent + 1, jsonTimestamp));
+				} else if (value instanceof JSONArray) {
+					JSONArray arr = (JSONArray) value;
+					String nextIndent = "· ".repeat(indent + 1);
+					for (int i = 0; i < arr.length(); i++) {
+						Object item = arr.get(i);
+						if (item instanceof JSONObject) {
+							sb.append("\n").append(formatObject((JSONObject) item, indent + 1, jsonTimestamp));
+						} else {
+							String raw = item.toString();
+							if (FilteredIdsCache.isFiltered(raw))
+								continue;
+							sb.append("\n").append(nextIndent).append(getMappedValue(raw));
+						}
+					}
+				} else {
+					String valueStr = value.toString();
+					if (value instanceof Boolean)
+						valueStr = (Boolean) value ? "Ja" : "Nein";
+					sb.append("\n").append(prefix).append(translatedKey).append(": ").append(valueStr);
 				}
-
-				sb.append("\n").append(indentStr).append(bulletPrefix).append(translatedKey).append(": ")
-						.append(valueStr);
 			}
 		}
 
@@ -986,16 +1033,31 @@ public class stats extends ListenerAdapter {
 				// For items with levels, don't show emoji here (will be shown on Level line)
 				return name;
 			} else {
-				// For items without levels, try to get and create emoji from icon
+				// For items without levels, always prefer showing price if available, and
+				// append emoji if present
+				String price = lostmanager.util.ImageMapCache.getPrice(dataValue);
+				String priceLine = price != null ? " · Preis: " + price : "";
+
+				// Try to get emoji/icon
 				String iconPath = lostmanager.util.ImageMapCache.getIconPath(dataValue);
+				String emoji = null;
 				if (iconPath != null && !iconPath.isEmpty()) {
-					String emoji = getOrCreateEmojiForPath(iconPath, name);
-					if (emoji != null) {
-						return name + " " + emoji;
-					}
+					emoji = getOrCreateEmojiForPath(iconPath, name);
 				}
-				// No icon available, just return name
-				return name;
+
+				// Build base line with name and optional emoji
+				String base = name;
+				if (emoji != null) {
+					base += " " + emoji;
+				}
+
+				// Append price on a new line if available
+				if (!priceLine.isEmpty()) {
+					return base + "\n" + priceLine;
+				}
+
+				// No price
+				return base;
 			}
 
 		} catch (Exception e) {
@@ -1047,6 +1109,7 @@ public class stats extends ListenerAdapter {
 	/**
 	 * Create stat options for select menu
 	 */
+	@SuppressWarnings("null")
 	private List<net.dv8tion.jda.api.interactions.components.selections.SelectOption> createStatOptions(
 			String currentStat) {
 		List<net.dv8tion.jda.api.interactions.components.selections.SelectOption> options = new ArrayList<>();
@@ -1112,22 +1175,22 @@ public class stats extends ListenerAdapter {
 	 */
 	private List<String> splitIntoPages(String formattedData, String headerText) {
 		List<String> pages = new ArrayList<>();
-		
+
 		// Reserve space for header and page indicator (e.g., "\n\nSeite 99/99")
 		int reservedSpace = headerText.length() + 20;
 		int availableSpace = MAX_PAGE_LENGTH - reservedSpace;
-		
+
 		if (formattedData.length() <= availableSpace) {
 			// No pagination needed
 			pages.add(formattedData);
 			return pages;
 		}
-		
+
 		// Split by lines to avoid breaking in the middle of an item
 		// Using -1 as limit preserves trailing empty strings for consistent formatting
 		String[] lines = formattedData.split("\n", -1);
 		StringBuilder currentPage = new StringBuilder();
-		
+
 		for (String line : lines) {
 			// Check if adding this line would exceed the limit
 			int lineLength = line.length() + 1; // +1 for newline
@@ -1136,24 +1199,25 @@ public class stats extends ListenerAdapter {
 				pages.add(currentPage.toString());
 				currentPage = new StringBuilder();
 			}
-			
+
 			// Add line to current page
 			if (currentPage.length() > 0) {
 				currentPage.append("\n");
 			}
 			currentPage.append(line);
 		}
-		
+
 		// Add the last page if it has content
 		if (currentPage.length() > 0) {
 			pages.add(currentPage.toString());
 		}
-		
-		// Defensive fallback: If no pages were created (should not happen with valid input), add one page
+
+		// Defensive fallback: If no pages were created (should not happen with valid
+		// input), add one page
 		if (pages.isEmpty()) {
 			pages.add("Keine Daten vorhanden");
 		}
-		
+
 		return pages;
 	}
 

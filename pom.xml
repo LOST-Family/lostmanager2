@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.pixel</groupId>
-	<artifactId>lostcrmanager</artifactId>
+	<artifactId>lostmanager</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>LostCRManager</name>
+	<name>LostManager</name>
 	<description>Discord Bot for Clash of Clans Clan Management in Lost Family</description>
 	<properties>
 		<maven.compiler.source>23</maven.compiler.source>

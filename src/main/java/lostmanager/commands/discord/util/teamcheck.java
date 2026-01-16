@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 public class teamcheck extends ListenerAdapter {
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("teamcheck"))
@@ -102,6 +103,7 @@ public class teamcheck extends ListenerAdapter {
 		}, "TeamCheckCommand-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();
@@ -146,6 +148,7 @@ public class teamcheck extends ListenerAdapter {
 		}, "TeamCheckRefresh-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	private void performTeamCheck(net.dv8tion.jda.api.interactions.InteractionHook hook, Guild guild, String title,
 			List<Role> memberRoles, List<Role> teamRoles, String buttonId) {
 
@@ -297,6 +300,7 @@ public class teamcheck extends ListenerAdapter {
 	/**
 	 * Decodes a Base64-encoded button ID back into role lists.
 	 */
+	@SuppressWarnings("null")
 	private void decodeButtonId(String buttonId, Guild guild, List<Role> memberRoles, List<Role> teamRoles) {
 		// Remove "tc_" prefix
 		String encoded = buttonId.substring(3);

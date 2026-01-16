@@ -905,6 +905,7 @@ public class ListeningEvent {
 	 * Sends a message to the channel and returns the Message object for later
 	 * editing.
 	 */
+	@SuppressWarnings("null")
 	private Message sendMessageToChannelAndReturn(String message) {
 		String channelId = getChannelID();
 		if (channelId != null && !channelId.isEmpty()) {
@@ -924,6 +925,7 @@ public class ListeningEvent {
 	/**
 	 * Edits an existing message in the channel.
 	 */
+	@SuppressWarnings("null")
 	private void editMessageInChannel(String channelId, long messageId, String newContent) {
 		if (channelId != null && !channelId.isEmpty()) {
 			try {
@@ -1738,6 +1740,7 @@ public class ListeningEvent {
 		}
 	}
 
+	@SuppressWarnings("null")
 	private void sendMessageToChannel(String message) {
 		String channelId = getChannelID();
 		if (channelId != null && !channelId.isEmpty()) {
@@ -1752,6 +1755,7 @@ public class ListeningEvent {
 		}
 	}
 
+	@SuppressWarnings("null")
 	private void sendMessageInChunks(String message) {
 		String channelId = getChannelID();
 		if (channelId != null && !channelId.isEmpty()) {

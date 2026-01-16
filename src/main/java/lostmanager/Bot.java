@@ -95,6 +95,7 @@ public class Bot extends ListenerAdapter {
 	private static lostmanager.webserver.JsonUploadServer uploadServer;
 	private static lostmanager.webserver.api.RestApiServer restApiServer;
 
+	@SuppressWarnings("null")
 	public static void main(String[] args) throws Exception {
 		VERSION = "2.1.0";
 		guild_id = System.getenv("DISCORD_GUILD_ID");
@@ -132,7 +133,6 @@ public class Bot extends ListenerAdapter {
 				try {
 					systemInstructions = Files.readString(filePath);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -177,6 +177,7 @@ public class Bot extends ListenerAdapter {
 
 	}
 
+	@SuppressWarnings("null")
 	public static void registerCommands(JDA jda, String guildId) {
 		Guild guild = jda.getGuildById(guildId);
 		if (guild != null) {
@@ -512,12 +513,14 @@ public class Bot extends ListenerAdapter {
 		return classes.toArray();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onReady(ReadyEvent event) {
 		setJda(event.getJDA());
 		registerCommands(event.getJDA(), guild_id);
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onShutdown(ShutdownEvent event) {
 		stopScheduler();

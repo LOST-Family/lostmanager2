@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 
 public class clanconfig extends ListenerAdapter {
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("clanconfig"))
@@ -92,6 +93,7 @@ public class clanconfig extends ListenerAdapter {
 
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onModalInteraction(ModalInteractionEvent event) {
 		if (event.getModalId().startsWith("clanconfig")) {
@@ -141,6 +143,7 @@ public class clanconfig extends ListenerAdapter {
 		}
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("clanconfig"))

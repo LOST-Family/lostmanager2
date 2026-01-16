@@ -64,6 +64,7 @@ public class DBManager {
 		return available;
 	}
 
+	@SuppressWarnings("null")
 	public static List<Command.Choice> getClansAutocomplete(String input) {
 		List<Command.Choice> choices = new ArrayList<>();
 
@@ -92,6 +93,7 @@ public class DBManager {
 		return choices;
 	}
 
+	@SuppressWarnings("null")
 	public static List<Command.Choice> getSideClansAutocomplete(String input) {
 		List<Command.Choice> choices = new ArrayList<>();
 
@@ -120,6 +122,7 @@ public class DBManager {
 		return choices;
 	}
 
+	@SuppressWarnings("null")
 	public static List<Command.Choice> getPlayerlistAutocomplete(String input, InClanType inclantype) {
 		List<Command.Choice> choices = new ArrayList<>();
 

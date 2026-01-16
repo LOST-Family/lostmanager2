@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 public class kpmember extends ListenerAdapter {
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("kpmember"))
@@ -145,6 +146,7 @@ public class kpmember extends ListenerAdapter {
 		}, "KpmemberCommand-" + event.getUser().getId()).start();
 
 	}
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("kpmember"))
@@ -164,6 +166,7 @@ public class kpmember extends ListenerAdapter {
 		}
 		}, "KpmemberAutocomplete-" + event.getUser().getId()).start();
 	}
+	@SuppressWarnings("null")
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();

@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 public class checkroles extends ListenerAdapter {
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("checkroles"))
@@ -68,6 +69,7 @@ public class checkroles extends ListenerAdapter {
 		}, "CheckRolesCommand-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("checkroles"))
@@ -86,6 +88,7 @@ public class checkroles extends ListenerAdapter {
 		}, "CheckRolesAutocomplete-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();
@@ -106,6 +109,7 @@ public class checkroles extends ListenerAdapter {
 		}, "CheckRolesRefresh-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	private void performRoleCheck(net.dv8tion.jda.api.interactions.InteractionHook hook, Guild guild, String title,
 			String clantag) {
 

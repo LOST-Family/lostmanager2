@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 
 public class listeningevent extends ListenerAdapter {
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("listeningevent"))
@@ -85,6 +86,7 @@ public class listeningevent extends ListenerAdapter {
 		}, "ListeningeventCommand-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	private void handleAdd(SlashCommandInteractionEvent event, String title) {
 		OptionMapping clanOption = event.getOption("clan");
 		OptionMapping typeOption = event.getOption("type");
@@ -552,6 +554,7 @@ public class listeningevent extends ListenerAdapter {
 		Bot.restartAllEvents();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onModalInteraction(ModalInteractionEvent event) {
 		String modalId = event.getModalId();
@@ -888,6 +891,7 @@ public class listeningevent extends ListenerAdapter {
 		Bot.restartAllEvents();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("listeningevent"))

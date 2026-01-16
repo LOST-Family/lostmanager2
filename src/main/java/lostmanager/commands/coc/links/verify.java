@@ -21,6 +21,7 @@ public class verify extends ListenerAdapter {
 
 	private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("verify"))

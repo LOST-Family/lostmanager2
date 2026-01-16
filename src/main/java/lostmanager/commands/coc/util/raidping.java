@@ -21,6 +21,7 @@ public class raidping extends ListenerAdapter {
 
 	HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> map = null;
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("raidping"))
@@ -168,6 +169,7 @@ public class raidping extends ListenerAdapter {
 		}, "RaidpingCommand-" + event.getUser().getId()).start();
 
 	}
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("raidping"))

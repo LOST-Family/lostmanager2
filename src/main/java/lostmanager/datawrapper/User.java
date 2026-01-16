@@ -33,6 +33,7 @@ public class User {
 		return userid;
 	}
 
+	@SuppressWarnings("null")
 	public boolean isAdmin() {
 		if (isadmin == null) {
 			if (DBUtil.getValueFromSQL("SELECT is_admin FROM users WHERE discord_id = ?", Boolean.class,
@@ -103,6 +104,7 @@ public class User {
 		return clanroles;
 	}
 
+	@SuppressWarnings("null")
 	public String getNickname() {
 		if (nickname == null) {
 			try {

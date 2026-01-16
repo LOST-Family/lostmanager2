@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class deletemessages extends ListenerAdapter {
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("deletemessages"))
@@ -44,14 +45,6 @@ public class deletemessages extends ListenerAdapter {
 
 			MessageChannelUnion channel = event.getChannel();
 
-			if (channel == null) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Der Channel konnte nicht geladen werden.", MessageUtil.EmbedType.ERROR)).queue(message -> {
-							message.delete().queueAfter(10, TimeUnit.SECONDS);
-						});
-				return;
-			}
-
 			channel.getIterableHistory().takeAsync(amount).thenAccept(messages -> {
 				List<Message> recent = new ArrayList<>();
 				List<Message> old = new ArrayList<>();
@@ -79,7 +72,6 @@ public class deletemessages extends ListenerAdapter {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} // Kurze Pause, um sicherzustellen, dass alle Nachrichten gelöscht wurden
 

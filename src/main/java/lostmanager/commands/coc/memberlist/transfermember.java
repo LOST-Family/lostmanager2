@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 public class transfermember extends ListenerAdapter {
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("transfermember"))
@@ -165,6 +166,7 @@ public class transfermember extends ListenerAdapter {
 
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();
@@ -248,6 +250,7 @@ public class transfermember extends ListenerAdapter {
 		}, "TransfermemberButton-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("transfermember"))
@@ -332,6 +335,7 @@ public class transfermember extends ListenerAdapter {
 	/**
 	 * Executes the actual transfer of a player from one clan to another.
 	 */
+	@SuppressWarnings("null")
 	private void executeTransfer(net.dv8tion.jda.api.interactions.InteractionHook hook, Player player, Clan playerclan,
 			Clan newclan, String playertag, String clantag, String newclantag, String title, String approverId) {
 

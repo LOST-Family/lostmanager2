@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class link extends ListenerAdapter {
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("link"))
@@ -72,7 +73,6 @@ public class link extends ListenerAdapter {
 				try {
 					playername = p.getNameAPI();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				if (!p.IsLinked()) {

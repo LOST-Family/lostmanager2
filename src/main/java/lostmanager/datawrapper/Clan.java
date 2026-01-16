@@ -832,6 +832,7 @@ public class Clan {
 		return getRaidJson();
 	}
 
+	@SuppressWarnings("null")
 	public static JSONObject getCWLDayJson(String warTag) {
 		String json;
 

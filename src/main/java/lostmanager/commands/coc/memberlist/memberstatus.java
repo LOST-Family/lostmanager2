@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 public class memberstatus extends ListenerAdapter {
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("memberstatus"))
@@ -135,6 +136,7 @@ public class memberstatus extends ListenerAdapter {
 		}, "MemberstatusCommand-" + event.getUser().getId()).start();
 
 	}
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("memberstatus"))
@@ -178,6 +180,7 @@ public class memberstatus extends ListenerAdapter {
 		}
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();

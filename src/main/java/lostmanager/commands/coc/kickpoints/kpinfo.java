@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class kpinfo extends ListenerAdapter {
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("kpinfo"))
@@ -108,6 +109,7 @@ public class kpinfo extends ListenerAdapter {
 		}, "KpinfoCommand-" + event.getUser().getId()).start();
 
 	}
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("kpinfo"))

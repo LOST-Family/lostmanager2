@@ -1,20 +1,15 @@
 package lostmanager.commands.coc.util;
 
-import java.sql.Timestamp;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import lostmanager.datawrapper.AchievementData;
 import lostmanager.datawrapper.Clan;
 import lostmanager.datawrapper.Player;
-import lostmanager.datawrapper.AchievementData.Type;
 import lostmanager.dbutil.DBManager;
 import lostmanager.util.MessageUtil;
-import lostmanager.util.SeasonUtil;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -23,10 +18,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class wins extends ListenerAdapter {
 
-	// Threshold for determining if a player was linked mid-season (1 day in
-	// milliseconds)
-	private static final long ONE_DAY_MS = 24 * 60 * 60 * 1000L;
-
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("wins"))
@@ -129,6 +121,7 @@ public class wins extends ListenerAdapter {
 		}, "WinsCommand-" + event.getUser().getId()).start();
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("wins"))
@@ -156,6 +149,7 @@ public class wins extends ListenerAdapter {
 	/**
 	 * Get list of available seasons based on data in the database
 	 */
+	@SuppressWarnings("null")
 	private List<Command.Choice> getAvailableSeasons(String input) {
 		List<Command.Choice> choices = new ArrayList<>();
 

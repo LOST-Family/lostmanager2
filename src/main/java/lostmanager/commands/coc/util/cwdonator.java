@@ -25,6 +25,7 @@ public class cwdonator extends ListenerAdapter {
 
 	HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> map = null;
 
+	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		if (!event.getName().equals("cwdonator"))
@@ -176,6 +177,7 @@ public class cwdonator extends ListenerAdapter {
 
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
 		if (!event.getName().equals("cwdonator"))
