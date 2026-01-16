@@ -1,13 +1,14 @@
 {
     "Conditions": [{
         "Cases": [{
+                "Name": "Oct. 2023 Event",
                 "IfMoreThan": {
                     "type": "quantity",
                     "allowed": 0,
                     "subtract": 0,
                     "elements": [{
                         "type": "element",
-                        "id": 52000101,
+                        "id": "52000101",
                         "name": "Ghost Queen"
                     }]
                 }
