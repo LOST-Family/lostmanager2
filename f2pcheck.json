@@ -15,7 +15,7 @@
             {
                 "IfMoreThan": [{
                     "type": "count",
-                    "allowed": 3,
+                    "allowed": 2,
                     "elements": [{
                             "type": "element",
                             "id": 18000099,
