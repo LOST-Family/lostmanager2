@@ -1123,15 +1123,15 @@
     "tier_3": "/home-base/seasonal-defenses/hero-bell/hero-bell-3.png",
     "tier_4": "/home-base/seasonal-defenses/hero-bell/hero-bell-4.png"
   },
-  "102000021":{
+  "102000021": {
     "name": "Hitpoints",
     "icon": "/home-base/seasonal-defenses/hitpoints.png"
   },
-  "102000022":{
+  "102000022": {
     "name": "Hero DPS Boost",
     "icon": "/home-base/seasonal-defenses/damage.png"
   },
-  "102000023":{
+  "102000023": {
     "name": "Hero HP Boost",
     "icon": "/home-base/seasonal-defenses/hitpoints.png"
   },
@@ -1143,15 +1143,15 @@
     "tier_3": "/home-base/seasonal-defenses/bomb-hive/bomb-hive-3.png",
     "tier_4": "/home-base/seasonal-defenses/bomb-hive/bomb-hive-4.png"
   },
-  "102000006":{
+  "102000006": {
     "name": "Hitpoints",
     "icon": "/home-base/seasonal-defenses/hitpoints.png"
   },
-  "102000007":{
+  "102000007": {
     "name": "Damage per Hit",
     "icon": "/home-base/seasonal-defenses/damage.png"
   },
-  "102000008":{
+  "102000008": {
     "name": "Range",
     "icon": "/home-base/seasonal-defenses/range.png"
   },
@@ -1163,15 +1163,15 @@
     "tier_3": "/home-base/seasonal-defenses/light-beam/light-beam-3.png",
     "tier_4": "/home-base/seasonal-defenses/light-beam/light-beam-4.png"
   },
-  "102000015":{
+  "102000015": {
     "name": "Hitpoints",
     "icon": "/home-base/seasonal-defenses/hitpoints.png"
   },
-  "102000016":{
+  "102000016": {
     "name": "Damage per Hit",
     "icon": "/home-base/seasonal-defenses/damage.png"
   },
-  "102000017":{
+  "102000017": {
     "name": "Attack Cooldown",
     "icon": "/home-base/seasonal-defenses/attackspeed.png"
   },
@@ -2091,31 +2091,31 @@
     "icon": ""
   },
   "18000000": {
-    "name": "Mighty Statue",
+    "name": "Mighty Statue (Aug. 2012",
     "icon": "/home-base/decorations/0.png"
   },
   "18000004": {
-    "name": "Pirate Flag",
+    "name": "Pirate Flag (Aug. 2012)",
     "icon": "/home-base/decorations/4.png"
   },
   "18000010": {
-    "name": "Ancient Skull",
+    "name": "Ancient Skull (Aug. 2012)",
     "icon": "/home-base/decorations/10.png"
   },
   "18000033": {
-    "name": "Statue of P.E.K.K.A",
+    "name": "Statue of P.E.K.K.A (Aug. 2012)",
     "icon": "/home-base/decorations/33.png"
   },
   "18000037": {
-    "name": "Barbarian King Statue",
+    "name": "Barbarian King Statue (Aug. 2012)",
     "icon": "/home-base/decorations/37.png"
   },
   "18000041": {
-    "name": "Ancient Barbarian Statue (BB)",
+    "name": "Ancient Barbarian Statue (BB) (May 2017)",
     "icon": "/home-base/decorations/41.png"
   },
   "18000043": {
-    "name": "Archer Queen Statue (BB)",
+    "name": "Archer Queen Statue (BB) (May 2017)",
     "icon": "/home-base/decorations/43.png"
   },
   "18000046": {
@@ -2124,30 +2124,30 @@
     "price": "5€"
   },
   "18000047": {
-    "name": "CWL The Champion Statue",
+    "name": "CWL The Champion Statue (Oct. 2018)",
     "icon": "/home-base/decorations/47.png"
   },
   "18000048": {
-    "name": "CWL The Master Statue",
+    "name": "CWL The Master Statue (Oct. 2018)",
     "icon": "/home-base/decorations/48.png"
   },
   "18000049": {
-    "name": "CWL The Contender Statue",
+    "name": "CWL The Contender Statue (Oct. 2018)",
     "icon": "/home-base/decorations/49.png"
   },
   "18000050": {
-    "name": "CWL The Challenger Statue",
+    "name": "CWL The Challenger Statue (Oct. 2018)",
     "icon": "/home-base/decorations/50.png"
   },
   "18000051": {
-    "name": "CWL The Warrior Statue",
+    "name": "CWL The Warrior Statue (Oct. 2018)",
     "icon": "/home-base/decorations/51.png"
   },
   "18000052": {
     "name": "Golden Hog (Feb. 2019)",
     "icon": "/home-base/decorations/52.png",
     "price": "1€"
-  },  
+  },
   "18000053": {
     "name": "Festive Firecrackers (BB) (Feb. 2019)",
     "icon": "/home-base/decorations/53.png",
@@ -2234,7 +2234,7 @@
     "icon": "/home-base/decorations/72.png"
   },
   "18000073": {
-    "name": "Magic Show Statue",
+    "name": "Magic Show Statue (Feb. 2023)",
     "icon": "/home-base/decorations/73.png",
     "price": "1€"
   },
@@ -2289,31 +2289,31 @@
     "icon": "/home-base/decorations/101.png"
   },
   "18000103": {
-    "name": "Duck Bath (Nov. 2023",
+    "name": "Duck Bath (Nov. 2023)",
     "icon": "/home-base/decorations/103.png"
   },
   "18000109": {
-    "name": "Hog Pen (Nov. 2023",
+    "name": "Hog Pen (Nov. 2023)",
     "icon": "/home-base/decorations/109.png"
   },
   "18000114": {
-    "name": "Cozy Clam (Nov. 2023",
+    "name": "Cozy Clam (Nov. 2023)",
     "icon": "/home-base/decorations/114.png"
   },
   "18000115": {
-    "name": "Gingerbread Bakery (Dec. 2023",
+    "name": "Gingerbread Bakery (Dec. 2023)",
     "icon": "/home-base/decorations/115.png"
   },
   "18000116": {
-    "name": "Jingle Bell (Dec. 2023",
+    "name": "Jingle Bell (Dec. 2023)",
     "icon": "/home-base/decorations/116.png"
   },
   "18000117": {
-    "name": "Barbarian Santa (Dec. 2023",
+    "name": "Barbarian Santa (Dec. 2023)",
     "icon": "/home-base/decorations/117.png"
   },
   "18000118": {
-    "name": "Skeleton Sock (Dec. 2023",
+    "name": "Skeleton Sock (Dec. 2023)",
     "icon": "/home-base/decorations/118.png"
   },
   "18000119": {
@@ -4283,499 +4283,623 @@
   },
   "82000000": {
     "name": "Brown Fence",
-    "icon": "/home-base/clancapital/0.png"
+    "icon": "/home-base/clancapital/0.png",
+    "index": "0"
   },
   "82000001": {
     "name": "Terrace",
-    "icon": "/home-base/clancapital/1.png"
+    "icon": "/home-base/clancapital/1.png",
+    "index": "1"
   },
   "82000002": {
     "name": "Stone Floor",
-    "icon": "/home-base/clancapital/2.png"
+    "icon": "/home-base/clancapital/2.png",
+    "index": "2"
   },
   "82000003": {
     "name": "Checkered Floor",
-    "icon": "/home-base/clancapital/3.png"
+    "icon": "/home-base/clancapital/3.png",
+    "index": "3"
   },
   "82000004": {
     "name": "Gold Floor",
-    "icon": "/home-base/clancapital/4.png"
+    "icon": "/home-base/clancapital/4.png",
+    "index": "4"
   },
   "82000005": {
     "name": "Snow",
-    "icon": "/home-base/clancapital/5.png"
+    "icon": "/home-base/clancapital/5.png",
+    "index": "73"
   },
   "82000006": {
     "name": "Gingerbread Floor",
-    "icon": "/home-base/clancapital/6.png"
+    "icon": "/home-base/clancapital/6.png",
+    "index": "77"
   },
   "82000007": {
     "name": "Grass Ground",
-    "icon": "/home-base/clancapital/7.png"
+    "icon": "/home-base/clancapital/7.png",
+    "index": "5"
   },
   "82000008": {
     "name": "Orange Classic Roof",
-    "icon": "/home-base/clancapital/8.png"
+    "icon": "/home-base/clancapital/8.png",
+    "index": "6"
   },
   "82000009": {
     "name": "Blue Classic Roof",
-    "icon": "/home-base/clancapital/9.png"
+    "icon": "/home-base/clancapital/9.png",
+    "index": "7"
   },
   "82000010": {
     "name": "Black Classic Roof",
-    "icon": "/home-base/clancapital/10.png"
+    "icon": "/home-base/clancapital/10.png",
+    "index": "8"
   },
   "82000011": {
     "name": "Red Classic Roof",
-    "icon": "/home-base/clancapital/11.png"
+    "icon": "/home-base/clancapital/11.png",
+    "index": "9"
   },
   "82000013": {
     "name": "Thatched Roof",
-    "icon": "/home-base/clancapital/13.png"
+    "icon": "/home-base/clancapital/13.png",
+    "index": "10"
   },
   "82000014": {
     "name": "Gable Thatched Roof",
-    "icon": "/home-base/clancapital/14.png"
+    "icon": "/home-base/clancapital/14.png",
+    "index": "11"
   },
   "82000015": {
     "name": "Orange Square Roof",
-    "icon": "/home-base/clancapital/15.png"
+    "icon": "/home-base/clancapital/15.png",
+    "index": "12"
   },
   "82000016": {
     "name": "Blue Square Roof",
-    "icon": "/home-base/clancapital/16.png"
+    "icon": "/home-base/clancapital/16.png",
+    "index": "13"
   },
   "82000017": {
     "name": "Green Square Roof",
-    "icon": "/home-base/clancapital/17.png"
+    "icon": "/home-base/clancapital/17.png",
+    "index": "14"
   },
   "82000019": {
     "name": "Brown Tent Roof",
-    "icon": "/home-base/clancapital/19.png"
+    "icon": "/home-base/clancapital/19.png",
+    "index": "15"
   },
   "82000020": {
     "name": "Red Tent Roof",
-    "icon": "/home-base/clancapital/20.png"
+    "icon": "/home-base/clancapital/20.png",
+    "index": "16"
   },
   "82000021": {
     "name": "Yellow Tent Roof",
-    "icon": "/home-base/clancapital/21.png"
+    "icon": "/home-base/clancapital/21.png",
+    "index": "17"
   },
   "82000022": {
     "name": "Blue Tent Roof",
-    "icon": "/home-base/clancapital/22.png"
+    "icon": "/home-base/clancapital/22.png",
+    "index": "18"
   },
   "82000023": {
     "name": "Blue Cross Roof",
-    "icon": "/home-base/clancapital/23.png"
+    "icon": "/home-base/clancapital/23.png",
+    "index": "19"
   },
   "82000024": {
     "name": "Green Cross Roof",
-    "icon": "/home-base/clancapital/24.png"
+    "icon": "/home-base/clancapital/24.png",
+    "index": "20"
   },
   "82000025": {
     "name": "Red Cross Roof",
-    "icon": "/home-base/clancapital/25.png"
+    "icon": "/home-base/clancapital/25.png",
+    "index": "21"
   },
   "82000026": {
     "name": "Orange Castle Roof",
-    "icon": "/home-base/clancapital/26.png"
+    "icon": "/home-base/clancapital/26.png",
+    "index": "22"
   },
   "82000027": {
     "name": "Blue Castle Roof",
-    "icon": "/home-base/clancapital/27.png"
+    "icon": "/home-base/clancapital/27.png",
+    "index": "23"
   },
   "82000028": {
     "name": "Black Castle Roof",
-    "icon": "/home-base/clancapital/28.png"
+    "icon": "/home-base/clancapital/28.png",
+    "index": "24"
   },
   "82000029": {
     "name": "Red Castle Roof",
-    "icon": "/home-base/clancapital/29.png"
+    "icon": "/home-base/clancapital/29.png",
+    "index": "25"
   },
   "82000030": {
     "name": "Yellow Castle Roof",
-    "icon": "/home-base/clancapital/30.png"
+    "icon": "/home-base/clancapital/30.png",
+    "index": "26"
   },
   "82000031": {
     "name": "Gable Brick Roof (Type 1)",
-    "icon": "/home-base/clancapital/31.png"
+    "icon": "/home-base/clancapital/31.png",
+    "index": "27"
   },
   "82000032": {
     "name": "Gable Brick Roof (Type 2)",
-    "icon": "/home-base/clancapital/32.png"
+    "icon": "/home-base/clancapital/32.png",
+    "index": "28"
   },
   "82000033": {
     "name": "Red Pagoda Roof",
-    "icon": "/home-base/clancapital/33.png"
+    "icon": "/home-base/clancapital/33.png",
+    "index": "29"
   },
   "82000034": {
     "name": "Blue Pagoda Roof",
-    "icon": "/home-base/clancapital/34.png"
+    "icon": "/home-base/clancapital/34.png",
+    "index": "30"
   },
   "82000035": {
     "name": "Black Pagoda Roof",
-    "icon": "/home-base/clancapital/35.png"
+    "icon": "/home-base/clancapital/35.png",
+    "index": "31"
   },
   "82000036": {
     "name": "Green Pagoda Roof",
-    "icon": "/home-base/clancapital/36.png"
+    "icon": "/home-base/clancapital/36.png",
+    "index": "32"
   },
   "82000037": {
     "name": "White Pagoda Roof",
-    "icon": "/home-base/clancapital/37.png"
+    "icon": "/home-base/clancapital/37.png",
+    "index": "33"
   },
   "82000038": {
     "name": "Stone Roof",
-    "icon": "/home-base/clancapital/38.png"
+    "icon": "/home-base/clancapital/38.png",
+    "index": "34"
   },
   "82000039": {
     "name": "Grass Roof (Type 1)",
-    "icon": "/home-base/clancapital/39.png"
+    "icon": "/home-base/clancapital/39.png",
+    "index": "35"
   },
   "82000040": {
     "name": "Grass Roof (Type 2)",
-    "icon": "/home-base/clancapital/40.png"
+    "icon": "/home-base/clancapital/40.png",
+    "index": "36"
   },
   "82000041": {
     "name": "White Windmill Roof",
-    "icon": "/home-base/clancapital/41.png"
+    "icon": "/home-base/clancapital/41.png",
+    "index": "37"
   },
   "82000042": {
     "name": "Blue Windmill Roof",
-    "icon": "/home-base/clancapital/42.png"
+    "icon": "/home-base/clancapital/42.png",
+    "index": "38"
   },
   "82000043": {
     "name": "Orange Windmill Roof",
-    "icon": "/home-base/clancapital/43.png"
+    "icon": "/home-base/clancapital/43.png",
+    "index": "39"
   },
   "82000044": {
     "name": "Red Windmill Roof",
-    "icon": "/home-base/clancapital/44.png"
+    "icon": "/home-base/clancapital/44.png",
+    "index": "40"
   },
   "82000045": {
     "name": "Green Windmill Roof",
-    "icon": "/home-base/clancapital/45.png"
+    "icon": "/home-base/clancapital/45.png",
+    "index": "41"
   },
   "82000046": {
     "name": "Gingerbread Roof",
-    "icon": "/home-base/clancapital/46.png"
+    "icon": "/home-base/clancapital/46.png",
+    "index": "75"
   },
   "82000047": {
     "name": "Winter Roof",
-    "icon": "/home-base/clancapital/47.png"
+    "icon": "/home-base/clancapital/47.png",
+    "index": "42"
   },
   "82000048": {
     "name": "Classic Walls",
-    "icon": "/home-base/clancapital/48.png"
+    "icon": "/home-base/clancapital/48.png",
+    "index": "43"
   },
   "82000049": {
     "name": "Stone Walls",
-    "icon": "/home-base/clancapital/49.png"
+    "icon": "/home-base/clancapital/49.png",
+    "index": "44"
   },
   "82000050": {
     "name": "Dark Stone Walls",
-    "icon": "/home-base/clancapital/50.png"
+    "icon": "/home-base/clancapital/50.png",
+    "index": "45"
   },
   "82000051": {
     "name": "Stilt Walls",
-    "icon": "/home-base/clancapital/51.png"
+    "icon": "/home-base/clancapital/51.png",
+    "index": "46"
   },
   "82000052": {
     "name": "Concentric Diamond Walls",
-    "icon": "/home-base/clancapital/52.png"
+    "icon": "/home-base/clancapital/52.png",
+    "index": "47"
   },
   "82000053": {
     "name": "Thatched Walls",
-    "icon": "/home-base/clancapital/53.png"
+    "icon": "/home-base/clancapital/53.png",
+    "index": "48"
   },
   "82000054": {
     "name": "Grass Walls",
-    "icon": "/home-base/clancapital/54.png"
+    "icon": "/home-base/clancapital/54.png",
+    "index": "49"
   },
   "82000055": {
     "name": "Gingerbread Walls",
-    "icon": "/home-base/clancapital/55.png"
+    "icon": "/home-base/clancapital/55.png",
+    "index": "76"
   },
   "82000056": {
     "name": "Winter Walls",
-    "icon": "/home-base/clancapital/56.png"
+    "icon": "/home-base/clancapital/56.png",
+    "index": "50"
   },
   "82000057": {
     "name": "Igloo Walls",
-    "icon": "/home-base/clancapital/57.png"
+    "icon": "/home-base/clancapital/57.png",
+    "index": "72"
   },
   "82000058": {
     "name": "Barrel",
-    "icon": "/home-base/clancapital/58.png"
+    "icon": "/home-base/clancapital/58.png",
+    "index": "51"
   },
   "82000059": {
     "name": "Practice Target",
-    "icon": "/home-base/clancapital/59.png"
+    "icon": "/home-base/clancapital/59.png",
+    "index": "52"
   },
   "82000060": {
     "name": "Axe",
-    "icon": "/home-base/clancapital/60.png"
+    "icon": "/home-base/clancapital/60.png",
+    "index": "53"
   },
   "82000061": {
     "name": "Anvil",
-    "icon": "/home-base/clancapital/61.png"
+    "icon": "/home-base/clancapital/61.png",
+    "index": "54"
   },
   "82000062": {
     "name": "Bomb",
-    "icon": "/home-base/clancapital/62.png"
+    "icon": "/home-base/clancapital/62.png",
+    "index": "55"
   },
   "82000063": {
     "name": "Sword Rack",
-    "icon": "/home-base/clancapital/63.png"
+    "icon": "/home-base/clancapital/63.png",
+    "index": "56"
   },
   "82000064": {
     "name": "Campfire",
-    "icon": "/home-base/clancapital/64.png"
+    "icon": "/home-base/clancapital/64.png",
+    "index": "57"
   },
   "82000065": {
     "name": "Tree",
-    "icon": "/home-base/clancapital/65.png"
+    "icon": "/home-base/clancapital/65.png",
+    "index": "58"
   },
   "82000066": {
     "name": "Capital Symbol",
-    "icon": "/home-base/clancapital/66.png"
+    "icon": "/home-base/clancapital/66.png",
+    "index": "59"
   },
   "82000067": {
     "name": "Gingerbread Archer",
-    "icon": "/home-base/clancapital/67.png"
+    "icon": "/home-base/clancapital/67.png",
+    "index": "78"
   },
   "82000068": {
     "name": "Candy Cane",
-    "icon": "/home-base/clancapital/68.png"
+    "icon": "/home-base/clancapital/68.png",
+    "index": "79"
   },
   "82000070": {
     "name": "Snowman",
-    "icon": "/home-base/clancapital/70.png"
+    "icon": "/home-base/clancapital/70.png",
+    "index": "74"
   },
   "82000071": {
     "name": "Flamingo",
-    "icon": "/home-base/clancapital/71.png"
+    "icon": "/home-base/clancapital/71.png",
+    "index": "60"
   },
   "82000078": {
     "name": "Black Capital Symbol Roof",
-    "icon": "/home-base/clancapital/78.png"
+    "icon": "/home-base/clancapital/78.png",
+    "index": "61"
   },
   "82000079": {
     "name": "Fancy Walls",
-    "icon": "/home-base/clancapital/79.png"
+    "icon": "/home-base/clancapital/79.png",
+    "index": "62"
   },
   "82000080": {
     "name": "Barbarian Statue",
-    "icon": "/home-base/clancapital/80.png"
+    "icon": "/home-base/clancapital/80.png",
+    "index": "63"
   },
   "82000081": {
     "name": "Capital Symbol Roof",
-    "icon": "/home-base/clancapital/81.png"
+    "icon": "/home-base/clancapital/81.png",
+    "index": "64"
   },
   "82000082": {
     "name": "Clan Symbol Roof",
-    "icon": "/home-base/clancapital/82.png"
+    "icon": "/home-base/clancapital/82.png",
+    "index": "65"
   },
   "82000083": {
     "name": "Stone",
-    "icon": "/home-base/clancapital/83.png"
+    "icon": "/home-base/clancapital/83.png",
+    "index": "66"
   },
   "82000084": {
     "name": "White Fence",
-    "icon": "/home-base/clancapital/84.png"
+    "icon": "/home-base/clancapital/84.png",
+    "index": "67"
   },
   "82000085": {
     "name": "Igloo Roof",
-    "icon": "/home-base/clancapital/85.png"
+    "icon": "/home-base/clancapital/85.png",
+    "index": "71"
   },
   "82000086": {
     "name": "Gold",
-    "icon": "/home-base/clancapital/86.png"
+    "icon": "/home-base/clancapital/86.png",
+    "index": "68"
   },
   "82000087": {
     "name": "Goblin Roof",
-    "icon": "/home-base/clancapital/87.png"
+    "icon": "/home-base/clancapital/87.png",
+    "index": "80"
   },
   "82000088": {
     "name": "Goblin Walls",
-    "icon": "/home-base/clancapital/88.png"
+    "icon": "/home-base/clancapital/88.png",
+    "index": "82"
   },
   "82000089": {
     "name": "Goblin Spears",
-    "icon": "/home-base/clancapital/89.png"
+    "icon": "/home-base/clancapital/89.png",
+    "index": "81"
   },
   "82000090": {
     "name": "Goblin Ground",
-    "icon": "/home-base/clancapital/90.png"
+    "icon": "/home-base/clancapital/90.png",
+    "index": "83"
   },
   "82000092": {
     "name": "White Chess Walls",
-    "icon": "/home-base/clancapital/92.png"
+    "icon": "/home-base/clancapital/92.png",
+    "index": "84"
   },
   "82000094": {
     "name": "Chess Floor",
-    "icon": "/home-base/clancapital/94.png"
+    "icon": "/home-base/clancapital/94.png",
+    "index": "85"
   },
   "82000108": {
     "name": "Halloween Roof",
-    "icon": "/home-base/clancapital/108.png"
+    "icon": "/home-base/clancapital/108.png",
+    "index": "86"
   },
   "82000109": {
     "name": "Dinosaur",
-    "icon": "/home-base/clancapital/109.png"
+    "icon": "/home-base/clancapital/109.png",
+    "index": "87"
   },
   "82000110": {
     "name": "Bakery Roof",
-    "icon": "/home-base/clancapital/110.png"
+    "icon": "/home-base/clancapital/110.png",
+    "index": "88"
   },
   "82000111": {
     "name": "Bakery Decoration",
-    "icon": "/home-base/clancapital/111.png"
+    "icon": "/home-base/clancapital/111.png",
+    "index": "91"
   },
   "82000112": {
     "name": "Bakery Walls",
-    "icon": "/home-base/clancapital/112.png"
+    "icon": "/home-base/clancapital/112.png",
+    "index": "89"
   },
   "82000113": {
     "name": "Bakery Ground",
-    "icon": "/home-base/clancapital/113.png"
+    "icon": "/home-base/clancapital/113.png",
+    "index": "90"
   },
   "82000114": {
     "name": "Lunar New Year 2024 Roof",
-    "icon": "/home-base/clancapital/114.png"
+    "icon": "/home-base/clancapital/114.png",
+    "index": "92"
   },
   "82000115": {
     "name": "Lunar New Year 2024 Sign",
-    "icon": "/home-base/clancapital/115.png"
+    "icon": "/home-base/clancapital/115.png",
+    "index": "95"
   },
   "82000116": {
     "name": "Lunar New Year 2024 Walls",
-    "icon": "/home-base/clancapital/116.png"
+    "icon": "/home-base/clancapital/116.png",
+    "index": "93"
   },
   "82000117": {
     "name": "Lunar New Year 2024 Ground",
-    "icon": "/home-base/clancapital/117.png"
+    "icon": "/home-base/clancapital/117.png",
+    "index": "94"
   },
   "82000120": {
     "name": "Football Roof",
-    "icon": "/home-base/clancapital/120.png"
+    "icon": "/home-base/clancapital/120.png",
+    "index": "96"
   },
   "82000121": {
     "name": "Football Decoration",
-    "icon": "/home-base/clancapital/121.png"
+    "icon": "/home-base/clancapital/121.png",
+    "index": "99"
   },
   "82000122": {
     "name": "Football Walls",
-    "icon": "/home-base/clancapital/122.png"
+    "icon": "/home-base/clancapital/122.png",
+    "index": "97"
   },
   "82000123": {
     "name": "Football Ground",
-    "icon": "/home-base/clancapital/123.png"
+    "icon": "/home-base/clancapital/123.png",
+    "index": "98"
   },
   "82000124": {
     "name": "Torch",
-    "icon": "/home-base/clancapital/124.png"
+    "icon": "/home-base/clancapital/124.png",
+    "index": "69"
   },
   "82000125": {
     "name": "Sports Track Ground",
-    "icon": "/home-base/clancapital/125.png"
+    "icon": "/home-base/clancapital/125.png",
+    "index": "70"
   },
   "82000126": {
     "name": "Anime Roof",
-    "icon": "/home-base/clancapital/126.png"
+    "icon": "/home-base/clancapital/126.png",
+    "index": "100"
   },
   "82000127": {
     "name": "Vending Machine",
-    "icon": "/home-base/clancapital/127.png"
+    "icon": "/home-base/clancapital/127.png",
+    "index": "103"
   },
   "82000128": {
     "name": "Anime Walls",
-    "icon": "/home-base/clancapital/128.png"
+    "icon": "/home-base/clancapital/128.png",
+    "index": "101"
   },
   "82000129": {
     "name": "Anime Ground",
-    "icon": "/home-base/clancapital/129.png"
+    "icon": "/home-base/clancapital/129.png",
+    "index": "102"
   },
   "82000130": {
     "name": "TTRPG Roof",
-    "icon": "/home-base/clancapital/130.png"
+    "icon": "/home-base/clancapital/130.png",
+    "index": "104"
   },
   "82000131": {
     "name": "Dice",
-    "icon": "/home-base/clancapital/131.png"
+    "icon": "/home-base/clancapital/131.png",
+    "index": "105"
   },
   "82000132": {
     "name": "Cyan Crystal Roof",
-    "icon": "/home-base/clancapital/132.png"
+    "icon": "/home-base/clancapital/132.png",
+    "index": "106"
   },
   "82000133": {
     "name": "Jack-o'Lantern",
-    "icon": "/home-base/clancapital/133.png"
+    "icon": "/home-base/clancapital/133.png",
+    "index": "107"
   },
   "82000134": {
     "name": "Toyshop Roof",
-    "icon": "/home-base/clancapital/134.png"
+    "icon": "/home-base/clancapital/134.png",
+    "index": "108"
   },
   "82000135": {
     "name": "Nutcracker",
-    "icon": "/home-base/clancapital/135.png"
+    "icon": "/home-base/clancapital/135.png",
+    "index": "109"
   },
   "82000136": {
     "name": "Lunar New Year 2025 Roof",
-    "icon": "/home-base/clancapital/136.png"
+    "icon": "/home-base/clancapital/136.png",
+    "index": "110"
   },
   "82000137": {
     "name": "Snake",
-    "icon": "/home-base/clancapital/137.png"
+    "icon": "/home-base/clancapital/137.png",
+    "index": "111"
   },
   "82000138": {
     "name": "Tombstone",
-    "icon": "/home-base/clancapital/138.png"
+    "icon": "/home-base/clancapital/138.png",
+    "index": "113"
   },
   "82000139": {
     "name": "ClashaMania Ground",
-    "icon": "/home-base/clancapital/139.png"
+    "icon": "/home-base/clancapital/139.png",
+    "index": "112"
   },
   "82000140": {
     "name": "Dark Days Walls",
-    "icon": "/home-base/clancapital/140.png"
+    "icon": "/home-base/clancapital/140.png",
+    "index": "114"
   },
   "82000141": {
     "name": "Dark Days Ground",
-    "icon": "/home-base/clancapital/141.png"
+    "icon": "/home-base/clancapital/141.png",
+    "index": "115"
   },
   "82000142": {
     "name": "Clash-A-Rama Roof",
-    "icon": "/home-base/clancapital/142.png"
+    "icon": "/home-base/clancapital/142.png",
+    "index": "116"
   },
   "82000143": {
     "name": "Cartoon Barrel",
-    "icon": "/home-base/clancapital/143.png"
+    "icon": "/home-base/clancapital/143.png",
+    "index": "119"
   },
   "82000144": {
     "name": "Clash-A-Rama Walls",
-    "icon": "/home-base/clancapital/144.png"
+    "icon": "/home-base/clancapital/144.png",
+    "index": "117"
   },
   "82000145": {
     "name": "Clash-A-Rama Ground",
-    "icon": "/home-base/clancapital/145.png"
+    "icon": "/home-base/clancapital/145.png",
+    "index": "118"
   },
   "82000146": {
     "name": "Cosmic Rock Ground",
-    "icon": "/home-base/clancapital/146.png"
+    "icon": "/home-base/clancapital/146.png",
+    "index": "121"
   },
   "82000147": {
     "name": "Cosmic Rock Walls",
-    "icon": "/home-base/clancapital/147.png"
+    "icon": "/home-base/clancapital/147.png",
+    "index": "120"
   },
   "82000148": {
     "name": "Meltdown Barrel",
-    "icon": "/home-base/clancapital/148.png"
+    "icon": "/home-base/clancapital/148.png",
+    "index": "123"
   },
   "82000149": {
     "name": "Meltdown Roof",
-    "icon": "/home-base/clancapital/149.png"
+    "icon": "/home-base/clancapital/149.png",
+    "index": "122"
   },
   "26000000": {
     "name": "Lightning Spell",
@@ -4864,5 +4988,5 @@
   "107000001": {
     "name": "Smasher",
     "icon": "/home-base/guardians/smasher.png"
-  }  
+  }
 }
