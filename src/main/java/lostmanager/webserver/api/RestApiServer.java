@@ -6,6 +6,9 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -22,6 +25,7 @@ import lostmanager.webserver.api.dto.ClanDTO;
 import lostmanager.webserver.api.dto.PlayerDTO;
 import lostmanager.webserver.api.dto.UserDTO;
 import lostmanager.webserver.api.dto.KickpointReasonDTO;
+import lostmanager.webserver.api.dto.SideclanDTO;
 
 import java.util.concurrent.Executors;
 
@@ -55,6 +59,7 @@ public class RestApiServer {
         // Note: More specific paths should be registered before more general paths
         server.createContext("/api/clans/", new ClanSpecificHandler());
         server.createContext("/api/clans", new ClansHandler());
+        server.createContext("/api/sideclans", new SideclansHandler());
         server.createContext("/api/players/", new PlayerHandler());
         server.createContext("/api/users/", new UserHandler());
         server.createContext("/api/guild", new GuildHandler());
@@ -63,6 +68,59 @@ public class RestApiServer {
         server.start();
         
         System.out.println("REST API Server started on port " + port);
+    }
+
+    /**
+     * Handler for GET /api/sideclans
+     * Returns all sideclans from DB table `sideclans` with fields
+     * `clan_tag`, `name`, `belongs_to`.
+     */
+    private class SideclansHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                addCorsHeaders(exchange);
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if (!"GET".equals(exchange.getRequestMethod())) {
+                sendResponse(exchange, 405, "{\"error\":\"Method Not Allowed\"}");
+                return;
+            }
+
+            if (!validateApiToken(exchange)) {
+                sendResponse(exchange, 401, "{\"error\":\"Unauthorized - Invalid or missing API token\"}");
+                return;
+            }
+
+            try {
+                String sql = "SELECT clan_tag, name, belongs_to FROM sideclans ORDER BY name ASC";
+                List<SideclanDTO> list = new ArrayList<>();
+
+                try (PreparedStatement pstmt = lostmanager.dbutil.Connection.getConnection().prepareStatement(sql)) {
+                    try (ResultSet rs = pstmt.executeQuery()) {
+                        while (rs.next()) {
+                            String tag = rs.getString("clan_tag");
+                            String name = rs.getString("name");
+                            String belongsTo = rs.getString("belongs_to");
+                            list.add(new SideclanDTO(tag, name, belongsTo));
+                        }
+                    }
+                }
+
+                String json = objectMapper.writeValueAsString(list);
+                sendJsonResponse(exchange, 200, json);
+            } catch (SQLException e) {
+                System.err.println("SQL error in SideclansHandler: " + e.getMessage());
+                e.printStackTrace();
+                sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");
+            } catch (Exception e) {
+                System.err.println("Error in SideclansHandler: " + e.getMessage());
+                e.printStackTrace();
+                sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");
+            }
+        }
     }
     
     public void stop() {

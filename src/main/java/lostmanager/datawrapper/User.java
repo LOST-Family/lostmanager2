@@ -33,19 +33,12 @@ public class User {
 		return userid;
 	}
 
-	@SuppressWarnings("null")
 	public boolean isAdmin() {
 		if (isadmin == null) {
 			if (DBUtil.getValueFromSQL("SELECT is_admin FROM users WHERE discord_id = ?", Boolean.class,
 					userid) == null) {
-				try {
-					DBUtil.executeUpdate("INSERT INTO users (discord_id, name, is_admin) VALUES (?, ?, ?)", userid,
-							Bot.getJda().getGuildById(Bot.guild_id).retrieveMemberById(userid).submit().get()
-									.getEffectiveName(),
-							false);
-				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
-				}
+				DBUtil.executeUpdate("INSERT INTO users (discord_id, is_admin) VALUES (?, ?)", userid,
+						false);
 			}
 			if (DBUtil.getValueFromSQL("SELECT is_admin FROM users WHERE discord_id = ?", Boolean.class, userid)) {
 				isadmin = true;
