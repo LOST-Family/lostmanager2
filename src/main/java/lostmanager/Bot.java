@@ -40,12 +40,13 @@ import lostmanager.commands.coc.memberlist.removemember;
 import lostmanager.commands.coc.memberlist.transfermember;
 import lostmanager.commands.coc.util.checkroles;
 import lostmanager.commands.coc.util.cwdonator;
-import lostmanager.commands.coc.util.jsonupload;
+import lostmanager.commands.coc.util.jsonutils.jsonupload;
 import lostmanager.commands.coc.util.listeningevent;
 import lostmanager.commands.coc.util.raidping;
 
 import lostmanager.commands.coc.util.setnick;
-import lostmanager.commands.coc.util.stats;
+import lostmanager.commands.coc.util.jsonutils.f2pcheck;
+import lostmanager.commands.coc.util.jsonutils.stats;
 import lostmanager.commands.coc.util.wins;
 import lostmanager.commands.discord.admin.deletemessages;
 import lostmanager.commands.discord.admin.reactionsrole;
@@ -463,7 +464,10 @@ public class Bot extends ListenerAdapter {
 											.addChoice("Equips", "Equips").addChoice("House Parts", "House Parts")
 											.addChoice("Skins", "Skins").addChoice("Skins (BB)", "Skins (BB)")
 											.addChoice("Sceneries", "Sceneries")
-											.addChoice("Sceneries (BB)", "Sceneries (BB)"))
+											.addChoice("Sceneries (BB)", "Sceneries (BB)")),
+
+							Commands.slash("f2pcheck", "Check ob ein Spieler F2P ist.")
+									.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
 
 					).queue();
 		}
@@ -509,6 +513,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new wins());
 		classes.add(new jsonupload());
 		classes.add(new stats());
+		classes.add(new f2pcheck());
 
 		return classes.toArray();
 	}
@@ -629,44 +634,44 @@ public class Bot extends ListenerAdapter {
 
 			// Check based on event type
 			switch (le.getListeningType()) {
-			case CS:
-				// Clan Games events should fire regardless (they check historical data)
-				return true;
+				case CS:
+					// Clan Games events should fire regardless (they check historical data)
+					return true;
 
-			case CW:
-				// Check if clan war is actually active
-				Boolean cwActive = clan.isCWActive();
-				if (cwActive == null || !cwActive) {
-					System.out.println("CW event validation: No active clan war");
-					return false;
-				}
-				return true;
+				case CW:
+					// Check if clan war is actually active
+					Boolean cwActive = clan.isCWActive();
+					if (cwActive == null || !cwActive) {
+						System.out.println("CW event validation: No active clan war");
+						return false;
+					}
+					return true;
 
-			case CWLDAY:
-				// Check if CWL is active
-				Boolean cwlActive = clan.isCWLActive();
-				if (cwlActive == null || !cwlActive) {
-					System.out.println("CWL event validation: No active CWL");
-					return false;
-				}
-				return true;
+				case CWLDAY:
+					// Check if CWL is active
+					Boolean cwlActive = clan.isCWLActive();
+					if (cwlActive == null || !cwlActive) {
+						System.out.println("CWL event validation: No active CWL");
+						return false;
+					}
+					return true;
 
-			case RAID:
-				// Check if raid is active
-				boolean raidActive = clan.RaidActive();
-				if (!raidActive) {
-					System.out.println("Raid event validation: No active raid");
-					return false;
-				}
-				return true;
+				case RAID:
+					// Check if raid is active
+					boolean raidActive = clan.RaidActive();
+					if (!raidActive) {
+						System.out.println("Raid event validation: No active raid");
+						return false;
+					}
+					return true;
 
-			case FIXTIMEINTERVAL:
-				// Fixed time events should always fire
-				return true;
+				case FIXTIMEINTERVAL:
+					// Fixed time events should always fire
+					return true;
 
-			default:
-				// Unknown types should fire (conservative approach)
-				return true;
+				default:
+					// Unknown types should fire (conservative approach)
+					return true;
 			}
 		} catch (Exception e) {
 			// If validation fails, log but allow event to fire (conservative approach)
@@ -1167,7 +1172,8 @@ public class Bot extends ListenerAdapter {
 			String usersql = "SELECT discord_id FROM users";
 			for (String id : DBUtil.getArrayListFromSQL(usersql, String.class)) {
 				try {
-					DBUtil.executeUpdate("UPDATE users SET name = ? WHERE discord_id = ?", getJda().getGuildById(guild_id).retrieveMemberById(id).submit().get().getEffectiveName(),
+					DBUtil.executeUpdate("UPDATE users SET name = ? WHERE discord_id = ?",
+							getJda().getGuildById(guild_id).retrieveMemberById(id).submit().get().getEffectiveName(),
 							id);
 				} catch (Exception e) {
 					System.out.println("Fehler beim Namenupdate von Tag " + id);

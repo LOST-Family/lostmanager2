@@ -1,4 +1,4 @@
-package lostmanager.commands.coc.util;
+package lostmanager.commands.coc.util.jsonutils;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
