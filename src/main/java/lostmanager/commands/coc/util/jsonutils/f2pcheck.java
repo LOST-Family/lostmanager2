@@ -3,6 +3,8 @@ package lostmanager.commands.coc.util.jsonutils;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,24 +20,6 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class f2pcheck extends ListenerAdapter {
-
-    public static class DataEntry {
-        private String id;
-        private int count;
-
-        public DataEntry(String id, int count) {
-            this.id = id;
-            this.count = count;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public int getCount() {
-            return count;
-        }
-    }
 
     @SuppressWarnings("null")
     @Override
@@ -86,14 +70,25 @@ public class f2pcheck extends ListenerAdapter {
                     String jsonStr = rs.getString("json");
                     JSONObject json = new JSONObject(jsonStr);
 
-                    List<DataEntry> dataEntries = new ArrayList<>();
-                    collectDataIds(json, dataEntries);
+                    // Collect data into Map for O(1) access
+                    Map<String, Integer> playerData = new java.util.HashMap<>();
+                    collectDataIds(json, playerData);
 
-                    // For verification, showing the count of items found
-                    event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-                            "Daten geladen. " + dataEntries.size() + " Einträge gefunden.",
-                            MessageUtil.EmbedType.SUCCESS))
-                            .queue();
+                    // Run F2P Check
+                    F2PCheckAlgorithm.CheckResult result = F2PCheckAlgorithm.check(playerData);
+                    Player player = new Player(playerTag);
+                    if (result.isF2P()) {
+                        event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+                                "Dieser Spieler " + player.getInfoStringAPI() + " ist **Free to Play** (F2P) konform!",
+                                MessageUtil.EmbedType.SUCCESS))
+                                .queue();
+                    } else {
+                        event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+                                "Dieser Spieler " + player.getInfoStringAPI() + " ist **NICHT F2P**.\nGrund: "
+                                        + result.getReason(),
+                                MessageUtil.EmbedType.ERROR))
+                                .queue();
+                    }
                 }
             } catch (Exception e) {
                 event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
@@ -105,24 +100,24 @@ public class f2pcheck extends ListenerAdapter {
         }, "F2PCheckCommand-" + event.getUser().getId()).start();
     }
 
-    private void collectDataIds(Object obj, List<DataEntry> entries) {
+    private void collectDataIds(Object obj, Map<String, Integer> dataMap) {
         if (obj instanceof JSONObject) {
             JSONObject jsonObject = (JSONObject) obj;
             if (jsonObject.has("data")) {
                 String dataId = jsonObject.get("data").toString();
                 int count = jsonObject.optInt("cnt", 1);
-                entries.add(new DataEntry(dataId, count));
+                dataMap.put(dataId, dataMap.getOrDefault(dataId, 0) + count);
             }
 
             // Recursively check all keys
             for (String key : jsonObject.keySet()) {
                 Object value = jsonObject.get(key);
-                collectDataIds(value, entries);
+                collectDataIds(value, dataMap);
             }
         } else if (obj instanceof JSONArray) {
             JSONArray jsonArray = (JSONArray) obj;
             for (int i = 0; i < jsonArray.length(); i++) {
-                collectDataIds(jsonArray.get(i), entries);
+                collectDataIds(jsonArray.get(i), dataMap);
             }
         }
     }
