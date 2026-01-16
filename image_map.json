@@ -2159,7 +2159,7 @@
   "18000052": {
     "name": "Golden Hog (Feb. 2019)",
     "icon": "/home-base/decorations/52.png",
-    "price": "1€",
+    "price": "10€",
     "index": "14"
   },
   "18000053": {
@@ -2297,6 +2297,7 @@
   "18000089": {
     "name": "Goblin Pit (Jul. 2023)",
     "icon": "/home-base/decorations/89.png",
+    "price": "10€",
     "index": "37"
   },
   "18000090": {

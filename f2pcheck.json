@@ -1,0 +1,41 @@
+{
+    "Conditions": [{
+        "Cases": [{
+                "Allowed": [{
+                    "type": "element",
+                    "id": 124636
+                }]
+            },
+            {
+                "Allowed": [{
+                        "type": "element",
+                        "id": 124637
+                    },
+                    {
+                        "type": "element",
+                        "id": 124638
+                    },
+                    {
+                        "type": "element",
+                        "id": 124639
+                    },
+                    {
+                        "type": "count",
+                        "allowed": 3,
+                        "subtract": 1,
+                        "elements": [{
+                                "type": "element",
+                                "id": 124640
+                            },
+                            {
+                                "type": "element",
+                                "id": 124641
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }],
+    "Unallowed": [1234566,124623]
+}
