@@ -425,7 +425,7 @@ public class Player {
 	public ArrayList<Kickpoint> getActiveKickpoints() {
 		if (kickpoints == null) {
 			kickpoints = new ArrayList<>();
-			String sql = "SELECT id FROM kickpoints WHERE player_tag = ?";
+			String sql = "SELECT id FROM kickpoints WHERE player_tag = ? ORDER BY expires_at ASC";
 			for (Long id : DBUtil.getArrayListFromSQL(sql, Long.class, tag)) {
 				Kickpoint kp = new Kickpoint(id);
 				if (kp.getExpirationDate().isAfter(OffsetDateTime.now())) {
