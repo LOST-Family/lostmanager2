@@ -496,28 +496,30 @@
                     }]
                 },
                 "ThenForbidden": {
-                    "name": "Hat 'Kawaii Giant Deco' und mindestens ein Clan House",
-                    "IfMoreThan": {
-                        "type": "quantity",
-                        "allowed": 1,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Anime Roof",
-                            "id": "82000126"                            
-                        },{
-                            "type": "element",
-                            "name": "Vending Machine",
-                            "id": "82000127"                            
-                        },{
-                            "type": "element",
-                            "name": "Anime Walls",
-                            "id": "82000128"                            
-                        },{
-                            "type": "element",
-                            "name": "Anime Ground",
-                            "id": "82000129"                            
-                        }]
-                    }
+                    "CasesStrict":[{
+                        "name": "Hat 'Kawaii Giant Deco' und mindestens ein Clan House",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 1,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Anime Roof",
+                                "id": "82000126"                            
+                            },{
+                                "type": "element",
+                                "name": "Vending Machine",
+                                "id": "82000127"                            
+                            },{
+                                "type": "element",
+                                "name": "Anime Walls",
+                                "id": "82000128"                            
+                            },{
+                                "type": "element",
+                                "name": "Anime Ground",
+                                "id": "82000129"                            
+                            }]
+                        }
+                    }]
                 }
             },{
                 "name": "",
@@ -531,7 +533,7 @@
                     }]
                 },
                 "ThenForbidden": {
-                    "cases":[{
+                    "CasesStrict":[{
                         "name": "Hat 'Kawaii Giant Deco' und mindestens ein Clan House",
                         "IfMoreThan": {
                             "type": "quantity",
