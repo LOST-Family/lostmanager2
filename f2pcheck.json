@@ -82,7 +82,7 @@
                         ]
                     }],
                     "ThenForbidden": {
-                        "CasesStrict": [{
+                        "cases": [{
                             "name": "",
                             "IfMoreThan": {
                                 "type": "quantity",
