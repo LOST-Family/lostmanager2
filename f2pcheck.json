@@ -921,7 +921,7 @@
                 },
                 "ThenForbidden": {
                     "CasesStrict":[{
-                        "name": "Hat 'Golden Giant Deco', 'Surprise Wheel Deco' und beide Clan Houses",
+                        "name": "",
                         "IfMoreThan": {
                             "type": "quantity",
                             "allowed": 1,
@@ -966,6 +966,78 @@
                                 "type": "element",
                                 "name": "ClashaMania Ground",
                                 "id": "82000139"                            
+                            }]
+                        }
+                    }]
+                }
+            }]
+        }
+    },
+    {
+        "Cases":{
+            "name": "June 2025 Event",
+            "cases": [{
+                "name": "",
+                "IfMoreThan": {
+                    "type": "quantity",
+                    "allowed": 0,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Clashy Carving Deco",
+                        "id": "18000180"
+                    }]
+                },
+                "ThenForbidden": {
+                    "CasesStrict":[{
+                        "name": "Hat 'Clash Carving Deco' und mindestens 3 'Clash-A-Rama Clan Houses'",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 2,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Clash-A-Rama Roof",
+                                "id": "82000142"                            
+                            },{
+                                "type": "element",
+                                "name": "Cartoon Barrel",
+                                "id": "82000143"                            
+                            },{
+                                "type": "element",
+                                "name": "Clash-A-Rama Walls",
+                                "id": "82000144"                            
+                            },{
+                                "type": "element",
+                                "name": "Clash-A-Rama Ground",
+                                "id": "82000145"                            
+                            }]
+                        }
+                    }]
+                }
+            },{
+                "name": "",
+                "IfMoreThan": {
+                    "type": "quantity",
+                    "allowed": 0,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Clashy Carving Deco",
+                        "id": "18000180"
+                    }]
+                },
+                "ThenForbidden": {
+                    "CasesStrict":[{
+                        "name": "Hat 'Clashy Carving Deco', 'Frozen Wizard Deco' und 'Soda Stand Deco'",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 1,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Frozen Wizard Deco",
+                                "id": "18000179"                            
+                            },{
+                                "type": "element",
+                                "name": "Soda Stand Deco",
+                                "id": "18000183"                            
                             }]
                         }
                     }]
