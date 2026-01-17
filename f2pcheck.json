@@ -1,7 +1,7 @@
 {
     "Conditions": [{
         "Cases": {
-            "name": "October Event 2023",
+            "name": "October 2023 Event",
             "cases": [{
                     "name": "",
                     "IfMoreThan": {
@@ -221,7 +221,7 @@
     },
     {
         "Cases":{
-            "name": "December Event 2023",
+            "name": "December 2023 Event",
             "cases": [{
                 "name": "Hat 'Gingerbread King'",
                 "IfMoreThan": {
@@ -271,7 +271,7 @@
     },
     {
         "Cases":{
-            "name": "February Event 2024",
+            "name": "February 2024 Event",
             "cases": [{
                 "name": "Hat 'Dragon Warden'",
                 "IfMoreThan": {
@@ -477,6 +477,97 @@
                             }]
                         }
                     }]
+                }
+            }]
+        }
+    },
+    {
+        "Cases":{
+            "name": "August 2024 Event",
+            "cases": [{
+                "name": "",
+                "IfMoreThan": {
+                    "type": "quantity",
+                    "allowed": 0,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Hat 'Kawaii Giant Deco'",
+                        "id": "18000145"
+                    }]
+                },
+                "ThenForbidden": {
+                    "name": "Hat 'Kawaii Giant Deco' und mindestens ein Clan House",
+                    "IfMoreThan": {
+                        "type": "quantity",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Anime Roof",
+                            "id": "82000126"                            
+                        },{
+                            "type": "element",
+                            "name": "Vending Machine",
+                            "id": "82000127"                            
+                        },{
+                            "type": "element",
+                            "name": "Anime Walls",
+                            "id": "82000128"                            
+                        },{
+                            "type": "element",
+                            "name": "Anime Ground",
+                            "id": "82000129"                            
+                        }]
+                    }
+                }
+            },{
+                "name": "",
+                "IfMoreThan": {
+                    "type": "quantity",
+                    "allowed": 0,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Hat 'Kawaii Giant Deco'",
+                        "id": "18000145"
+                    }]
+                },
+                "ThenForbidden": {
+                    "CasesStrict":[{
+                        "name": "Hat 'Kawaii Giant Deco' und mindestens ein Clan House",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 1,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Anime Roof",
+                                "id": "82000126"                            
+                            },{
+                                "type": "element",
+                                "name": "Vending Machine",
+                                "id": "82000127"                            
+                            },{
+                                "type": "element",
+                                "name": "Anime Walls",
+                                "id": "82000128"                            
+                            },{
+                                "type": "element",
+                                "name": "Anime Ground",
+                                "id": "82000129"                            
+                            }]
+                        }
+                    },
+                    {
+                        "name": "Hat 'Kawaii Giant Deco' und 'Chibi Archer Deco'",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 0,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Chibi Archer Deco",
+                                "id": "18000144"                            
+                            }]
+                        }
+                    }]
+                                        
                 }
             }]
         }
