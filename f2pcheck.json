@@ -2,9 +2,41 @@
     "Conditions": [{
         "Cases": {
             "name": "October 2023 Event",
-            "cases": [{
-                    "name": "",
-                    "IfMoreThan": {
+            "CasesStrict": [{
+                "name": "",
+                "IfMoreThan": {
+                    "type": "count",
+                    "allowed": 0,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Cozy Coffin",
+                        "id": "18000096"
+                    },{
+                        "type": "element",
+                        "name": "Friendly Clown",
+                        "id": "18000097"
+                    },{
+                        "type": "element",
+                        "name": "Spooky Spa",
+                        "id": "18000098"
+                    },{   
+                        "type": "element",
+                        "name": "Pumpkin Scarecrow",
+                        "id": "18000099"
+                    },{
+                        "type": "element",
+                        "name": "Halloween Roof",
+                        "id": "82000108"
+                    },{   
+                        "type": "element",
+                        "name": "Dinosaur",
+                        "id": "82000109"
+                    }]
+                },
+                "ThenForbidden":{
+                    "CasesStrict": [{
+                        "name":"Hat 'Ghost Queen' + mindestens eins davon: 'Spooky Spa Deco', 'Cozy Coffin Deco', 'Pumpkin Scarecrow Deco', 'Halloween Roof' oder 'Dinosaur Clan House'",
+                        "IfMoreThan": {
                         "type": "quantity",
                         "allowed": 0,
                         "elements": [{
@@ -12,73 +44,70 @@
                             "name": "Ghost Queen",
                             "id": "52000101"
                         }]
-                    }
+                        }
+                    }] 
+                }
+            },{   
+                "name": "",
+                "IfMoreThan": {
+                    "type": "count",
+                    "allowed": 4,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Cozy Coffin",
+                        "id": "18000096"
+                    },{
+                        "type": "element",
+                        "name": "Spooky Spa",
+                        "id": "18000098"
+                    },{   
+                        "type": "element",
+                        "name": "Pumpkin Scarecrow",
+                        "id": "18000099"
+                    }]
                 },
-                {
-                    "name": "",
-                    "IfMoreThan": {
-                        "type": "count",
-                        "allowed": 0,
-                        "elements": [{
-                                "type": "element",
-                                "name": "Cozy Coffin",
-                                "id": "18000096"
-                            },{
+                "ThenForbidden": {
+                    "CasesStrict": [{
+                        "name": "Hat gesamt 5-6 'Pumpkin Scarecrow Decos', 'Spooky Spa Deco' und 'Cozy Coffin Deco' sowie 'Friendly Clown Deco' oder 'Halloween Roof' oder 'Dinosaur Clan House'",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 0,
+                            "elements": [{
                                 "type": "element",
                                 "name": "Friendly Clown",
                                 "id": "18000097"
                             },{
                                 "type": "element",
-                                "name": "Spooky Spa",
-                                "id": "18000098"
-                            },{   
-                                "type": "element",
-                                "name": "Pumpkin Scarecrow",
-                                "id": "18000099"
-                            },{
-                                "type": "element",
                                 "name": "Halloween Roof",
                                 "id": "82000108"
-                            },{   
+                            },{
                                 "type": "element",
                                 "name": "Dinosaur",
                                 "id": "82000109"
                             }]
-                    },
-                    "ThenForbidden":{
-                        "CasesStrict": [{
-                            "name":"Hat 'Ghost Queen' + mindestens eins davon: 'Spooky Spa Deco', 'Cozy Coffin Deco', 'Pumpkin Scarecrow Deco', 'Halloween Roof' oder 'Dinosaur Clan House'",
-                            "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 0,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Ghost Queen",
-                                "id": "52000101"
-                            }]
-                            }
-                        }] 
-                    }
-                },
-                {
-                    "name": "",
-                    "IfMoreThan": [{
-                        "type": "count",
-                        "allowed": 3,
-                        "elements": [{
-                                "type": "element",
-                                "name": "Cozy Coffin",
-                                "id": "18000096"
-                            },{
-                                "type": "element",
-                                "name": "Spooky Spa",
-                                "id": "18000098"
-                            },{   
-                                "type": "element",
-                                "name": "Pumpkin Scarecrow",
-                                "id": "18000099"
-                            }]
-                    }],
+                        }
+                    }]
+                }
+            }],
+            "Cases": [{
+                "name": "",
+                "IfMoreThan": [{
+                    "type": "count",
+                    "allowed": 3,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Cozy Coffin",
+                        "id": "18000096"
+                    },{
+                        "type": "element",
+                        "name": "Spooky Spa",
+                        "id": "18000098"
+                    },{   
+                        "type": "element",
+                        "name": "Pumpkin Scarecrow",
+                        "id": "18000099"
+                    }]
+                }],
                     "ThenForbidden": {
                         "CasesStrict": [{
                             "name": "Hat >3 'Pumpkin Scarecrow Deco', 'Spooky Spa Deco' oder 'Cozy Coffin Deco' sowie 'Friendly Clown Deco'",
@@ -93,8 +122,7 @@
                             }
                         }]
                     }
-                },
-                {
+                },{
                     "name": "",
                     "IfMoreThan": [{
                         "type": "count",
@@ -131,80 +159,6 @@
                             }
                         }]
                     }
-                },
-                {   
-                    "name": "",
-                    "IfMoreThan": {
-                        "type": "count",
-                        "allowed": 4,
-                        "elements": [{
-                                "type": "element",
-                                "name": "Cozy Coffin",
-                                "id": "18000096"
-                            },{
-                                "type": "element",
-                                "name": "Spooky Spa",
-                                "id": "18000098"
-                            },{   
-                                "type": "element",
-                                "name": "Pumpkin Scarecrow",
-                                "id": "18000099"
-                            }]
-                    },
-                    "ThenForbidden": {
-                        "CasesStrict": [{
-                            "name": "Hat gesamt 5-6 'Pumpkin Scarecrow Decos', 'Spooky Spa Deco' und 'Cozy Coffin Deco' sowie 'Friendly Clown Deco'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 0,
-                                "elements": [{
-                                    "type": "element",
-                                    "name": "Friendly Clown",
-                                    "id": "18000097"
-                                }]
-                            }
-                        }]
-
-                    }
-                },
-                {   
-                    "name": "",
-                    "IfMoreThan": {
-                        "type": "count",
-                        "allowed": 4,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Cozy Coffin",
-                            "id": "18000096"
-                        },{
-                            "type": "element",
-                            "name": "Spooky Spa",
-                            "id": "18000098"
-                        },{   
-                            "type": "element",
-                            "name": "Pumpkin Scarecrow",
-                            "id": "18000099"
-                        }]
-                    },
-                    "ThenForbidden": {
-                        "CasesStrict": [{
-                            "name": "Hat gesamt 5-6 'Pumpkin Scarecrow Decos', 'Spooky Spa Deco' und 'Cozy Coffin Deco' sowie 'Halloween Roof' oder 'Dinosaur Clan House'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 0,
-                                "elements": [{
-                                    "type": "element",
-                                    "name": "Halloween Roof",
-                                    "id": "82000108"
-                                },{
-                                    "type": "element",
-                                    "name": "Dinosaur",
-                                    "id": "82000109"
-                                }]
-                            }
-                        }]
-
-                    }
                 }
             ]
         }
@@ -212,8 +166,8 @@
     {
         "Cases":{
             "name": "December 2023 Event",
-            "cases": [{
-                "name": "Hat 'Gingerbread King'",
+            "CasesStrict": [{
+                "name": "",
                 "IfMoreThan": {
                     "type": "quantity",
                     "allowed": 0,
@@ -223,47 +177,47 @@
                         "id": "52000094",
                         "name": "Gingerbread King"
                     }]
+                },
+                "ThenForbidden":{
+                    "name":"Hat 'Gingerbread King' und mindestens eins davon: 'Barbarian Santa Deco', 'Skeleton Sock Deco' oder mindestens 1 Gingerbread Clan House",
+                    "IfMoreThan": {
+                        "type": "quantity",
+                        "allowed": 0,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Gingerbread Floor",
+                            "id": "82000006"
+                        },{
+                            "type": "element",
+                            "name": "Gingerbread Roof",
+                            "id": "82000046"
+                        },{
+                            "type": "element",
+                            "name": "Gingerbread Walls",
+                            "id": "82000055"
+                        },{
+                            "type": "element",
+                            "name": "Gingerbread Archer",
+                            "id": "82000067"
+                        },{
+                            "type": "element",
+                            "name": "Barbarian Santa",
+                            "id": "18000117"
+                        },{
+                            "type": "element",
+                            "name": "Skeleton Sock",
+                            "id": "18000118"
+                        }]
+                    }
                 }
-            },
-            {
-                "name":"Hat 'Barbarian Santa Deco', 'Skeleton Sock Deco' oder >= 1 Gingerbread Clan House",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Gingerbread Floor",
-                        "id": "82000006"
-                    },{
-                        "type": "element",
-                        "name": "Gingerbread Roof",
-                        "id": "82000046"
-                    },{
-                        "type": "element",
-                        "name": "Gingerbread Walls",
-                        "id": "82000055"
-                    },{
-                        "type": "element",
-                        "name": "Gingerbread Archer",
-                        "id": "82000067"
-                    },{
-                        "type": "element",
-                        "name": "Barbarian Santa",
-                        "id": "18000117"
-                    },{
-                        "type": "element",
-                        "name": "Skeleton Sock",
-                        "id": "18000118"
-                    }]
-                }
-        }]
+            }]
         }
     },
     {
         "Cases":{
             "name": "February 2024 Event",
-            "cases": [{
-                "name": "Hat 'Dragon Warden'",
+            "CasesStrict": [{
+                "name": "",
                 "IfMoreThan": {
                     "type": "quantity",
                     "allowed": 0,
@@ -273,46 +227,46 @@
                         "id": "52000124",
                         "name": "Dragon Warden"
                     }]
+                },
+                "ThenForbidden":{
+                    "name":"Hat 'Dragon Warden' und mindestens eins davon: 'Crab at Home', 'Lucky Anchor' oder mindestens 1 LNY 2024 Clan House",
+                    "IfMoreThan": {
+                        "type": "quantity",
+                        "allowed": 0,
+                        "elements": [{
+                            "type": "element",
+                            "name": "LNY 2024 Roof",
+                            "id": "82000114"
+                        },{
+                            "type": "element",
+                            "name": "LNY 2024 Sign",
+                            "id": "82000115"
+                        },{
+                            "type": "element",
+                            "name": "LNY 2024 Walls",
+                            "id": "82000116"
+                        },{
+                            "type": "element",
+                            "name": "LNY 2024 Ground",
+                            "id": "82000117"
+                        },{
+                            "type": "element",
+                            "name": "Lucky Anchor",
+                            "id": "18000119"
+                        },{
+                            "type": "element",
+                            "name": "Crab at Home",
+                            "id": "18000120"
+                        }]
+                    }
                 }
-            },{
-                "name":"Hat 'Crab at Home', 'Lucky Anchor' oder >= 1 LNY 2024 Clan House",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "LNY 2024 Roof",
-                        "id": "82000114"
-                    },{
-                        "type": "element",
-                        "name": "LNY 2024 Sign",
-                        "id": "82000115"
-                    },{
-                        "type": "element",
-                        "name": "LNY 2024 Walls",
-                        "id": "82000116"
-                    },{
-                        "type": "element",
-                        "name": "LNY 2024 Ground",
-                        "id": "82000117"
-                    },{
-                        "type": "element",
-                        "name": "Lucky Anchor",
-                        "id": "18000119"
-                    },{
-                        "type": "element",
-                        "name": "Crab at Home",
-                        "id": "18000120"
-                    }]
-                }
-            }
-            ]
+            }]
         }
     },
     {
         "Cases":{
             "name": "May 2024 Event",
-            "cases":[{
+            "CasesStrict":[{
                 "name": "Hat 'Football Queen'",
                 "IfMoreThan": {
                     "type": "quantity",
@@ -322,14 +276,13 @@
                         "id": "52000145",
                         "name": "Football Queen"
                     }]
-                }
-            },
-            {
-                "IfMoreThan":{
-                    "name": "",
-                    "type": "count",
-                    "allowed": 0,
-                    "elements": [{
+                },
+                "ThenForbidden":{
+                    "IfMoreThan":{
+                        "name": "",
+                        "type": "count",
+                        "allowed": 0,
+                        "elements": [{
                             "type": "element",
                             "name": "Golden Boot",
                             "id": "18000131"
@@ -357,26 +310,11 @@
                             "type": "element",
                             "name": "Football Ground",
                             "id": "82000123"
-                        }
-                    ]
-                },
-                "ThenForbidden":{
-                    "CasesStrict": [{
-                        "name":"Hat 'Football Queen' sowie mindestens eins davon: 'Golden Boot', 'Bestest Ball' oder 'Triumphant Trophy' oder mindestens ein 'Football Clan House'",
-                        "IfMoreThan": {
-                        "type": "quantity",
-                        "allowed": 0,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Football Queen",
-                            "id": "52000145"
                         }]
-                        }
-                    }] 
+                    }
                 }
-            },
-            {
-               "IfMoreThan":{
+            },{
+                "IfMoreThan":{
                     "name": "",
                     "type": "count",
                     "allowed": 2,
@@ -385,54 +323,7 @@
                             "name": "Golden Boot",
                             "id": "18000131"
                         },{
-                             "type": "element",
-                            "name": "Bestest Ball",
-                            "id": "18000132"
-                        },{
                             "type": "element",
-                            "name": "Triumphant Trophy",
-                            "id": "18000134"
-                        }
-                    ]
-                },
-                "ThenForbidden":{
-                    "CasesStrict": [{
-                        "name": "",
-                        "IfMoreThan": {
-                            "type": "count",
-                            "allowed": 3,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Football Roof",
-                                "id": "82000120"
-                            },{
-                                "type": "element",
-                                "name": "Football Decoration",
-                                "id": "82000121"
-                            },{
-                                "type": "element",
-                                "name": "Football Walls",
-                                "id": "82000122"
-                            },{
-                                "type": "element",
-                                "name": "Football Ground",
-                                "id": "82000123"
-                            }]
-                        }
-                    }]
-                }
-            },
-            {
-               "IfMoreThan":{
-                    "name": "",
-                    "type": "count",
-                    "allowed": 2,
-                    "elements": [{
-                            "type": "element",
-                            "name": "Golden Boot",
-                            "id": "18000131"
-                        },{
-                             "type": "element",
                             "name": "Bestest Ball",
                             "id": "18000132"
                         },{
@@ -474,7 +365,7 @@
     {
         "Cases":{
             "name": "August 2024 Event",
-            "cases": [{
+            "CasesStrict": [{
                 "name": "",
                 "IfMoreThan": {
                     "type": "quantity",
@@ -488,43 +379,6 @@
                 "ThenForbidden": {
                     "CasesStrict":[{
                         "name": "",
-                        "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 1,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Anime Roof",
-                                "id": "82000126"                            
-                            },{
-                                "type": "element",
-                                "name": "Vending Machine",
-                                "id": "82000127"                            
-                            },{
-                                "type": "element",
-                                "name": "Anime Walls",
-                                "id": "82000128"                            
-                            },{
-                                "type": "element",
-                                "name": "Anime Ground",
-                                "id": "82000129"                            
-                            }]
-                        }
-                    }]
-                }
-            },{
-                "name": "",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Kawaii Giant Deco",
-                        "id": "18000145"
-                    }]
-                },
-                "ThenForbidden": {
-                    "CasesStrict":[{
-                        "name": "Hat 'Kawaii Giant Deco' und mehr als ein Clan House",
                         "IfMoreThan": {
                             "type": "quantity",
                             "allowed": 1,
@@ -557,33 +411,7 @@
                                 "id": "18000144"                            
                             }]
                         }
-                    }]                    
-                }
-            },
-            {
-                "name": "",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Kawaii Giant Deco",
-                        "id": "18000145"
                     }]
-                },
-                "ThenForbidden": {
-                    "CasesStrict":[{
-                        "name": "Hat 'Kawaii Giant Deco' und 'Chibi Archer Deco'",
-                        "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 0,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Chibi Archer Deco",
-                                "id": "18000144"                            
-                            }]
-                        }
-                    }]                    
                 }
             }]
         }
@@ -591,7 +419,7 @@
     {
         "Cases":{
             "name": "October 2024 Event",
-            "cases": [{
+            "CasesStrict": [{
                 "name": "",
                 "IfMoreThan": {
                     "type": "quantity",
@@ -618,35 +446,6 @@
                                 "id": "82000133"                            
                             }]
                         }
-                    }]
-                }
-            },{
-                "name": "",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Bubble Boil Cauldron",
-                        "id": "18000159"
-                    }]
-                },
-                "ThenForbidden": {
-                    "CasesStrict":[{
-                        "name": "Hat 'Bubble Boil Cauldron' und mehr als ein Clan House",
-                        "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 1,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Cyan Crystal Roof",
-                                "id": "82000132"                            
-                            },{
-                                "type": "element",
-                                "name": "Jack-o'Lantern",
-                                "id": "82000133"                            
-                            }]
-                        }
                     },{
                         "name": "",
                         "IfMoreThan": {
@@ -658,33 +457,7 @@
                                 "id": "18000158"                            
                             }]
                         }
-                    }]                    
-                }
-            },
-            {
-                "name": "",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Bubble Boil Cauldron",
-                        "id": "18000159"
                     }]
-                },
-                "ThenForbidden": {
-                    "CasesStrict":[{
-                        "name": "Hat 'Bubble Boil Cauldron' und 'Jailbroken Box'",
-                        "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 0,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Jailbroken Box",
-                                "id": "18000158"                            
-                            }]
-                        }
-                    }]                    
                 }
             }]
         }
@@ -793,7 +566,7 @@
     {
         "Cases":{
             "name": "February 2025 Event",
-            "cases": [{
+            "CasesStrict": [{
                 "name": "",
                 "IfMoreThan": {
                     "type": "quantity",
@@ -820,35 +593,6 @@
                                 "id": "82000137"                            
                             }]
                         }
-                    }]
-                }
-            },{
-                "name": "",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Lucky Cookies Deco",
-                        "id": "18000169"
-                    }]
-                },
-                "ThenForbidden": {
-                    "CasesStrict":[{
-                        "name": "Hat 'Lucky Cookies Deco' und mehr als ein Clan House",
-                        "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 0,
-                            "elements": [{
-                                "type": "element",
-                                "name": "LNY 2025 Roof",
-                                "id": "82000136"                            
-                            },{
-                                "type": "element",
-                                "name": "Snake",
-                                "id": "82000137"                            
-                            }]
-                        }
                     },{
                         "name": "",
                         "IfMoreThan": {
@@ -860,33 +604,7 @@
                                 "id": "18000167"                            
                             }]
                         }
-                    }]                    
-                }
-            },
-            {
-                "name": "",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Lucky Cookies Deco",
-                        "id": "18000169"
                     }]
-                },
-                "ThenForbidden": {
-                    "CasesStrict":[{
-                        "name": "Hat 'Lucky Cookies Deco' und 'Monk Statue'",
-                        "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 0,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Monk Statue",
-                                "id": "18000167"                            
-                            }]
-                        }
-                    }]                    
                 }
             }]
         }
@@ -894,7 +612,7 @@
     {
         "Cases":{
             "name": "April 2025 Event",
-            "cases": [{
+            "CasesStrict": [{
                 "name": "",
                 "IfMoreThan": {
                     "type": "quantity",
@@ -912,39 +630,6 @@
                 "ThenForbidden": {
                     "CasesStrict":[{
                         "name": "",
-                        "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 1,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Tombstone",
-                                "id": "82000138"                            
-                            },{
-                                "type": "element",
-                                "name": "ClashaMania Ground",
-                                "id": "82000139"                            
-                            }]
-                        }
-                    }]
-                }
-            },{
-                "name": "",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 1,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Golden Giant Deco",
-                        "id": "18000173"
-                    },{
-                        "type": "element",
-                        "name": "Surprise Wheel Deco",
-                        "id": "18000175"
-                    }]
-                },
-                "ThenForbidden": {
-                    "CasesStrict":[{
-                        "name": "Hat 'Golden Giant Deco', 'Surprise Wheel Deco' und beide Clan Houses",
                         "IfMoreThan": {
                             "type": "quantity",
                             "allowed": 1,
@@ -966,44 +651,7 @@
     {
         "Cases":{
             "name": "August 2025 Event",
-            "cases": [{
-                "name": "",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Clashy Carving Deco",
-                        "id": "18000180"
-                    }]
-                },
-                "ThenForbidden": {
-                    "CasesStrict":[{
-                        "name": "",
-                        "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 2,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Clash-A-Rama Roof",
-                                "id": "82000142"                            
-                            },{
-                                "type": "element",
-                                "name": "Cartoon Barrel",
-                                "id": "82000143"                            
-                            },{
-                                "type": "element",
-                                "name": "Clash-A-Rama Walls",
-                                "id": "82000144"                            
-                            },{
-                                "type": "element",
-                                "name": "Clash-A-Rama Ground",
-                                "id": "82000145"                            
-                            }]
-                        }
-                    }]
-                }
-            },{
+            "CasesStrict": [{
                 "name": "",
                 "IfMoreThan": {
                     "type": "quantity",
@@ -1038,79 +686,7 @@
                                 "id": "82000145"                            
                             }]
                         }
-                    }]
-                }
-            },{
-                "name": "",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Clashy Carving Deco",
-                        "id": "18000180"
-                    }]
-                },
-                "ThenForbidden": {
-                    "CasesStrict":[{
-                        "name": "",
-                        "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 1,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Frozen Wizard Deco",
-                                "id": "18000179"                            
-                            },{
-                                "type": "element",
-                                "name": "Soda Stand Deco",
-                                "id": "18000183"                            
-                            }]
-                        }
-                    }]
-                }
-            },{
-                "name": "",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Clashy Carving Deco",
-                        "id": "18000180"
-                    }]
-                },
-                "ThenForbidden": {
-                    "CasesStrict":[{
-                        "name": "Hat 'Clashy Carving Deco', 'Frozen Wizard Deco' und 'Soda Stand Deco'",
-                        "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 1,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Frozen Wizard Deco",
-                                "id": "18000179"                            
-                            },{
-                                "type": "element",
-                                "name": "Soda Stand Deco",
-                                "id": "18000183"                            
-                            }]
-                        }
-                    }]
-                }
-            },{
-                "name": "",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Clashy Carving Deco",
-                        "id": "18000180"
-                    }]
-                },
-                "ThenForbidden": {
-                    "CasesStrict":[{
+                    },{
                         "name": "",
                         "IfMoreThan": {
                             "type": "quantity",
@@ -1127,7 +703,7 @@
                         },
                         "ThenForbidden":{
                             "CasesStrict":[{
-                               "name": "",
+                                "name": "Hat 'Clash Carving Deco' und mindestens 3 'Clash-A-Rama Clan Houses'",
                                 "IfMoreThan": {
                                     "type": "quantity",
                                     "allowed": 0,
@@ -1148,68 +724,174 @@
                                         "name": "Clash-A-Rama Ground",
                                         "id": "82000145"                            
                                     }]
-                                } 
-                            }]
-                        }
-                    }]
-                }
-            },{
-                "name": "",
-                "IfMoreThan": {
-                    "type": "quantity",
-                    "allowed": 0,
-                    "elements": [{
-                        "type": "element",
-                        "name": "Clashy Carving Deco",
-                        "id": "18000180"
-                    }]
-                },
-                "ThenForbidden": {
-                    "CasesStrict":[{
-                        "name": "Hat 'Clash Carving Deco' und mindestens eins davon: 'Frozen Wizard Deco' und 'Soda Stand Deco' sowie mindestens ein 'Clash-A-Rama Clan House'",
-                        "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 0,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Frozen Wizard Deco",
-                                "id": "18000179"                            
+                                }
                             },{
-                                "type": "element",
-                                "name": "Soda Stand Deco",
-                                "id": "18000183"                            
-                            }]
-                        },
-                        "ThenForbidden":{
-                            "CasesStrict":[{
-                               "name": "",
+                                "name": "Hat 'Clashy Carving Deco', 'Frozen Wizard Deco' und 'Soda Stand Deco'",
                                 "IfMoreThan": {
                                     "type": "quantity",
-                                    "allowed": 0,
+                                    "allowed": 1,
                                     "elements": [{
                                         "type": "element",
-                                        "name": "Clash-A-Rama Roof",
-                                        "id": "82000142"                            
+                                        "name": "Frozen Wizard Deco",
+                                        "id": "18000179"                            
                                     },{
                                         "type": "element",
-                                        "name": "Cartoon Barrel",
-                                        "id": "82000143"                            
-                                    },{
-                                        "type": "element",
-                                        "name": "Clash-A-Rama Walls",
-                                        "id": "82000144"                            
-                                    },{
-                                        "type": "element",
-                                        "name": "Clash-A-Rama Ground",
-                                        "id": "82000145"                            
+                                        "name": "Soda Stand Deco",
+                                        "id": "18000183"                            
                                     }]
-                                } 
+                                }
                             }]
                         }
                     }]
                 }
             }]
         }
+    },
+    {
+        "Cases":{
+            "name": "Oct. 2025 Event",
+            "CasesStrict": [{
+                "name": "",
+                "IfMoreThan": {
+                    "type": "quantity",
+                    "allowed": 0,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Cursed Tome Deco",
+                        "id": "18000191"
+                    }]
+                },
+                "ThenForbidden": {
+                    "CasesStrict":[{
+                        "name": "Hat 'Cursed Tome Deco' und beide 'Cosmic Rock Clan Houses'",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 1,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Cosmic Rock Ground",
+                                "id": "82000146"                            
+                            },{
+                                "type": "element",
+                                "name": "Cosmic Rock Walls",
+                                "id": "82000147"                            
+                            }]
+                        }
+                    },{
+                        "name": "Hat 'Cursed Tome Deco' und 'Cosmic Lantern Deco'",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 0,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Cosmic Lantern Deco",
+                                "id": "18000186"                            
+                            }]
+                        }
+                    }]
+                }
+            }]
+        }
+    },
+    {
+        "Cases":{
+            "name": "Dec. 2025 Event",
+            "CasesStrict": [{
+                "CasesStrict":[{
+                    "name": "",
+                    "IfMoreThan": {
+                        "type": "quantity",
+                        "allowed": 0,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Frost Flake Equipment",
+                            "id": "90000050"
+                        }]
+                    },
+                    "ThenForbidden": {
+                        "CasesStrict":[{
+                            "name": "",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 0,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Frozen Stone",
+                                    "id": "18000204"                            
+                                }]
+                            },
+                            "ThenForbidden": {
+                                "CasesStrict":[{
+                                    "name": "Hat 'Frost Flake Equipment', 'Frozen Stone' und beide 'Meltdown Clan Houses'",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 0,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Meltdown Barrel",
+                                            "id": "82000148"                            
+                                        },{
+                                            "type": "element",
+                                            "name": "Meltdown Roof",
+                                            "id": "82000149"                            
+                                        }]
+                                    }
+                                }]
+                            }
+                        }]
+                    }
+                }]  
+            },{
+                "CasesStrict":[{
+                    "name": "",
+                    "IfMoreThan": {
+                        "type": "quantity",
+                        "allowed": 0,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Hungry Hound Deco",
+                            "id": "18000203"
+                        }]
+                    },
+                    "ThenForbidden": {
+                        "CasesStrict":[{
+                            "name": "",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 0,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Frozen Stone",
+                                    "id": "18000204"                            
+                                }]
+                            },
+                            "ThenForbidden": {
+                                "CasesStrict":[{
+                                    "name": "Hat 'Hungry Hound Deco', 'Frozen Stone Deco' und beide 'Meltdown Clan Houses'",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 0,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Meltdown Barrel",
+                                            "id": "82000148"                            
+                                        },{
+                                            "type": "element",
+                                            "name": "Meltdown Roof",
+                                            "id": "82000149"                            
+                                        }]
+                                    }
+                                }]
+                            }
+                        }]
+                    }
+                }]  
+            }
+            ]
+        }
+    },
+    {
+        
     }
     ],
     "StrictForbidden": [1234566, 124623]
