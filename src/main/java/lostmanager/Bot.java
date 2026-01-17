@@ -32,22 +32,21 @@ import lostmanager.commands.coc.links.relink;
 import lostmanager.commands.coc.links.unlink;
 import lostmanager.commands.coc.links.verify;
 import lostmanager.commands.coc.memberlist.addmember;
+import lostmanager.commands.coc.memberlist.checkroles;
 import lostmanager.commands.coc.memberlist.cwlmemberstatus;
 import lostmanager.commands.coc.memberlist.editmember;
 import lostmanager.commands.coc.memberlist.listmembers;
 import lostmanager.commands.coc.memberlist.memberstatus;
 import lostmanager.commands.coc.memberlist.removemember;
 import lostmanager.commands.coc.memberlist.transfermember;
-import lostmanager.commands.coc.util.checkroles;
-import lostmanager.commands.coc.util.cwdonator;
 import lostmanager.commands.coc.util.jsonutils.jsonupload;
-import lostmanager.commands.coc.util.listeningevent;
-import lostmanager.commands.coc.util.raidping;
-
-import lostmanager.commands.coc.util.setnick;
 import lostmanager.commands.coc.util.jsonutils.f2pcheck;
 import lostmanager.commands.coc.util.jsonutils.stats;
-import lostmanager.commands.coc.util.wins;
+import lostmanager.commands.coc.util.playerutils.setnick;
+import lostmanager.commands.coc.util.playerutils.wins;
+import lostmanager.commands.coc.util.automation.listeningevent;
+import lostmanager.commands.coc.util.clanutils.cwdonator;
+import lostmanager.commands.coc.util.clanutils.raidping;
 import lostmanager.commands.discord.admin.deletemessages;
 import lostmanager.commands.discord.admin.reactionsrole;
 import lostmanager.commands.discord.admin.restart;
@@ -156,15 +155,6 @@ public class Bot extends ListenerAdapter {
 			uploadServer.start();
 		} catch (Exception e) {
 			System.err.println("Failed to start JSON Upload Server: " + e.getMessage());
-			e.printStackTrace();
-		}
-
-		// Start REST API Server
-		try {
-			restApiServer = new lostmanager.webserver.api.RestApiServer(rest_api_port);
-			restApiServer.start();
-		} catch (Exception e) {
-			System.err.println("Failed to start REST API Server: " + e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -523,6 +513,14 @@ public class Bot extends ListenerAdapter {
 	public void onReady(ReadyEvent event) {
 		setJda(event.getJDA());
 		registerCommands(event.getJDA(), guild_id);
+		// Start REST API Server
+		try {
+			restApiServer = new lostmanager.webserver.api.RestApiServer(rest_api_port);
+			restApiServer.start();
+		} catch (Exception e) {
+			System.err.println("Failed to start REST API Server: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	@SuppressWarnings("null")

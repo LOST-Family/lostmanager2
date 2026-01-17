@@ -1,4 +1,4 @@
-package lostmanager.commands.coc.util;
+package lostmanager.commands.coc.util.clanutils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,144 +31,145 @@ public class raidping extends ListenerAdapter {
 
 		new Thread(() -> {
 
-		OptionMapping clanOption = event.getOption("clan");
+			OptionMapping clanOption = event.getOption("clan");
 
-		if (clanOption == null) {
-			event.getHook().editOriginalEmbeds(
-					MessageUtil.buildEmbed(title, "Der Parameter ist erforderlich!", MessageUtil.EmbedType.ERROR))
-					.queue();
-			return;
-		}
-
-		String clantag = clanOption.getAsString();
-
-		User userexecuted = new User(event.getUser().getId());
-		boolean bp = false;
-		for (String clantags : DBManager.getAllClans()) {
-			if (userexecuted.getClanRoles().get(clantags) == Player.RoleType.ADMIN
-					|| userexecuted.getClanRoles().get(clantags) == Player.RoleType.LEADER
-					|| userexecuted.getClanRoles().get(clantags) == Player.RoleType.COLEADER) {
-				bp = true;
-				break;
+			if (clanOption == null) {
+				event.getHook().editOriginalEmbeds(
+						MessageUtil.buildEmbed(title, "Der Parameter ist erforderlich!", MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
 			}
-		}
-		if (bp == false) {
-			event.getHook()
-					.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-							"Du musst mindestens Vize-Anführer eines Clans sein, um diesen Befehl ausführen zu können.",
-							MessageUtil.EmbedType.ERROR))
-					.queue();
-			return;
-		}
 
-		Clan clan = new Clan(clantag);
+			String clantag = clanOption.getAsString();
 
-		ArrayList<Player> raidmembers = clan.getRaidMemberList();
-
-		boolean raidactive = clan.RaidActive();
-
-		String desc = "";
-		desc += "ausgeführt von " + event.getUser().getAsMention() + "\n";
-
-		if (!raidactive) {
-			desc += "\n**Kein Ping, da Raid aktuell nicht aktiv ist.**\n";
-		}
-
-		desc += "## Fehlende Raid Angriffe:\n";
-
-		ArrayList<Player> dbmemberlist = clan.getPlayersDB();
-
-		ArrayList<Player> notfinished = new ArrayList<>();
-		ArrayList<Player> notdone = new ArrayList<>();
-
-		for (Player dbPlayer : dbmemberlist) {
-			// Skip hidden co-leaders as they don't need to be in clan/raid
-			if (dbPlayer.isHiddenColeader()) {
-				continue;
-			}
-			
-			boolean b = false;
-			for (Player raidPlayer : raidmembers) {
-				if (raidPlayer.getTag().equals(dbPlayer.getTag())) {
-					int currentattacks = raidPlayer.getCurrentRaidAttacks();
-					int max = raidPlayer.getCurrentRaidAttackLimit() + raidPlayer.getCurrentRaidbonusAttackLimit();
-					if (currentattacks < max) {
-						notfinished.add(raidPlayer);
-					}
-					b = true;
+			User userexecuted = new User(event.getUser().getId());
+			boolean bp = false;
+			for (String clantags : DBManager.getAllClans()) {
+				if (userexecuted.getClanRoles().get(clantags) == Player.RoleType.ADMIN
+						|| userexecuted.getClanRoles().get(clantags) == Player.RoleType.LEADER
+						|| userexecuted.getClanRoles().get(clantags) == Player.RoleType.COLEADER) {
+					bp = true;
 					break;
 				}
 			}
-			if (!b) {
-				notdone.add(dbPlayer);
+			if (bp == false) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Du musst mindestens Vize-Anführer eines Clans sein, um diesen Befehl ausführen zu können.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
 			}
-		}
-		if (!notdone.isEmpty()) {
-			ArrayList<String> allclantags = DBManager.getAllClans();
-			ArrayList<Clan> allclans = new ArrayList<>();
-			for (String s : allclantags) {
-				Clan c = new Clan(s);
-				c.getRaidMemberList(); // load from API
-				allclans.add(c);
+
+			Clan clan = new Clan(clantag);
+
+			ArrayList<Player> raidmembers = clan.getRaidMemberList();
+
+			boolean raidactive = clan.RaidActive();
+
+			String desc = "";
+			desc += "ausgeführt von " + event.getUser().getAsMention() + "\n";
+
+			if (!raidactive) {
+				desc += "\n**Kein Ping, da Raid aktuell nicht aktiv ist.**\n";
 			}
-			for (int i = 0; i < notdone.size(); i++) {
-				Player p = notdone.get(i);
-				for (Clan c : allclans) {
-					ArrayList<Player> raidmemberlist = c.getRaidMemberList();
-					for (Player t : raidmemberlist) {
-						if (t.getTag().equals(p.getTag())) {
-							if (!desc.contains("In")) {
-								desc += "### In einem anderen Lost-Clan angegriffen:\n";
+
+			desc += "## Fehlende Raid Angriffe:\n";
+
+			ArrayList<Player> dbmemberlist = clan.getPlayersDB();
+
+			ArrayList<Player> notfinished = new ArrayList<>();
+			ArrayList<Player> notdone = new ArrayList<>();
+
+			for (Player dbPlayer : dbmemberlist) {
+				// Skip hidden co-leaders as they don't need to be in clan/raid
+				if (dbPlayer.isHiddenColeader()) {
+					continue;
+				}
+
+				boolean b = false;
+				for (Player raidPlayer : raidmembers) {
+					if (raidPlayer.getTag().equals(dbPlayer.getTag())) {
+						int currentattacks = raidPlayer.getCurrentRaidAttacks();
+						int max = raidPlayer.getCurrentRaidAttackLimit() + raidPlayer.getCurrentRaidbonusAttackLimit();
+						if (currentattacks < max) {
+							notfinished.add(raidPlayer);
+						}
+						b = true;
+						break;
+					}
+				}
+				if (!b) {
+					notdone.add(dbPlayer);
+				}
+			}
+			if (!notdone.isEmpty()) {
+				ArrayList<String> allclantags = DBManager.getAllClans();
+				ArrayList<Clan> allclans = new ArrayList<>();
+				for (String s : allclantags) {
+					Clan c = new Clan(s);
+					c.getRaidMemberList(); // load from API
+					allclans.add(c);
+				}
+				for (int i = 0; i < notdone.size(); i++) {
+					Player p = notdone.get(i);
+					for (Clan c : allclans) {
+						ArrayList<Player> raidmemberlist = c.getRaidMemberList();
+						for (Player t : raidmemberlist) {
+							if (t.getTag().equals(p.getTag())) {
+								if (!desc.contains("In")) {
+									desc += "### In einem anderen Lost-Clan angegriffen:\n";
+								}
+								desc += t.getNameAPI() + " in " + c.getNameDB() + ": " + t.getCurrentRaidAttacks() + "/"
+										+ (t.getCurrentRaidAttackLimit() + t.getCurrentRaidbonusAttackLimit()) + "\n";
+								notdone.remove(p);
+								i--;
+								break;
 							}
-							desc += t.getNameAPI() + " in " + c.getNameDB() + ": " + t.getCurrentRaidAttacks() + "/"
-									+ (t.getCurrentRaidAttackLimit() + t.getCurrentRaidbonusAttackLimit()) + "\n";
-							notdone.remove(p);
-							i--;
-							break;
 						}
 					}
 				}
+				for (Player p : notdone) {
+					if (!desc.contains("icht angegriffen")) {
+						if (raidactive) {
+							desc += "### Noch gar nicht angegriffen:\n";
+						} else {
+							desc += "### Nicht angegriffen:\n";
+						}
+					}
+					desc += p.getNameAPI() + " (<@" + p.getUser().getUserID() + ">)\n";
+				}
 			}
-			for (Player p : notdone) {
-				if (!desc.contains("icht angegriffen")) {
+
+			notfinished.sort(Comparator.comparingInt(Player::getCurrentRaidAttacks));
+			for (Player p : notfinished) {
+				int currentattacks = p.getCurrentRaidAttacks();
+				int max = p.getCurrentRaidAttackLimit() + p.getCurrentRaidbonusAttackLimit();
+				if (!desc.contains("Angriffe")) {
 					if (raidactive) {
-						desc += "### Noch gar nicht angegriffen:\n";
+						desc += "### Noch offene Angriffe:\n";
 					} else {
-						desc += "### Nicht angegriffen:\n";
+						desc += "### Teil der Angriffe gemacht:\n";
 					}
 				}
-				desc += p.getNameAPI() + " (<@" + p.getUser().getUserID() + ">)\n";
+				desc += p.getNameAPI() + " (<@" + p.getUser().getUserID() + ">): " + currentattacks + "/" + max + "\n";
 			}
-		}
 
-		notfinished.sort(Comparator.comparingInt(Player::getCurrentRaidAttacks));
-		for (Player p : notfinished) {
-			int currentattacks = p.getCurrentRaidAttacks();
-			int max = p.getCurrentRaidAttackLimit() + p.getCurrentRaidbonusAttackLimit();
-			if (!desc.contains("Angriffe")) {
-				if (raidactive) {
-					desc += "### Noch offene Angriffe:\n";
-				} else {
-					desc += "### Teil der Angriffe gemacht:\n";
-				}
-			}
-			desc += p.getNameAPI() + " (<@" + p.getUser().getUserID() + ">): " + currentattacks + "/" + max + "\n";
-		}
-
-		event.getHook().editOriginal(".").queue(message -> {
-			message.delete().queue();
-		});
-		if (raidactive) {
-			event.getChannel().sendMessage(desc).queue();
-		} else {
-			final String newmessage = desc;
-			event.getChannel().sendMessage(".").queue(message -> {
-				message.editMessage(newmessage).queue();
+			event.getHook().editOriginal(".").queue(message -> {
+				message.delete().queue();
 			});
-		}
+			if (raidactive) {
+				event.getChannel().sendMessage(desc).queue();
+			} else {
+				final String newmessage = desc;
+				event.getChannel().sendMessage(".").queue(message -> {
+					message.editMessage(newmessage).queue();
+				});
+			}
 		}, "RaidpingCommand-" + event.getUser().getId()).start();
 
 	}
+
 	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
@@ -177,16 +178,16 @@ public class raidping extends ListenerAdapter {
 
 		new Thread(() -> {
 
-		String focused = event.getFocusedOption().getName();
-		String input = event.getFocusedOption().getValue();
+			String focused = event.getFocusedOption().getName();
+			String input = event.getFocusedOption().getValue();
 
-		if (focused.equals("clan")) {
-			List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
+			if (focused.equals("clan")) {
+				List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
 
-			event.replyChoices(choices).queue(_ -> {
-			}, _ -> {
-			});
-		}
+				event.replyChoices(choices).queue(_ -> {
+				}, _ -> {
+				});
+			}
 		}, "RaidpingAutocomplete-" + event.getUser().getId()).start();
 	}
 }

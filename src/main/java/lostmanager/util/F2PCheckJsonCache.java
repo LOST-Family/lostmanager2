@@ -14,7 +14,7 @@ import org.json.JSONObject;
  */
 public class F2PCheckJsonCache {
 
-    private static final String F2P_CHECK_URL = "https://raw.githubusercontent.com/LOST-Family/lostmanager2/main/f2p_check.json";
+    private static final String F2P_CHECK_URL = "https://raw.githubusercontent.com/LOST-Family/lostmanager2/main/f2pcheck.json";
 
     /**
      * Fetch the f2p_check.json from GitHub
@@ -31,7 +31,7 @@ public class F2PCheckJsonCache {
 
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {
-                System.err.println("Failed to fetch f2p_check.json: HTTP " + responseCode);
+                System.err.println("Failed to fetch f2pcheck.json: HTTP " + responseCode);
                 return null;
             }
 

@@ -1,4 +1,4 @@
-package lostmanager.commands.coc.util;
+package lostmanager.commands.coc.util.automation;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -70,18 +70,19 @@ public class listeningevent extends ListenerAdapter {
 		// requests
 		new Thread(() -> {
 			switch (subcommand) {
-			case "add":
-				handleAdd(event, title);
-				break;
-			case "list":
-				handleList(event, title);
-				break;
-			case "remove":
-				handleRemove(event, title);
-				break;
-			default:
-				event.replyEmbeds(
-						MessageUtil.buildEmbed(title, "Unbekannter Unterbefehl.", MessageUtil.EmbedType.ERROR)).queue();
+				case "add":
+					handleAdd(event, title);
+					break;
+				case "list":
+					handleList(event, title);
+					break;
+				case "remove":
+					handleRemove(event, title);
+					break;
+				default:
+					event.replyEmbeds(
+							MessageUtil.buildEmbed(title, "Unbekannter Unterbefehl.", MessageUtil.EmbedType.ERROR))
+							.queue();
 			}
 		}, "ListeningeventCommand-" + event.getUser().getId()).start();
 	}
@@ -1111,29 +1112,29 @@ public class listeningevent extends ListenerAdapter {
 		// Check if this is a "start" trigger
 		if (duration == -1) {
 			switch (type) {
-			case CW:
-				return "Feuert, wenn neuer CW startet";
-			default:
-				return "Feuert bei Event-Start";
+				case CW:
+					return "Feuert, wenn neuer CW startet";
+				default:
+					return "Feuert bei Event-Start";
 			}
 		}
 
 		// Otherwise, it's waiting for an active event
 		switch (type) {
-		case CW:
-			return "Wartet auf aktiven CW";
-		case RAID:
-			return "Wartet auf aktives Raid Weekend";
-		case CWLDAY:
-			return "Wartet auf aktive CWL";
-		case CS:
-			return "Wartet auf aktive Clan Games";
-		case FIXTIMEINTERVAL:
-			return "Zeitbasiertes Event";
-		case CWLEND:
-			return "Wartet auf CWL Ende";
-		default:
-			return "Wartet auf Event";
+			case CW:
+				return "Wartet auf aktiven CW";
+			case RAID:
+				return "Wartet auf aktives Raid Weekend";
+			case CWLDAY:
+				return "Wartet auf aktive CWL";
+			case CS:
+				return "Wartet auf aktive Clan Games";
+			case FIXTIMEINTERVAL:
+				return "Zeitbasiertes Event";
+			case CWLEND:
+				return "Wartet auf CWL Ende";
+			default:
+				return "Wartet auf Event";
 		}
 	}
 }

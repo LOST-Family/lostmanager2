@@ -51,6 +51,7 @@ public class F2PCheckAlgorithm {
      * @return CheckResult containing success status and failure reason if any
      */
     public static CheckResult check(JSONObject rules, Map<String, Integer> playerData) {
+        System.out.println("DEBUG: Starting F2P check with " + playerData.size() + " items.");
         if (rules == null) {
             return new CheckResult(true, "Internal Error: Could not load F2P rules.");
         }
@@ -84,32 +85,36 @@ public class F2PCheckAlgorithm {
 
     private static CheckResult evaluateGroup(JSONObject group, Map<String, Integer> playerData) {
         boolean isStrict = group.has("CasesStrict");
-        String arrayKey = isStrict ? "CasesStrict" : "Cases";
+        String key = isStrict ? "CasesStrict" : "Cases";
 
-        if (!group.has(arrayKey)) {
-            // If neither exists, and it's just a container (e.g. from ThenForbidden), it
-            // passes if empty?
-            // Or maybe it has "Cases" inside "Cases"? The prompt says "A Cases Array is
-            // built up of many Cases".
-            // But valid recursion should generally find either Cases or CasesStrict or be a
-            // leaf.
-            // If empty, we assume safely passed.
+        if (!group.has(key)) {
             return new CheckResult(true, null);
         }
 
-        JSONArray cases = group.getJSONArray(arrayKey);
+        Object val = group.get(key);
+        JSONArray cases;
+        String groupName = null;
+
+        if (val instanceof JSONObject) {
+            JSONObject valObj = (JSONObject) val;
+            cases = valObj.getJSONArray("cases");
+            groupName = valObj.optString("name", null);
+        } else if (val instanceof JSONArray) {
+            cases = (JSONArray) val;
+        } else {
+            return new CheckResult(true, null);
+        }
+
+        String logName = (groupName != null ? groupName : key);
+        System.out.println("DEBUG: Evaluating Group (" + logName + ")");
+
         int trueCases = 0;
         List<String> reasons = new ArrayList<>();
 
         for (int i = 0; i < cases.length(); i++) {
             JSONObject caseObj = cases.getJSONObject(i);
+            System.out.println("DEBUG: Processing Case index " + i + " in " + logName);
             CheckResult caseResult = evaluateCase(caseObj, playerData);
-
-            // If caseResult.isF2P() is FALSE, it means the case is FLAGGED/BAD (True
-            // condition met)
-            // The prompt says "Cases is true if 2 or more of its cases returns true".
-            // My evaluateCase returns isF2P=false (Flagged) if FLAGGED.
-            // So if (!caseResult.isF2P()) -> FLAGGED.
 
             if (!caseResult.isF2P()) {
                 trueCases++;
@@ -130,16 +135,22 @@ public class F2PCheckAlgorithm {
         }
 
         if (groupIsFlagged) {
-            return new CheckResult(false, "Verstoß gegen Regelgruppe (" + (isStrict ? "Strict" : "Normal") + "): "
+            System.out
+                    .println("DEBUG: Group FLAGGED (Failed F2P check). Strict=" + isStrict + " TrueCases=" + trueCases);
+            String label = (groupName != null && !groupName.isEmpty()) ? groupName : (isStrict ? "Strict" : "Normal");
+            return new CheckResult(false, "Verstoß gegen Regelgruppe (" + label + "): "
                     + String.join(", ", reasons));
         }
 
+        System.out.println("DEBUG: Group PASSED (Safe). Strict=" + isStrict + " TrueCases=" + trueCases);
         return new CheckResult(true, null);
     }
 
     // Returns CheckResult(false, reason) if FLAGGED, or CheckResult(true, null) if
     // SAFE
     private static CheckResult evaluateCase(JSONObject caseObj, Map<String, Integer> playerData) {
+        String debugName = caseObj.optString("name", "Unknown Case");
+        System.out.println("DEBUG: Start Case: " + debugName);
         if (!caseObj.has("IfMoreThan"))
             return new CheckResult(true, null); // Safe
 
@@ -192,6 +203,7 @@ public class F2PCheckAlgorithm {
     private static boolean checkIfMoreThan(JSONObject ifObj, Map<String, Integer> playerData) {
         String type = ifObj.getString("type"); // "quantity" or "count"
         int allowed = ifObj.getInt("allowed");
+        System.out.println("DEBUG: CheckIfMoreThan type=" + type + " allowed=" + allowed);
         JSONArray elements = ifObj.getJSONArray("elements");
 
         int userValue = 0;
@@ -201,6 +213,7 @@ public class F2PCheckAlgorithm {
         for (int i = 0; i < elements.length(); i++) {
             JSONObject el = elements.getJSONObject(i);
             String idStr = String.valueOf(el.get("id")); // Can be string "queen skin" or int
+            String name = el.optString("name", "Unknown Item");
 
             if (idStr.isEmpty())
                 continue; // Skip empty ids if any
@@ -208,6 +221,7 @@ public class F2PCheckAlgorithm {
             if (playerData.containsKey(idStr)) {
                 int count = playerData.get(idStr);
                 if (count > 0) {
+                    System.out.println("DEBUG:   -> Found " + name + " (ID: " + idStr + ") Count: " + count);
                     if (type.equals("quantity")) {
                         // Only count unique elements logic?
                         // "quantity: only count unique elements the player has (1+1+1=3)" ??
@@ -253,6 +267,8 @@ public class F2PCheckAlgorithm {
         }
 
         int finalValue = userValue;
+        System.out
+                .println("DEBUG: FinalValue=" + finalValue + " > Allowed=" + allowed + " -> " + (finalValue > allowed));
         return finalValue > allowed;
     }
 

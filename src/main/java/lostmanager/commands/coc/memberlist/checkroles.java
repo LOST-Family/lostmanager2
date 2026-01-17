@@ -1,4 +1,4 @@
-package lostmanager.commands.coc.util;
+package lostmanager.commands.coc.memberlist;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -158,20 +158,20 @@ public class checkroles extends ListenerAdapter {
 			// Get expected Discord role ID based on clan role
 			String expectedRoleId = null;
 			switch (roleDB) {
-			case LEADER:
-				expectedRoleId = clan.getRoleID(Clan.Role.LEADER);
-				break;
-			case COLEADER:
-				expectedRoleId = clan.getRoleID(Clan.Role.COLEADER);
-				break;
-			case ELDER:
-				expectedRoleId = clan.getRoleID(Clan.Role.ELDER);
-				break;
-			case MEMBER:
-				expectedRoleId = clan.getRoleID(Clan.Role.MEMBER);
-				break;
-			default:
-				break;
+				case LEADER:
+					expectedRoleId = clan.getRoleID(Clan.Role.LEADER);
+					break;
+				case COLEADER:
+					expectedRoleId = clan.getRoleID(Clan.Role.COLEADER);
+					break;
+				case ELDER:
+					expectedRoleId = clan.getRoleID(Clan.Role.ELDER);
+					break;
+				case MEMBER:
+					expectedRoleId = clan.getRoleID(Clan.Role.MEMBER);
+					break;
+				default:
+					break;
 			}
 
 			if (expectedRoleId == null) {
@@ -232,16 +232,16 @@ public class checkroles extends ListenerAdapter {
 
 	private String getRoleDisplayName(Player.RoleType roleType) {
 		switch (roleType) {
-		case LEADER:
-			return "Anführer";
-		case COLEADER:
-			return "Vize-Anführer";
-		case ELDER:
-			return "Ältester";
-		case MEMBER:
-			return "Mitglied";
-		default:
-			return "Unbekannt";
+			case LEADER:
+				return "Anführer";
+			case COLEADER:
+				return "Vize-Anführer";
+			case ELDER:
+				return "Ältester";
+			case MEMBER:
+				return "Mitglied";
+			default:
+				return "Unbekannt";
 		}
 	}
 }

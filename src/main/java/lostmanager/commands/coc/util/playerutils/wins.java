@@ -1,4 +1,4 @@
-package lostmanager.commands.coc.util;
+package lostmanager.commands.coc.util.playerutils;
 
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -94,9 +94,11 @@ public class wins extends ListenerAdapter {
 						}
 
 						java.time.ZoneId zone = java.time.ZoneId.of("Europe/Berlin");
-						java.time.ZonedDateTime startOfMonth = java.time.ZonedDateTime.of(selectedMonth.getYear(), selectedMonth.getMonthValue(), 1, 0, 0, 0, 0, zone);
-						Player.WinsData wd = member.getMonthlyWins(selectedMonth.getYear(), selectedMonth.getMonthValue(),
-							selectedMonth.equals(currentMonth), startOfMonth, startOfMonth.plusMonths(1), zone);
+						java.time.ZonedDateTime startOfMonth = java.time.ZonedDateTime.of(selectedMonth.getYear(),
+								selectedMonth.getMonthValue(), 1, 0, 0, 0, 0, zone);
+						Player.WinsData wd = member.getMonthlyWins(selectedMonth.getYear(),
+								selectedMonth.getMonthValue(),
+								selectedMonth.equals(currentMonth), startOfMonth, startOfMonth.plusMonths(1), zone);
 						if (wd != null) {
 							playerWinsDataList.add(new PlayerWinsData(member, wd.wins));
 						}
@@ -196,7 +198,8 @@ public class wins extends ListenerAdapter {
 	private String getPlayerWinsForSeason(Player player, YearMonth selectedMonth, YearMonth currentMonth) {
 
 		java.time.ZoneId zone = java.time.ZoneId.of("Europe/Berlin");
-		java.time.ZonedDateTime startOfMonth = java.time.ZonedDateTime.of(selectedMonth.getYear(), selectedMonth.getMonthValue(), 1, 0, 0, 0, 0, zone);
+		java.time.ZonedDateTime startOfMonth = java.time.ZonedDateTime.of(selectedMonth.getYear(),
+				selectedMonth.getMonthValue(), 1, 0, 0, 0, 0, zone);
 		Player.WinsData winsData = player.getMonthlyWins(selectedMonth.getYear(), selectedMonth.getMonthValue(),
 				selectedMonth.equals(currentMonth), startOfMonth, startOfMonth.plusMonths(1), zone);
 
@@ -213,8 +216,6 @@ public class wins extends ListenerAdapter {
 		return "Season: " + selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.GERMAN)) + "\n\n**"
 				+ winsData.wins + "** Wins in dieser Season" + warning + warningNote + "\n";
 	}
-
-    
 
 	/**
 	 * Helper class to store player and wins data for sorting

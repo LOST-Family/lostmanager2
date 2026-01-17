@@ -1,4 +1,4 @@
-package lostmanager.commands.coc.util;
+package lostmanager.commands.coc.util.clanutils;
 
 import java.sql.Array;
 import java.sql.Connection;
@@ -412,8 +412,9 @@ public class cwdonator extends ListenerAdapter {
 				Collections.shuffle(eligiblePlayers);
 
 				chosen = eligiblePlayers.get(0);
-				
-				// Defensive check: should not happen since leaders are filtered upfront, but kept as safeguard
+
+				// Defensive check: should not happen since leaders are filtered upfront, but
+				// kept as safeguard
 				if (isLeaderOrCoLeader(chosen) && excludeLeaders) {
 					listA.remove(chosen.getTag());
 					listB.add(chosen.getTag());
