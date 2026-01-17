@@ -62,27 +62,6 @@
                     }
                 },
                 {
-                    "name": "Test",
-                        "IfMoreThan": [{
-                            "type": "count",
-                            "allowed": 3,
-                            "elements": [{
-                                    "type": "element",
-                                    "name": "Cozy Coffin",
-                                    "id": "18000096"
-                                },{
-                                    "type": "element",
-                                    "name": "Spooky Spa",
-                                    "id": "18000098"
-                                },{   
-                                    "type": "element",
-                                    "name": "Pumpkin Scarecrow",
-                                    "id": "18000099"
-                                }
-                            ]
-                        }] 
-                },
-                {
                     "name": "",
                     "IfMoreThan": [{
                         "type": "count",
