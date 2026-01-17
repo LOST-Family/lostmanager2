@@ -1111,7 +1111,7 @@
                 },
                 "ThenForbidden": {
                     "CasesStrict":[{
-                        "name": "Hat 'Clash Carving Deco' und mindestens eins davon: 'Frozen Wizard Deco' und 'Soda Stand Deco' sowie mindestens ein 'Clash-A-Rama Clan House'",
+                        "name": "",
                         "IfMoreThan": {
                             "type": "quantity",
                             "allowed": 0,
@@ -1127,7 +1127,7 @@
                         },
                         "ThenForbidden":{
                             "CasesStrict":[{
-                               "name": "Test2",
+                               "name": "",
                                 "IfMoreThan": {
                                     "type": "quantity",
                                     "allowed": 0,
@@ -1182,7 +1182,7 @@
                         },
                         "ThenForbidden":{
                             "CasesStrict":[{
-                               "name": "Test2",
+                               "name": "",
                                 "IfMoreThan": {
                                     "type": "quantity",
                                     "allowed": 0,
