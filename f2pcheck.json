@@ -491,7 +491,7 @@
                     "allowed": 0,
                     "elements": [{
                         "type": "element",
-                        "name": "",
+                        "name": "Kawaii Giant Deco",
                         "id": "18000145"
                     }]
                 },
@@ -528,7 +528,7 @@
                     "allowed": 0,
                     "elements": [{
                         "type": "element",
-                        "name": "Hat 'Kawaii Giant Deco'",
+                        "name": "Kawaii Giant Deco",
                         "id": "18000145"
                     }]
                 },
@@ -577,7 +577,7 @@
                     "allowed": 0,
                     "elements": [{
                         "type": "element",
-                        "name": "",
+                        "name": "Kawaii Giant Deco",
                         "id": "18000145"
                     }]
                 },
@@ -591,6 +591,107 @@
                                 "type": "element",
                                 "name": "Chibi Archer Deco",
                                 "id": "18000144"                            
+                            }]
+                        }
+                    }]                    
+                }
+            }]
+        }
+    },
+    {
+        "Cases":{
+            "name": "October 2024 Event",
+            "cases": [{
+                "name": "",
+                "IfMoreThan": {
+                    "type": "quantity",
+                    "allowed": 0,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Bubble Boil Cauldron Deco",
+                        "id": "18000159"
+                    }]
+                },
+                "ThenForbidden": {
+                    "CasesStrict":[{
+                        "name": "",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 1,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Cyan Crystal Roof",
+                                "id": "82000132"                            
+                            },{
+                                "type": "element",
+                                "name": "Jack-o'Lantern",
+                                "id": "82000133"                            
+                            }]
+                        }
+                    }]
+                }
+            },{
+                "name": "",
+                "IfMoreThan": {
+                    "type": "quantity",
+                    "allowed": 0,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Bubble Boil Cauldron",
+                        "id": "18000159"
+                    }]
+                },
+                "ThenForbidden": {
+                    "CasesStrict":[{
+                        "name": "Hat 'Bubble Boil Cauldron' und mehr als ein Clan House",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 1,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Cyan Crystal Roof",
+                                "id": "82000132"                            
+                            },{
+                                "type": "element",
+                                "name": "Jack-o'Lantern",
+                                "id": "82000133"                            
+                            }]
+                        }
+                    },{
+                        "name": "",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 0,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Jailbroken Box",
+                                "id": "18000158"                            
+                            }]
+                        }
+                    }]                    
+                }
+            },
+            {
+                "name": "",
+                "IfMoreThan": {
+                    "type": "quantity",
+                    "allowed": 0,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Bubble Boil Cauldron",
+                        "id": "18000159"
+                    }]
+                },
+                "ThenForbidden": {
+                    "CasesStrict":[{
+                        "name": "Hat 'Bubble Boil Cauldron' und 'Jailbroken Box'",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 0,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Jailbroken Box",
+                                "id": "18000158"                            
                             }]
                         }
                     }]                    
