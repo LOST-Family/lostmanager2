@@ -97,6 +97,7 @@ public class Bot extends ListenerAdapter {
 
 	@SuppressWarnings("null")
 	public static void main(String[] args) throws Exception {
+		lostmanager.util.DiscordLogger.setup();
 		VERSION = "2.1.0";
 		guild_id = System.getenv("DISCORD_GUILD_ID");
 		api_key = System.getenv("LOST_MANAGER_API_KEY");
@@ -512,6 +513,7 @@ public class Bot extends ListenerAdapter {
 	@Override
 	public void onReady(ReadyEvent event) {
 		setJda(event.getJDA());
+		lostmanager.util.DiscordLogger.setJda(event.getJDA());
 		registerCommands(event.getJDA(), guild_id);
 		// Start REST API Server
 		try {

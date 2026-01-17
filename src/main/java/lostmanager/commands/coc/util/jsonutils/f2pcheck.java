@@ -119,10 +119,13 @@ public class f2pcheck extends ListenerAdapter {
         } else if (obj instanceof JSONArray) {
             JSONArray jsonArray = (JSONArray) obj;
             for (int i = 0; i < jsonArray.length(); i++) {
-                collectDataIds(jsonArray.get(i), dataMap);
+                Object item = jsonArray.get(i);
+                if (item instanceof Integer) {
+                    dataMap.put(item.toString(), dataMap.getOrDefault(item.toString(), 0) + 1);
+                } else {
+                    collectDataIds(item, dataMap);
+                }
             }
-        } else if (obj instanceof Integer) {
-            dataMap.put(obj.toString(), 1);
         }
     }
 
