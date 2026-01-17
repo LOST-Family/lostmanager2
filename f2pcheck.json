@@ -848,7 +848,7 @@
                         "name": "Hat 'Lucky Cookies Deco' und mehr als ein Clan House",
                         "IfMoreThan": {
                             "type": "quantity",
-                            "allowed": 1,
+                            "allowed": 0,
                             "elements": [{
                                 "type": "element",
                                 "name": "LNY 2025 Roof",
@@ -897,6 +897,78 @@
                             }]
                         }
                     }]                    
+                }
+            }]
+        }
+    },
+    {
+        "Cases":{
+            "name": "April 2025 Event",
+            "cases": [{
+                "name": "",
+                "IfMoreThan": {
+                    "type": "quantity",
+                    "allowed": 1,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Golden Giant Deco",
+                        "id": "18000173"
+                    },{
+                        "type": "element",
+                        "name": "Surprise Wheel Deco",
+                        "id": "18000175"
+                    }]
+                },
+                "ThenForbidden": {
+                    "CasesStrict":[{
+                        "name": "",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 1,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Tombstone",
+                                "id": "82000138"                            
+                            },{
+                                "type": "element",
+                                "name": "ClashaMania Ground",
+                                "id": "82000139"                            
+                            }]
+                        }
+                    }]
+                }
+            },{
+                "name": "",
+                "IfMoreThan": {
+                    "type": "quantity",
+                    "allowed": 1,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Golden Giant Deco",
+                        "id": "18000173"
+                    },{
+                        "type": "element",
+                        "name": "Surprise Wheel Deco",
+                        "id": "18000175"
+                    }]
+                },
+                "ThenForbidden": {
+                    "CasesStrict":[{
+                        "name": "",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 1,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Tombstone",
+                                "id": "82000138"                            
+                            },{
+                                "type": "element",
+                                "name": "ClashaMania Ground",
+                                "id": "82000139"                            
+                            }]
+                        }
+                    }]
                 }
             }]
         }
