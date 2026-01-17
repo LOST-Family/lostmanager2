@@ -953,9 +953,8 @@
                     }]
                 },
                 "ThenForbidden": {
-                    "name": "Hat 'Golden Giant Deco', 'Surprise Wheel Deco' und beide Clan Houses",
                     "CasesStrict":[{
-                        "name": "",
+                        "name": "Hat 'Golden Giant Deco', 'Surprise Wheel Deco' und beide Clan Houses",
                         "IfMoreThan": {
                             "type": "quantity",
                             "allowed": 1,
