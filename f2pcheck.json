@@ -568,8 +568,19 @@
                                 "id": "18000144"                            
                             }]
                         }
-                    }]
-                                        
+                    },
+                    {
+                        "name": "Hat 'Kawaii Giant Deco' und 'Chibi Archer Deco'",
+                        "IfMoreThan": {
+                            "type": "quantity",
+                            "allowed": 0,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Chibi Archer Deco",
+                                "id": "18000144"                            
+                            }]
+                        }
+                    }]                    
                 }
             }]
         }
