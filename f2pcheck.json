@@ -236,45 +236,37 @@
                 }
             },
             {
-                "CasesStrict": [{
-                    "name":"Hat 'Barbarian Santa Deco', 'Skeleton Sock Deco' oder >= 1 Gingerbread Clan House",
-                    "IfMoreThan": {
-                        "type": "quantity",
-                        "allowed": 0,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Barbarian Santa",
-                            "id": "18000117"
-                        },
-                        {
-                            "type": "element",
-                            "name": "Skeleton Sock",
-                            "id": "18000118"
-                        },
-                        {
-                            "type": "element",
-                            "name": "Gingerbread Roof",
-                            "id": "82000046"
-                        },
-                        {
-                            "type": "element",
-                            "name": "Gingerbread Walls",
-                            "id": "82000055"
-                        },
-                        {
-                            "type": "element",
-                            "name": "Gingerbread Floor",
-                            "id": "82000006"
-                        },
-                        {
-                            "type": "element",
-                            "name": "Gingerbread Archer",
-                            "id": "82000067"
-                        }]
-                        }
-                }]
-            }
-            ]
+                "name":"Hat 'Barbarian Santa Deco', 'Skeleton Sock Deco' oder >= 1 Gingerbread Clan House",
+                "IfMoreThan": {
+                    "type": "quantity",
+                    "allowed": 0,
+                    "elements": [{
+                        "type": "element",
+                        "name": "Gingerbread Floor",
+                        "id": "82000006"
+                    },{
+                        "type": "element",
+                        "name": "Gingerbread Roof",
+                        "id": "82000046"
+                    },{
+                        "type": "element",
+                        "name": "Gingerbread Walls",
+                        "id": "82000055"
+                    },{
+                        "type": "element",
+                        "name": "Gingerbread Archer",
+                        "id": "82000067"
+                    },{
+                        "type": "element",
+                        "name": "Barbarian Santa",
+                        "id": "18000117"
+                    },{
+                        "type": "element",
+                        "name": "Skeleton Sock",
+                        "id": "18000118"
+                    }]
+                }
+        }]
         }
     },
     {
