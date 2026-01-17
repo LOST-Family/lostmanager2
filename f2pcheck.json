@@ -17,7 +17,7 @@
                 {
                     "name": "Hat 'Ghost Queen' + mindestens eins davon: 'Pumpkin Scarecrow Deco', 'Spooky Spa Deco', 'Cozy Coffin Deco','Halloween Roof' oder 'Dinosaur Clan House' ",
                     "IfMoreThan": {
-                        "type": "quantity",
+                        "type": "count",
                         "allowed": 1,
                         "elements": [{
                                 "type": "element",
@@ -52,13 +52,13 @@
                     },
                     "ThenForbidden":{
                         "IfMoreThan": {
-                        "type": "count",
-                        "allowed": 0,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Ghost Queen",
-                            "id": "52000101"
-                        }]
+                            "type": "quantity",
+                            "allowed": 0,
+                            "elements": [{
+                                "type": "element",
+                                "name": "Ghost Queen",
+                                "id": "52000101"
+                            }]
                         }
                     }
                 },
