@@ -74,6 +74,8 @@ public class f2pcheck extends ListenerAdapter {
                     Map<String, Integer> playerData = new java.util.HashMap<>();
                     collectDataIds(json, playerData);
 
+                    System.out.println("DEBUG: PlayerData: " + playerData);
+
                     // Run F2P Check
                     F2PCheckAlgorithm.CheckResult result = F2PCheckAlgorithm.check(playerData);
                     Player player = new Player(playerTag);
@@ -119,6 +121,8 @@ public class f2pcheck extends ListenerAdapter {
             for (int i = 0; i < jsonArray.length(); i++) {
                 collectDataIds(jsonArray.get(i), dataMap);
             }
+        } else if (obj instanceof Integer) {
+            dataMap.put(obj.toString(), 1);
         }
     }
 
