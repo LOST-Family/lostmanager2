@@ -1121,7 +1121,7 @@
                     }]
                 },
                 "ThenForbidden": {
-                    "cases":[{
+                    "CasesStrict":[{
                         "name": "",
                         "IfMoreThan": {
                             "type": "quantity",
@@ -1174,7 +1174,7 @@
                     }]
                 },
                 "ThenForbidden": {
-                    "cases":[{
+                    "CasesStrict":[{
                         "name": "Hat 'Clash Carving Deco' und mindestens eins davon: 'Frozen Wizard Deco' und 'Soda Stand Deco' sowie mindestens ein 'Clash-A-Rama Clan House'",
                         "IfMoreThan": {
                             "type": "quantity",
