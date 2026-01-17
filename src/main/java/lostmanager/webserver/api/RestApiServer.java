@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -36,25 +35,26 @@ import org.json.JSONObject;
  * Runs on port 8070 by default
  */
 public class RestApiServer {
-    
+
     private HttpServer server;
     private int port;
     private ObjectMapper objectMapper;
     private String apiToken;
-    
+
     public RestApiServer(int port) {
         this.port = port;
         this.objectMapper = new ObjectMapper();
         this.apiToken = System.getenv("REST_API_TOKEN");
-        
+
         if (this.apiToken == null || this.apiToken.isEmpty()) {
-            System.err.println("WARNING: REST_API_TOKEN is not set. API endpoints will be accessible without authentication.");
+            System.err.println(
+                    "WARNING: REST_API_TOKEN is not set. API endpoints will be accessible without authentication.");
         }
     }
-    
+
     public void start() throws IOException {
         server = HttpServer.create(new InetSocketAddress(port), 0);
-        
+
         // Register API endpoints
         // Note: More specific paths should be registered before more general paths
         server.createContext("/api/clans/", new ClanSpecificHandler());
@@ -63,10 +63,10 @@ public class RestApiServer {
         server.createContext("/api/players/", new PlayerHandler());
         server.createContext("/api/users/", new UserHandler());
         server.createContext("/api/guild", new GuildHandler());
-        
+
         server.setExecutor(Executors.newFixedThreadPool(10));
         server.start();
-        
+
         System.out.println("REST API Server started on port " + port);
     }
 
@@ -111,25 +111,19 @@ public class RestApiServer {
 
                 String json = objectMapper.writeValueAsString(list);
                 sendJsonResponse(exchange, 200, json);
-            } catch (SQLException e) {
-                System.err.println("SQL error in SideclansHandler: " + e.getMessage());
-                e.printStackTrace();
-                sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");
             } catch (Exception e) {
-                System.err.println("Error in SideclansHandler: " + e.getMessage());
-                e.printStackTrace();
-                sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");
+                handleException(exchange, "SideclansHandler", e);
             }
         }
     }
-    
+
     public void stop() {
         if (server != null) {
             server.stop(0);
             System.out.println("REST API Server stopped");
         }
     }
-    
+
     /**
      * Handler for GET /api/clans
      * Returns all available clans
@@ -142,22 +136,22 @@ public class RestApiServer {
                 exchange.sendResponseHeaders(204, -1);
                 return;
             }
-            
+
             if (!"GET".equals(exchange.getRequestMethod())) {
                 sendResponse(exchange, 405, "{\"error\":\"Method Not Allowed\"}");
                 return;
             }
-            
+
             // Validate API token
             if (!validateApiToken(exchange)) {
                 sendResponse(exchange, 401, "{\"error\":\"Unauthorized - Invalid or missing API token\"}");
                 return;
             }
-            
+
             try {
                 // Get all clan tags from database
                 ArrayList<String> clanTags = DBManager.getAllClans();
-                
+
                 // Convert to DTOs
                 List<ClanDTO> clans = new ArrayList<>();
                 for (String tag : clanTags) {
@@ -169,19 +163,17 @@ public class RestApiServer {
                         // Continue with other clans
                     }
                 }
-                
+
                 // Serialize to JSON
                 String json = objectMapper.writeValueAsString(clans);
                 sendJsonResponse(exchange, 200, json);
-                
+
             } catch (Exception e) {
-                System.err.println("Error in ClansHandler: " + e.getMessage());
-                e.printStackTrace();
-                sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");
+                handleException(exchange, "ClansHandler", e);
             }
         }
     }
-    
+
     /**
      * Handler for clan-specific endpoints:
      * - GET /api/clans/{tag} - clan info
@@ -199,42 +191,42 @@ public class RestApiServer {
                 exchange.sendResponseHeaders(204, -1);
                 return;
             }
-            
+
             if (!"GET".equals(exchange.getRequestMethod())) {
                 sendResponse(exchange, 405, "{\"error\":\"Method Not Allowed\"}");
                 return;
             }
-            
+
             // Validate API token
             if (!validateApiToken(exchange)) {
                 sendResponse(exchange, 401, "{\"error\":\"Unauthorized - Invalid or missing API token\"}");
                 return;
             }
-            
+
             try {
                 // Extract path
                 String path = exchange.getRequestURI().getPath();
                 String[] parts = path.split("/");
-                
+
                 // Need at least /api/clans/{tag}
                 if (parts.length < 4) {
                     sendResponse(exchange, 400, "{\"error\":\"Invalid path format\"}");
                     return;
                 }
-                
+
                 String clanTag = parts[3];
-                
+
                 // Validate clan exists (DB call only)
                 Clan clan = new Clan(clanTag);
                 if (!clan.ExistsDB()) {
                     sendResponse(exchange, 404, "{\"error\":\"Clan not found\"}");
                     return;
                 }
-                
+
                 // Route based on sub-path
                 if (parts.length >= 5) {
                     String subPath = parts[4];
-                    
+
                     switch (subPath) {
                         case "members":
                             handleClanMembers(exchange, clan);
@@ -260,24 +252,23 @@ public class RestApiServer {
                     String json = objectMapper.writeValueAsString(clanDTO);
                     sendJsonResponse(exchange, 200, json);
                 }
-                
+
             } catch (Exception e) {
-                System.err.println("Error in ClanSpecificHandler: " + e.getMessage());
-                e.printStackTrace();
-                sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");
+                handleException(exchange, "ClanSpecificHandler", e);
             }
         }
-        
+
         private void handleClanMembers(HttpExchange exchange, Clan clan) throws Exception {
             // Return members list (DB call only - no API call)
             ArrayList<Player> members = clan.getPlayersDB();
-            
+
             if (members == null) {
                 sendJsonResponse(exchange, 200, "[]");
                 return;
             }
-            
-            // Convert to DTOs - include player data here so not every one needs to be checked
+
+            // Convert to DTOs - include player data here so not every one needs to be
+            // checked
             List<PlayerDTO> playerDTOs = new ArrayList<>();
             for (Player player : members) {
                 try {
@@ -287,21 +278,21 @@ public class RestApiServer {
                     // Continue with other players
                 }
             }
-            
+
             // Serialize to JSON
             String json = objectMapper.writeValueAsString(playerDTOs);
             sendJsonResponse(exchange, 200, json);
         }
-        
+
         private void handleKickpointReasons(HttpExchange exchange, Clan clan) throws Exception {
             // Get kickpoint reasons for the clan (DB call only)
             ArrayList<KickpointReason> reasons = clan.getKickpointReasons();
-            
+
             if (reasons == null) {
                 sendJsonResponse(exchange, 200, "[]");
                 return;
             }
-            
+
             // Convert to DTOs
             List<KickpointReasonDTO> reasonDTOs = new ArrayList<>();
             for (KickpointReason reason : reasons) {
@@ -312,73 +303,73 @@ public class RestApiServer {
                     // Continue with other reasons
                 }
             }
-            
+
             // Serialize to JSON
             String json = objectMapper.writeValueAsString(reasonDTOs);
             sendJsonResponse(exchange, 200, json);
         }
-        
+
         private void handleWarMembers(HttpExchange exchange, Clan clan) throws Exception {
             // Get clan war members (DB call only)
             ArrayList<Player> warMembers = clan.getWarMemberList();
-            
+
             if (warMembers == null) {
                 sendJsonResponse(exchange, 200, "[]");
                 return;
             }
-            
+
             // Convert to simple tag list for performance
             List<String> tags = new ArrayList<>();
             for (Player player : warMembers) {
                 tags.add(player.getTag());
             }
-            
+
             // Serialize to JSON
             String json = objectMapper.writeValueAsString(tags);
             sendJsonResponse(exchange, 200, json);
         }
-        
+
         private void handleRaidMembers(HttpExchange exchange, Clan clan) throws Exception {
             // Get raid members (DB call only)
             ArrayList<Player> raidMembers = clan.getRaidMemberList();
-            
+
             if (raidMembers == null) {
                 sendJsonResponse(exchange, 200, "[]");
                 return;
             }
-            
+
             // Convert to simple tag list for performance
             List<String> tags = new ArrayList<>();
             for (Player player : raidMembers) {
                 tags.add(player.getTag());
             }
-            
+
             // Serialize to JSON
             String json = objectMapper.writeValueAsString(tags);
             sendJsonResponse(exchange, 200, json);
         }
-        
+
         private void handleCWLMembers(HttpExchange exchange, Clan clan) throws Exception {
             // Get CWL members (DB call only)
             ArrayList<Player> cwlMembers = clan.getCWLMemberList();
-            
+
             if (cwlMembers == null) {
                 sendJsonResponse(exchange, 200, "[]");
                 return;
             }
-            
+
             // Convert to simple tag list for performance
             List<String> tags = new ArrayList<>();
             for (Player player : cwlMembers) {
                 tags.add(player.getTag());
             }
-            
+
             // Serialize to JSON
             String json = objectMapper.writeValueAsString(tags);
             sendJsonResponse(exchange, 200, json);
         }
     }
-    
+
     /**
      * Handler for GET /api/players/{tag}
      * Returns a player object with all requested data (DB call only)
@@ -391,55 +382,53 @@ public class RestApiServer {
                 exchange.sendResponseHeaders(204, -1);
                 return;
             }
-            
+
             if (!"GET".equals(exchange.getRequestMethod())) {
                 sendResponse(exchange, 405, "{\"error\":\"Method Not Allowed\"}");
                 return;
             }
-            
+
             // Validate API token
             if (!validateApiToken(exchange)) {
                 sendResponse(exchange, 401, "{\"error\":\"Unauthorized - Invalid or missing API token\"}");
                 return;
             }
-            
+
             try {
                 // Extract player tag from path
                 String path = exchange.getRequestURI().getPath();
                 // Path format: /api/players/{tag}
                 String[] parts = path.split("/");
-                
+
                 if (parts.length < 4) {
                     sendResponse(exchange, 400, "{\"error\":\"Invalid path format. Expected /api/players/{tag}\"}");
                     return;
                 }
-                
+
                 String playerTag = parts[3];
-                
+
                 // Create player object
                 Player player = new Player(playerTag);
-                
+
                 // Check if player is linked (exists in DB)
                 if (!player.IsLinked()) {
                     sendResponse(exchange, 404, "{\"error\":\"Player not found\"}");
                     return;
                 }
-                
+
                 // Convert to DTO (DB calls only)
                 PlayerDTO playerDTO = new PlayerDTO(player);
-                
+
                 // Serialize to JSON
                 String json = objectMapper.writeValueAsString(playerDTO);
                 sendJsonResponse(exchange, 200, json);
-                
+
             } catch (Exception e) {
-                System.err.println("Error in PlayerHandler: " + e.getMessage());
-                e.printStackTrace();
-                sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");
+                handleException(exchange, "PlayerHandler", e);
             }
         }
     }
-    
+
     /**
      * Handler for GET /api/users/{userId}
      * Returns a user object with isAdmin and list of linked players (DB call only)
@@ -452,56 +441,54 @@ public class RestApiServer {
                 exchange.sendResponseHeaders(204, -1);
                 return;
             }
-            
+
             if (!"GET".equals(exchange.getRequestMethod())) {
                 sendResponse(exchange, 405, "{\"error\":\"Method Not Allowed\"}");
                 return;
             }
-            
+
             // Validate API token
             if (!validateApiToken(exchange)) {
                 sendResponse(exchange, 401, "{\"error\":\"Unauthorized - Invalid or missing API token\"}");
                 return;
             }
-            
+
             try {
                 // Extract user ID from path
                 String path = exchange.getRequestURI().getPath();
                 // Path format: /api/users/{userId}
                 String[] parts = path.split("/");
-                
+
                 if (parts.length < 4) {
                     sendResponse(exchange, 400, "{\"error\":\"Invalid path format. Expected /api/users/{userId}\"}");
                     return;
                 }
-                
+
                 String userId = parts[3];
-                
+
                 // Create user object
                 User user = new User(userId);
-                
+
                 // Check if user has any linked accounts
                 ArrayList<Player> linkedPlayers = user.getAllLinkedAccounts();
                 if ((linkedPlayers == null || linkedPlayers.isEmpty()) && !user.isAdmin()) {
                     sendResponse(exchange, 404, "{\"error\":\"User not found or has no linked accounts\"}");
                     return;
                 }
-                
+
                 // Convert to DTO
                 UserDTO userDTO = new UserDTO(user);
-                
+
                 // Serialize to JSON
                 String json = objectMapper.writeValueAsString(userDTO);
                 sendJsonResponse(exchange, 200, json);
-                
+
             } catch (Exception e) {
-                System.err.println("Error in UserHandler: " + e.getMessage());
-                e.printStackTrace();
-                sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");
+                handleException(exchange, "UserHandler", e);
             }
         }
     }
-    
+
     private class GuildHandler implements HttpHandler {
         @SuppressWarnings("null")
         @Override
@@ -511,34 +498,59 @@ public class RestApiServer {
                 exchange.sendResponseHeaders(204, -1);
                 return;
             }
-            
+
             if (!"GET".equals(exchange.getRequestMethod())) {
                 sendResponse(exchange, 405, "{\"error\":\"Method Not Allowed\"}");
                 return;
             }
-            
+
             // Validate API token
             if (!validateApiToken(exchange)) {
                 sendResponse(exchange, 401, "{\"error\":\"Unauthorized - Invalid or missing API token\"}");
                 return;
             }
-            
+
             try {
-            	JSONObject object = new JSONObject();
-            	object.put("membercount", Bot.getJda().getGuildById(Bot.guild_id).getMemberCount());
+                JSONObject object = new JSONObject();
+                object.put("membercount", Bot.getJda().getGuildById(Bot.guild_id).getMemberCount());
                 String json = object.toString();
                 sendJsonResponse(exchange, 200, json);
-                
+
             } catch (Exception e) {
-                System.err.println("Error in GuildHandler: " + e.getMessage());
-                e.printStackTrace();
-                sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");
+                handleException(exchange, "GuildHandler", e);
             }
         }
     }
-    
+
+    /**
+     * Handle exceptions from handlers, suppressing connection reset errors
+     */
+    private void handleException(HttpExchange exchange, String handlerName, Exception e) {
+        boolean isClientDisconnect = false;
+        if (e instanceof IOException) {
+            String msg = e.getMessage();
+            if (msg != null && (msg.contains("Connection reset") || msg.contains("Broken pipe")
+                    || msg.contains("insufficient bytes written"))) {
+                isClientDisconnect = true;
+            }
+        }
+
+        if (isClientDisconnect) {
+            System.out.println("Client disconnected in " + handlerName + ": " + e.getMessage());
+        } else {
+            System.err.println("Error in " + handlerName + ": " + e.getMessage());
+            e.printStackTrace();
+            try {
+                sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");
+            } catch (IOException ignore) {
+                // Failed to send error response
+            }
+        }
+    }
+
     /**
      * Validate API token from request headers
+     * 
      * @return true if token is valid or no token is required, false otherwise
      */
     private boolean validateApiToken(HttpExchange exchange) {
@@ -546,7 +558,7 @@ public class RestApiServer {
         if (apiToken == null || apiToken.isEmpty()) {
             return true;
         }
-        
+
         // Check Authorization header
         String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
         if (authHeader != null) {
@@ -558,16 +570,16 @@ public class RestApiServer {
                 return apiToken.equals(authHeader);
             }
         }
-        
+
         // Check X-API-Token header
         String apiTokenHeader = exchange.getRequestHeaders().getFirst("X-API-Token");
         if (apiTokenHeader != null) {
             return apiToken.equals(apiTokenHeader);
         }
-        
+
         return false;
     }
-    
+
     /**
      * Send plain text response
      */
@@ -580,7 +592,7 @@ public class RestApiServer {
             os.write(bytes);
         }
     }
-    
+
     /**
      * Send JSON response
      */
@@ -593,7 +605,7 @@ public class RestApiServer {
             os.write(bytes);
         }
     }
-    
+
     /**
      * Add CORS headers to allow cross-origin requests
      */
