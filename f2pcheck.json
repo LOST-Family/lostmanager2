@@ -487,26 +487,28 @@
                         }]
                     },
                     "ThenForbidden":{
-                        "name": "Hat 'Crossover SC-ID Scenery' und mindestens eine SC-ID Deco: 'Brawl's Star Deco', 'Gargantuan Gauntlet Deco', 'Sleepy King Deco'",
-                        "IfMoreThan": {
-                            "type": "quantity",
-                            "allowed": 0,
-                            "elements": [{
-                                "type": "element",
-                                "name": "Brawl's Star",
-                                "id": "18000147"
-                            },
-                            {    
-                                "type": "element",
-                                "name": "Gargantuan Gauntlet",
-                                "id": "18000148"
-                            },
-                            {    
-                                "type": "element",
-                                "name": "Sleepy King",
-                                "id": "18000150"
-                            }]
-                        }
+                        "CasesStrict":[{
+                            "name": "Hat 'Crossover SC-ID Scenery' und mindestens eine SC-ID Deco: 'Brawl's Star Deco', 'Gargantuan Gauntlet Deco', 'Sleepy King Deco'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 0,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Brawl's Star",
+                                    "id": "18000147"
+                                },
+                                {    
+                                    "type": "element",
+                                    "name": "Gargantuan Gauntlet",
+                                    "id": "18000148"
+                                },
+                                {    
+                                    "type": "element",
+                                    "name": "Sleepy King",
+                                    "id": "18000150"
+                                }]
+                            }
+                        }] 
                     }
                 }]  
             }
