@@ -1,6 +1,7 @@
 {
     "Conditions": [{
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "Cases":[{
            "name": "October 2023 Event",
             "CasesStrict": [{
@@ -281,11 +282,16 @@
                     "IfMoreThan":{
                         "name": "",
 =======
+=======
+>>>>>>> Stashed changes
             "Cases": [{
                 "name": "October 2023 Event",
                 "CasesStrict": [{
                     "name": "",
                     "IfMoreThan": {
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                         "type": "count",
                         "allowed": 0,
