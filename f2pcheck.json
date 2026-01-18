@@ -1,6 +1,6 @@
 {
     "Conditions": [{
-            "Cases": [{
+            "Cases": {
                 "name": "October 2023 Event",
                 "CasesStrict": [{
                     "name": "October 2023 Event V2",
@@ -47,7 +47,7 @@
                             }
                         }]
                     }
-                },{
+                }, {
                     "name": "",
                     "IfMoreThan": {
                         "type": "count",
@@ -78,8 +78,8 @@
                                     "id": "18000097"
                                 }]
                             },
-                            "ThenForbidden":{
-                                "CasesStrict":[{
+                            "ThenForbidden": {
+                                "CasesStrict": [{
                                     "name": "Hat 4 'Pumpkin Scarecrow Decos', 'Spooky Spa Deco' und 'Cozy Coffin Deco' sowie 'Friendly Clown Deco' und entweder 'Halloween Roof' oder 'Dinosaur Clan House'",
                                     "IfMoreThan": {
                                         "type": "quantity",
@@ -98,7 +98,7 @@
                             }
                         }]
                     }
-                },{
+                }, {
                     "name": "",
                     "IfMoreThan": {
                         "type": "count",
@@ -140,7 +140,7 @@
                         }]
                     }
                 }]
-            }]
+            }
         },
         {
             "Cases": {
@@ -299,7 +299,7 @@
                             }
                         }]
                     }
-                },{
+                }, {
                     "IfMoreThan": {
                         "name": "",
                         "type": "count",
@@ -431,7 +431,7 @@
                                     "id": "82000133"
                                 }]
                             }
-                        },{
+                        }, {
                             "name": "Hat 'Bubble Boil Cauldron Deco' und 'Jailbroken Box Deco'",
                             "IfMoreThan": {
                                 "type": "quantity",
@@ -477,7 +477,7 @@
                                     "id": "82000135"
                                 }]
                             }
-                        },{
+                        }, {
                             "name": "Hat 'Snow Globe Deco' und 'Clockwork Choir'",
                             "IfMoreThan": {
                                 "type": "quantity",
@@ -523,7 +523,7 @@
                                     "id": "82000137"
                                 }]
                             }
-                        },{
+                        }, {
                             "name": "Hat 'Lucky Cookies Deco' und 'Monk Statue Deco'",
                             "IfMoreThan": {
                                 "type": "quantity",
@@ -616,7 +616,7 @@
                                     "id": "82000145"
                                 }]
                             }
-                        },{
+                        }, {
                             "name": "",
                             "IfMoreThan": {
                                 "type": "quantity",
@@ -732,15 +732,16 @@
                         "type": "quantity",
                         "allowed": 0,
                         "elements": [{
-                            "type": "element",
-                            "name": "Frost Flake Equipment",
-                            "id": "90000050"
-                        },
-                        {   
-                            "type": "element",
-                            "name": "Hungry Hound Deco",
-                            "id": "18000203"
-                        }]
+                                "type": "element",
+                                "name": "Frost Flake Equipment",
+                                "id": "90000050"
+                            },
+                            {
+                                "type": "element",
+                                "name": "Hungry Hound Deco",
+                                "id": "18000203"
+                            }
+                        ]
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
@@ -749,17 +750,18 @@
                                 "type": "quantity",
                                 "allowed": 1,
                                 "elements": [{
-                                    "type": "element",
-                                    "name": "Frost Flake Equipment",
-                                    "id": "90000050"
-                                },
-                                {   
-                                    "type": "element",
-                                    "name": "Hungry Hound Deco",
-                                    "id": "18000203"
-                                }]
+                                        "type": "element",
+                                        "name": "Frost Flake Equipment",
+                                        "id": "90000050"
+                                    },
+                                    {
+                                        "type": "element",
+                                        "name": "Hungry Hound Deco",
+                                        "id": "18000203"
+                                    }
+                                ]
                             }
-                        },{
+                        }, {
                             "name": "",
                             "IfMoreThan": {
                                 "type": "quantity",
