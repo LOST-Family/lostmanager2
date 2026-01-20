@@ -17,13 +17,13 @@ public class SideclanDTO {
     private String belongsTo;
 
     @JsonProperty("index")
-    private int index;
+    private Integer index;
 
     public SideclanDTO() {
         // default for Jackson
     }
 
-    public SideclanDTO(String clanTag, String name, String belongsTo, int index) {
+    public SideclanDTO(String clanTag, String name, String belongsTo, Integer index) {
         this.clanTag = clanTag;
         this.name = name;
         this.belongsTo = belongsTo;
@@ -54,11 +54,11 @@ public class SideclanDTO {
         this.belongsTo = belongsTo;
     }
 
-    public int getIndex() {
+    public Integer getIndex() {
         return index;
     }
 
-    public void setIndex(int index) {
+    public void setIndex(Integer index) {
         this.index = index;
     }
 }
