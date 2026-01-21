@@ -140,6 +140,9 @@ public class checkroles extends ListenerAdapter {
 		List<String> missingRolesList = new ArrayList<>();
 
 		for (Player p : playerlist) {
+			if (p.isHiddenColeader()) {
+				continue;
+			}
 			totalMembers++;
 
 			Player.RoleType roleDB = p.getRoleDB();

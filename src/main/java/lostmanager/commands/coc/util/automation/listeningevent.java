@@ -455,6 +455,7 @@ public class listeningevent extends ListenerAdapter {
 					desc.append("**Typ:** ").append(listeningType).append("\n");
 				}
 
+				desc.append("**Dauer:** ").append(formatDuration(le.getDurationUntilEnd())).append("\n");
 				desc.append("**Action:** ").append(le.getActionType()).append("\n");
 				desc.append("**Channel:** <#").append(le.getChannelID()).append(">\n");
 
@@ -1136,5 +1137,36 @@ public class listeningevent extends ListenerAdapter {
 			default:
 				return "Wartet auf Event";
 		}
+	}
+
+	/**
+	 * Formats a duration in milliseconds into a human-readable string.
+	 * 0 -> "0 (Sofort)"
+	 * -1 -> "start"
+	 * Others -> e.g. "1h", "2d", "30m"
+	 */
+	private String formatDuration(long duration) {
+		if (duration == 0) {
+			return "0 (Sofort)";
+		}
+		if (duration == -1) {
+			return "start";
+		}
+
+		long absDuration = Math.abs(duration);
+		if (absDuration % (24 * 60 * 60 * 1000) == 0) {
+			return (duration / (24 * 60 * 60 * 1000)) + "d";
+		}
+		if (absDuration % (60 * 60 * 1000) == 0) {
+			return (duration / (60 * 60 * 1000)) + "h";
+		}
+		if (absDuration % (60 * 1000) == 0) {
+			return (duration / (60 * 1000)) + "m";
+		}
+		if (absDuration % 1000 == 0) {
+			return (duration / 1000) + "s";
+		}
+
+		return duration + "ms";
 	}
 }

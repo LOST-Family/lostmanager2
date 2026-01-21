@@ -118,10 +118,10 @@ public class playerinfo extends ListenerAdapter {
 					}
 				}
 			}
-			
+
 			Button bellButton = Button.secondary("playerinfo_bell_" + userid, "\u200B")
 					.withEmoji(Emoji.fromUnicode("🔔"));
-			
+
 			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.INFO))
 					.setActionRow(bellButton).queue();
 		}, "PlayerInfoCommand-" + event.getUser().getId()).start();
@@ -147,12 +147,12 @@ public class playerinfo extends ListenerAdapter {
 			}
 		}, "PlayerInfoAutocomplete-" + event.getUser().getId()).start();
 	}
-	
+
 	@SuppressWarnings("null")
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();
-		
+
 		// Handle bell button - send ping with trash button
 		if (id.startsWith("playerinfo_bell_")) {
 			String userid = id.substring("playerinfo_bell_".length());
@@ -161,11 +161,11 @@ public class playerinfo extends ListenerAdapter {
 			event.deferEdit().queue();
 			return;
 		}
-		
+
 		// Handle trash button - delete the ping message
 		if (id.equals("playerinfo_trash")) {
+			event.deferEdit().queue();
 			event.getMessage().delete().queue(null, _ -> {
-				// Silently ignore errors (e.g., message already deleted or insufficient permissions)
 			});
 			return;
 		}

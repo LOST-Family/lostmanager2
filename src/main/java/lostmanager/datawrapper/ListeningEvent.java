@@ -117,28 +117,28 @@ public class ListeningEvent {
 				return null;
 			}
 			switch (type.toLowerCase()) {
-			case "cw":
-				listeningtype = LISTENINGTYPE.CW;
-				break;
-			case "raid":
-				listeningtype = LISTENINGTYPE.RAID;
-				break;
-			case "cwl":
-			case "cwlday":
-				listeningtype = LISTENINGTYPE.CWLDAY;
-				break;
-			case "cs":
-				listeningtype = LISTENINGTYPE.CS;
-				break;
-			case "fixtimeinterval":
-				listeningtype = LISTENINGTYPE.FIXTIMEINTERVAL;
-				break;
-			case "cwlend":
-				listeningtype = LISTENINGTYPE.CWLEND;
-				break;
-			default:
-				System.err.println("Warning: Unknown listeningtype '" + type + "' for event " + id);
-				listeningtype = null;
+				case "cw":
+					listeningtype = LISTENINGTYPE.CW;
+					break;
+				case "raid":
+					listeningtype = LISTENINGTYPE.RAID;
+					break;
+				case "cwl":
+				case "cwlday":
+					listeningtype = LISTENINGTYPE.CWLDAY;
+					break;
+				case "cs":
+					listeningtype = LISTENINGTYPE.CS;
+					break;
+				case "fixtimeinterval":
+					listeningtype = LISTENINGTYPE.FIXTIMEINTERVAL;
+					break;
+				case "cwlend":
+					listeningtype = LISTENINGTYPE.CWLEND;
+					break;
+				default:
+					System.err.println("Warning: Unknown listeningtype '" + type + "' for event " + id);
+					listeningtype = null;
 			}
 		}
 		return listeningtype;
@@ -207,38 +207,38 @@ public class ListeningEvent {
 			Clan c = new Clan(getClanTag());
 			Long endTimeMillis = null;
 			switch (type) {
-			case CS:
-				endTimeMillis = c.getCGEndTimeMillis();
-				if (endTimeMillis != null) {
-					timestamptofire = endTimeMillis - getDurationUntilEnd();
-				}
-				break;
-			case CW:
-				endTimeMillis = c.getCWEndTimeMillis();
-				if (endTimeMillis != null) {
-					timestamptofire = endTimeMillis - getDurationUntilEnd();
-				}
-				break;
-			case CWLDAY:
-				endTimeMillis = c.getCWLDayEndTimeMillis();
-				if (endTimeMillis != null) {
-					timestamptofire = endTimeMillis - getDurationUntilEnd();
-				}
-				break;
-			case RAID:
-				endTimeMillis = c.getRaidEndTimeMillis();
-				if (endTimeMillis != null) {
-					timestamptofire = endTimeMillis - getDurationUntilEnd();
-				}
-				break;
-			case FIXTIMEINTERVAL:
-				timestamptofire = getDurationUntilEnd();
-				break;
-			case CWLEND:
+				case CS:
+					endTimeMillis = c.getCGEndTimeMillis();
+					if (endTimeMillis != null) {
+						timestamptofire = endTimeMillis - getDurationUntilEnd();
+					}
+					break;
+				case CW:
+					endTimeMillis = c.getCWEndTimeMillis();
+					if (endTimeMillis != null) {
+						timestamptofire = endTimeMillis - getDurationUntilEnd();
+					}
+					break;
+				case CWLDAY:
+					endTimeMillis = c.getCWLDayEndTimeMillis();
+					if (endTimeMillis != null) {
+						timestamptofire = endTimeMillis - getDurationUntilEnd();
+					}
+					break;
+				case RAID:
+					endTimeMillis = c.getRaidEndTimeMillis();
+					if (endTimeMillis != null) {
+						timestamptofire = endTimeMillis - getDurationUntilEnd();
+					}
+					break;
+				case FIXTIMEINTERVAL:
+					timestamptofire = getDurationUntilEnd();
+					break;
+				case CWLEND:
 
-				break;
-			default:
-				break;
+					break;
+				default:
+					break;
 			}
 
 			// If timestamptofire is still null, return a far future time to prevent
@@ -264,28 +264,28 @@ public class ListeningEvent {
 			Clan clan = new Clan(getClanTag());
 
 			switch (type) {
-			case CS:
-				handleClanGamesEvent(clan);
-				break;
+				case CS:
+					handleClanGamesEvent(clan);
+					break;
 
-			case CW:
-				handleClanWarEvent(clan);
-				break;
+				case CW:
+					handleClanWarEvent(clan);
+					break;
 
-			case CWLDAY:
-				handleCWLDayEvent(clan);
-				break;
+				case CWLDAY:
+					handleCWLDayEvent(clan);
+					break;
 
-			case RAID:
-				handleRaidEvent(clan);
-				break;
+				case RAID:
+					handleRaidEvent(clan);
+					break;
 
-			case FIXTIMEINTERVAL:
-				// For custom timed events
-				break;
+				case FIXTIMEINTERVAL:
+					// For custom timed events
+					break;
 
-			default:
-				break;
+				default:
+					break;
 			}
 
 			System.out.println("Completed fireEvent for event ID " + getId());
@@ -434,6 +434,9 @@ public class ListeningEvent {
 		if (warMemberList == null) {
 			return; // Can't execute if no war members
 		}
+
+		// Filter hidden co-leaders
+		warMemberList.removeIf(p -> p.isHiddenColeader());
 
 		// Check action values for parameters (backwards compatible)
 		boolean useLists = false;
@@ -612,6 +615,11 @@ public class ListeningEvent {
 			try {
 				Player player = new Player(tag);
 
+				// Skip hidden co-leaders
+				if (player.isHiddenColeader()) {
+					continue;
+				}
+
 				// Check if this player has opted out (warPreference = "out")
 				boolean isOptedOut = !player.getWarPreference();
 
@@ -645,7 +653,8 @@ public class ListeningEvent {
 	}
 
 	private void handleCWMissedAttacks(Clan clan, org.json.JSONObject cwJson) {
-		// Get required attacks from action values (default to attacksPerMember from API)
+		// Get required attacks from action values (default to attacksPerMember from
+		// API)
 		int requiredAttacks = getRequiredAttacksFromConfig(cwJson);
 
 		// Get war end time to match with fillers
@@ -730,8 +739,10 @@ public class ListeningEvent {
 			// Check if war data is still available (state is notInWar or warEnded)
 			boolean dataIsReliable = currentState.equals("notInWar") || currentState.equals("warEnded");
 
-			// Re-fetch required attacks from event's action values to ensure the configured setting is preserved
-			// This prevents the setting from being lost and reverting to the API's attacksPerMember value
+			// Re-fetch required attacks from event's action values to ensure the configured
+			// setting is preserved
+			// This prevents the setting from being lost and reverting to the API's
+			// attacksPerMember value
 			int actualRequiredAttacks = event.getRequiredAttacksFromConfig(cwJson);
 
 			String updatedMessage;
@@ -780,10 +791,11 @@ public class ListeningEvent {
 			} catch (Exception e2) {
 				System.err.println("Failed to update message with error: " + e2.getMessage());
 			}
-			
+
 			// Still clean up fillers even on error
 			try {
-				DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clanTag, endTimeTs);
+				DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clanTag,
+						endTimeTs);
 			} catch (Exception e3) {
 				System.err.println("Failed to delete fillers on error: " + e3.getMessage());
 			}
@@ -882,8 +894,13 @@ public class ListeningEvent {
 					continue;
 				}
 
-				hasMissedAttacks = true;
 				Player p = new Player(tag);
+				// Skip hidden co-leaders
+				if (p.isHiddenColeader()) {
+					continue;
+				}
+
+				hasMissedAttacks = true;
 				message.append("- ");
 
 				if (!isVerificationPhase && getDurationUntilEnd() > 0) {
@@ -1048,7 +1065,8 @@ public class ListeningEvent {
 							: opponentData;
 
 					// Build initial message with missed attacks data
-					CWMissedAttacksResult result = buildCWLDayMissedAttacksMessage(clan, ourClanData, lastCompletedRound, false);
+					CWMissedAttacksResult result = buildCWLDayMissedAttacksMessage(clan, ourClanData,
+							lastCompletedRound, false);
 
 					// Determine if this is an end-of-war event (duration = 0)
 					boolean isEndOfWarEvent = getDurationUntilEnd() <= 0;
@@ -1082,7 +1100,8 @@ public class ListeningEvent {
 								}
 							}, 5, TimeUnit.MINUTES);
 
-							System.out.println("Scheduled 5-minute CWL day missed attacks verification for clan " + clanTag);
+							System.out.println(
+									"Scheduled 5-minute CWL day missed attacks verification for clan " + clanTag);
 						}
 					} else if (isEndOfWarEvent && !result.hasMissedAttacks) {
 						// End of war but no missed attacks - nothing to send or schedule
@@ -1140,8 +1159,13 @@ public class ListeningEvent {
 			}
 
 			if (attacks < 1) { // CWL has 1 attack per member
-				hasMissedAttacks = true;
 				Player p = new Player(tag);
+				// Skip hidden co-leaders
+				if (p.isHiddenColeader()) {
+					continue;
+				}
+
+				hasMissedAttacks = true;
 				message.append("- ").append(name);
 
 				// Only include Discord mentions if not in verification phase
@@ -1165,7 +1189,8 @@ public class ListeningEvent {
 	private void handleCWLDayMissedAttacksDelayedVerification(String clanTag, int roundNumber, String warTag,
 			long messageId, String channelId, ListeningEvent event, String originalMessage) {
 
-		System.out.println("Starting 5-minute CWL day verification for clan " + clanTag + " round " + (roundNumber + 1));
+		System.out
+				.println("Starting 5-minute CWL day verification for clan " + clanTag + " round " + (roundNumber + 1));
 
 		try {
 			// Fetch fresh CWL war data
@@ -1274,9 +1299,12 @@ public class ListeningEvent {
 				}
 
 				// Use default values if not configured
-				if (capitalPeakMax == null) capitalPeakMax = 10;
-				if (otherDistrictsMax == null) otherDistrictsMax = 6;
-				if (penalizeBoth == null) penalizeBoth = 1;
+				if (capitalPeakMax == null)
+					capitalPeakMax = 10;
+				if (otherDistrictsMax == null)
+					otherDistrictsMax = 6;
+				if (penalizeBoth == null)
+					penalizeBoth = 1;
 
 				handleRaidDistrictAnalysis(clan, capitalPeakMax, otherDistrictsMax, penalizeBoth);
 			}
@@ -1289,7 +1317,7 @@ public class ListeningEvent {
 
 		StringBuilder message = new StringBuilder();
 		message.append("## Raid Weekend - ");
-		
+
 		// Show time remaining if raid is active, or "ended" if not (like CW)
 		if (isRaidActive && getDurationUntilEnd() > 0) {
 			int secondsLeft = (int) (getDurationUntilEnd() / 1000);
@@ -1424,25 +1452,26 @@ public class ListeningEvent {
 
 	private void handleRaidCustomMessage(Clan clan, boolean isRaidActive) {
 		// Get custom message from action values
-		String customMessageJson = DBUtil.getValueFromSQL("SELECT actionvalues FROM listening_events WHERE id = ?", 
+		String customMessageJson = DBUtil.getValueFromSQL("SELECT actionvalues FROM listening_events WHERE id = ?",
 				String.class, getId());
-		
+
 		String customMessage = "";
 		if (customMessageJson != null && !customMessageJson.isEmpty()) {
 			try {
 				ObjectMapper mapper = new ObjectMapper();
-				java.util.Map<String, String> messageMap = mapper.readValue(customMessageJson, 
-						new TypeReference<java.util.HashMap<String, String>>() {});
+				java.util.Map<String, String> messageMap = mapper.readValue(customMessageJson,
+						new TypeReference<java.util.HashMap<String, String>>() {
+						});
 				customMessage = messageMap.getOrDefault("message", "");
 			} catch (JsonProcessingException e) {
 				System.err.println("Error parsing custom message: " + e.getMessage());
 			}
 		}
-		
+
 		// Build message with raid header (like CW format)
 		StringBuilder message = new StringBuilder();
 		message.append("## Raid - ");
-		
+
 		// Show time remaining if raid is active (same format as CW)
 		if (isRaidActive && getDurationUntilEnd() > 0) {
 			int secondsLeft = (int) (getDurationUntilEnd() / 1000);
@@ -1465,10 +1494,10 @@ public class ListeningEvent {
 		} else {
 			message.append("**Raid beendet.**\n\n");
 		}
-		
+
 		// Append custom message
 		message.append(customMessage);
-		
+
 		sendMessageToChannel(message.toString());
 	}
 
@@ -1490,7 +1519,8 @@ public class ListeningEvent {
 
 			org.json.JSONArray attackLog = currentRaid.getJSONArray("attackLog");
 
-			// Determine if we should add kickpoints based on action type and kickpoint reason
+			// Determine if we should add kickpoints based on action type and kickpoint
+			// reason
 			boolean shouldAddKickpoints = false;
 			if (getActionType() == ACTIONTYPE.RAIDFAILS) {
 				// Check if kickpoint reason is configured
@@ -1660,40 +1690,40 @@ public class ListeningEvent {
 		// Get the event's configured clan
 		String eventClanTag = getClanTag();
 		Clan eventClan = eventClanTag != null ? new Clan(eventClanTag) : null;
-		
+
 		// Check if the player is in the clan we're checking for this event
 		// Only add kickpoints if player is in the event's clan DB
 		Clan playerClanDB = player.getClanDB();
 		boolean playerIsInEventClan = false;
-		
+
 		if (playerClanDB != null && eventClanTag != null) {
 			playerIsInEventClan = playerClanDB.getTag().equals(eventClanTag);
 		}
-		
+
 		// If player is not in the event's clan DB, skip adding kickpoint
 		if (!playerIsInEventClan) {
-			System.out.println("Skipping kickpoint for player " + player.getTag() + 
+			System.out.println("Skipping kickpoint for player " + player.getTag() +
 					" - not in clan DB for event clan " + eventClanTag);
 			return;
 		}
-		
+
 		// Verify the event's clan exists in DB before proceeding
 		if (eventClan == null || !eventClan.ExistsDB()) {
-			System.out.println("Cannot add kickpoint for player " + player.getTag() + 
+			System.out.println("Cannot add kickpoint for player " + player.getTag() +
 					" - event clan " + eventClanTag + " does not exist in DB");
 			return;
 		}
-		
+
 		// Use the event's clan for kickpoint assignment
 		Clan clan = eventClan;
-		
+
 		if (clan != null) {
 			Integer daysExpire = clan.getDaysKickpointsExpireAfter();
 			// Default to 30 days if not configured
 			if (daysExpire == null) {
 				daysExpire = 30;
 			}
-			
+
 			java.sql.Timestamp now = java.sql.Timestamp.from(java.time.Instant.now());
 			java.sql.Timestamp expires = java.sql.Timestamp
 					.valueOf(now.toLocalDateTime().plusDays(daysExpire));
@@ -1704,7 +1734,7 @@ public class ListeningEvent {
 					clan.getTag(), now);
 
 			if (result == null) {
-				System.err.println("Error: Failed to add kickpoint for player " + player.getTag() + 
+				System.err.println("Error: Failed to add kickpoint for player " + player.getTag() +
 						" in clan " + clan.getTag() + " - database error occurred");
 				return;
 			}
@@ -1928,7 +1958,8 @@ public class ListeningEvent {
 				Collections.shuffle(eligiblePlayers);
 
 				chosen = eligiblePlayers.get(0);
-				// Defensive check: should not happen since leaders are filtered upfront, but kept as safeguard
+				// Defensive check: should not happen since leaders are filtered upfront, but
+				// kept as safeguard
 				if (isLeaderOrCoLeaderForEvent(chosen) && excludeLeaders) {
 					listA.remove(chosen.getTag());
 					listB.add(chosen.getTag());
@@ -2020,8 +2051,11 @@ public class ListeningEvent {
 
 	/**
 	 * Get the required attacks count from the event's action values configuration.
-	 * For CW events, this value is always configured via the modal and stored in action values.
-	 * Falls back to the API's attacksPerMember only if no configured value is found (legacy events).
+	 * For CW events, this value is always configured via the modal and stored in
+	 * action values.
+	 * Falls back to the API's attacksPerMember only if no configured value is found
+	 * (legacy events).
+	 * 
 	 * @param cwJson The clan war JSON containing the API's attacksPerMember value
 	 * @return The configured required attacks count
 	 */
@@ -2034,24 +2068,29 @@ public class ListeningEvent {
 				// by checking if we have a non-null value that isn't a reason or type
 				boolean isValueField = av.getSaved() == ActionValue.kind.value;
 				boolean looksLikeValue = av.getValue() != null && av.getReason() == null && av.getType() == null;
-				
+
 				if (isValueField && av.getValue() != null) {
 					int configuredValue = av.getValue().intValue();
-					System.out.println("CW Event " + getId() + ": Using configured required attacks = " + configuredValue);
+					System.out.println(
+							"CW Event " + getId() + ": Using configured required attacks = " + configuredValue);
 					return configuredValue;
 				} else if (!isValueField && looksLikeValue) {
-					// Handle legacy/malformed data where saved field is wrong but value is clearly a numeric value
+					// Handle legacy/malformed data where saved field is wrong but value is clearly
+					// a numeric value
 					int configuredValue = av.getValue().intValue();
-					System.out.println("CW Event " + getId() + ": WARNING - Using configured required attacks from malformed ActionValue = " + configuredValue);
+					System.out.println("CW Event " + getId()
+							+ ": WARNING - Using configured required attacks from malformed ActionValue = "
+							+ configuredValue);
 					return configuredValue;
 				}
 			}
 		}
-		
+
 		// Fallback for legacy events that don't have a configured value
 		// (this should not happen for newly created events)
 		int attacksPerMember = cwJson.getInt("attacksPerMember");
-		System.out.println("CW Event " + getId() + ": WARNING - No configured required attacks found, falling back to API value = " + attacksPerMember);
+		System.out.println("CW Event " + getId()
+				+ ": WARNING - No configured required attacks found, falling back to API value = " + attacksPerMember);
 		return attacksPerMember;
 	}
 
