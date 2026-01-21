@@ -184,26 +184,26 @@
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Gingerbread King' und mindestens eins davon: 'Barbarian Santa Deco', 'Skeleton Sock Deco' oder mindestens 1 'Gingerbread Clan House'",
+                            "name": "Hat 'Gingerbread King' und mindestens eins davon: 'Barbarian Santa Deco', 'Skeleton Sock Deco' oder mindestens 1 'Bakery Clan House'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
                                 "elements": [{
                                     "type": "element",
-                                    "name": "Gingerbread Floor",
-                                    "id": "82000006"
+                                    "name": "Bakery Roof",
+                                    "id": "82000110"
                                 }, {
                                     "type": "element",
-                                    "name": "Gingerbread Roof",
-                                    "id": "82000046"
+                                    "name": "Bakery Decoration",
+                                    "id": "82000111"
                                 }, {
                                     "type": "element",
-                                    "name": "Gingerbread Walls",
-                                    "id": "82000055"
+                                    "name": "Bakery Walls",
+                                    "id": "82000112"
                                 }, {
                                     "type": "element",
-                                    "name": "Gingerbread Archer",
-                                    "id": "82000067"
+                                    "name": "Bakery Floor",
+                                    "id": "82000113"
                                 }, {
                                     "type": "element",
                                     "name": "Barbarian Santa",
