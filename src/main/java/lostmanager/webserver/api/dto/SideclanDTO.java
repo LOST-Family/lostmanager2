@@ -16,14 +16,18 @@ public class SideclanDTO {
     @JsonProperty("belongs_to")
     private String belongsTo;
 
+    @JsonProperty("index")
+    private Integer index;
+
     public SideclanDTO() {
         // default for Jackson
     }
 
-    public SideclanDTO(String clanTag, String name, String belongsTo) {
+    public SideclanDTO(String clanTag, String name, String belongsTo, Integer index) {
         this.clanTag = clanTag;
         this.name = name;
         this.belongsTo = belongsTo;
+        this.index = index;
     }
 
     public String getClanTag() {
@@ -48,5 +52,13 @@ public class SideclanDTO {
 
     public void setBelongsTo(String belongsTo) {
         this.belongsTo = belongsTo;
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 }

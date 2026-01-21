@@ -428,11 +428,17 @@ public class stats extends ListenerAdapter {
 				// Format the data
 				String formattedData = formatData(fieldData, timestamp);
 
+				// Format database timestamp
+				ZonedDateTime uploadTime = timestamp.toInstant().atZone(ZoneId.of("Europe/Berlin"));
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
+				String uploadFormatiert = uploadTime.format(formatter);
+
 				// Build description header
 				Player p = new Player(playerTag);
 				String playerName = p.getNameDB() != null ? p.getNameDB() : p.getNameAPI();
 				String headerText = "**Spieler:** " + (playerName != null ? playerName : playerTag) + "\n"
-						+ "**Stat:** " + statType + "\n\n";
+						+ "**Stat:** " + statType + "\n"
+						+ "**Hochgeladen:** " + uploadFormatiert + "\n\n";
 
 				// Split into pages if needed
 				List<String> pages = splitIntoPages(formattedData, headerText);
@@ -479,9 +485,8 @@ public class stats extends ListenerAdapter {
 				StringSelectMenu selectMenu = StringSelectMenu.create(selectMenuId).setPlaceholder("Anderes Feld")
 						.addOptions(createStatOptions(statType)).build();
 
-				// Add timestamp
+				// Add current time for footer
 				ZonedDateTime jetzt = ZonedDateTime.now(ZoneId.of("Europe/Berlin"));
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
 				String formatiert = jetzt.format(formatter);
 
 				hook.editOriginal("").setEmbeds(MessageUtil.buildEmbed(title, description.toString(),

@@ -16,11 +16,19 @@ public class F2PCheckAlgorithm {
 
     public static class CheckResult {
         private final boolean isF2P;
-        private final String reason;
+        private final List<String> reasons;
+
+        public CheckResult(boolean isF2P, List<String> reasons) {
+            this.isF2P = isF2P;
+            this.reasons = reasons != null ? reasons : new ArrayList<>();
+        }
 
         public CheckResult(boolean isF2P, String reason) {
             this.isF2P = isF2P;
-            this.reason = reason;
+            this.reasons = new ArrayList<>();
+            if (reason != null && !reason.isEmpty()) {
+                this.reasons.add(reason);
+            }
         }
 
         public boolean isF2P() {
@@ -28,7 +36,11 @@ public class F2PCheckAlgorithm {
         }
 
         public String getReason() {
-            return reason;
+            return String.join("\n", reasons);
+        }
+
+        public List<String> getReasons() {
+            return reasons;
         }
     }
 
@@ -53,8 +65,11 @@ public class F2PCheckAlgorithm {
     public static CheckResult check(JSONObject rules, Map<String, Integer> playerData) {
         System.out.println("DEBUG: Starting F2P check with " + playerData.size() + " items.");
         if (rules == null) {
-            return new CheckResult(true, "Internal Error: Could not load F2P rules.");
+            return new CheckResult(false, "Internal Error: Could not load F2P rules.");
         }
+
+        List<String> allReasons = new ArrayList<>();
+        boolean isF2P = true;
 
         // 1. Check StrictForbidden
         if (rules.has("StrictForbidden")) {
@@ -63,7 +78,8 @@ public class F2PCheckAlgorithm {
                 String forbiddenId = String.valueOf(strictForbidden.get(i));
                 if (playerData.containsKey(forbiddenId) && playerData.get(forbiddenId) > 0) {
                     String itemName = getItemName(forbiddenId);
-                    return new CheckResult(false, "Besitzt streng verbotenes Item: " + itemName);
+                    allReasons.add("Besitzt streng verbotenes Item: " + itemName);
+                    isF2P = false;
                 }
             }
         }
@@ -75,12 +91,13 @@ public class F2PCheckAlgorithm {
                 JSONObject condition = conditions.getJSONObject(i);
                 CheckResult result = evaluateGroup(condition, playerData);
                 if (!result.isF2P()) {
-                    return result; // Propagate failure
+                    allReasons.addAll(result.getReasons());
+                    isF2P = false;
                 }
             }
         }
 
-        return new CheckResult(true, null);
+        return new CheckResult(isF2P, allReasons);
     }
 
     private static CheckResult evaluateGroup(JSONObject group, Map<String, Integer> playerData) {
@@ -88,7 +105,7 @@ public class F2PCheckAlgorithm {
         String key = isStrict ? "CasesStrict" : "Cases";
 
         if (!group.has(key)) {
-            return new CheckResult(true, null);
+            return new CheckResult(true, (List<String>) null);
         }
 
         Object val = group.get(key);
@@ -104,7 +121,7 @@ public class F2PCheckAlgorithm {
         } else if (val instanceof JSONArray) {
             cases = (JSONArray) val;
         } else {
-            return new CheckResult(true, null);
+            return new CheckResult(true, (List<String>) null);
         }
 
         String logName = (groupName != null ? groupName : key);
@@ -120,10 +137,7 @@ public class F2PCheckAlgorithm {
 
             if (!caseResult.isF2P()) {
                 trueCases++;
-                String reason = caseResult.getReason();
-                if (reason != null && !reason.isEmpty()) {
-                    reasons.add(reason);
-                }
+                reasons.addAll(caseResult.getReasons());
             }
         }
 
@@ -140,12 +154,12 @@ public class F2PCheckAlgorithm {
             System.out
                     .println("DEBUG: Group FLAGGED (Failed F2P check). Strict=" + isStrict + " TrueCases=" + trueCases);
             String label = (groupName != null && !groupName.isEmpty()) ? groupName : (isStrict ? "Strict" : "Normal");
-            return new CheckResult(false, "Verstoß gegen Regelgruppe (" + label + "): "
-                    + String.join(", ", reasons));
+            String combinedReason = "Verstoß gegen Regelgruppe (" + label + "): " + String.join(", ", reasons);
+            return new CheckResult(false, combinedReason);
         }
 
         System.out.println("DEBUG: Group PASSED (Safe). Strict=" + isStrict + " TrueCases=" + trueCases);
-        return new CheckResult(true, null);
+        return new CheckResult(true, (List<String>) null);
     }
 
     // Returns CheckResult(false, reason) if FLAGGED, or CheckResult(true, null) if
@@ -154,7 +168,7 @@ public class F2PCheckAlgorithm {
         String debugName = caseObj.optString("name", "Unknown Case");
         System.out.println("DEBUG: Start Case: " + debugName);
         if (!caseObj.has("IfMoreThan"))
-            return new CheckResult(true, null); // Safe
+            return new CheckResult(true, (List<String>) null); // Safe
 
         Object ifMoreThanObj = caseObj.get("IfMoreThan");
         boolean conditionMet = false;
@@ -172,7 +186,7 @@ public class F2PCheckAlgorithm {
         }
 
         if (!conditionMet) {
-            return new CheckResult(true, null); // Case is Safe
+            return new CheckResult(true, (List<String>) null); // Case is Safe
         }
 
         // IfMoreThan is True. Check ThenForbidden.
@@ -193,7 +207,7 @@ public class F2PCheckAlgorithm {
                 String name = caseObj.optString("name", "Unbekannte Regel");
                 return new CheckResult(false, name + " -> " + res.getReason());
             } else {
-                return new CheckResult(true, null); // Nested check passed -> SAFE
+                return new CheckResult(true, (List<String>) null); // Nested check passed -> SAFE
             }
         }
 
@@ -225,31 +239,6 @@ public class F2PCheckAlgorithm {
                 if (count > 0) {
                     System.out.println("DEBUG:   -> Found " + name + " (ID: " + idStr + ") Count: " + count);
                     if (type.equals("quantity")) {
-                        // Only count unique elements logic?
-                        // "quantity: only count unique elements the player has (1+1+1=3)" ??
-                        // Wait. The prompt says: "quantity, only count unique elements the player has.
-                        // (1+1+1=3)"
-                        // This example 1+1+1=3 for unique implies if I have 3 DIFFERENT items, I get 3.
-                        // If I have 3 of the SAME item... does it count as 1 or 3?
-                        // "quantity" usually means distinct kinds.
-                        // "count" usually means total sum.
-                        // Prompt: "If this is quantity, only count unique elements the player has.
-                        // (1+1+1=3)" -> This is confusing phrasing.
-                        // "If this is count, count all elements the player has including the count
-                        // (2+2+2=6)"
-                        // Interpretation:
-                        // Quantity = Count how many of the LISTED IDs the player possesses at least 1
-                        // of.
-                        // Count = Sum of amounts of the LISTED IDs the player possesses.
-
-                        // Example 1+1+1=3 for quantity...
-                        // Maybe 1xID_A + 1xID_B + 1xID_C = 3?
-
-                        // Let's assume:
-                        // Quantity: Sum (1 if hasItem else 0) for each ID in list?
-                        // But if list has ID_A and user has 5 ID_A... is it 1?
-                        // Likely yes.
-
                         uniqueIds.add(idStr); // Just to be safe if json lists same id twice?
                     } else {
                         // Count

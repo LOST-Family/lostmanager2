@@ -1,8 +1,10 @@
 package lostmanager.commands.coc.util.jsonutils;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -54,7 +56,7 @@ public class f2pcheck extends ListenerAdapter {
             }
 
             // Load JSON from DB
-            String sql = "SELECT json FROM userjsons WHERE tag = ? LIMIT 1";
+            String sql = "SELECT json, timestamp FROM userjsons WHERE tag = ? LIMIT 1";
 
             try (java.sql.PreparedStatement pstmt = lostmanager.dbutil.Connection.getConnection()
                     .prepareStatement(sql)) {
@@ -68,6 +70,7 @@ public class f2pcheck extends ListenerAdapter {
                     }
 
                     String jsonStr = rs.getString("json");
+                    java.sql.Timestamp timestamp = rs.getTimestamp("timestamp");
                     JSONObject json = new JSONObject(jsonStr);
 
                     // Collect data into Map for O(1) access
@@ -76,20 +79,25 @@ public class f2pcheck extends ListenerAdapter {
 
                     System.out.println("DEBUG: PlayerData: " + playerData);
 
+                    // Format database timestamp
+                    ZonedDateTime uploadTime = timestamp.toInstant().atZone(ZoneId.of("Europe/Berlin"));
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
+                    String uploadFormatiert = uploadTime.format(formatter);
+
                     // Run F2P Check
                     F2PCheckAlgorithm.CheckResult result = F2PCheckAlgorithm.check(playerData);
                     Player player = new Player(playerTag);
                     if (result.isF2P()) {
-                        event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-                                "Dieser Spieler " + player.getInfoStringAPI() + " ist **Free to Play** (F2P) konform!",
+                        String description = "Dieser Spieler " + player.getInfoStringAPI()
+                                + " ist **Free to Play** (F2P) konform!\n\n"
+                                + "**Hochgeladen:** " + uploadFormatiert;
+
+                        event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, description,
                                 MessageUtil.EmbedType.SUCCESS))
                                 .queue();
                     } else {
-                        event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-                                "Dieser Spieler " + player.getInfoStringAPI() + " ist **NICHT F2P**.\nGrund: "
-                                        + result.getReason(),
-                                MessageUtil.EmbedType.ERROR))
-                                .queue();
+                        List<String> reasons = result.getReasons();
+                        sendFailureMessages(event, title, player, reasons, uploadFormatiert);
                     }
                 }
             } catch (Exception e) {
@@ -246,5 +254,50 @@ public class f2pcheck extends ListenerAdapter {
         }
 
         return choices;
+    }
+
+    @SuppressWarnings("null")
+    private void sendFailureMessages(SlashCommandInteractionEvent event, String title, Player player,
+            List<String> reasons, String uploadTimestamp) {
+        String baseMessage = "Dieser Spieler " + player.getInfoStringAPI() + " ist **NICHT F2P**.\n"
+                + "**Hochgeladen:** " + uploadTimestamp + "\n\n";
+
+        List<String> chunks = new ArrayList<>();
+        StringBuilder currentChunk = new StringBuilder();
+        currentChunk.append(baseMessage);
+
+        if (reasons == null || reasons.isEmpty()) {
+            currentChunk.append("Grund: Unbekannt");
+            chunks.add(currentChunk.toString());
+        } else if (reasons.size() == 1) {
+            currentChunk.append("Grund: ").append(reasons.get(0));
+            chunks.add(currentChunk.toString());
+        } else {
+            currentChunk.append("Gründe:\n");
+            for (String reason : reasons) {
+                String line = "- " + reason + "\n";
+                // Check if adding this line exceeds limit (using 4000 to be safe)
+                if (currentChunk.length() + line.length() > 4000) {
+                    chunks.add(currentChunk.toString());
+                    currentChunk = new StringBuilder();
+                }
+                currentChunk.append(line);
+            }
+            if (currentChunk.length() > 0) {
+                chunks.add(currentChunk.toString());
+            }
+        }
+
+        for (int i = 0; i < chunks.size(); i++) {
+            if (i == 0) {
+                event.getHook()
+                        .editOriginalEmbeds(MessageUtil.buildEmbed(title, chunks.get(i), MessageUtil.EmbedType.ERROR))
+                        .complete();
+            } else {
+                event.getChannel()
+                        .sendMessageEmbeds(MessageUtil.buildEmbed(title, chunks.get(i), MessageUtil.EmbedType.ERROR))
+                        .complete();
+            }
+        }
     }
 }

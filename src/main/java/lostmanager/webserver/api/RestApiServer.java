@@ -104,7 +104,8 @@ public class RestApiServer {
                             String tag = rs.getString("clan_tag");
                             String name = rs.getString("name");
                             String belongsTo = rs.getString("belongs_to");
-                            list.add(new SideclanDTO(tag, name, belongsTo));
+                            Integer index = rs.getInt("index");
+                            list.add(new SideclanDTO(tag, name, belongsTo, index));
                         }
                     }
                 }
