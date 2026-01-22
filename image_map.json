@@ -1514,6 +1514,11 @@
     "icon": "/builder-base/troops/baby-dragon/baby-dragon-icon.png",
     "character": "/builder-base/troops/baby-dragon/baby-dragon-character.png"
   },
+  "4000042": {
+    "name": "Night Witch",
+    "icon": "/builder-base/troops/night-witch/night-witch-icon.png",
+    "character": "/builder-base/troops/night-witch/night-witch-character.png"
+  },
   "4000045": {
     "name": "Battle Ram",
     "icon": "/home-base/troops/battle-ram/battle-ram-icon.png",
@@ -1852,9 +1857,9 @@
     "character": "/home-base/troops/the-disarmer/the-disarmer-character.png"
   },
   "4000177": {
-    "name": "Meteorite Golem",
-    "icon": "/home-base/troops/meteorite-golem/meteorite-golem-icon.png",
-    "character": "/home-base/troops/meteorite-golem/meteorite-golem-character.png"
+    "name": "Meteor Golem",
+    "icon": "/home-base/troops/meteor-golem/meteor-golem-icon.png",
+    "character": "/home-base/troops/meteor-golem/meteor-golem-character.png"
   },
   "28000000": {
     "name": "Barbarian King",
@@ -2065,10 +2070,6 @@
   "90000044": {
     "name": "Metal Pants",
     "icon": "/home-base/equipments/44.png"
-  },
-  "90000045": {
-    "name": "Snow Flake",
-    "icon": "/home-base/equipments/45.png"
   },
   "90000047": {
     "name": "Noble Iron",
