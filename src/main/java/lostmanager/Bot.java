@@ -38,6 +38,7 @@ import lostmanager.commands.coc.memberlist.editmember;
 import lostmanager.commands.coc.memberlist.listmembers;
 import lostmanager.commands.coc.memberlist.memberstatus;
 import lostmanager.commands.coc.memberlist.removemember;
+import lostmanager.commands.coc.memberlist.signoff;
 import lostmanager.commands.coc.memberlist.transfermember;
 import lostmanager.commands.coc.util.jsonutils.jsonupload;
 import lostmanager.commands.coc.util.jsonutils.f2pcheck;
@@ -368,6 +369,16 @@ public class Bot extends ListenerAdapter {
 											"Der Clan, zu welchem der Spieler hinzugefügt werden soll", true)
 											.setAutoComplete(true)),
 
+							Commands.slash("signoff", "Melde einen Spieler für einen Zeitraum ab.")
+									.addOptions(new OptionData(OptionType.STRING, "player",
+											"Der Spieler, welcher abgemeldet werden soll", true).setAutoComplete(true))
+									.addOptions(new OptionData(OptionType.STRING, "action",
+											"Die auszuführende Aktion", true).setAutoComplete(true))
+									.addOptions(new OptionData(OptionType.INTEGER, "days",
+											"Anzahl der Tage (optional, leer = unbegrenzt)", false))
+									.addOptions(new OptionData(OptionType.STRING, "reason",
+											"Grund für die Abmeldung (optional)", false)),
+
 							Commands.slash("listeningevent", "Verwalte automatische Event-Listener für Clan-Events.")
 									.addSubcommands(
 											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("add",
@@ -498,6 +509,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new reactionsrole());
 		classes.add(new raidping());
 		classes.add(new transfermember());
+		classes.add(new signoff());
 		classes.add(new listeningevent());
 		classes.add(new teamcheck());
 		classes.add(new checkroles());

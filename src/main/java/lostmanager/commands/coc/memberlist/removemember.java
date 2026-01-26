@@ -5,6 +5,7 @@ import java.util.List;
 
 import lostmanager.Bot;
 import lostmanager.datawrapper.Clan;
+import lostmanager.datawrapper.MemberSignoff;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
@@ -97,6 +98,8 @@ public class removemember extends ListenerAdapter {
 		String clanname = playerclan.getNameDB();
 
 		DBUtil.executeUpdate("DELETE FROM clan_members WHERE player_tag = ?", playertag);
+		// Remove any active signoff for this player
+		MemberSignoff.remove(playertag);
 		String desc = "";
 		try {
 			desc += "Der Spieler " + MessageUtil.unformat(player.getInfoStringDB()) + " wurde aus dem Clan " + clanname

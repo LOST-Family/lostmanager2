@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lostmanager.datawrapper.Clan;
+import lostmanager.datawrapper.MemberSignoff;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.Player.RoleType;
 import lostmanager.dbutil.DBManager;
@@ -122,6 +123,24 @@ public class memberstatus extends ListenerAdapter {
 			desc += "**Im Clan, falsche Rolle:**\n";
 			desc += wrongrolestr == "" ? "---\n\n" : MessageUtil.unformat(wrongrolestr) + "\n";
 		}
+
+		// Add signed-off members section
+		String signedOffStr = "";
+		for (Player player : playerlistdb) {
+			MemberSignoff signoff = new MemberSignoff(player.getTag());
+			if (signoff.isActive()) {
+				signedOffStr += player.getInfoStringDB() + " - ";
+				if (signoff.isUnlimited()) {
+					signedOffStr += "unbegrenzt";
+				} else {
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+					signedOffStr += "bis " + signoff.getEndDate().toLocalDateTime().format(formatter);
+				}
+				signedOffStr += "\n";
+			}
+		}
+		desc += "**Abgemeldete Mitglieder:**\n";
+		desc += signedOffStr == "" ? "---\n\n" : MessageUtil.unformat(signedOffStr) + "\n";
 
 		String buttonId = "memberstatus_" + clantag + (disableRolecheck ? "_norolecheck" : "");
 		Button refreshButton = Button.secondary(buttonId, "\u200B").withEmoji(Emoji.fromUnicode("🔁"));
@@ -286,6 +305,24 @@ public class memberstatus extends ListenerAdapter {
 					desc += "**Im Clan, falsche Rolle:**\n";
 					desc += wrongrolestr == "" ? "---\n\n" : MessageUtil.unformat(wrongrolestr) + "\n";
 				}
+
+				// Add signed-off members section
+				String signedOffStr = "";
+				for (Player player : playerlistdb) {
+					MemberSignoff signoff = new MemberSignoff(player.getTag());
+					if (signoff.isActive()) {
+						signedOffStr += player.getInfoStringDB() + " - ";
+						if (signoff.isUnlimited()) {
+							signedOffStr += "unbegrenzt";
+						} else {
+							DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+							signedOffStr += "bis " + signoff.getEndDate().toLocalDateTime().format(formatter);
+						}
+						signedOffStr += "\n";
+					}
+				}
+				desc += "**Abgemeldete Mitglieder:**\n";
+				desc += signedOffStr == "" ? "---\n\n" : MessageUtil.unformat(signedOffStr) + "\n";
 
 				String buttonId = "memberstatus_" + clantag + (disableRolecheck ? "_norolecheck" : "");
 				Button refreshButton = Button.secondary(buttonId, "\u200B")
