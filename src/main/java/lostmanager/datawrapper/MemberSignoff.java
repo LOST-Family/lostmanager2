@@ -57,9 +57,15 @@ public class MemberSignoff {
         return Timestamp.from(Instant.now()).before(endDate);
     }
 
+    /**
+     * Static method to check if a player is signed off without creating a full instance.
+     * More efficient for quick checks.
+     */
     public static boolean isSignedOff(String playerTag) {
-        MemberSignoff signoff = new MemberSignoff(playerTag);
-        return signoff.isActive();
+        // Query database directly without loading full object
+        String sql = "SELECT COUNT(*) FROM member_signoffs WHERE player_tag = ? AND (end_date IS NULL OR end_date > NOW())";
+        Integer count = DBUtil.getValueFromSQL(sql, Integer.class, playerTag);
+        return count != null && count > 0;
     }
 
     public Long getId() {
