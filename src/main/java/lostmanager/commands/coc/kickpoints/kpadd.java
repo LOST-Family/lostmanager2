@@ -16,6 +16,7 @@ import java.util.List;
 import lostmanager.datawrapper.Clan;
 import lostmanager.datawrapper.Kickpoint;
 import lostmanager.datawrapper.KickpointReason;
+import lostmanager.datawrapper.MemberSignoff;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
@@ -204,6 +205,19 @@ public class kpadd extends ListenerAdapter {
 				desc += "Anzahl: " + amount + "\n";
 				desc += "Grund: " + reason + "\n";
 				desc += "ID: " + id + "\n";
+
+				// Check if player is signed off
+				MemberSignoff signoff = new MemberSignoff(playertag);
+				if (signoff.isActive()) {
+					desc += "\n### ⚠️ Warnung: Dieser Spieler ist aktuell abgemeldet.\n";
+					desc += "Die Abmeldung läuft ";
+					if (signoff.isUnlimited()) {
+						desc += "unbegrenzt.\n";
+					} else {
+						desc += "bis " + signoff.getEndDate().toLocalDateTime()
+								.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'")) + ".\n";
+					}
+				}
 
 				if (timestampexpires.before(Timestamp.from(Instant.now()))) {
 					desc += "### Achtung: Der Kickpunkt ist bereits abgelaufen.\n";
