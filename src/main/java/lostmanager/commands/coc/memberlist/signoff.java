@@ -80,6 +80,7 @@ public class signoff extends ListenerAdapter {
 
                 OptionMapping daysOption = event.getOption("days");
                 OptionMapping reasonOption = event.getOption("reason");
+                OptionMapping pingsOption = event.getOption("pings");
 
                 Timestamp endDate = null;
                 String durationText = "unbegrenzt";
@@ -98,8 +99,10 @@ public class signoff extends ListenerAdapter {
                 }
 
                 String reason = reasonOption != null ? reasonOption.getAsString() : null;
+                boolean receivePings = pingsOption != null && pingsOption.getAsBoolean();
 
-                boolean success = MemberSignoff.create(playertag, endDate, reason, event.getUser().getId());
+                boolean success = MemberSignoff.create(playertag, endDate, reason, event.getUser().getId(),
+                        receivePings);
 
                 if (success) {
                     String desc = "### Abmeldung erfolgreich erstellt.\n";
@@ -111,7 +114,11 @@ public class signoff extends ListenerAdapter {
                     }
                     desc += "\n**Während der Abmeldung:**\n";
                     desc += "- Keine automatischen Kickpunkte\n";
-                    desc += "- Keine Raid-Pings, CW-Reminder-Pings und Checkreacts-Pings\n";
+                    if (receivePings) {
+                        desc += "- **Reminder-Pings (CW/Raid/Checkreacts) AKTIVIERT**\n";
+                    } else {
+                        desc += "- Keine Raid-Pings, CW-Reminder-Pings und Checkreacts-Pings\n";
+                    }
                     desc += "- Manuelle Kickpunkte weiterhin möglich (mit Warnung)\n";
 
                     event.getHook()
@@ -231,6 +238,8 @@ public class signoff extends ListenerAdapter {
                 if (signoff.getReason() != null) {
                     desc += "Grund: " + signoff.getReason() + "\n";
                 }
+
+                desc += "Pings: " + (signoff.isReceivePings() ? "Aktiviert" : "Deaktiviert") + "\n";
 
                 event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.INFO))
                         .queue();

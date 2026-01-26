@@ -100,7 +100,7 @@ public class wins extends ListenerAdapter {
 								selectedMonth.getMonthValue(),
 								selectedMonth.equals(currentMonth), startOfMonth, startOfMonth.plusMonths(1), zone);
 						if (wd != null) {
-							playerWinsDataList.add(new PlayerWinsData(member, wd.wins));
+							playerWinsDataList.add(new PlayerWinsData(member, wd.wins, wd.hasWarning));
 						}
 					}
 
@@ -109,8 +109,9 @@ public class wins extends ListenerAdapter {
 
 					for (int i = 0; i < playerWinsDataList.size(); i++) {
 						PlayerWinsData data = playerWinsDataList.get(i);
+						String warning = data.hasWarning ? " ⚠️" : "";
 						desc += (i + 1) + ". " + MessageUtil.unformat(data.player.getInfoStringDB()) + ": **"
-								+ data.wins + "** Wins\n";
+								+ data.wins + "** Wins" + warning + "\n";
 					}
 
 					if (playerWinsDataList.isEmpty()) {
@@ -223,10 +224,12 @@ public class wins extends ListenerAdapter {
 	private static class PlayerWinsData {
 		Player player;
 		Integer wins;
+		boolean hasWarning;
 
-		PlayerWinsData(Player player, Integer wins) {
+		PlayerWinsData(Player player, Integer wins, boolean hasWarning) {
 			this.player = player;
 			this.wins = wins;
+			this.hasWarning = hasWarning;
 		}
 	}
 }

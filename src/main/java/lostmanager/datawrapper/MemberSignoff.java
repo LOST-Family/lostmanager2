@@ -17,13 +17,15 @@ public class MemberSignoff {
     private String createdByDiscordId;
     private Timestamp createdAt;
 
+    private boolean receivePings;
+
     public MemberSignoff(String playerTag) {
         this.playerTag = playerTag;
         loadFromDB();
     }
 
     private void loadFromDB() {
-        String sql = "SELECT id, start_date, end_date, reason, created_by_discord_id, created_at FROM member_signoffs WHERE player_tag = ?";
+        String sql = "SELECT id, start_date, end_date, reason, created_by_discord_id, created_at, receive_pings FROM member_signoffs WHERE player_tag = ?";
         try (PreparedStatement pstmt = lostmanager.dbutil.Connection.getConnection().prepareStatement(sql)) {
             pstmt.setString(1, playerTag);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -34,6 +36,7 @@ public class MemberSignoff {
                     this.reason = rs.getString("reason");
                     this.createdByDiscordId = rs.getString("created_by_discord_id");
                     this.createdAt = rs.getTimestamp("created_at");
+                    this.receivePings = rs.getBoolean("receive_pings");
                 }
             }
         } catch (SQLException e) {
@@ -58,7 +61,8 @@ public class MemberSignoff {
     }
 
     /**
-     * Static method to check if a player is signed off without creating a full instance.
+     * Static method to check if a player is signed off without creating a full
+     * instance.
      * More efficient for quick checks.
      */
     public static boolean isSignedOff(String playerTag) {
@@ -96,13 +100,18 @@ public class MemberSignoff {
         return createdAt;
     }
 
+    public boolean isReceivePings() {
+        return receivePings;
+    }
+
     public boolean isUnlimited() {
         return exists() && endDate == null;
     }
 
-    public static boolean create(String playerTag, Timestamp endDate, String reason, String createdByDiscordId) {
-        String sql = "INSERT INTO member_signoffs (player_tag, end_date, reason, created_by_discord_id) VALUES (?, ?, ?, ?)";
-        return DBUtil.executeUpdate(sql, playerTag, endDate, reason, createdByDiscordId) != null;
+    public static boolean create(String playerTag, Timestamp endDate, String reason, String createdByDiscordId,
+            boolean receivePings) {
+        String sql = "INSERT INTO member_signoffs (player_tag, end_date, reason, created_by_discord_id, receive_pings) VALUES (?, ?, ?, ?, ?)";
+        return DBUtil.executeUpdate(sql, playerTag, endDate, reason, createdByDiscordId, receivePings) != null;
     }
 
     public static boolean remove(String playerTag) {

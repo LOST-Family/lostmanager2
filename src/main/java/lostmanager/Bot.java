@@ -377,7 +377,10 @@ public class Bot extends ListenerAdapter {
 									.addOptions(new OptionData(OptionType.INTEGER, "days",
 											"Anzahl der Tage (optional, leer = unbegrenzt)", false))
 									.addOptions(new OptionData(OptionType.STRING, "reason",
-											"Grund für die Abmeldung (optional)", false)),
+											"Grund für die Abmeldung (optional)", false))
+									.addOptions(new OptionData(OptionType.BOOLEAN, "pings",
+											"Sollen Reminder-Pings (CW/Raid/Checkreacts) trotz Abmeldung gesendet werden?",
+											false)),
 
 							Commands.slash("listeningevent", "Verwalte automatische Event-Listener für Clan-Events.")
 									.addSubcommands(

@@ -376,7 +376,8 @@ public class ListeningEvent {
 			// Check against threshold
 			if (difference < threshold) {
 				// Skip signed-off members
-				if (MemberSignoff.isSignedOff(p.getTag())) {
+				MemberSignoff signoff = new MemberSignoff(p.getTag());
+				if (signoff.isActive() && !signoff.isReceivePings()) {
 					continue;
 				}
 
@@ -442,6 +443,18 @@ public class ListeningEvent {
 
 		// Filter hidden co-leaders
 		warMemberList.removeIf(p -> p.isHiddenColeader());
+
+		// Filter signed-off members who don't want pings
+		warMemberList.removeIf(p -> {
+			MemberSignoff signoff = new MemberSignoff(p.getTag());
+			return signoff.isActive() && !signoff.isReceivePings();
+		});
+
+		// Filter signed-off members who don't want pings
+		warMemberList.removeIf(p -> {
+			MemberSignoff signoff = new MemberSignoff(p.getTag());
+			return signoff.isActive() && !signoff.isReceivePings();
+		});
 
 		// Check action values for parameters (backwards compatible)
 		boolean useLists = false;
@@ -909,7 +922,8 @@ public class ListeningEvent {
 				message.append("- ");
 
 				if (!isVerificationPhase && getDurationUntilEnd() > 0) {
-					if (p.getUser() != null && !MemberSignoff.isSignedOff(tag)) {
+					MemberSignoff signoff = new MemberSignoff(tag);
+					if (p.getUser() != null && (!signoff.isActive() || signoff.isReceivePings())) {
 						message.append("(<@").append(p.getUser().getUserID()).append(">) ");
 					}
 				}
@@ -1171,7 +1185,8 @@ public class ListeningEvent {
 				}
 
 				// Skip signed-off members
-				if (MemberSignoff.isSignedOff(tag)) {
+				MemberSignoff signoff = new MemberSignoff(tag);
+				if (signoff.isActive() && !signoff.isReceivePings()) {
 					continue;
 				}
 
@@ -1364,7 +1379,8 @@ public class ListeningEvent {
 			}
 
 			// Skip signed-off members
-			if (MemberSignoff.isSignedOff(dbPlayer.getTag())) {
+			MemberSignoff signoff = new MemberSignoff(dbPlayer.getTag());
+			if (signoff.isActive() && !signoff.isReceivePings()) {
 				continue;
 			}
 
