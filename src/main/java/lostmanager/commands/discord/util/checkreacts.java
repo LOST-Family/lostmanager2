@@ -1,9 +1,12 @@
 package lostmanager.commands.discord.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lostmanager.datawrapper.MemberSignoff;
+import lostmanager.dbutil.DBUtil;
 import lostmanager.util.MessageUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -76,21 +79,60 @@ public class checkreacts extends ListenerAdapter {
 								.filter(member -> member.getRoles().contains(role))
 								.filter(member -> !reactedUserIds.contains(member.getId()))
 								.collect(Collectors.toList());
+						
+						// Separate signed-off members
+						List<Member> signedOffMembers = new ArrayList<>();
+						List<Member> regularMissingMembers = new ArrayList<>();
+						
+						for (Member member : missingMembers) {
+							String discordId = member.getId();
+							// Check if this discord user has any signed-off accounts
+							List<String> playerTags = DBUtil.getArrayListFromSQL(
+								"SELECT coc_tag FROM players WHERE discord_id = ?", String.class, discordId);
+							
+							boolean isSignedOff = false;
+							for (String playerTag : playerTags) {
+								if (MemberSignoff.isSignedOff(playerTag)) {
+									isSignedOff = true;
+									break;
+								}
+							}
+							
+							if (isSignedOff) {
+								signedOffMembers.add(member);
+							} else {
+								regularMissingMembers.add(member);
+							}
+						}
+						
 						if (missingMembers.isEmpty()) {
 							event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
 									"Alle Mitglieder der Rolle " + role.getAsMention() + " haben schon mit dem Emoji "
 											+ emoji + " auf die Nachricht " + messagelink + " reagiert.",
 									MessageUtil.EmbedType.INFO)).queue();
 						} else {
-							event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-									"Mitglieder der Rolle " + role.getAsMention() + ", die noch nicht mit " + emoji
-											+ " auf die Nachricht " + messagelink + " reagiert haben:\n",
+							String description = "Mitglieder der Rolle " + role.getAsMention() + ", die noch nicht mit " + emoji
+											+ " auf die Nachricht " + messagelink + " reagiert haben:\n";
+							event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, description,
 									MessageUtil.EmbedType.INFO)).queue();
-							String pingstring = "";
-							for (Member member : missingMembers) {
-								pingstring += " " + member.getAsMention();
+							
+							// Send regular missing members
+							if (!regularMissingMembers.isEmpty()) {
+								String pingstring = "";
+								for (Member member : regularMissingMembers) {
+									pingstring += " " + member.getAsMention();
+								}
+								event.getChannel().sendMessage(pingstring).queue();
 							}
-							event.getChannel().sendMessage(pingstring).queue();
+							
+							// Send signed-off members separately
+							if (!signedOffMembers.isEmpty()) {
+								String signedOffString = "**Abgemeldete Mitglieder:**";
+								for (Member member : signedOffMembers) {
+									signedOffString += " " + member.getAsMention();
+								}
+								event.getChannel().sendMessage(signedOffString).queue();
+							}
 						}
 					});
 				});

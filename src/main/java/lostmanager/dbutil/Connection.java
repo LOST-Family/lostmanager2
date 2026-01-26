@@ -51,6 +51,7 @@ public class Connection {
 		tableNames.add("upload_sessions");
 		tableNames.add("userjsons");
 		tableNames.add("datamappings");
+		tableNames.add("member_signoffs");
 		try (java.sql.Connection conn = DriverManager.getConnection(url, user, password)) {
 			DatabaseMetaData dbm = conn.getMetaData();
 
@@ -133,6 +134,16 @@ public class Connection {
 									+ "name TEXT,"
 									+ "emojiname TEXT)";
 							break;
+						case "member_signoffs":
+							createTableSQL = "CREATE TABLE " + tableName + " (id BIGSERIAL PRIMARY KEY,"
+									+ "player_tag TEXT NOT NULL,"
+									+ "start_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+									+ "end_date TIMESTAMP,"
+									+ "reason TEXT,"
+									+ "created_by_discord_id TEXT NOT NULL,"
+									+ "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+									+ "UNIQUE(player_tag))";
+							break;
 						}
 
 						try (Statement stmt = conn.createStatement()) {
@@ -151,6 +162,13 @@ public class Connection {
 								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_achievement_data_time ON achievement_data(time)");
 								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_achievement_data_type ON achievement_data(type)");
 								System.out.println("Indexes für 'achievement_data' wurden erstellt.");
+							}
+							
+							// Create indexes for member_signoffs table
+							if (tableName.equals("member_signoffs")) {
+								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_member_signoffs_player ON member_signoffs(player_tag)");
+								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_member_signoffs_end_date ON member_signoffs(end_date)");
+								System.out.println("Indexes für 'member_signoffs' wurden erstellt.");
 							}
 						}
 					}

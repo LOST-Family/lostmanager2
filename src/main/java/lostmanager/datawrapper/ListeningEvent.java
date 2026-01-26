@@ -375,6 +375,11 @@ public class ListeningEvent {
 
 			// Check against threshold
 			if (difference < threshold) {
+				// Skip signed-off members
+				if (MemberSignoff.isSignedOff(p.getTag())) {
+					continue;
+				}
+				
 				hasViolations = true;
 				message.append(p.getNameAPI()).append(": ").append(difference).append(" points");
 				if (p.getUser() != null) {
@@ -1164,6 +1169,11 @@ public class ListeningEvent {
 				if (p.isHiddenColeader()) {
 					continue;
 				}
+				
+				// Skip signed-off members
+				if (MemberSignoff.isSignedOff(tag)) {
+					continue;
+				}
 
 				hasMissedAttacks = true;
 				message.append("- ").append(name);
@@ -1350,6 +1360,11 @@ public class ListeningEvent {
 		for (Player dbPlayer : dbMembers) {
 			// Skip hidden co-leaders as they don't need to be in clan/raid
 			if (dbPlayer.isHiddenColeader()) {
+				continue;
+			}
+			
+			// Skip signed-off members
+			if (MemberSignoff.isSignedOff(dbPlayer.getTag())) {
 				continue;
 			}
 
@@ -1672,6 +1687,12 @@ public class ListeningEvent {
 	}
 
 	private void addKickpointForPlayer(Player player, String reason) {
+		// Check if player is signed off - skip automatic kickpoints
+		if (MemberSignoff.isSignedOff(player.getTag())) {
+			System.out.println("Skipping automatic kickpoint for player " + player.getTag() + " - player is signed off");
+			return;
+		}
+		
 		// Get kickpoint reason from action values if specified
 		KickpointReason kpReason = null;
 		for (ActionValue av : getActionValues()) {

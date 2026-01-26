@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import lostmanager.datawrapper.Clan;
+import lostmanager.datawrapper.MemberSignoff;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
@@ -80,10 +81,17 @@ public class raidping extends ListenerAdapter {
 
 			ArrayList<Player> notfinished = new ArrayList<>();
 			ArrayList<Player> notdone = new ArrayList<>();
+			ArrayList<Player> signedOffMembers = new ArrayList<>();
 
 			for (Player dbPlayer : dbmemberlist) {
 				// Skip hidden co-leaders as they don't need to be in clan/raid
 				if (dbPlayer.isHiddenColeader()) {
+					continue;
+				}
+
+				// Check if player is signed off
+				if (MemberSignoff.isSignedOff(dbPlayer.getTag())) {
+					signedOffMembers.add(dbPlayer);
 					continue;
 				}
 
@@ -153,6 +161,14 @@ public class raidping extends ListenerAdapter {
 					}
 				}
 				desc += p.getNameAPI() + " (<@" + p.getUser().getUserID() + ">): " + currentattacks + "/" + max + "\n";
+			}
+
+			// Add signed-off members section
+			if (!signedOffMembers.isEmpty()) {
+				desc += "### Abgemeldet (keine Pings):\n";
+				for (Player p : signedOffMembers) {
+					desc += p.getNameDB() + "\n";
+				}
 			}
 
 			event.getHook().editOriginal(".").queue(message -> {
