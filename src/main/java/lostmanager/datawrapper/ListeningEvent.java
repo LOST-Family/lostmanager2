@@ -379,7 +379,7 @@ public class ListeningEvent {
 				if (MemberSignoff.isSignedOff(p.getTag())) {
 					continue;
 				}
-				
+
 				hasViolations = true;
 				message.append(p.getNameAPI()).append(": ").append(difference).append(" points");
 				if (p.getUser() != null) {
@@ -909,7 +909,7 @@ public class ListeningEvent {
 				message.append("- ");
 
 				if (!isVerificationPhase && getDurationUntilEnd() > 0) {
-					if (p.getUser() != null) {
+					if (p.getUser() != null && !MemberSignoff.isSignedOff(tag)) {
 						message.append("(<@").append(p.getUser().getUserID()).append(">) ");
 					}
 				}
@@ -1169,7 +1169,7 @@ public class ListeningEvent {
 				if (p.isHiddenColeader()) {
 					continue;
 				}
-				
+
 				// Skip signed-off members
 				if (MemberSignoff.isSignedOff(tag)) {
 					continue;
@@ -1362,7 +1362,7 @@ public class ListeningEvent {
 			if (dbPlayer.isHiddenColeader()) {
 				continue;
 			}
-			
+
 			// Skip signed-off members
 			if (MemberSignoff.isSignedOff(dbPlayer.getTag())) {
 				continue;
@@ -1689,10 +1689,11 @@ public class ListeningEvent {
 	private void addKickpointForPlayer(Player player, String reason) {
 		// Check if player is signed off - skip automatic kickpoints
 		if (MemberSignoff.isSignedOff(player.getTag())) {
-			System.out.println("Skipping automatic kickpoint for player " + player.getTag() + " - player is signed off");
+			System.out
+					.println("Skipping automatic kickpoint for player " + player.getTag() + " - player is signed off");
 			return;
 		}
-		
+
 		// Get kickpoint reason from action values if specified
 		KickpointReason kpReason = null;
 		for (ActionValue av : getActionValues()) {
