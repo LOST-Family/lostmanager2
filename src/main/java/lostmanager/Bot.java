@@ -66,7 +66,6 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
-import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -1195,9 +1194,10 @@ public class Bot extends ListenerAdapter {
 					DBUtil.executeUpdate("UPDATE users SET name = ? WHERE discord_id = ?",
 							getJda().getGuildById(guild_id).retrieveMemberById(id).submit().get().getEffectiveName(),
 							id);
-				} catch (ErrorResponseException e) {
-					// ignore
 				} catch (Exception e) {
+					if (e.getMessage().contains("Unknown Member")) {
+						continue;
+					}
 					System.out.println("Fehler beim Namenupdate von ID " + id + "; Exception: " + e.getMessage());
 				}
 			}
@@ -1208,9 +1208,10 @@ public class Bot extends ListenerAdapter {
 				try {
 					DBUtil.executeUpdate("UPDATE players SET name = ? WHERE coc_tag = ?", new Player(tag).getNameAPI(),
 							tag);
-				} catch (NullPointerException e) {
-					// ignore
 				} catch (Exception e) {
+					if (e.getMessage().contains("String.length()")) {
+						continue;
+					}
 					System.out.println("Fehler beim Namenupdate von Tag " + tag + "; Exception: " + e.getMessage());
 				}
 			}
