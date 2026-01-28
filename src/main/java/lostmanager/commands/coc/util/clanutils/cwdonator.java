@@ -97,6 +97,8 @@ public class cwdonator extends ListenerAdapter {
 				}
 			}
 
+			int cwsize = warMemberList.size();
+
 			// Filter hidden co-leaders
 			warMemberList.removeIf(p -> p.isHiddenColeader());
 
@@ -105,8 +107,6 @@ public class cwdonator extends ListenerAdapter {
 				MemberSignoff signoff = new MemberSignoff(p.getTag());
 				return signoff.isActive() && !signoff.isReceivePings();
 			});
-
-			int cwsize = warMemberList.size();
 
 			HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> mappings = getMappings();
 
