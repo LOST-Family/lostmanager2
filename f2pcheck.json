@@ -753,7 +753,78 @@
             }
         },
         {
-
+            "Cases": {
+                "name": "Feb. 2026 Event",
+                "CasesStrict": [{
+                    "name": "",
+                    "IfMoreThan": {
+                        "type": "quantity",
+                        "allowed": 0,
+                        "elements": [{
+                                "type": "element",
+                                "name": "Stick Horse Equipment",
+                                "id": "90000051"
+                            },
+                            {
+                                "type": "element",
+                                "name": "Flame Horse Deco",
+                                "id": "18000195"
+                            }
+                        ]
+                    },
+                    "ThenForbidden": {
+                        "CasesStrict": [{
+                            "name": "Hat 'Stick Horse Equipment' und 'Flame Horse Deco'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 1,
+                                "elements": [{
+                                        "type": "element",
+                                        "name": "Stick Horse Equipment",
+                                        "id": "90000051"
+                                    },
+                                    {
+                                        "type": "element",
+                                        "name": "Flame Horse Deco",
+                                        "id": "18000195"
+                                    }
+                                ]
+                            }
+                        },{
+                            "name": "Hat 'Stick Horse Equipment' oder 'Stick Horse Deco' sowie beide 'LNY 2026 Clan Houses'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 1,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "LNY 2026 Roof",
+                                    "id": "82000150"
+                                }, {
+                                    "type": "element",
+                                    "name": "LNY 2026 Walls",
+                                    "id": "82000151"
+                                }]
+                            }
+                        },{
+                            "name":"Hat 'Stick Horse Equipment' oder 'Stick Horse Deco' sowie 'Handsome Scroll Deco' oder 'Lucky Shoe Deco'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 0,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Handsome Scroll",
+                                    "id": "18000193"
+                                },
+                                {
+                                    "type": "element",
+                                    "name": "Lucky Shoe",
+                                    "id": "18000194"
+                                }]
+                            }
+                        }]
+                    }
+                }]
+            }
         }
     ],
     "StrictForbidden": [52000010, 52000016, 52000034, 52000036, 52000038, 52000040, 52000042, 52000043, 52000045, 52000049, 52000051, 52000052, 52000054, 
