@@ -2734,6 +2734,21 @@
     "icon": "/home-base/decorations/192.png",
     "index": "122"
   },
+  "18000193": {
+    "name": "Handsome Scroll (Feb. 2026)",
+    "icon": "/home-base/decorations/193.png",
+    "index": "129"
+  },
+  "18000194": {
+    "name": "",
+    "icon": "/home-base/decorations/194.png",
+    "index": "130"
+  },
+  "18000195": {
+    "name": "",
+    "icon": "/home-base/decorations/195.png",
+    "index": "131"
+  },
   "18000196": {
     "name": "Smokey Stove (Dec. 2025)",
     "icon": "/home-base/decorations/196.png",
