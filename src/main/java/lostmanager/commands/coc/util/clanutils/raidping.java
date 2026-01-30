@@ -90,7 +90,8 @@ public class raidping extends ListenerAdapter {
 				}
 
 				// Check if player is signed off
-				if (MemberSignoff.isSignedOff(dbPlayer.getTag())) {
+				MemberSignoff signoff = new MemberSignoff(dbPlayer.getTag());
+				if (signoff.isActive() && !signoff.isReceivePings()) {
 					signedOffMembers.add(dbPlayer);
 					continue;
 				}

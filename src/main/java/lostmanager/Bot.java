@@ -45,6 +45,7 @@ import lostmanager.commands.coc.util.jsonutils.f2pcheck;
 import lostmanager.commands.coc.util.jsonutils.stats;
 import lostmanager.commands.coc.util.playerutils.setnick;
 import lostmanager.commands.coc.util.playerutils.wins;
+import lostmanager.commands.coc.util.playerutils.missinghits;
 import lostmanager.commands.coc.util.automation.listeningevent;
 import lostmanager.commands.coc.util.clanutils.cwdonator;
 import lostmanager.commands.coc.util.clanutils.raidping;
@@ -205,6 +206,8 @@ public class Bot extends ListenerAdapter {
 											.setAutoComplete(true)),
 
 							Commands.slash("restart", "Startet den Bot neu."),
+
+							Commands.slash("missinghits", "Zeigt fehlende Angriffe für alle verlinkten Accounts an."),
 
 							Commands.slash("addmember", "Füge einen Spieler zu einem Clan hinzu.")
 									.addOptions(new OptionData(OptionType.STRING, "clan",
@@ -377,7 +380,10 @@ public class Bot extends ListenerAdapter {
 									.addOptions(new OptionData(OptionType.INTEGER, "days",
 											"Anzahl der Tage (optional, leer = unbegrenzt)", false))
 									.addOptions(new OptionData(OptionType.STRING, "reason",
-											"Grund für die Abmeldung (optional)", false)),
+											"Grund für die Abmeldung (optional)", false))
+									.addOptions(new OptionData(OptionType.BOOLEAN, "pings",
+											"Sollen Reminder-Pings (CW/Raid/Checkreacts) trotz Abmeldung gesendet werden?",
+											false)),
 
 							Commands.slash("listeningevent", "Verwalte automatische Event-Listener für Clan-Events.")
 									.addSubcommands(
@@ -514,6 +520,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new teamcheck());
 		classes.add(new checkroles());
 		classes.add(new wins());
+		classes.add(new missinghits());
 		classes.add(new jsonupload());
 		classes.add(new stats());
 		classes.add(new f2pcheck());
@@ -1188,7 +1195,10 @@ public class Bot extends ListenerAdapter {
 							getJda().getGuildById(guild_id).retrieveMemberById(id).submit().get().getEffectiveName(),
 							id);
 				} catch (Exception e) {
-					System.out.println("Fehler beim Namenupdate von Tag " + id);
+					if (e.getMessage().contains("Unknown Member")) {
+						continue;
+					}
+					System.out.println("Fehler beim Namenupdate von ID " + id + "; Exception: " + e.getMessage());
 				}
 			}
 
@@ -1199,7 +1209,10 @@ public class Bot extends ListenerAdapter {
 					DBUtil.executeUpdate("UPDATE players SET name = ? WHERE coc_tag = ?", new Player(tag).getNameAPI(),
 							tag);
 				} catch (Exception e) {
-					System.out.println("Fehler beim Namenupdate von Tag " + tag);
+					if (e.getMessage().contains("String.length()")) {
+						continue;
+					}
+					System.out.println("Fehler beim Namenupdate von Tag " + tag + "; Exception: " + e.getMessage());
 				}
 			}
 		};

@@ -1,7 +1,6 @@
 package lostmanager.commands.coc.memberlist;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -81,10 +80,11 @@ public class signoff extends ListenerAdapter {
 
                 OptionMapping daysOption = event.getOption("days");
                 OptionMapping reasonOption = event.getOption("reason");
+                OptionMapping pingsOption = event.getOption("pings");
 
                 Timestamp endDate = null;
                 String durationText = "unbegrenzt";
-                
+
                 if (daysOption != null) {
                     int days = daysOption.getAsInt();
                     if (days <= 0) {
@@ -99,8 +99,10 @@ public class signoff extends ListenerAdapter {
                 }
 
                 String reason = reasonOption != null ? reasonOption.getAsString() : null;
+                boolean receivePings = pingsOption != null && pingsOption.getAsBoolean();
 
-                boolean success = MemberSignoff.create(playertag, endDate, reason, event.getUser().getId());
+                boolean success = MemberSignoff.create(playertag, endDate, reason, event.getUser().getId(),
+                        receivePings);
 
                 if (success) {
                     String desc = "### Abmeldung erfolgreich erstellt.\n";
@@ -112,10 +114,15 @@ public class signoff extends ListenerAdapter {
                     }
                     desc += "\n**Während der Abmeldung:**\n";
                     desc += "- Keine automatischen Kickpunkte\n";
-                    desc += "- Keine Raid-Pings, CW-Reminder-Pings und Checkreacts-Pings\n";
+                    if (receivePings) {
+                        desc += "- **Reminder-Pings (CW/Raid/Checkreacts) AKTIVIERT**\n";
+                    } else {
+                        desc += "- Keine Raid-Pings, CW-Reminder-Pings und Checkreacts-Pings\n";
+                    }
                     desc += "- Manuelle Kickpunkte weiterhin möglich (mit Warnung)\n";
 
-                    event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
+                    event.getHook()
+                            .editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
                             .queue();
                 } else {
                     event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
@@ -139,7 +146,8 @@ public class signoff extends ListenerAdapter {
                     desc += "Spieler: " + MessageUtil.unformat(p.getInfoStringDB()) + "\n";
                     desc += "Clan: " + c.getInfoString() + "\n";
 
-                    event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
+                    event.getHook()
+                            .editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
                             .queue();
                 } else {
                     event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
@@ -196,7 +204,8 @@ public class signoff extends ListenerAdapter {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
                     desc += "Neues Enddatum: " + newEndDate.toLocalDateTime().format(formatter) + "\n";
 
-                    event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
+                    event.getHook()
+                            .editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
                             .queue();
                 } else {
                     event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
@@ -216,19 +225,21 @@ public class signoff extends ListenerAdapter {
                 String desc = "### Abmeldungs-Information\n";
                 desc += "Spieler: " + MessageUtil.unformat(p.getInfoStringDB()) + "\n";
                 desc += "Clan: " + c.getInfoString() + "\n";
-                
+
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
                 desc += "Startdatum: " + signoff.getStartDate().toLocalDateTime().format(formatter) + "\n";
-                
+
                 if (signoff.isUnlimited()) {
                     desc += "Dauer: Unbegrenzt\n";
                 } else {
                     desc += "Enddatum: " + signoff.getEndDate().toLocalDateTime().format(formatter) + "\n";
                 }
-                
+
                 if (signoff.getReason() != null) {
                     desc += "Grund: " + signoff.getReason() + "\n";
                 }
+
+                desc += "Pings: " + (signoff.isReceivePings() ? "Aktiviert" : "Deaktiviert") + "\n";
 
                 event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.INFO))
                         .queue();
@@ -249,15 +260,18 @@ public class signoff extends ListenerAdapter {
 
             if (focused.equals("player")) {
                 List<Command.Choice> choices = DBManager.getPlayerlistAutocomplete(input, DBManager.InClanType.INCLAN);
-                event.replyChoices(choices).queue(_ -> {}, _ -> {});
+                event.replyChoices(choices).queue(_ -> {
+                }, _ -> {
+                });
             } else if (focused.equals("action")) {
                 List<Command.Choice> choices = List.of(
-                    new Command.Choice("Erstellen", "create"),
-                    new Command.Choice("Beenden", "end"),
-                    new Command.Choice("Verlängern", "extend"),
-                    new Command.Choice("Info", "info")
-                );
-                event.replyChoices(choices).queue(_ -> {}, _ -> {});
+                        new Command.Choice("Erstellen", "create"),
+                        new Command.Choice("Beenden", "end"),
+                        new Command.Choice("Verlängern", "extend"),
+                        new Command.Choice("Info", "info"));
+                event.replyChoices(choices).queue(_ -> {
+                }, _ -> {
+                });
             }
         }, "SignoffAutocomplete-" + event.getUser().getId()).start();
     }

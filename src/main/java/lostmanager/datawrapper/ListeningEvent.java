@@ -376,10 +376,11 @@ public class ListeningEvent {
 			// Check against threshold
 			if (difference < threshold) {
 				// Skip signed-off members
-				if (MemberSignoff.isSignedOff(p.getTag())) {
+				MemberSignoff signoff = new MemberSignoff(p.getTag());
+				if (signoff.isActive() && !signoff.isReceivePings()) {
 					continue;
 				}
-				
+
 				hasViolations = true;
 				message.append(p.getNameAPI()).append(": ").append(difference).append(" points");
 				if (p.getUser() != null) {
@@ -440,8 +441,22 @@ public class ListeningEvent {
 			return; // Can't execute if no war members
 		}
 
+		int cwsize = warMemberList.size();
+
 		// Filter hidden co-leaders
 		warMemberList.removeIf(p -> p.isHiddenColeader());
+
+		// Filter signed-off members who don't want pings
+		warMemberList.removeIf(p -> {
+			MemberSignoff signoff = new MemberSignoff(p.getTag());
+			return signoff.isActive() && !signoff.isReceivePings();
+		});
+
+		// Filter signed-off members who don't want pings
+		warMemberList.removeIf(p -> {
+			MemberSignoff signoff = new MemberSignoff(p.getTag());
+			return signoff.isActive() && !signoff.isReceivePings();
+		});
 
 		// Check action values for parameters (backwards compatible)
 		boolean useLists = false;
@@ -457,8 +472,6 @@ public class ListeningEvent {
 				}
 			}
 		}
-
-		int cwsize = warMemberList.size();
 
 		// Use the same mapping logic as cwdonator command
 		HashMap<Integer, ArrayList<lostmanager.util.Tuple<Integer, Integer>>> mappings = getCWDonatorMappings();
@@ -909,7 +922,8 @@ public class ListeningEvent {
 				message.append("- ");
 
 				if (!isVerificationPhase && getDurationUntilEnd() > 0) {
-					if (p.getUser() != null) {
+					MemberSignoff signoff = new MemberSignoff(tag);
+					if (p.getUser() != null && (!signoff.isActive() || signoff.isReceivePings())) {
 						message.append("(<@").append(p.getUser().getUserID()).append(">) ");
 					}
 				}
@@ -971,26 +985,31 @@ public class ListeningEvent {
 
 		// Get CWL group data
 		org.json.JSONObject cwlJson = clan.getCWLJson();
+		if (!cwlJson.has("rounds") || cwlJson.isNull("rounds")) {
+			return;
+		}
 		org.json.JSONArray rounds = cwlJson.getJSONArray("rounds");
 
-		// Find the last completed day by checking rounds in order
-		// CWL has 7 days, each day has up to 4 wars (warTags)
-		// We need to find the most recent completed war for our clan
-		int lastCompletedRound = -1;
-		String lastCompletedWarTag = null;
+		// Find the target round to report
+		// If a round is in progress (inWar), that's our target (for reminders)
+		// If we find an active round, the selection is finalized
+		int targetRound = -1;
+		String targetWarTag = null;
 		org.json.JSONObject cachedWarData = null;
 
-		// Iterate through all 7 rounds to find the last completed one
 		for (int r = 0; r < rounds.length(); r++) {
 			org.json.JSONArray warTags = rounds.getJSONObject(r).getJSONArray("warTags");
 
-			// Check each war in this round to find our clan's war
 			for (int w = 0; w < warTags.length(); w++) {
 				String warTag = warTags.getString(w);
+				if (warTag.equals("#0"))
+					continue;
+
 				try {
 					org.json.JSONObject warData = Clan.getCWLDayJson(warTag);
+					if (warData == null || !warData.has("clan") || !warData.has("opponent"))
+						continue;
 
-					// Check if this war involves our clan (could be in "clan" or "opponent" field)
 					org.json.JSONObject clanData = warData.getJSONObject("clan");
 					org.json.JSONObject opponentData = warData.getJSONObject("opponent");
 					boolean isOurWar = clanData.getString("tag").equals(clan.getTag())
@@ -999,131 +1018,92 @@ public class ListeningEvent {
 					if (isOurWar) {
 						String state = warData.getString("state");
 
-						// If we find an active war, the previous round was the last completed
-						if (state.equals("inWar") || state.equals("preparation")) {
-							// Current active round found, so last completed is r-1
-							if (r > 0) {
-								lastCompletedRound = r - 1;
+						if (state.equals("inWar")) {
+							// For reminders or end-of-war firing while state is still inWar
+							targetRound = r;
+							targetWarTag = warTag;
+							cachedWarData = warData;
+							break;
+						} else if (state.equals("preparation")) {
+							// If we are in preparation for round N, the last completed round N-1 is
+							// usually what's relevant for final results
+							if (r > 0 && targetRound == -1) {
+								// Only go back if we haven't already found a more recent finished round
+								// This part is tricky - usually the loop has already found the finished round
 							}
-							break; // Found active war, no need to check further
+							// Exit the search as we've hit the future
+							return;
 						} else if (state.equals("warEnded")) {
-							// This round is completed, update tracking
-							lastCompletedRound = r;
-							lastCompletedWarTag = warTag;
-							cachedWarData = warData; // Cache the war data to avoid refetching
+							// This round is completed, it's our current best candidate
+							targetRound = r;
+							targetWarTag = warTag;
+							cachedWarData = warData;
 						}
 					}
 				} catch (Exception e) {
-					// If war data is not available, skip
 					continue;
 				}
 			}
-
-			// If we found an active round, stop checking further rounds
-			if (lastCompletedRound < r && lastCompletedRound >= 0) {
+			// If we found an inWar round, we stop immediately as it's the "now" day
+			if (targetRound == r && cachedWarData != null && cachedWarData.getString("state").equals("inWar")) {
 				break;
 			}
 		}
 
-		// If no active wars found and we have completed wars, it means all 7 days are
-		// done
-		// In this case, lastCompletedRound should be the last round (day 7 = round 6)
-		if (lastCompletedRound == -1 && rounds.length() == 7) {
-			lastCompletedRound = 6; // Day 7 (0-indexed)
-		}
-
-		// If we couldn't determine the round, exit
-		if (lastCompletedRound == -1 || lastCompletedRound >= rounds.length()) {
+		if (targetRound == -1 || cachedWarData == null) {
 			return;
 		}
 
-		// Now find our clan's war in the last completed round
-		org.json.JSONArray lastRoundWarTags = rounds.getJSONObject(lastCompletedRound).getJSONArray("warTags");
+		try {
+			// Determine which object contains our clan's data
+			org.json.JSONObject clanData = cachedWarData.getJSONObject("clan");
+			org.json.JSONObject opponentData = cachedWarData.getJSONObject("opponent");
+			org.json.JSONObject ourClanData = clanData.getString("tag").equals(clan.getTag()) ? clanData
+					: opponentData;
 
-		for (int w = 0; w < lastRoundWarTags.length(); w++) {
-			String warTag = lastRoundWarTags.getString(w);
+			String finalState = cachedWarData.getString("state");
 
-			// Use cached data if available, otherwise fetch
-			org.json.JSONObject warData;
-			if (cachedWarData != null && warTag.equals(lastCompletedWarTag)) {
-				warData = cachedWarData;
+			// Build initial message with missed attacks data
+			CWMissedAttacksResult result = buildCWLDayMissedAttacksMessage(clan, ourClanData,
+					targetRound, false);
+
+			// Determine if this is an end-of-war event (duration = 0)
+			boolean isEndOfWarEvent = getDurationUntilEnd() <= 0;
+
+			if (isEndOfWarEvent && result.hasMissedAttacks && finalState.equals("warEnded")) {
+				// At end of war: send initial message, then schedule 5-minute verification
+				Message sentMessage = sendMessageToChannelAndReturn(result.message);
+
+				if (sentMessage != null) {
+					final String clanTag = clan.getTag();
+					final int finalCompletedRound = targetRound;
+					final String finalWarTag = targetWarTag;
+					final long messageId = sentMessage.getIdLong();
+					final String channelId = getChannelID();
+					final ListeningEvent thisEvent = this;
+					final String originalMessage = result.message;
+
+					ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+					scheduler.schedule(() -> {
+						try {
+							handleCWLDayMissedAttacksDelayedVerification(clanTag, finalCompletedRound,
+									finalWarTag, messageId, channelId, thisEvent, originalMessage);
+						} catch (Exception e) {
+							System.err.println("Error in delayed CWL day verification: " + e.getMessage());
+							e.printStackTrace();
+						} finally {
+							scheduler.shutdown();
+						}
+					}, 5, TimeUnit.MINUTES);
+				}
 			} else {
-				try {
-					warData = Clan.getCWLDayJson(warTag);
-				} catch (Exception e) {
-					// If war data is not available, skip
-					continue;
+				// It's a reminder (inWar or warEnded but not duration 0)
+				if (result.hasMissedAttacks) {
+					sendMessageInChunks(result.message);
 				}
 			}
-
-			try {
-
-				// Check if this war involves our clan (could be in "clan" or "opponent" field)
-				org.json.JSONObject clanData = warData.getJSONObject("clan");
-				org.json.JSONObject opponentData = warData.getJSONObject("opponent");
-				boolean isOurWar = clanData.getString("tag").equals(clan.getTag())
-						|| opponentData.getString("tag").equals(clan.getTag());
-
-				if (isOurWar && warData.getString("state").equals("warEnded")) {
-					// Determine which object contains our clan's data
-					org.json.JSONObject ourClanData = clanData.getString("tag").equals(clan.getTag()) ? clanData
-							: opponentData;
-
-					// Build initial message with missed attacks data
-					CWMissedAttacksResult result = buildCWLDayMissedAttacksMessage(clan, ourClanData,
-							lastCompletedRound, false);
-
-					// Determine if this is an end-of-war event (duration = 0)
-					boolean isEndOfWarEvent = getDurationUntilEnd() <= 0;
-
-					if (isEndOfWarEvent && result.hasMissedAttacks) {
-						// At end of war: send initial message, then schedule 5-minute verification
-						// Don't process kickpoints yet - wait for verification
-						Message sentMessage = sendMessageToChannelAndReturn(result.message);
-
-						if (sentMessage != null) {
-							// Store references needed for the delayed update
-							final String clanTag = clan.getTag();
-							final int finalCompletedRound = lastCompletedRound;
-							final String finalWarTag = warTag;
-							final long messageId = sentMessage.getIdLong();
-							final String channelId = getChannelID();
-							final ListeningEvent thisEvent = this;
-							final String originalMessage = result.message;
-
-							// Schedule 5-minute delayed verification
-							ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-							scheduler.schedule(() -> {
-								try {
-									handleCWLDayMissedAttacksDelayedVerification(clanTag, finalCompletedRound,
-											finalWarTag, messageId, channelId, thisEvent, originalMessage);
-								} catch (Exception e) {
-									System.err.println("Error in delayed CWL day verification: " + e.getMessage());
-									e.printStackTrace();
-								} finally {
-									scheduler.shutdown();
-								}
-							}, 5, TimeUnit.MINUTES);
-
-							System.out.println(
-									"Scheduled 5-minute CWL day missed attacks verification for clan " + clanTag);
-						}
-					} else if (isEndOfWarEvent && !result.hasMissedAttacks) {
-						// End of war but no missed attacks - nothing to send or schedule
-						// Nothing to clean up for CWL (no fillers table)
-					} else {
-						// Not end of war (e.g., reminder during war) - use original behavior
-						if (result.hasMissedAttacks) {
-							sendMessageInChunks(result.message);
-						}
-					}
-
-					break; // Found our war, no need to check other wars in this round
-				}
-			} catch (Exception e) {
-				// If war data is not available, skip
-				continue;
-			}
+		} catch (Exception e) {
+			System.err.println("Error processing target CWL round: " + e.getMessage());
 		}
 	}
 
@@ -1169,9 +1149,10 @@ public class ListeningEvent {
 				if (p.isHiddenColeader()) {
 					continue;
 				}
-				
+
 				// Skip signed-off members
-				if (MemberSignoff.isSignedOff(tag)) {
+				MemberSignoff signoff = new MemberSignoff(tag);
+				if (signoff.isActive() && !signoff.isReceivePings()) {
 					continue;
 				}
 
@@ -1362,9 +1343,10 @@ public class ListeningEvent {
 			if (dbPlayer.isHiddenColeader()) {
 				continue;
 			}
-			
+
 			// Skip signed-off members
-			if (MemberSignoff.isSignedOff(dbPlayer.getTag())) {
+			MemberSignoff signoff = new MemberSignoff(dbPlayer.getTag());
+			if (signoff.isActive() && !signoff.isReceivePings()) {
 				continue;
 			}
 
@@ -1689,10 +1671,11 @@ public class ListeningEvent {
 	private void addKickpointForPlayer(Player player, String reason) {
 		// Check if player is signed off - skip automatic kickpoints
 		if (MemberSignoff.isSignedOff(player.getTag())) {
-			System.out.println("Skipping automatic kickpoint for player " + player.getTag() + " - player is signed off");
+			System.out
+					.println("Skipping automatic kickpoint for player " + player.getTag() + " - player is signed off");
 			return;
 		}
-		
+
 		// Get kickpoint reason from action values if specified
 		KickpointReason kpReason = null;
 		for (ActionValue av : getActionValues()) {

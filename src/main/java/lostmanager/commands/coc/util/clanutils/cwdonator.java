@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import lostmanager.datawrapper.Clan;
+import lostmanager.datawrapper.MemberSignoff;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
@@ -96,10 +97,16 @@ public class cwdonator extends ListenerAdapter {
 				}
 			}
 
+			int cwsize = warMemberList.size();
+
 			// Filter hidden co-leaders
 			warMemberList.removeIf(p -> p.isHiddenColeader());
 
-			int cwsize = warMemberList.size();
+			// Filter signed-off members who don't want pings
+			warMemberList.removeIf(p -> {
+				MemberSignoff signoff = new MemberSignoff(p.getTag());
+				return signoff.isActive() && !signoff.isReceivePings();
+			});
 
 			HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> mappings = getMappings();
 

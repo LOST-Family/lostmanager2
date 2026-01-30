@@ -29,13 +29,13 @@ public class Clan {
 	// Identifier
 	private String clan_tag;
 
-	//DB Index
-	private Long index;	
-	
+	// DB Index
+	private Long index;
+
 	// Names
 	private String namedb;
 	private String nameapi;
-	
+
 	// Icon and Description
 	private String icondb;
 	private String iconapi;
@@ -83,7 +83,7 @@ public class Clan {
 		// Names
 		namedb = null;
 		nameapi = null;
-		
+
 		// Icon and Description
 		icondb = null;
 		iconapi = null;
@@ -155,23 +155,23 @@ public class Clan {
 		}
 		return index;
 	}
-	
+
 	// Roles
 
 	public String getRoleID(Role role) {
 		switch (role) {
-		case LEADER:
-			return DBUtil.getValueFromSQL("SELECT leader_role_id FROM guilds WHERE clan_tag = ?", String.class,
-					clan_tag);
-		case COLEADER:
-			return DBUtil.getValueFromSQL("SELECT co_leader_role_id FROM guilds WHERE clan_tag = ?", String.class,
-					clan_tag);
-		case ELDER:
-			return DBUtil.getValueFromSQL("SELECT elder_role_id FROM guilds WHERE clan_tag = ?", String.class,
-					clan_tag);
-		case MEMBER:
-			return DBUtil.getValueFromSQL("SELECT member_role_id FROM guilds WHERE clan_tag = ?", String.class,
-					clan_tag);
+			case LEADER:
+				return DBUtil.getValueFromSQL("SELECT leader_role_id FROM guilds WHERE clan_tag = ?", String.class,
+						clan_tag);
+			case COLEADER:
+				return DBUtil.getValueFromSQL("SELECT co_leader_role_id FROM guilds WHERE clan_tag = ?", String.class,
+						clan_tag);
+			case ELDER:
+				return DBUtil.getValueFromSQL("SELECT elder_role_id FROM guilds WHERE clan_tag = ?", String.class,
+						clan_tag);
+			case MEMBER:
+				return DBUtil.getValueFromSQL("SELECT member_role_id FROM guilds WHERE clan_tag = ?", String.class,
+						clan_tag);
 		}
 		return null;
 	}
@@ -810,7 +810,8 @@ public class Clan {
 			json = responseBody;
 		} else {
 			if (response != null && response.statusCode() != 404) {
-				// Only log errors for non-404 responses (404 is expected when no raid data is available)
+				// Only log errors for non-404 responses (404 is expected when no raid data is
+				// available)
 				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
 				System.err.println("Antwort: " + response.body());
 			} else if (response == null) {
@@ -832,11 +833,11 @@ public class Clan {
 		return getRaidJson();
 	}
 
-	@SuppressWarnings("null")
 	public static JSONObject getCWLDayJson(String warTag) {
 		String json;
 
-		String url = "https://api.clashofclans.com/v1/clans/clanwarleagues/wars/" + warTag;
+		String encodedTag = java.net.URLEncoder.encode(warTag, java.nio.charset.StandardCharsets.UTF_8);
+		String url = "https://api.clashofclans.com/v1/clanwarleagues/wars/" + encodedTag;
 
 		HttpClient client = HttpClient.newHttpClient();
 
@@ -851,18 +852,24 @@ public class Clan {
 			json = null;
 		}
 
-		if (response.statusCode() == 200) {
+		if (response != null && response.statusCode() == 200) {
 			String responseBody = response.body();
 			// Einfacher JSON-Name-Parser ohne Bibliotheken:
 			json = responseBody;
 		} else {
-			System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
-			System.err.println("Antwort: " + response.body());
+			if (response != null) {
+				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
+				System.err.println("Antwort: " + response.body());
+			}
 			json = null;
 		}
 
-		JSONObject jsonObject = new JSONObject(json);
-		return jsonObject;
+		if (json != null) {
+			JSONObject jsonObject = new JSONObject(json);
+			return jsonObject;
+		} else {
+			return new JSONObject("{\"state\":\"warNotFound\"}");
+		}
 	}
 
 	public String getJson() {
@@ -886,7 +893,8 @@ public class Clan {
 			return responseBody;
 		} else {
 			if (response != null && response.statusCode() != 404) {
-				// Only log errors for non-404 responses (404 is expected when clan is not found)
+				// Only log errors for non-404 responses (404 is expected when clan is not
+				// found)
 				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
 				System.err.println("Antwort: " + response.body());
 			} else if (response == null) {
