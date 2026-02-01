@@ -4515,6 +4515,12 @@
     "full": "",
     "index": "205"
   },
+  "52000209": {
+    "name": "Monkey King",
+    "icon": "/home-base/skins/209.png",
+    "full": "",
+    "index": "211"
+  },
   "52000210": {
     "name": "Puppet Queen",
     "icon": "/home-base/skins/210.png",
@@ -4598,6 +4604,12 @@
     "icon": "/home-base/skins/223.png",
     "full": "",
     "index": "206"
+  },
+  "52000224": {
+    "name": "Phantom Queen",
+    "icon": "/home-base/skins/224.png",
+    "full": "",
+    "index": "212"
   },
   "52000230": {
     "name": "Dark Minion Warden",
@@ -4689,6 +4701,12 @@
     "full": "",
     "index": "208"
   },
+  "52000245": {
+    "name": "River Warden",
+    "icon": "/home-base/skins/245.png",
+    "full": "",
+    "index": "214"
+  },
   "52000251": {
     "name": "Snake Prince",
     "icon": "/home-base/skins/251.png",
@@ -4761,11 +4779,23 @@
     "full": "",
     "index": "209"
   },
+  "52000263": {
+    "name": "Ox Prince",
+    "icon": "/home-base/skins/263.png",
+    "full": "",
+    "index": "213"
+  },
   "52000295": {
     "name": "Mirage Champion",
     "icon": "/home-base/skins/262.png",
     "full": "",
     "index": "207"
+  },
+  "52000296": {
+    "name": "Red Champion",
+    "icon": "/home-base/skins/296.png",
+    "full": "",
+    "index": "210"
   },
   "52000306": {
     "name": "Meteorite Builder",
