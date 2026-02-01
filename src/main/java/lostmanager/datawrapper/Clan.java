@@ -504,9 +504,15 @@ public class Clan {
 	public boolean RaidActive() {
 		if (raidactive == null) {
 			JSONObject jsonObject = getRaidJson();
+			if (!jsonObject.has("items") || jsonObject.isNull("items")
+					|| jsonObject.getJSONArray("items").length() == 0) {
+				raidactive = false;
+				RaidEndTimeMillis = null;
+				return raidactive;
+			}
 			JSONArray items = jsonObject.getJSONArray("items");
 			JSONObject currentitem = items.getJSONObject(0);
-			String state = currentitem.getString("state");
+			String state = currentitem.optString("state", "ended");
 			raidactive = state.equals("ongoing") ? true : false;
 
 			// endtimelogic here to prevent double api requests if in same result
@@ -529,20 +535,27 @@ public class Clan {
 		if (raidmembers == null) {
 			raidmembers = new ArrayList<>();
 			JSONObject jsonObject = getRaidJson();
+			if (!jsonObject.has("items") || jsonObject.isNull("items")
+					|| jsonObject.getJSONArray("items").length() == 0) {
+				raidactive = false;
+				return raidmembers;
+			}
 			JSONArray items = jsonObject.getJSONArray("items");
 			JSONObject currentitem = items.getJSONObject(0);
-			String state = currentitem.getString("state");
+			String state = currentitem.optString("state", "ended");
 			raidactive = state.equals("ongoing") ? true : false;
+			if (!currentitem.has("members") || currentitem.isNull("members"))
+				return raidmembers;
 			JSONArray members = currentitem.getJSONArray("members");
 
 			for (int i = 0; i < members.length(); i++) {
 				JSONObject member = members.getJSONObject(i);
 				String tag = member.getString("tag");
 				String name = member.getString("name");
-				int attacks = member.getInt("attacks");
-				int attackLimit = member.getInt("attackLimit");
-				int bonusAttackLimit = member.getInt("bonusAttackLimit");
-				int capitalResourcesLooted = member.getInt("capitalResourcesLooted");
+				int attacks = member.optInt("attackCount", member.optInt("attacks", 0));
+				int attackLimit = member.optInt("attackLimit", 6);
+				int bonusAttackLimit = member.optInt("bonusAttackLimit", 0);
+				int capitalResourcesLooted = member.optInt("capitalResourcesLooted", 0);
 				Player p = new Player(tag).setNameAPI(name).setCurrentRaidAttacks(attacks)
 						.setCurrentRaidAttackLimit(attackLimit).setCurrentRaidBonusAttackLimit(bonusAttackLimit)
 						.setCurrentGoldLooted(capitalResourcesLooted);
@@ -579,16 +592,22 @@ public class Clan {
 				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 				// If successful (200) or client error (4xx), return immediately (no retry for
-				// client errors)
-				if (response.statusCode() == 200 || (response.statusCode() >= 400 && response.statusCode() < 500)) {
+				// client errors except 429)
+				if (response.statusCode() == 200 || (response.statusCode() >= 400 && response.statusCode() < 500
+						&& response.statusCode() != 429)) {
 					return response;
 				}
 
-				// For server errors (5xx) or other errors, retry
+				// For server errors (5xx) or throttling (429), retry
 				if (attempt < maxRetries) {
 					long waitTime = (long) Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
-					System.err.println("Request failed with status " + response.statusCode() + ", retrying in "
-							+ waitTime + "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
+					if (response.statusCode() == 429) {
+						System.err.println("Request throttled (429), retrying in " + waitTime + "ms (attempt "
+								+ (attempt + 1) + "/" + maxRetries + ")");
+					} else {
+						System.err.println("Request failed with status " + response.statusCode() + ", retrying in "
+								+ waitTime + "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
+					}
 					Thread.sleep(waitTime);
 				}
 			} catch (IOException | InterruptedException e) {
@@ -769,7 +788,8 @@ public class Clan {
 			// Einfacher JSON-Name-Parser ohne Bibliotheken:
 			json = responseBody;
 		} else {
-			if (response != null && response.statusCode() != 404) {
+			if (response != null && response.statusCode() != 404 && response.statusCode() != 403
+					&& response.statusCode() != 429) {
 				// Only log errors for non-404 responses (404 is expected when no war is active)
 				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
 				System.err.println("Antwort: " + response.body());
