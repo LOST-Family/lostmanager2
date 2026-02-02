@@ -95,7 +95,7 @@ public class RestApiServer {
             }
 
             try {
-                String sql = "SELECT clan_tag, name, belongs_to FROM sideclans ORDER BY name ASC";
+                String sql = "SELECT clan_tag, name, index, belongs_to FROM sideclans ORDER BY name ASC";
                 List<SideclanDTO> list = new ArrayList<>();
 
                 try (PreparedStatement pstmt = lostmanager.dbutil.Connection.getConnection().prepareStatement(sql)) {
