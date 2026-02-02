@@ -1309,6 +1309,7 @@ public class ListeningEvent {
 		StringBuilder message = new StringBuilder();
 		message.append("## Raid Weekend - ");
 
+		boolean ended = !(isRaidActive && getDurationUntilEnd() > 0);
 		// Show time remaining if raid is active, or "ended" if not (like CW)
 		if (isRaidActive && getDurationUntilEnd() > 0) {
 			int secondsLeft = (int) (getDurationUntilEnd() / 1000);
@@ -1410,7 +1411,7 @@ public class ListeningEvent {
 			for (Player p : notDone) {
 				hasMissedAttacks = true;
 				message.append(p.getNameAPI());
-				if (p.getUser() != null) {
+				if (p.getUser() != null && !ended) {
 					message.append(" (<@").append(p.getUser().getUserID()).append(">)");
 				}
 				message.append("\n");
