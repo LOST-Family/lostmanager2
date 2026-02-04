@@ -3034,15 +3034,15 @@
     "icon": "/home-base/obstacles/135.png",
     "index": "47"
   },
+  "8000136": {
+    "name": "2026 LNY Kumquat Tree",
+    "icon": "/home-base/obstacles/136.png",
+    "index": "52"
+  },
   "8000137": {
     "name": "2025 Clashmas Tree",
     "icon": "/home-base/obstacles/137.png",
     "index": "51"
-  },
-  "8000138": {
-    "name": "2026 LNY Kumquat Tree",
-    "icon": "/home-base/obstacles/138.png",
-    "index": "52"
   },
   "60000000": {
     "name": "Classic Scenery",
