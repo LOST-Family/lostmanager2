@@ -2094,955 +2094,955 @@
   "18000000": {
     "name": "Mighty Statue (Aug. 2012",
     "icon": "/home-base/decorations/0.png",
-    "index": "0"
+    "index": 0
   },
   "18000004": {
     "name": "Pirate Flag (Aug. 2012)",
     "icon": "/home-base/decorations/4.png",
-    "index": "1"
+    "index": 1
   },
   "18000010": {
     "name": "Ancient Skull (Aug. 2012)",
     "icon": "/home-base/decorations/10.png",
-    "index": "2"
+    "index": 2
   },
   "18000033": {
     "name": "Statue of P.E.K.K.A (Aug. 2012)",
     "icon": "/home-base/decorations/33.png",
-    "index": "3"
+    "index": 3
   },
   "18000037": {
     "name": "Barbarian King Statue (Aug. 2012)",
     "icon": "/home-base/decorations/37.png",
-    "index": "4"
+    "index": 4
   },
   "18000041": {
     "name": "Ancient Barbarian Statue (BB) (May 2017)",
     "icon": "/home-base/decorations/41.png",
-    "index": "5"
+    "index": 5
   },
   "18000043": {
     "name": "Archer Queen Statue (BB) (May 2017)",
     "icon": "/home-base/decorations/43.png",
-    "index": "6"
+    "index": 6
   },
   "18000046": {
     "name": "Builder Statue (May 2017)",
     "icon": "/home-base/decorations/46.png",
     "price": "5€",
-    "index": "7"
+    "index": 7
   },
   "18000047": {
     "name": "CWL The Champion Statue (Oct. 2018)",
     "icon": "/home-base/decorations/47.png",
-    "index": "8"
+    "index": 8
   },
   "18000048": {
     "name": "CWL The Master Statue (Oct. 2018)",
     "icon": "/home-base/decorations/48.png",
-    "index": "9"
+    "index": 9
   },
   "18000049": {
     "name": "CWL The Contender Statue (Oct. 2018)",
     "icon": "/home-base/decorations/49.png",
-    "index": "10"
+    "index": 10
   },
   "18000050": {
     "name": "CWL The Challenger Statue (Oct. 2018)",
     "icon": "/home-base/decorations/50.png",
-    "index": "11"
+    "index": 11
   },
   "18000051": {
     "name": "CWL The Warrior Statue (Oct. 2018)",
     "icon": "/home-base/decorations/51.png",
-    "index": "12"
+    "index": 12
   },
   "18000052": {
     "name": "Golden Hog (Feb. 2019)",
     "icon": "/home-base/decorations/52.png",
     "price": "10€",
-    "index": "14"
+    "index": 14
   },
   "18000053": {
     "name": "Festive Firecrackers (BB) (Feb. 2019)",
     "icon": "/home-base/decorations/53.png",
     "price": "5€",
-    "index": "15"
+    "index": 15
   },
   "18000055": {
     "name": "Snowman (Dec. 2018)",
     "icon": "/home-base/decorations/55.png",
     "price": "5€",
-    "index": "13"
+    "index": 13
   },
   "18000056": {
     "name": "Battle Machine Statue (Jun. 2019)",
     "icon": "/home-base/decorations/56.png",
     "price": "5€",
-    "index": "16"
+    "index": 16
   },
   "18000057": {
     "name": "Dragon Statue (Oct. 2019)",
     "icon": "/home-base/decorations/57.png",
     "price": "10€",
-    "index": "17"
+    "index": 17
   },
   "18000058": {
     "name": "Golden Poet (Jan. 2020)",
     "icon": "/home-base/decorations/58.png",
     "price": "10€",
-    "index": "18"
+    "index": 18
   },
   "18000059": {
     "name": "Super Statue (May 2020)",
     "icon": "/home-base/decorations/59.png",
     "price": "10€",
-    "index": "19"
+    "index": 19
   },
   "18000060": {
     "name": "Storied Statue (Aug. 2020)",
     "icon": "/home-base/decorations/60.png",
-    "index": "21"
+    "index": 21
   },
   "18000061": {
     "name": "Anniversary Fountain (Aug. 2020)",
     "icon": "/home-base/decorations/61.png",
-    "index": "22"
+    "index": 22
   },
   "18000062": {
     "name": "Clockwork Statue (May 2020)",
     "icon": "/home-base/decorations/62.png",
     "price": "10€",
-    "index": "20"
+    "index": 20
   },
   "18000063": {
     "name": "A Piece of Birthday Cake (Aug. 2020)",
     "icon": "/home-base/decorations/63.png",
-    "index": "23"
+    "index": 23
   },
   "18000064": {
     "name": "Retired Anchor (Nov. 2020)",
     "icon": "/home-base/decorations/64.png",
     "price": "4€",
-    "index": "24"
+    "index": 24
   },
   "18000065": {
     "name": "Logmas Tree (Dec. 2020)",
     "icon": "/home-base/decorations/65.png",
-    "index": "25"
+    "index": 25
   },
   "18000066": {
     "name": "Firework Fanboy (Feb. 2021)",
     "icon": "/home-base/decorations/66.png",
     "price": "5€",
-    "index": "26"
+    "index": 26
   },
   "18000067": {
     "name": "Flowing Fountain (Apr. 2021)",
     "icon": "/home-base/decorations/67.png",
-    "index": "27"
+    "index": 27
   },
   "18000068": {
     "name": "Fiery Figure (Aug. 2021)",
     "icon": "/home-base/decorations/68.png",
-    "index": "28"
+    "index": 28
   },
   "18000069": {
     "name": "Wizard Statue (May 2022)",
     "icon": "/home-base/decorations/69.png",
-    "index": "29"
+    "index": 29
   },
   "18000070": {
     "name": "Goblin King Tribute (Aug. 2022)",
     "icon": "/home-base/decorations/70.png",
-    "index": "30"
+    "index": 30
   },
   "18000071": {
     "name": "Eternal Flame (Sep. 2022)",
     "icon": "/home-base/decorations/71.png",
-    "index": "31"
+    "index": 31
   },
   "18000072": {
     "name": "Clashmas Sleigh (Dec. 2022)",
     "icon": "/home-base/decorations/72.png",
-    "index": "32"
+    "index": 32
   },
   "18000073": {
     "name": "Magic Show Statue (Feb. 2023)",
     "icon": "/home-base/decorations/73.png",
     "price": "1€",
-    "index": "33"
+    "index": 33
   },
   "18000074": {
     "name": "Decorated Dragon Statue (Mar. 2023)",
     "icon": "/home-base/decorations/74.png",
-    "index": "34"
+    "index": 34
   },
   "18000075": {
     "name": "Dragon Trophy (Apr. 2024)",
     "icon": "/home-base/decorations/75.png",
     "price": "3€",
-    "index": "59"
+    "index": 59
   },
   "18000079": {
     "name": "Books of Clash (Jun. 2023)",
     "icon": "/home-base/decorations/79.png",
-    "index": "36"
+    "index": 36
   },
   "18000080": {
     "name": "Master Builder's Return (BB) (May 2023)",
     "icon": "/home-base/decorations/80.png",
     "price": "3€",
-    "index": "35"
+    "index": 35
   },
   "18000089": {
     "name": "Goblin Pit (Jul. 2023)",
     "icon": "/home-base/decorations/89.png",
     "price": "10€",
-    "index": "37"
+    "index": 37
   },
   "18000090": {
     "name": "Goblin Dragon Statue (Jul. 2023) (GP)",
     "icon": "/home-base/decorations/90.png",
-    "index": "38"
+    "index": 38
   },
   "18000096": {
     "name": "Cosy Coffin (Oct. 2023)",
     "icon": "/home-base/decorations/96.png",
-    "index": "39"
+    "index": 39
   },
   "18000097": {
     "name": "Friendly Clown (Oct. 2023)",
     "icon": "/home-base/decorations/97.png",
-    "index": "40"
+    "index": 40
   },
   "18000098": {
     "name": "Spooky Spa (Oct. 2023)",
     "icon": "/home-base/decorations/98.png",
-    "index": "41"
+    "index": 41
   },
   "18000099": {
     "name": "Pumpkin Scarecrow (Oct. 2023)",
     "icon": "/home-base/decorations/99.png",
-    "index": "42"
+    "index": 42
   },
   "18000100": {
     "name": "Sour Elixir Cauldron (Oct. 2023)",
     "icon": "/home-base/decorations/100.png",
-    "index": "43"
+    "index": 43
   },
   "18000101": {
     "name": "World Finals 23 Statue (Nov. 2023)",
     "icon": "/home-base/decorations/101.png",
-    "index": "44"
+    "index": 44
   },
   "18000103": {
     "name": "Duck Bath (Nov. 2023)",
     "icon": "/home-base/decorations/103.png",
-    "index": "45"
+    "index": 45
   },
   "18000109": {
     "name": "Hog Pen (Nov. 2023)",
     "icon": "/home-base/decorations/109.png",
-    "index": "46"
+    "index": 46
   },
   "18000114": {
     "name": "Cozy Clam (Nov. 2023)",
     "icon": "/home-base/decorations/114.png",
-    "index": "47"
+    "index": 47
   },
   "18000115": {
     "name": "Gingerbread Bakery (Dec. 2023)",
     "icon": "/home-base/decorations/115.png",
-    "index": "48"
+    "index": 48
   },
   "18000116": {
     "name": "Jingle Bell (Dec. 2023)",
     "icon": "/home-base/decorations/116.png",
-    "index": "49"
+    "index": 49
   },
   "18000117": {
     "name": "Barbarian Santa (Dec. 2023)",
     "icon": "/home-base/decorations/117.png",
-    "index": "50"
+    "index": 50
   },
   "18000118": {
     "name": "Skeleton Sock (Dec. 2023)",
     "icon": "/home-base/decorations/118.png",
-    "index": "51"
+    "index": 51
   },
   "18000119": {
     "name": "Lucky Anchor (Feb. 2024)",
     "icon": "/home-base/decorations/119.png",
-    "index": "52"
+    "index": 52
   },
   "18000120": {
     "name": "Crab at home (Feb. 2024)",
     "icon": "/home-base/decorations/120.png",
-    "index": "53"
+    "index": 53
   },
   "18000121": {
     "name": "Baby Dragon Statue (Feb. 2024) (EP)",
     "icon": "/home-base/decorations/121.png",
-    "index": "54"
+    "index": 54
   },
   "18000122": {
     "name": "Dragon Pinata (Feb. 2024)",
     "icon": "/home-base/decorations/122.png",
-    "index": "55"
+    "index": 55
   },
   "18000123": {
     "name": "Clashy Crater (Mar. 2024)",
     "icon": "/home-base/decorations/123.png",
-    "index": "56"
+    "index": 56
   },
   "18000124": {
     "name": "Stone Globe (Mar. 2024) (EP)",
     "icon": "/home-base/decorations/124.png",
-    "index": "57"
+    "index": 57
   },
   "18000125": {
     "name": "Goblin Explorer (Mar. 2024)",
     "icon": "/home-base/decorations/125.png",
-    "index": "58"
+    "index": 58
   },
   "18000126": {
     "name": "Baby Ptah (Apr. 2024)",
     "icon": "/home-base/decorations/126.png",
-    "index": "60"
+    "index": 60
   },
   "18000127": {
     "name": "Goblin Pharaoh (Apr. 2024) (EP)",
     "icon": "/home-base/decorations/127.png",
-    "index": "61"
+    "index": 61
   },
   "18000128": {
     "name": "Hog Sphinx (Apr. 2024)",
     "icon": "/home-base/decorations/128.png",
-    "index": "62"
+    "index": 62
   },
   "18000129": {
     "name": "Crown Sword (Apr. 2024)",
     "icon": "/home-base/decorations/129.png",
-    "index": "63"
+    "index": 63
   },
   "18000130": {
     "name": "Surprising Squad (May 2024)",
     "icon": "/home-base/decorations/130.png",
-    "index": "64"
+    "index": 64
   },
   "18000131": {
     "name": "Golden Boot (Jun. 2024)",
     "icon": "/home-base/decorations/131.png",
-    "index": "65"
+    "index": 65
   },
   "18000132": {
     "name": "Bestest Ball (Jun. 2024)",
     "icon": "/home-base/decorations/132.png",
-    "index": "66"
+    "index": 66
   },
   "18000133": {
     "name": "Haaland Statue (Jun. 2024)",
     "icon": "/home-base/decorations/133.png",
-    "index": "67"
+    "index": 67
   },
   "18000134": {
     "name": "Triumphant Trophy (Jun. 2024)",
     "icon": "/home-base/decorations/134.png",
-    "index": "68"
+    "index": 68
   },
   "18000135": {
     "name": "Celebration Cup (Jun. 2024)",
     "icon": "/home-base/decorations/135.png",
-    "index": "69"
+    "index": 69
   },
   "18000136": {
     "name": "Victory Milk (Jun. 2024) (EP)",
     "icon": "/home-base/decorations/136.png",
-    "index": "70"
+    "index": 70
   },
   "18000137": {
     "name": "Cactus Guy (Jun. 2024) (EP)",
     "icon": "/home-base/decorations/137.png",
-    "index": "71"
+    "index": 71
   },
   "18000138": {
     "name": "Cowboy Skeleton (Jun. 2024)",
     "icon": "/home-base/decorations/138.png",
-    "index": "72"
+    "index": 72
   },
   "18000139": {
     "name": "Dragon Totem (Jun. 2024)",
     "icon": "/home-base/decorations/139.png",
-    "index": "73"
+    "index": 73
   },
   "18000140": {
     "name": "Football Camp (Jun. 2024)",
     "icon": "/home-base/decorations/140.png",
-    "index": "74"
+    "index": 74
   },
   "18000141": {
     "name": "Wizard Vendor (Aug. 2024)",
     "icon": "/home-base/decorations/141.png",
-    "index": "79"
+    "index": 79
   },
   "18000143": {
     "name": "Cherry Bonsai (Aug. 2024)",
     "icon": "/home-base/decorations/143.png",
-    "index": "80"
+    "index": 80
   },
   "18000144": {
     "name": "Chibi Archer (Aug. 2024)",
     "icon": "/home-base/decorations/144.png",
-    "index": "81"
+    "index": 81
   },
   "18000145": {
     "name": "Kawaii Giant (Aug. 2024)",
     "icon": "/home-base/decorations/145.png",
-    "index": "82"
+    "index": 82
   },
   "18000147": {
     "name": "Brawl's Star (SC-ID) (Feb. 2025)",
     "icon": "/home-base/decorations/147.png",
-    "index": "96"
+    "index": 96
   },
   "18000148": {
     "name": "Gargantuan Gauntlet (SC-ID) (Dec. 2024)",
     "icon": "/home-base/decorations/148.png",
-    "index": "90"
+    "index": 90
   },
   "18000150": {
     "name": "Sleepy King (SC-ID) (Feb. 2025)",
     "icon": "/home-base/decorations/150.png",
-    "index": "97"
+    "index": 97
   },
   "18000151": {
     "name": "Champion's Flame (Jul. 2024)",
     "icon": "/home-base/decorations/151.png",
-    "index": "75"
+    "index": 75
   },
   "18000152": {
     "name": "Goblin High Dive (Jul 2024)",
     "icon": "/home-base/decorations/152.png",
     "price": "6€",
-    "index": "76"
+    "index": 76
   },
   "18000153": {
     "name": "Foot Tribute (Jul. 2024)",
     "icon": "/home-base/decorations/153.png",
-    "index": "77"
+    "index": 77
   },
   "18000154": {
     "name": "Pretty Portal (Sep. 2024) (EP)",
     "icon": "/home-base/decorations/154.png",
-    "index": "83"
+    "index": 83
   },
   "18000155": {
     "name": "Decision Dice (Sep. 2024) (GP)",
     "icon": "/home-base/decorations/155.png",
-    "index": "84"
+    "index": 84
   },
   "18000156": {
     "name": "Cuddly Chest (Sep. 2024) (EP)",
     "icon": "/home-base/decorations/156.png",
-    "index": "85"
+    "index": 85
   },
   "18000157": {
     "name": "Hydra Headstone (Oct. 2024)",
     "icon": "/home-base/decorations/157.png",
-    "index": "86"
+    "index": 86
   },
   "18000158": {
     "name": "Jailbroken Box (Oct. 2024)",
     "icon": "/home-base/decorations/158.png",
-    "index": "87"
+    "index": 87
   },
   "18000159": {
     "name": "Bubble Boil Cauldron (Oct. 2024)",
     "icon": "/home-base/decorations/159.png",
-    "index": "88"
+    "index": 88
   },
   "18000160": {
     "name": "Abra-Cada-Brewer (Nov. 2024)",
     "icon": "/home-base/decorations/160.png",
     "price": "6€",
-    "index": "89"
+    "index": 89
   },
   "18000161": {
     "name": "Festival Lantern (Oct. 2025)",
     "icon": "/home-base/decorations/161.png",
     "price": "6€",
-    "index": "116"
+    "index": 116
   },
   "18000162": {
     "name": "Rocking Reindeer (Dec. 2024)",
     "icon": "/home-base/decorations/162.png",
-    "index": "91"
+    "index": 91
   },
   "18000163": {
     "name": "Clockwork Choir (Dec. 2024)",
     "icon": "/home-base/decorations/163.png",
-    "index": "92"
+    "index": 92
   },
   "18000164": {
     "name": "Snow Globe (Dec. 2024)",
     "icon": "/home-base/decorations/164.png",
-    "index": "93"
+    "index": 93
   },
   "18000165": {
     "name": "Gift Bag (Dec. 2024)",
     "icon": "/home-base/decorations/165.png",
-    "index": "94"
+    "index": 94
   },
   "18000166": {
     "name": "Snake Shrine (Feb. 2025)",
     "icon": "/home-base/decorations/166.png",
-    "index": "98"
+    "index": 98
   },
   "18000167": {
     "name": "Monk Statue (Feb. 2025)",
     "icon": "/home-base/decorations/167.png",
-    "index": "99"
+    "index": 99
   },
   "18000168": {
     "name": "Cozy Sauna (Jan. 2025)",
     "icon": "/home-base/decorations/168.png",
     "price": "6€",
-    "index": "95"
+    "index": 95
   },
   "18000169": {
     "name": "Lucky Cookies (Feb. 2025)",
     "icon": "/home-base/decorations/169.png",
-    "index": "100"
+    "index": 100
   },
   "18000170": {
     "name": "Shooting Range (Mar. 2025)",
     "icon": "/home-base/decorations/170.png",
     "price": "6€",
-    "index": "101"
+    "index": 101
   },
   "18000171": {
     "name": "WWE Title (Apr. 2025)",
     "icon": "/home-base/decorations/171.png",
-    "index": "102"
+    "index": 102
   },
   "18000172": {
     "name": "Rumbling Goblins (Apr. 2025)",
     "icon": "/home-base/decorations/172.png",
-    "index": "103"
+    "index": 103
   },
   "18000173": {
     "name": "Golden Giant (Apr. 2025)",
     "icon": "/home-base/decorations/173.png",
-    "index": "104"
+    "index": 104
   },
   "18000174": {
     "name": "Creator Fountain (May 2025) (Super Creator)",
     "icon": "/home-base/decorations/174.png",
-    "index": "106"
+    "index": 106
   },
   "18000175": {
     "name": "Surprise Wheel (Apr. 2025)",
     "icon": "/home-base/decorations/175.png",
-    "index": "105"
+    "index": 105
   },
   "18000176": {
     "name": "Sacred Gate (May 2025) (EP)",
     "icon": "/home-base/decorations/176.png",
-    "index": "107"
+    "index": 107
   },
   "18000177": {
     "name": "Jingle Maker (Jun. 2025)",
     "icon": "/home-base/decorations/177.png",
     "price": "6€",
-    "index": "108"
+    "index": 108
   },
   "18000178": {
     "name": "Looter Wagon (Jun. 2025)",
     "icon": "/home-base/decorations/178.png",
-    "index": "109"
+    "index": 109
   },
   "18000179": {
     "name": "Frozen Wizard (Aug. 2025)",
     "icon": "/home-base/decorations/179.png",
-    "index": "111"
+    "index": 111
   },
   "18000180": {
     "name": "Clashy Carving (Aug. 2025)",
     "icon": "/home-base/decorations/180.png",
-    "index": "112"
+    "index": 112
   },
   "18000181": {
     "name": "Sketch Summoner (Sep. 2025) (EP)",
     "icon": "/home-base/decorations/181.png",
-    "index": "115"
+    "index": 115
   },
   "18000182": {
     "name": "Cyber Hologram (Jul. 2024)",
     "icon": "/home-base/decorations/182.png",
     "price": "6€",
-    "index": "78"
+    "index": 78
   },
   "18000183": {
     "name": "Soda Stand (Aug. 2025)",
     "icon": "/home-base/decorations/183.png",
-    "index": "113"
+    "index": 113
   },
   "18000184": {
     "name": "Party Bench (Aug. 2025)",
     "icon": "/home-base/decorations/184.png",
-    "index": "114"
+    "index": 114
   },
   "18000185": {
     "name": "Justice Crown (Jun. 2025)",
     "icon": "/home-base/decorations/185.png",
-    "index": "110"
+    "index": 110
   },
   "18000186": {
     "name": "Cosmic Lantern (Oct. 2025)",
     "icon": "/home-base/decorations/186.png",
-    "index": "117"
+    "index": 117
   },
   "18000187": {
     "name": "Electro Skull (Nov. 2025)",
     "icon": "/home-base/decorations/187.png",
-    "index": "120"
+    "index": 120
   },
   "18000188": {
     "name": "Meteor Observer (Jan. 2026)",
     "icon": "/home-base/decorations/188.png",
-    "index": "129"
+    "index": 129
   },
   "18000189": {
     "name": "Fortune Printer (Nov. 2025)",
     "icon": "/home-base/decorations/189.png",
     "price": "6€",
-    "index": "121"
+    "index": 121
   },
   "18000190": {
     "name": "Boom Box (Oct. 2025)",
     "icon": "/home-base/decorations/190.png",
-    "index": "118"
+    "index": 118
   },
   "18000191": {
     "name": "Cursed Tome (Oct. 2025)",
     "icon": "/home-base/decorations/191.png",
-    "index": "119"
+    "index": 119
   },
   "18000192": {
     "name": "Eagle Monument (Nov. 2025)",
     "icon": "/home-base/decorations/192.png",
-    "index": "122"
+    "index": 122
   },
   "18000193": {
     "name": "Handsome Scroll (Feb. 2026)",
     "icon": "/home-base/decorations/193.png",
-    "index": "129"
+    "index": 129
   },
   "18000194": {
     "name": "Lucky Shoe (Feb. 2026)",
     "icon": "/home-base/decorations/194.png",
-    "index": "130"
+    "index": 130
   },
   "18000195": {
     "name": "Flame Horse (Feb. 2026)",
     "icon": "/home-base/decorations/195.png",
-    "index": "131"
+    "index": 131
   },
   "18000196": {
     "name": "Smokey Stove (Dec. 2025)",
     "icon": "/home-base/decorations/196.png",
-    "index": "124"
+    "index": 124
   },
   "18000197": {
     "name": "Wish Lamp (Jan. 2026)",
     "icon": "/home-base/decorations/197.png",
-    "index": "128"
+    "index": 128
   },
   "18000199": {
     "name": "Brawny Battleaxe (Dec. 2025)",
     "icon": "/home-base/decorations/199.png",
-    "index": "125"
+    "index": 125
   },
   "18000200": {
     "name": "Crafted Statue (Nov. 2025)",
     "icon": "/home-base/decorations/200.png",
-    "index": "123"
+    "index": 123
   },
   "18000203": {
     "name": "Hungry Hound (Dec. 2025)",
     "icon": "/home-base/decorations/203.png",
-    "index": "126"
+    "index": 126
   },
   "18000204": {
     "name": "Frozen Stone (Dec. 2025)",
     "icon": "/home-base/decorations/204.png",
-    "index": "127"
+    "index": 127
   },
   "8000015": {
     "name": "2012 Stone",
     "icon": "/home-base/obstacles/15.png",
-    "index": "2"
+    "index": 2
   },
   "8000021": {
     "name": "2012 Clashmas Tree",
     "icon": "/home-base/obstacles/21.png",
-    "index": "3"
+    "index": 3
   },
   "8000028": {
     "name": "2013 Clashmas Tree",
     "icon": "/home-base/obstacles/28.png",
-    "index": "4"
+    "index": 4
   },
   "8000030": {
     "name": "Gem Box",
     "icon": "/home-base/obstacles/30.png",
-    "index": "0"
+    "index": 0
   },
   "8000031": {
     "name": "2014 Halloween Headstone",
     "icon": "/home-base/obstacles/31.png",
-    "index": "5"
+    "index": 5
   },
   "8000032": {
     "name": "2014 Clashmas Tree",
     "icon": "/home-base/obstacles/32.png",
-    "index": "6"
+    "index": 6
   },
   "8000036": {
     "name": "2015 Halloween Cauldron",
     "icon": "/home-base/obstacles/36.png",
-    "index": "7"
+    "index": 7
   },
   "8000037": {
     "name": "2015 Clashmas Tree",
     "icon": "/home-base/obstacles/37.png",
-    "index": "8"
+    "index": 8
   },
   "8000039": {
     "name": "2016 Scary Pumpkin",
     "icon": "/home-base/obstacles/39.png",
-    "index": "9"
+    "index": 9
   },
   "8000040": {
     "name": "2016 Clashmas Tree",
     "icon": "/home-base/obstacles/40.png",
-    "index": "10"
+    "index": 10
   },
   "8000055": {
     "name": "Old Barbarian Statue",
     "icon": "/home-base/obstacles/55.png",
-    "index": "1"
+    "index": 1
   },
   "8000065": {
     "name": "2017 Anniversary Cake",
     "icon": "/home-base/obstacles/65.png",
-    "index": "11"
+    "index": 11
   },
   "8000067": {
     "name": "2017 Halloween Obstacle",
     "icon": "/home-base/obstacles/67.png",
-    "index": "12"
+    "index": 12
   },
   "8000068": {
     "name": "2018 Fireworks Stash",
     "icon": "/home-base/obstacles/68.png",
-    "index": "14"
+    "index": 14
   },
   "8000069": {
     "name": "2017 Clashmas Tree",
     "icon": "/home-base/obstacles/69.png",
-    "index": "13"
+    "index": 13
   },
   "8000070": {
     "name": "2018 Fortune Tree",
     "icon": "/home-base/obstacles/70.png",
-    "index": "15"
+    "index": 15
   },
   "8000071": {
     "name": "2018 Anniversary Cake",
     "icon": "/home-base/obstacles/71.png",
-    "index": "17"
+    "index": 17
   },
   "8000072": {
     "name": "2018 Clashmas Tree",
     "icon": "/home-base/obstacles/72.png",
-    "index": "19"
+    "index": 19
   },
   "8000073": {
     "name": "2018 Witch's Hat",
     "icon": "/home-base/obstacles/73.png",
-    "index": "18"
+    "index": 18
   },
   "8000074": {
     "name": "2018 Spike-y Cactus",
     "icon": "/home-base/obstacles/74.png",
-    "index": "16"
+    "index": 16
   },
   "8000075": {
     "name": "2020 Glowy Lantern (BB)",
     "icon": "/home-base/obstacles/75.png",
-    "index": "23"
+    "index": 23
   },
   "8000076": {
     "name": "2019 Birthday Surprise",
     "icon": "/home-base/obstacles/76.png",
-    "index": "20"
+    "index": 20
   },
   "8000077": {
     "name": "2019 Spooky Tree",
     "icon": "/home-base/obstacles/77.png",
-    "index": "21"
+    "index": 21
   },
   "8000078": {
     "name": "2019 Clashmas Tree",
     "icon": "/home-base/obstacles/78.png",
-    "index": "22"
+    "index": 22
   },
   "8000079": {
     "name": "2020 Glowy Lantern",
     "icon": "/home-base/obstacles/79.png",
-    "index": "24"
+    "index": 24
   },
   "8000080": {
     "name": "2020 Anniversary Cake",
     "icon": "/home-base/obstacles/80.png",
-    "index": "25"
+    "index": 25
   },
   "8000081": {
     "name": "2020 Vacant Tomb",
     "icon": "/home-base/obstacles/81.png",
-    "index": "26"
+    "index": 26
   },
   "8000082": {
     "name": "2020 Clashmas Tree",
     "icon": "/home-base/obstacles/82.png",
-    "index": "27"
+    "index": 27
   },
   "8000083": {
     "name": "2021 Lucky Shrub",
     "icon": "/home-base/obstacles/83.png",
-    "index": "28"
+    "index": 28
   },
   "8000084": {
     "name": "2021 Anniversary Cake",
     "icon": "/home-base/obstacles/84.png",
-    "index": "29"
+    "index": 29
   },
   "8000085": {
     "name": "2021 Friendly Flower",
     "icon": "/home-base/obstacles/85.png",
-    "index": "30"
+    "index": 30
   },
   "8000086": {
     "name": "2021 Clashmas Tree",
     "icon": "/home-base/obstacles/86.png",
-    "index": "31"
+    "index": 31
   },
   "8000087": {
     "name": "2022 Anniversary Cake",
     "icon": "/home-base/obstacles/87.png",
-    "index": "32"
+    "index": 32
   },
   "8000088": {
     "name": "2022 Trick or Treat?",
     "icon": "/home-base/obstacles/88.png",
-    "index": "33"
+    "index": 33
   },
   "8000089": {
     "name": "2022 Clashmas Tree",
     "icon": "/home-base/obstacles/89.png",
-    "index": "34"
+    "index": 34
   },
   "8000090": {
     "name": "2023 Rabbit Lantern",
     "icon": "/home-base/obstacles/90.png",
-    "index": "35"
+    "index": 35
   },
   "8000108": {
     "name": "2023 Anniversary Cake",
     "icon": "/home-base/obstacles/108.png",
-    "index": "36"
+    "index": 36
   },
   "8000110": {
     "name": "2023 Sinister Sapling",
     "icon": "/home-base/obstacles/110.png",
-    "index": "37"
+    "index": 37
   },
   "8000111": {
     "name": "2023 Clashmas Tree",
     "icon": "/home-base/obstacles/111.png",
-    "index": "38"
+    "index": 38
   },
   "8000113": {
     "name": "2024 Lucky Letterbox",
     "icon": "/home-base/obstacles/113.png",
-    "index": "39"
+    "index": 39
   },
   "8000115": {
     "name": "2024 Mysterious Object",
     "icon": "/home-base/obstacles/115.png",
-    "index": "40"
+    "index": 40
   },
   "8000116": {
     "name": "2024 Anniversary Cake",
     "icon": "/home-base/obstacles/116.png",
-    "index": "41"
+    "index": 41
   },
   "8000117": {
     "name": "2024 Ghost Post",
     "icon": "/home-base/obstacles/117.png",
-    "index": "42"
+    "index": 42
   },
   "8000127": {
     "name": "2024 Clashmas Tree",
     "icon": "/home-base/obstacles/127.png",
-    "index": "43"
+    "index": 43
   },
   "8000128": {
     "name": "2025 Snake Sculpture",
     "icon": "/home-base/obstacles/128.png",
-    "index": "44"
+    "index": 44
   },
   "8000129": {
     "name": "2025 Money in the Bank",
     "icon": "/home-base/obstacles/129.png",
-    "index": "45"
+    "index": 45
   },
   "8000131": {
     "name": "2025 Anniversary Cake",
     "icon": "/home-base/obstacles/131.png",
-    "index": "46"
+    "index": 46
   },
   "8000132": {
     "name": "2025 Shiny Ore Meteorite",
     "icon": "/home-base/obstacles/132.png",
-    "index": "48"
+    "index": 48
   },
   "8000133": {
     "name": "2025 Glowy Ore Meteorite",
     "icon": "/home-base/obstacles/133.png",
-    "index": "49"
+    "index": 49
   },
   "8000134": {
     "name": "2025 Starry Ore Meteorite",
     "icon": "/home-base/obstacles/134.png",
-    "index": "50"
+    "index": 50
   },
   "8000135": {
     "name": "2025 Cursed Seedling",
     "icon": "/home-base/obstacles/135.png",
-    "index": "47"
+    "index": 47
   },
   "8000136": {
     "name": "2026 LNY Kumquat Tree",
     "icon": "/home-base/obstacles/136.png",
-    "index": "52"
+    "index": 52
   },
   "8000137": {
     "name": "2025 Clashmas Tree",
     "icon": "/home-base/obstacles/137.png",
-    "index": "51"
+    "index": 51
   },
   "60000000": {
     "name": "Classic Scenery",
@@ -3063,145 +3063,145 @@
     "name": "Clashy Constructs Scenery (Jun. 2020)",
     "icon": "/home-base/sceneries/4.png",
     "full": "",
-    "index": "0"
+    "index": 0
   },
   "60000005": {
     "name": "Pirate Scenery (Nov. 2020)",
     "icon": "/home-base/sceneries/5.png",
     "full": "",
-    "index": "1"
+    "index": 1
   },
   "60000006": {
     "name": "Epic Winter Scenery (Dec. 2020)",
     "icon": "/home-base/sceneries/6.png",
     "full": "",
-    "index": "2"
+    "index": 2
   },
   "60000007": {
     "name": "Hog Mountain Scenery (Feb. 2021)",
     "icon": "/home-base/sceneries/7.png",
     "full": "",
-    "index": "3"
+    "index": 3
   },
   "60000008": {
     "name": "Jungle Scenery (Apr. 2021 TH 14)",
     "icon": "/home-base/sceneries/8.png",
     "full": "",
-    "index": "5"
+    "index": 5
   },
   "60000009": {
     "name": "Epic Jungle Scenery (Apr. 2021)",
     "icon": "/home-base/sceneries/9.png",
     "full": "",
-    "index": "4"
+    "index": 4
   },
   "60000010": {
     "name": "Inferno War Base Scenery (Jun. 2021)",
     "icon": "/home-base/sceneries/10.png",
     "full": "",
-    "index": "6"
+    "index": 6
   },
   "60000011": {
     "name": "9th Clashiversary Scenery (Aug. 2021)",
     "icon": "/home-base/sceneries/11.png",
     "full": "",
-    "index": "7"
+    "index": 7
   },
   "60000012": {
     "name": "Pumpkin Graveyard (Oct. 2021)",
     "icon": "/home-base/sceneries/12.png",
     "full": "",
-    "index": "8"
+    "index": 8
   },
   "60000013": {
     "name": "Snow Day (Dec. 2021)",
     "icon": "/home-base/sceneries/13.png",
     "full": "",
-    "index": "9"
+    "index": 9
   },
   "60000014": {
     "name": "Tiger Mountain (Jan. 2022)",
     "icon": "/home-base/sceneries/14.png",
     "full": "",
-    "index": "10"
+    "index": 10
   },
   "60000015": {
     "name": "Pixel Scenery (Aug. 2022)",
     "icon": "/home-base/sceneries/15.png",
     "full": "",
-    "index": "16"
+    "index": 16
   },
   "60000016": {
     "name": "Primal Scenery (Mar. 2022)",
     "icon": "/home-base/sceneries/16.png",
     "full": "",
-    "index": "11"
+    "index": 11
   },
   "60000017": {
     "name": "Shadow Scenery (Apr. 2022)",
     "icon": "/home-base/sceneries/17.png",
     "full": "",
-    "index": "12"
+    "index": 12
   },
   "60000018": {
     "name": "Royale Scenery (May 2022)",
     "icon": "/home-base/sceneries/18.png",
     "full": "",
-    "index": "13"
+    "index": 13
   },
   "60000019": {
     "name": "Summer Scenery (Jun. 2022)",
     "icon": "/home-base/sceneries/19.png",
     "full": "",
-    "index": "14"
+    "index": 14
   },
   "60000020": {
     "name": "10th Clashiversary Scenery (Aug. 2022)",
     "icon": "/home-base/sceneries/20.png",
     "full": "",
-    "index": "15"
+    "index": 15
   },
   "60000021": {
     "name": "Clash Fest Scenery (Sep. 2022)",
     "icon": "/home-base/sceneries/21.png",
     "full": "",
-    "index": "17"
+    "index": 17
   },
   "60000022": {
     "name": "Magic Scenery (Oct. 2022 TH 15)",
     "icon": "/home-base/sceneries/22.png",
     "full": "",
-    "index": "18"
+    "index": 18
   },
   "60000023": {
     "name": "Epic Magic Scenery (Oct. 2022)",
     "icon": "/home-base/sceneries/23.png",
     "full": "",
-    "index": "19"
+    "index": 19
   },
   "60000034": {
     "name": "Spooky Scenery (Oct. 2022)",
     "icon": "/home-base/sceneries/34.png",
     "full": "",
-    "index": "20"
+    "index": 20
   },
   "60000035": {
     "name": "Jolly Scenery (Dec. 2022)",
     "icon": "/home-base/sceneries/35.png",
     "full": "",
-    "index": "21"
+    "index": 21
   },
   "60000036": {
     "name": "Magic Theatre Scenery (Jan. 2023)",
     "icon": "/home-base/sceneries/36.png",
     "full": "",
-    "index": "22"
+    "index": 22
   },
   "60000037": {
     "name": "Painter Scenery (Mar. 2023)",
     "icon": "/home-base/sceneries/37.png",
     "full": "",
-    "index": "23"
+    "index": 23
   },
   "60000038": {
     "name": "Classic Scenery",
@@ -3212,2203 +3212,2203 @@
     "name": "Dark Ages Scenery (Apr. 2023)",
     "icon": "/home-base/sceneries/40.png",
     "full": "",
-    "index": "24"
+    "index": 24
   },
   "60000041": {
     "name": "Books of Clash Scenery (Jun. 2023)",
     "icon": "/home-base/sceneries/41.png",
     "full": "",
-    "index": "25"
+    "index": 25
   },
   "60000042": {
     "name": "War Arena Scenery (Jun. 2023)",
     "icon": "/home-base/sceneries/42.png",
     "full": "",
-    "index": "26"
+    "index": 26
   },
   "60000043": {
     "name": "Goblin Caves Scenery (Jul. 2023)",
     "icon": "/home-base/sceneries/43.png",
     "full": "",
-    "index": "27"
+    "index": 27
   },
   "60000046": {
     "name": "Chess Scenery (Aug. 2023)",
     "icon": "/home-base/sceneries/46.png",
     "full": "",
-    "index": "29"
+    "index": 29
   },
   "60000047": {
     "name": "Crystal Caverns Scenery (Jul. 2023)",
     "icon": "/home-base/sceneries/47.png",
     "full": "",
-    "index": "0"
+    "index": 0
   },
   "60000048": {
     "name": "Future Scenery (Aug. 2023)",
     "icon": "/home-base/sceneries/48.png",
     "full": "",
-    "index": "28"
+    "index": 28
   },
   "60000049": {
     "name": "Ghost Scenery (Oct. 2023)",
     "icon": "/home-base/sceneries/49.png",
     "full": "",
-    "index": "30"
+    "index": 30
   },
   "60000052": {
     "name": "Champion War Base Scenery (Nov. 2023)",
     "icon": "/home-base/sceneries/52.png",
     "full": "",
-    "index": "31"
+    "index": 31
   },
   "60000053": {
     "name": "Gingerbread Scenery (Dec. 2023)",
     "icon": "/home-base/sceneries/53.png",
     "full": "",
-    "index": "32"
+    "index": 32
   },
   "60000054": {
     "name": "Of the North Scenery (Jan. 2024)",
     "icon": "/home-base/sceneries/54.png",
     "full": "",
-    "index": "1"
+    "index": 1
   },
   "60000055": {
     "name": "Dragon Palace Scenery (Feb. 2024)",
     "icon": "/home-base/sceneries/55.png",
     "full": "",
-    "index": "33"
+    "index": 33
   },
   "60000056": {
     "name": "Space Scenery (Mar. 2024)",
     "icon": "/home-base/sceneries/56.png",
     "full": "",
-    "index": "34"
+    "index": 34
   },
   "60000057": {
     "name": "Egypt Scenery (Apr. 2024)",
     "icon": "/home-base/sceneries/57.png",
     "full": "",
-    "index": "35"
+    "index": 35
   },
   "60000058": {
     "name": "Football Scenery (May 2024",
     "icon": "/home-base/sceneries/58.png",
     "full": "",
-    "index": "36"
+    "index": 36
   },
   "60000059": {
     "name": "Wild West Scenery (Jun. 2024)",
     "icon": "/home-base/sceneries/59.png",
     "full": "",
-    "index": "37"
+    "index": 37
   },
   "60000060": {
     "name": "Clash Games Stadium (Jul. 2024)",
     "icon": "/home-base/sceneries/60.png",
     "full": "",
-    "index": "38"
+    "index": 38
   },
   "60000061": {
     "name": "Anime Scenery (Aug. 2024)",
     "icon": "/home-base/sceneries/61.png",
     "full": "",
-    "index": "39"
+    "index": 39
   },
   "60000062": {
     "name": "Crossover Scenery (Dec. 2024 (SC-ID))",
     "icon": "/home-base/sceneries/62.png",
     "full": "",
-    "index": "45"
+    "index": 45
   },
   "60000063": {
     "name": "Clash of Dragons (Sep. 2025)",
     "icon": "/home-base/sceneries/63.png",
     "full": "",
-    "index": "40"
+    "index": 40
   },
   "60000064": {
     "name": "Doomed Scenery (Oct. 2024)",
     "icon": "/home-base/sceneries/64.png",
     "full": "",
-    "index": "41"
+    "index": 41
   },
   "60000065": {
     "name": "Justice Scenery (Nov. 2024)",
     "icon": "/home-base/sceneries/65.png",
     "full": "",
-    "index": "42"
+    "index": 42
   },
   "60000066": {
     "name": "War Machine Scenery (Nov. 2024)",
     "icon": "/home-base/sceneries/66.png",
     "full": "",
-    "index": "43"
+    "index": 43
   },
   "60000067": {
     "name": "Toy Workshop Scenery (Dec. 2024)",
     "icon": "/home-base/sceneries/67.png",
     "full": "",
-    "index": "44"
+    "index": 44
   },
   "60000068": {
     "name": "Fire and Ice Scenery (Jan. 2025)",
     "icon": "/home-base/sceneries/68.png",
     "full": "",
-    "index": "46"
+    "index": 46
   },
   "60000069": {
     "name": "Clash-A-Rama Scenery (Apr. 2025)",
     "icon": "/home-base/sceneries/69.png",
     "full": "",
-    "index": "53"
+    "index": 53
   },
   "60000070": {
     "name": "Year of the Snake (Feb. 2025)",
     "icon": "/home-base/sceneries/70.png",
     "full": "",
-    "index": "47"
+    "index": 47
   },
   "60000071": {
     "name": "Military Scenery (Mar. 2025)",
     "icon": "/home-base/sceneries/71.png",
     "full": "",
-    "index": "48"
+    "index": 48
   },
   "60000072": {
     "name": "ClashaMania Scenery (Apr. 2025)",
     "icon": "/home-base/sceneries/2.png",
     "full": "",
-    "index": "49"
+    "index": 49
   },
   "60000073": {
     "name": "High Seas Scenery (May 2025)",
     "icon": "/home-base/sceneries/73.png",
     "full": "",
-    "index": "50"
+    "index": 50
   },
   "60000074": {
     "name": "Dark Days Scenery (Jun. 2025)",
     "icon": "/home-base/sceneries/74.png",
     "full": "",
-    "index": "51"
+    "index": 51
   },
   "60000075": {
     "name": "Cyber Scenery (Jul. 2025)",
     "icon": "/home-base/sceneries/75.png",
     "full": "",
-    "index": "52"
+    "index": 52
   },
   "60000076": {
     "name": "13th Clash-A-Versary Scenery (Aug. 2025)",
     "icon": "/home-base/sceneries/76.png",
     "full": "",
-    "index": "54"
+    "index": 54
   },
   "60000077": {
     "name": "Mash-A-Rama Scenery (Sep. 2025)",
     "icon": "/home-base/sceneries/77.png",
     "full": "",
-    "index": "55"
+    "index": 55
   },
   "60000078": {
     "name": "Cosmic Scenery (Oct. 2025)",
     "icon": "/home-base/sceneries/78.png",
     "full": "",
-    "index": "56"
+    "index": 56
   },
   "60000079": {
     "name": "Ruined Kingdom War Scenery (Nov. 2025)",
     "icon": "/home-base/sceneries/79.png",
     "full": "",
-    "index": "57"
+    "index": 57
   },
   "60000080": {
     "name": "Wasteland Scenery (Nov. 2025)",
     "icon": "/home-base/sceneries/80.png",
     "full": "",
-    "index": "58"
+    "index": 58
   },
   "60000081": {
     "name": "Frost Age Scenery (Dec. 2025)",
     "icon": "/home-base/sceneries/81.png",
     "full": "",
-    "index": "59"
+    "index": 59
   },
   "60000082": {
     "name": "Classic Meteor Scenery (Jan. 2026)",
     "icon": "/home-base/sceneries/82.png",
     "full": "",
-    "index": "61"
+    "index": 61
   },
   "60000083": {
     "name": "Desert Nights Scenery (Jan. 2026)",
     "icon": "/home-base/sceneries/83.png",
     "full": "",
-    "index": "60"
+    "index": 60
   },
   "60000084": {
     "name": "Year of the Fire Horse Scenery (Feb. 2026)",
     "icon": "/home-base/sceneries/84.png",
     "full": "",
-    "index": "61"
+    "index": 61
   },
   "52000001": {
     "name": "Gladiator King (Apr. 2019)",
     "icon": "/home-base/skins/1.png",
     "full": "",
-    "index": "0"
+    "index": 0
   },
   "52000004": {
     "name": "P.E.K.K.A King (Jun. 2019)",
     "icon": "/home-base/skins/4.png",
     "full": "",
-    "index": "2"
+    "index": 2
   },
   "52000005": {
     "name": "Skeleton King (Oct. 2019)",
     "icon": "/home-base/skins/5.png",
     "full": "",
-    "index": "6"
+    "index": 6
   },
   "52000006": {
     "name": "Jolly King (Dec. 2019)",
     "icon": "/home-base/skins/6.png",
     "full": "",
-    "index": "8"
+    "index": 8
   },
   "52000007": {
     "name": "Primal King (Feb. 2020)",
     "icon": "/home-base/skins/7.png",
     "full": "",
-    "index": "12"
+    "index": 12
   },
   "52000008": {
     "name": "Clockwork King (May 2020)",
     "icon": "/home-base/skins/8.png",
     "full": "",
-    "index": "15"
+    "index": 15
   },
   "52000009": {
     "name": "Party King (Aug. 2020)",
     "icon": "/home-base/skins/9.png",
     "full": "",
-    "index": "18"
+    "index": 18
   },
   "52000010": {
     "name": "Champion King (Oct. 2020 WM)",
     "icon": "/home-base/skins/10.png",
     "full": "",
-    "index": "21"
+    "index": 21
   },
   "52000011": {
     "name": "Pirate King (Nov. 2020)",
     "icon": "/home-base/skins/11.png",
     "full": "",
-    "index": "22"
+    "index": 22
   },
   "52000012": {
     "name": "Gladiator Queen (May 2019)",
     "icon": "/home-base/skins/12.png",
     "full": "",
-    "index": "1"
+    "index": 1
   },
   "52000013": {
     "name": "Valkyrie Queen (Jul. 2019)",
     "icon": "/home-base/skins/13.png",
     "full": "",
-    "index": "3"
+    "index": 3
   },
   "52000014": {
     "name": "Autumn Queen (Sep. 2019)",
     "icon": "/home-base/skins/14.png",
     "full": "",
-    "index": "5"
+    "index": 5
   },
   "52000015": {
     "name": "Ice Queen (Nov. 2019)",
     "icon": "/home-base/skins/15.png",
     "full": "",
-    "index": "7"
+    "index": 7
   },
   "52000016": {
     "name": "Warrior Queen (Jan. 2020)",
     "icon": "/home-base/skins/16.png",
     "full": "",
-    "index": "10"
+    "index": 10
   },
   "52000017": {
     "name": "Primal Queen (Mar. 2020)",
     "icon": "/home-base/skins/17.png",
     "full": "",
-    "index": "13"
+    "index": 13
   },
   "52000018": {
     "name": "Clockwork Queen (Jun. 2020)",
     "icon": "/home-base/skins/18.png",
     "full": "",
-    "index": "16"
+    "index": 16
   },
   "52000019": {
     "name": "Pirate Queen (Sep. 2020)",
     "icon": "/home-base/skins/19.png",
     "full": "",
-    "index": "19"
+    "index": 19
   },
   "52000020": {
     "name": "Party Warden (Aug. 2019)",
     "icon": "/home-base/skins/20.png",
     "full": "",
-    "index": "4"
+    "index": 4
   },
   "52000021": {
     "name": "Primal Warden (Jan. 2020)",
     "icon": "/home-base/skins/21.png",
     "full": "",
-    "index": "9"
+    "index": 9
   },
   "52000022": {
     "name": "Clockwork Warden (Apr. 2020)",
     "icon": "/home-base/skins/22.png",
     "full": "",
-    "index": "14"
+    "index": 14
   },
   "52000023": {
     "name": "Gladiator Warden (Jul. 2020)",
     "icon": "/home-base/skins/23.png",
     "full": "",
-    "index": "17"
+    "index": 17
   },
   "52000024": {
     "name": "Pirate Warden (Oct. 2020)",
     "icon": "/home-base/skins/24.png",
     "full": "",
-    "index": "20"
+    "index": 20
   },
   "52000025": {
     "name": "Warden of the North (Jan. 2021)",
     "icon": "/home-base/skins/25.png",
     "full": "",
-    "index": "23"
+    "index": 23
   },
   "52000026": {
     "name": "Jungle Warden (May 2021)",
     "icon": "/home-base/skins/26.png",
     "full": "",
-    "index": "29"
+    "index": 29
   },
   "52000027": {
     "name": "Warden Master (Oct. 2021)",
     "icon": "/home-base/skins/27.png",
     "full": "",
-    "index": "36"
+    "index": 36
   },
   "52000029": {
     "name": "Winter Champion (Dec. 2020)",
     "icon": "/home-base/skins/29.png",
     "full": "",
-    "index": "22"
+    "index": 22
   },
   "52000030": {
     "name": "Rogue Champion (Apr. 2021)",
     "icon": "/home-base/skins/30.png",
     "full": "",
-    "index": "27"
+    "index": 27
   },
   "52000031": {
     "name": "Jungle Champion (Apr. 2021)",
     "icon": "/home-base/skins/31.png",
     "full": "",
-    "index": "28"
+    "index": 28
   },
   "52000032": {
     "name": "Gladiator Champion (Sep. 2021)",
     "icon": "/home-base/skins/32.png",
     "full": "",
-    "index": "35"
+    "index": 35
   },
   "52000033": {
     "name": "Shadow Champion (Mar. 2022)",
     "icon": "/home-base/skins/33.png",
     "full": "",
-    "index": "44"
+    "index": 44
   },
   "52000034": {
     "name": "Primal Champion (Mar. 2022)",
     "icon": "/home-base/skins/34.png",
     "full": "",
-    "index": "45"
+    "index": 45
   },
   "52000035": {
     "name": "Summer Champion (Jun. 2022)",
     "icon": "/home-base/skins/35.png",
     "full": "",
-    "index": "51"
+    "index": 51
   },
   "52000036": {
     "name": "Pixel Champion (Aug. 2022)",
     "icon": "/home-base/skins/36.png",
     "full": "",
-    "index": "57"
+    "index": 57
   },
   "52000037": {
     "name": "Party Champion (Aug. 2022)",
     "icon": "/home-base/skins/37.png",
     "full": "",
-    "index": "53"
+    "index": 53
   },
   "52000038": {
     "name": "Magic Champion (Oct. 2022)",
     "icon": "/home-base/skins/38.png",
     "full": "",
-    "index": "64"
+    "index": 64
   },
   "52000039": {
     "name": "Pirate Champion (Nov. 2022)",
     "icon": "/home-base/skins/39.png",
     "full": "",
-    "index": "65"
+    "index": 65
   },
   "52000040": {
     "name": "Jolly Champion (Dec. 2022)",
     "icon": "/home-base/skins/40.png",
     "full": "",
-    "index": "67"
+    "index": 67
   },
   "52000041": {
     "name": "Warrior Champion (Jan. 2023)",
     "icon": "/home-base/skins/41.png",
     "full": "",
-    "index": "68"
+    "index": 68
   },
   "52000042": {
     "name": "Painter Champion (Mar. 2023)",
     "icon": "/home-base/skins/42.png",
     "full": "",
-    "index": "75"
+    "index": 75
   },
   "52000043": {
     "name": "Dark Ages Champion (May 2023)",
     "icon": "/home-base/skins/43.png",
     "full": "",
-    "index": "79"
+    "index": 79
   },
   "52000044": {
     "name": "Ghost Champion (Oct. 2023)",
     "icon": "/home-base/skins/44.png",
     "full": "",
-    "index": "94"
+    "index": 94
   },
   "52000045": {
     "name": "Warrior King (Feb. 2021)",
     "icon": "/home-base/skins/45.png",
     "full": "",
-    "index": "25"
+    "index": 25
   },
   "52000046": {
     "name": "Rogue King (Mar. 2021)",
     "icon": "/home-base/skins/46.png",
     "full": "",
-    "index": "26"
+    "index": 26
   },
   "52000047": {
     "name": "Fierce King (Jun. 2021)",
     "icon": "/home-base/skins/47.png",
     "full": "",
-    "index": "31"
+    "index": 31
   },
   "52000048": {
     "name": "Jungle King (Jul. 2021)",
     "icon": "/home-base/skins/48.png",
     "full": "",
-    "index": "32"
+    "index": 32
   },
   "52000049": {
     "name": "Beat King (Aug. 2021)",
     "icon": "/home-base/skins/49.png",
     "full": "",
-    "index": "34"
+    "index": 34
   },
   "52000050": {
     "name": "Golem King (Nov. 2021)",
     "icon": "/home-base/skins/50.png",
     "full": "",
-    "index": "37"
+    "index": 37
   },
   "52000051": {
     "name": "Ice King (Dec. 2021)",
     "icon": "/home-base/skins/51.png",
     "full": "",
-    "index": "40"
+    "index": 40
   },
   "52000052": {
     "name": "Lunar King (Jan. 2022)",
     "icon": "/home-base/skins/52.png",
     "full": "",
-    "index": "42"
+    "index": 42
   },
   "52000053": {
     "name": "Shadow King (Apr. 2022)",
     "icon": "/home-base/skins/53.png",
     "full": "",
-    "index": "46"
+    "index": 46
   },
   "52000054": {
     "name": "Summer King (Jun. 2022)",
     "icon": "/home-base/skins/54.png",
     "full": "",
-    "index": "50"
+    "index": 50
   },
   "52000055": {
     "name": "Pixel King (Aug. 2022)",
     "icon": "/home-base/skins/55.png",
     "full": "",
-    "index": "54"
+    "index": 54
   },
   "52000056": {
     "name": "Clash Fest King (Sep. 2022)",
     "icon": "/home-base/skins/56.png",
     "full": "",
-    "index": "58"
+    "index": 58
   },
   "52000057": {
     "name": "Rogue Queen (Feb. 2021)",
     "icon": "/home-base/skins/57.png",
     "full": "",
-    "index": "24"
+    "index": 24
   },
   "52000058": {
     "name": "Jungle Queen (Jun. 2021)",
     "icon": "/home-base/skins/58.png",
     "full": "",
-    "index": "30"
+    "index": 30
   },
   "52000059": {
     "name": "Party Queen (Aug. 2021)",
     "icon": "/home-base/skins/59.png",
     "full": "",
-    "index": "33"
+    "index": 33
   },
   "52000060": {
     "name": "Champion Queen (Nov. 2021 WM)",
     "icon": "/home-base/skins/60.png",
     "full": "",
-    "index": "38"
+    "index": 38
   },
   "52000061": {
     "name": "Shadow Queen (Jan. 2022)",
     "icon": "/home-base/skins/61.png",
     "full": "",
-    "index": "41"
+    "index": 41
   },
   "52000062": {
     "name": "Miner Queen (May 2022)",
     "icon": "/home-base/skins/62.png",
     "full": "",
-    "index": "48"
+    "index": 48
   },
   "52000063": {
     "name": "Summer Queen (Jul. 2022)",
     "icon": "/home-base/skins/63.png",
     "full": "",
-    "index": "52"
+    "index": 52
   },
   "52000064": {
     "name": "Pixel Queen (Aug. 2022)",
     "icon": "/home-base/skins/64.png",
     "full": "",
-    "index": "55"
+    "index": 55
   },
   "52000065": {
     "name": "Spooky Queen (Oct. 2022)",
     "icon": "/home-base/skins/65.png",
     "full": "",
-    "index": "60"
+    "index": 60
   },
   "52000066": {
     "name": "Magic Queen (Oct. 2022)",
     "icon": "/home-base/skins/66.png",
     "full": "",
-    "index": "62"
+    "index": 62
   },
   "52000067": {
     "name": "Jolly Queen (Dec. 2022)",
     "icon": "/home-base/skins/67.png",
     "full": "",
-    "index": "66"
+    "index": 66
   },
   "52000068": {
     "name": "Dark Ages Queen (Apr. 2023)",
     "icon": "/home-base/skins/68.png",
     "full": "",
-    "index": "77"
+    "index": 77
   },
   "52000069": {
     "name": "Jolly Warden (Dec. 2021)",
     "icon": "/home-base/skins/69.png",
     "full": "",
-    "index": "39"
+    "index": 39
   },
   "52000070": {
     "name": "Warrior Warden (Feb. 2022)",
     "icon": "/home-base/skins/70.png",
     "full": "",
-    "index": "43"
+    "index": 43
   },
   "52000071": {
     "name": "Shadow Warden (Apr. 2022)",
     "icon": "/home-base/skins/71.png",
     "full": "",
-    "index": "47"
+    "index": 47
   },
   "52000072": {
     "name": "Summer Warden (Jun. 2022)",
     "icon": "/home-base/skins/72.png",
     "full": "",
-    "index": "49"
+    "index": 49
   },
   "52000073": {
     "name": "Pixel Warden (Aug. 2022)",
     "icon": "/home-base/skins/73.png",
     "full": "",
-    "index": "56"
+    "index": 56
   },
   "52000074": {
     "name": "Champion Warden (Nov. 2021 WM)",
     "icon": "/home-base/skins/74.png",
     "full": "",
-    "index": "59"
+    "index": 59
   },
   "52000075": {
     "name": "Magic Warden (Nov. 2021)",
     "icon": "/home-base/skins/75.png",
     "full": "",
-    "index": "63"
+    "index": 63
   },
   "52000076": {
     "name": "Painter Warden (Mar. 2023)",
     "icon": "/home-base/skins/76.png",
     "full": "",
-    "index": "74"
+    "index": 74
   },
   "52000077": {
     "name": "Dark Ages Warden (Apr. 2023)",
     "icon": "/home-base/skins/77.png",
     "full": "",
-    "index": "76"
+    "index": 76
   },
   "52000078": {
     "name": "Ghost Warden (Oct. 2023)",
     "icon": "/home-base/skins/78.png",
     "full": "",
-    "index": "95"
+    "index": 95
   },
   "52000079": {
     "name": "Goblin Warden (Jun. 2023)",
     "icon": "/home-base/skins/79.png",
     "full": "",
-    "index": "81"
+    "index": 81
   },
   "52000080": {
     "name": "League Warden (Jun. 2023)",
     "icon": "/home-base/skins/80.png",
     "full": "",
-    "index": "84"
+    "index": 84
   },
   "52000087": {
     "name": "Magic King (Oct. 2022)",
     "icon": "/home-base/skins/87.png",
     "full": "",
-    "index": "61"
+    "index": 61
   },
   "52000088": {
     "name": "Dark Ages King (May 2023)",
     "icon": "/home-base/skins/88.png",
     "full": "",
-    "index": "78"
+    "index": 78
   },
   "52000089": {
     "name": "Painter King (Mar. 2023)",
     "icon": "/home-base/skins/89.png",
     "full": "",
-    "index": "72"
+    "index": 72
   },
   "52000090": {
     "name": "Beast King (Feb. 2023)",
     "icon": "/home-base/skins/90.png",
     "full": "",
-    "index": "70"
+    "index": 70
   },
   "52000091": {
     "name": "League King (Jun. 2023)",
     "icon": "/home-base/skins/90.png",
     "full": "",
-    "index": "82"
+    "index": 82
   },
   "52000092": {
     "name": "Goblin King (Jul. 2023)",
     "icon": "/home-base/skins/92.png",
     "full": "",
-    "index": "86"
+    "index": 86
   },
   "52000093": {
     "name": "Future King (Aug. 2023)",
     "icon": "/home-base/skins/93.png",
     "full": "",
-    "index": "89"
+    "index": 89
   },
   "52000094": {
     "name": "Gingerbread King (Dec. 2023)",
     "icon": "/home-base/skins/94.png",
     "full": "",
-    "index": "101"
+    "index": 101
   },
   "52000095": {
     "name": "Ghost King (Oct. 2023)",
     "icon": "/home-base/skins/95.png",
     "full": "",
-    "index": "97"
+    "index": 97
   },
   "52000096": {
     "name": "Chess King (Sep. 2023)",
     "icon": "/home-base/skins/96.png",
     "full": "",
-    "index": "93"
+    "index": 93
   },
   "52000097": {
     "name": "Lunar Queen (Jan. 2023)",
     "icon": "/home-base/skins/97.png",
     "full": "",
-    "index": "69"
+    "index": 69
   },
   "52000098": {
     "name": "Painter Queen (Mar. 2023)",
     "icon": "/home-base/skins/98.png",
     "full": "",
-    "index": "73"
+    "index": 73
   },
   "52000099": {
     "name": "Heart Hunter Queen (Feb. 2023)",
     "icon": "/home-base/skins/99.png",
     "full": "",
-    "index": "71"
+    "index": 71
   },
   "52000100": {
     "name": "Goblin Queen (Jun. 2023)",
     "icon": "/home-base/skins/100.png",
     "full": "",
-    "index": "80"
+    "index": 80
   },
   "52000101": {
     "name": "Ghost Queen (Oct. 2023)",
     "icon": "/home-base/skins/101.png",
     "full": "",
-    "index": "96"
+    "index": 96
   },
   "52000102": {
     "name": "League Queen (Jun. 2023)",
     "icon": "/home-base/skins/102.png",
     "full": "",
-    "index": "83"
+    "index": 83
   },
   "52000103": {
     "name": "Future Queen (Aug. 2023)",
     "icon": "/home-base/skins/103.png",
     "full": "",
-    "index": "90"
+    "index": 90
   },
   "52000104": {
     "name": "Gingerbread Queen (Dec. 2023)",
     "icon": "/home-base/skins/104.png",
     "full": "",
-    "index": "100"
+    "index": 100
   },
   "52000105": {
     "name": "Chess Queen (Sep. 2023)",
     "icon": "/home-base/skins/105.png",
     "full": "",
-    "index": "92"
+    "index": 92
   },
   "52000106": {
     "name": "Queen of the North (Jan. 2024)",
     "icon": "/home-base/skins/106.png",
     "full": "",
-    "index": "104"
+    "index": 104
   },
   "52000112": {
     "name": "League Champion (Jun. 2023)",
     "icon": "/home-base/skins/112.png",
     "full": "",
-    "index": "85"
+    "index": 85
   },
   "52000113": {
     "name": "Goblin Champion (Jul. 2023)",
     "icon": "/home-base/skins/113.png",
     "full": "",
-    "index": "87"
+    "index": 87
   },
   "52000114": {
     "name": "Future Champion (Aug. 2023)",
     "icon": "/home-base/skins/114.png",
     "full": "",
-    "index": "91"
+    "index": 91
   },
   "52000115": {
     "name": "Gingerbread Champion (Dec. 2023)",
     "icon": "/home-base/skins/115.png",
     "full": "",
-    "index": "102"
+    "index": 102
   },
   "52000116": {
     "name": "Champions' Champion (Nov. 2023 WM)",
     "icon": "/home-base/skins/116.png",
     "full": "",
-    "index": "98"
+    "index": 98
   },
   "52000117": {
     "name": "Dragon Champion (Feb. 2024)",
     "icon": "/home-base/skins/117.png",
     "full": "",
-    "index": "105"
+    "index": 105
   },
   "52000118": {
     "name": "Space Champion (Mar. 2024)",
     "icon": "/home-base/skins/118.png",
     "full": "",
-    "index": "112"
+    "index": 112
   },
   "52000119": {
     "name": "Egypt Champion (Apr. 2024)",
     "icon": "/home-base/skins/119.png",
     "full": "",
-    "index": "115"
+    "index": 115
   },
   "52000120": {
     "name": "Football Champion (May 2024)",
     "icon": "/home-base/skins/120.png",
     "full": "",
-    "index": "117"
+    "index": 117
   },
   "52000121": {
     "name": "Wild West Champion (Jun. 2024)",
     "icon": "/home-base/skins/121.png",
     "full": "",
-    "index": "125"
+    "index": 125
   },
   "52000122": {
     "name": "Future Warden (Aug. 2023)",
     "icon": "/home-base/skins/122.png",
     "full": "",
-    "index": "88"
+    "index": 88
   },
   "52000123": {
     "name": "Gingerbread Warden (Dec. 2023)",
     "icon": "/home-base/skins/123.png",
     "full": "",
-    "index": "99"
+    "index": 99
   },
   "52000124": {
     "name": "Dragon Warden (Feb. 2024)",
     "icon": "/home-base/skins/124.png",
     "full": "",
-    "index": "106"
+    "index": 106
   },
   "52000125": {
     "name": "Space Warden (Mar. 2024)",
     "icon": "/home-base/skins/125.png",
     "full": "",
-    "index": "111"
+    "index": 111
   },
   "52000126": {
     "name": "Egypt Warden (Apr. 2024)",
     "icon": "/home-base/skins/126.png",
     "full": "",
-    "index": "113"
+    "index": 113
   },
   "52000127": {
     "name": "Football Warden (May 2024)",
     "icon": "/home-base/skins/127.png",
     "full": "",
-    "index": "120"
+    "index": 120
   },
   "52000128": {
     "name": "Wild West Warden (Jun. 2024)",
     "icon": "/home-base/skins/128.png",
     "full": "",
-    "index": "123"
+    "index": 123
   },
   "52000129": {
     "name": "Clash Games Warden (Jul. 2024)",
     "icon": "/home-base/skins/129.png",
     "full": "",
-    "index": "129"
+    "index": 129
   },
   "52000130": {
     "name": "Anime Warden (Aug. 2024)",
     "icon": "/home-base/skins/130.png",
     "full": "",
-    "index": "133"
+    "index": 133
   },
   "52000131": {
     "name": "Grand Dwarf (Sep. 2024)",
     "icon": "/home-base/skins/131.png",
     "full": "",
-    "index": "137"
+    "index": 137
   },
   "52000132": {
     "name": "Dragon King (Feb. 2024)",
     "icon": "/home-base/skins/132.png",
     "full": "",
-    "index": "108"
+    "index": 108
   },
   "52000133": {
     "name": "King of the North (Jan. 2024)",
     "icon": "/home-base/skins/133.png",
     "full": "",
-    "index": "103"
+    "index": 103
   },
   "52000134": {
     "name": "Egypt King (Apr. 2024)",
     "icon": "/home-base/skins/134.png",
     "full": "",
-    "index": "114"
+    "index": 114
   },
   "52000135": {
     "name": "Space King (Mar. 2024)",
     "icon": "/home-base/skins/135.png",
     "full": "",
-    "index": "110"
+    "index": 110
   },
   "52000136": {
     "name": "Super Squad King (May 2024 Squad Busters)",
     "icon": "/home-base/skins/136.png",
     "full": "",
-    "index": "122"
+    "index": 122
   },
   "52000137": {
     "name": "King Haaland (May 2024 (exclusive!))",
     "icon": "/home-base/skins/137.png",
     "full": "",
-    "index": "118"
+    "index": 118
   },
   "52000138": {
     "name": "Football King (May 2024)",
     "icon": "/home-base/skins/138.png",
     "full": "",
-    "index": "121"
+    "index": 121
   },
   "52000139": {
     "name": "Wild West King (Jun. 2024)",
     "icon": "/home-base/skins/139.png",
     "full": "",
-    "index": "126"
+    "index": 126
   },
   "52000141": {
     "name": "Clash Games King (Jul. 2024)",
     "icon": "/home-base/skins/141.png",
     "full": "",
-    "index": "127"
+    "index": 127
   },
   "52000142": {
     "name": "Dragon Queen (Feb. 2024)",
     "icon": "/home-base/skins/142.png",
     "full": "",
-    "index": "107"
+    "index": 107
   },
   "52000143": {
     "name": "Space Queen (Mar. 2024)",
     "icon": "/home-base/skins/143.png",
     "full": "",
-    "index": "109"
+    "index": 109
   },
   "52000144": {
     "name": "Egypt Queen (Apr. 202)",
     "icon": "/home-base/skins/144.png",
     "full": "",
-    "index": "116"
+    "index": 116
   },
   "52000145": {
     "name": "Football Queen (May 2024)",
     "icon": "/home-base/skins/145.png",
     "full": "",
-    "index": "119"
+    "index": 119
   },
   "52000146": {
     "name": "Wild West Queen (Jun. 2024)",
     "icon": "/home-base/skins/146.png",
     "full": "",
-    "index": "124"
+    "index": 124
   },
   "52000147": {
     "name": "Clash Games Queen (Jul. 2024)",
     "icon": "/home-base/skins/147.png",
     "full": "",
-    "index": "128"
+    "index": 128
   },
   "52000148": {
     "name": "Anime Queen (Aug. 2024)",
     "icon": "/home-base/skins/148.png",
     "full": "",
-    "index": "132"
+    "index": 132
   },
   "52000149": {
     "name": "Archer Satyr (Sep. 2024)",
     "icon": "/home-base/skins/149.png",
     "full": "",
-    "index": "136"
+    "index": 136
   },
   "52000150": {
     "name": "Dark Minion Queen (Oct. 2024)",
     "icon": "/home-base/skins/150.png",
     "full": "",
-    "index": "138"
+    "index": 138
   },
   "52000151": {
     "name": "Justice Queen (Nov. 2024)",
     "icon": "/home-base/skins/151.png",
     "full": "",
-    "index": "142"
+    "index": 142
   },
   "52000153": {
     "name": "Armored Machine (May 2023)",
     "icon": "/builder-base/skins/153.png",
     "full": "",
-    "index": "0"
+    "index": 0
   },
   "52000154": {
     "name": "Steampunk Copter (Jul. 2024)",
     "icon": "/builder-base/skins/154.png",
     "full": "",
-    "index": "2"
+    "index": 2
   },
   "52000155": {
     "name": "Steampunk Machine (Dec. 2024)",
     "icon": "/builder-base/skins/155.png",
     "full": "",
-    "index": "4"
+    "index": 4
   },
   "52000156": {
     "name": "Battle Machine of the North (Jan. 2024)",
     "icon": "/builder-base/skins/156.png",
     "full": "",
-    "index": "1"
+    "index": 1
   },
   "52000166": {
     "name": "Boat Copter (Dec. 2024)",
     "icon": "/builder-base/skins/166.png",
     "full": "",
-    "index": "3"
+    "index": 3
   },
   "52000174": {
     "name": "Anime Champion (Aug. 2024)",
     "icon": "/home-base/skins/175.png",
     "full": "",
-    "index": "130"
+    "index": 130
   },
   "52000175": {
     "name": "Paladin Champion (Sep. 2024)",
     "icon": "/home-base/skins/175.png",
     "full": "",
-    "index": "135"
+    "index": 135
   },
   "52000176": {
     "name": "Ice Champion (Jan. 2025)",
     "icon": "/home-base/skins/176.png",
     "full": "",
-    "index": "146"
+    "index": 146
   },
   "52000177": {
     "name": "Snake Champion (Feb. 2025)",
     "icon": "/home-base/skins/177.png",
     "full": "",
-    "index": "151"
+    "index": 151
   },
   "52000178": {
     "name": "Sniper Champion (Mar. 2025)",
     "icon": "/home-base/skins/178.png",
     "full": "",
-    "index": "156"
+    "index": 156
   },
   "52000179": {
     "name": "The RoyalEST (Apr. 2025 (exclusive!))",
     "icon": "/home-base/skins/179.png",
     "full": "",
-    "index": "162"
+    "index": 162
   },
   "52000180": {
     "name": "Royal Ninja (May 2025)",
     "icon": "/home-base/skins/180.png",
     "full": "",
-    "index": "169"
+    "index": 169
   },
   "52000181": {
     "name": "Showtime Champion (Jun. 2025)",
     "icon": "/home-base/skins/181.png",
     "full": "",
-    "index": "170"
+    "index": 170
   },
   "52000182": {
     "name": "Royal Officer (Jul. 2025)",
     "icon": "/home-base/skins/182.png",
     "full": "",
-    "index": "177"
+    "index": 177
   },
   "52000183": {
     "name": "Clash-A-Rama Champion (Aug. 2025)",
     "icon": "/home-base/skins/183.png",
     "full": "",
-    "index": "180"
+    "index": 180
   },
   "52000184": {
     "name": "Yeti Champion (Sep. 2025)",
     "icon": "/home-base/skins/184.png",
     "full": "",
-    "index": "187"
+    "index": 187
   },
   "52000185": {
     "name": "Cursed Champion (Oct. 2025)",
     "icon": "/home-base/skins/185.png",
     "full": "",
-    "index": "192"
+    "index": 192
   },
   "52000186": {
     "name": "Nomad Champion (Nov. 2025)",
     "icon": "/home-base/skins/186.png",
     "full": "",
-    "index": "199"
+    "index": 199
   },
   "52000187": {
     "name": "Explorer Champion (Dec. 2025)",
     "icon": "/home-base/skins/187.png",
     "full": "",
-    "index": "205"
+    "index": 205
   },
   "52000191": {
     "name": "Anime King (Aug. 2024)",
     "icon": "/home-base/skins/191.png",
     "full": "",
-    "index": "131"
+    "index": 131
   },
   "52000192": {
     "name": "Barbarian Orc (Sep. 2024)",
     "icon": "/home-base/skins/192.png",
     "full": "",
-    "index": "134"
+    "index": 134
   },
   "52000193": {
     "name": "Dark Minion King (Oct. 2024)",
     "icon": "/home-base/skins/193.png",
     "full": "",
-    "index": "139"
+    "index": 139
   },
   "52000194": {
     "name": "Judgment King (Nov. 2024)",
     "icon": "/home-base/skins/194.png",
     "full": "",
-    "index": "141"
+    "index": 141
   },
   "52000195": {
     "name": "Robo King (Dec. 2024)",
     "icon": "/home-base/skins/195.png",
     "full": "",
-    "index": "145"
+    "index": 145
   },
   "52000196": {
     "name": "Fire King (Jan. 2025)",
     "icon": "/home-base/skins/196.png",
     "full": "",
-    "index": "149"
+    "index": 149
   },
   "52000197": {
     "name": "Snake King (Feb. 2025)",
     "icon": "/home-base/skins/197.png",
     "full": "",
-    "index": "153"
+    "index": 153
   },
   "52000198": {
     "name": "Combat King (Mar. 2025)",
     "icon": "/home-base/skins/198.png",
     "full": "",
-    "index": "155"
+    "index": 155
   },
   "52000199": {
     "name": "King Cody (Apr. 2025 (exclusive!))",
     "icon": "/home-base/skins/199.png",
     "full": "",
-    "index": "161"
+    "index": 161
   },
   "52000200": {
     "name": "Samurai King (May 2025)",
     "icon": "/home-base/skins/200.png",
     "full": "",
-    "index": "166"
+    "index": 166
   },
   "52000201": {
     "name": "Barbarian Butcher (Jun. 2025)",
     "icon": "/home-base/skins/201.png",
     "full": "",
-    "index": "172"
+    "index": 172
   },
   "52000202": {
     "name": "Renegade King (Jul. 2025)",
     "icon": "/home-base/skins/202.png",
     "full": "",
-    "index": "178"
+    "index": 178
   },
   "52000203": {
     "name": "Clash-A-Rama King (Aug. 2025)",
     "icon": "/home-base/skins/203.png",
     "full": "",
-    "index": "182"
+    "index": 182
   },
   "52000204": {
     "name": "Jelly King (Sep. 2025)",
     "icon": "/home-base/skins/204.png",
     "full": "",
-    "index": "189"
+    "index": 189
   },
   "52000205": {
     "name": "Berserker King (Oct. 2025)",
     "icon": "/home-base/skins/205.png",
     "full": "",
-    "index": "194"
+    "index": 194
   },
   "52000206": {
     "name": "Awakened King (Nov. 2025)",
     "icon": "/home-base/skins/206.png",
     "full": "",
-    "index": "202"
+    "index": 202
   },
   "52000207": {
     "name": "Bruiser King (Dec. 2025)",
     "icon": "/home-base/skins/207.png",
     "full": "",
-    "index": "195"
+    "index": 195
   },
   "52000208": {
     "name": "Desert King (Jan. 2025)",
     "icon": "/home-base/skins/208.png",
     "full": "",
-    "index": "206"
+    "index": 206
   },
   "52000209": {
     "name": "Monkey King (Feb. 2025)",
     "icon": "/home-base/skins/209.png",
     "full": "",
-    "index": "212"
+    "index": 212
   },
   "52000210": {
     "name": "Puppet Queen (Dec. 2024)",
     "icon": "/home-base/skins/210.png",
     "full": "",
-    "index": "144"
+    "index": 144
   },
   "52000211": {
     "name": "Fire Queen (Jan. 2025)",
     "icon": "/home-base/skins/211.png",
     "full": "",
-    "index": "148"
+    "index": 148
   },
   "52000212": {
     "name": "Snake Queen (Feb. 2025)",
     "icon": "/home-base/skins/212.png",
     "full": "",
-    "index": "154"
+    "index": 154
   },
   "52000213": {
     "name": "Quickfire Queen (Mar. 2025)",
     "icon": "/home-base/skins/213.png",
     "full": "",
-    "index": "159"
+    "index": 159
   },
   "52000214": {
     "name": "Brutality Queen (Apr. 2025 (exclusive!))",
     "icon": "/home-base/skins/214.png",
     "full": "",
-    "index": "163"
+    "index": 163
   },
   "52000215": {
     "name": "Kyudo Queen (May 2025)",
     "icon": "/home-base/skins/215.png",
     "full": "",
-    "index": "165"
+    "index": 165
   },
   "52000216": {
     "name": "Queen Fatale (Jun. 2025)",
     "icon": "/home-base/skins/216.png",
     "full": "",
-    "index": "171"
+    "index": 171
   },
   "52000217": {
     "name": "Renegade Queen (Jul. 2025)",
     "icon": "/home-base/skins/217.png",
     "full": "",
-    "index": "179"
+    "index": 179
   },
   "52000218": {
     "name": "Clash-A-Rama Queen (Aug. 2025)",
     "icon": "/home-base/skins/218.png",
     "full": "",
-    "index": "181"
+    "index": 181
   },
   "52000219": {
     "name": "P.E.Q.Q.A Queen (Sep. 2025)",
     "icon": "/home-base/skins/219.png",
     "full": "",
-    "index": "186"
+    "index": 186
   },
   "52000220": {
     "name": "Archer Hunter (Oct. 2025)",
     "icon": "/home-base/skins/220.png",
     "full": "",
-    "index": "190"
+    "index": 190
   },
   "52000221": {
     "name": "Fury Queen (Nov. 2025)",
     "icon": "/home-base/skins/221.png",
     "full": "",
-    "index": "196"
+    "index": 196
   },
   "52000222": {
     "name": "Blizzard Queen (Dec. 2025)",
     "icon": "/home-base/skins/222.png",
     "full": "",
-    "index": "203"
+    "index": 203
   },
   "52000223": {
     "name": "Queen of the Dunes (Jan. 2026)",
     "icon": "/home-base/skins/223.png",
     "full": "",
-    "index": "207"
+    "index": 207
   },
   "52000224": {
     "name": "Phantom Queen (Feb. 2026)",
     "icon": "/home-base/skins/224.png",
     "full": "",
-    "index": "213"
+    "index": 213
   },
   "52000230": {
     "name": "Dark Minion Warden (Oct. 2024)",
     "icon": "/home-base/skins/230.png",
     "full": "",
-    "index": "140"
+    "index": 140
   },
   "52000231": {
     "name": "Grand Judge (Nov. 2024)",
     "icon": "/home-base/skins/231.png",
     "full": "",
-    "index": "143"
+    "index": 143
   },
   "52000232": {
     "name": "Ice Warden (Jan. 2025)",
     "icon": "/home-base/skins/232.png",
     "full": "",
-    "index": "147"
+    "index": 147
   },
   "52000233": {
     "name": "Snake Warden (Feb. 2025)",
     "icon": "/home-base/skins/233.png",
     "full": "",
-    "index": "150"
+    "index": 150
   },
   "52000234": {
     "name": "Jetpack Warden (Mar. 2025)",
     "icon": "/home-base/skins/234.png",
     "full": "",
-    "index": "158"
+    "index": 158
   },
   "52000235": {
     "name": "Darkness Warden (Apr. 2025 (exclusive!))",
     "icon": "/home-base/skins/235.png",
     "full": "",
-    "index": "164"
+    "index": 164
   },
   "52000236": {
     "name": "Grand Monk (May 2025)",
     "icon": "/home-base/skins/236.png",
     "full": "",
-    "index": "168"
+    "index": 168
   },
   "52000237": {
     "name": "Grand Godfather (Jun. 2025)",
     "icon": "/home-base/skins/237.png",
     "full": "",
-    "index": "173"
+    "index": 173
   },
   "52000238": {
     "name": "Grand Doctor (Jul. 2025)",
     "icon": "/home-base/skins/238.png",
     "full": "",
-    "index": "175"
+    "index": 175
   },
   "52000239": {
     "name": "Clash-A-Rama Warden (Aug. 2025)",
     "icon": "/home-base/skins/239.png",
     "full": "",
-    "index": "183"
+    "index": 183
   },
   "52000240": {
     "name": "Ivan Warden (Sep. 2025)",
     "icon": "/home-base/skins/240.png",
     "full": "",
-    "index": "188"
+    "index": 188
   },
   "52000241": {
     "name": "Eternal Warden (Oct. 2025)",
     "icon": "/home-base/skins/241.png",
     "full": "",
-    "index": "193"
+    "index": 193
   },
   "52000242": {
     "name": "Shaman Warden (Nov. 2025",
     "icon": "/home-base/skins/242.png",
     "full": "",
-    "index": "198"
+    "index": 198
   },
   "52000243": {
     "name": "Grand Warlock (Dec. 2025)",
     "icon": "/home-base/skins/243.png",
     "full": "",
-    "index": "201"
+    "index": 201
   },
   "52000244": {
     "name": "Grand Sorcerer (Jan. 2026)",
     "icon": "/home-base/skins/244.png",
     "full": "",
-    "index": "209"
+    "index": 209
   },
   "52000245": {
     "name": "River Warden (Feb. 2026)",
     "icon": "/home-base/skins/245.png",
     "full": "",
-    "index": "215"
+    "index": 215
   },
   "52000251": {
     "name": "Snake Prince (Feb. 2025)",
     "icon": "/home-base/skins/251.png",
     "full": "",
-    "index": "152"
+    "index": 152
   },
   "52000252": {
     "name": "Minion General (Mar. 2025)",
     "icon": "/home-base/skins/252.png",
     "full": "",
-    "index": "157"
+    "index": 157
   },
   "52000253": {
     "name": "Prince Mysterio (Apr. 2025 (exclusive!))",
     "icon": "/home-base/skins/253.png",
     "full": "",
-    "index": "160"
+    "index": 160
   },
   "52000254": {
     "name": "Cyclone Prince (May 2025)",
     "icon": "/home-base/skins/254.png",
     "full": "",
-    "index": "167"
+    "index": 167
   },
   "52000255": {
     "name": "Minion Cop (Jun. 2025)",
     "icon": "/home-base/skins/255.png",
     "full": "",
-    "index": "174"
+    "index": 174
   },
   "52000256": {
     "name": "Minion Inventor (Jul. 2025)",
     "icon": "/home-base/skins/256.png",
     "full": "",
-    "index": "176"
+    "index": 176
   },
   "52000257": {
     "name": "Clash-A-Rama Prince (Aug. 2025)",
     "icon": "/home-base/skins/257.png",
     "full": "",
-    "index": "184"
+    "index": 184
   },
   "52000258": {
     "name": "Lava Prince (Sep. 2025)",
     "icon": "/home-base/skins/258.png",
     "full": "",
-    "index": "185"
+    "index": 185
   },
   "52000259": {
     "name": "Nightmare Prince (Oct. 2025)",
     "icon": "/home-base/skins/259.png",
     "full": "",
-    "index": "191"
+    "index": 191
   },
   "52000260": {
     "name": "Armored Prince (Nov. 2025)",
     "icon": "/home-base/skins/260.png",
     "full": "",
-    "index": "197"
+    "index": 197
   },
   "52000261": {
     "name": "Frost Prince (Dec. 2025)",
     "icon": "/home-base/skins/261.png",
     "full": "",
-    "index": "204"
+    "index": 204
   },
   "52000262": {
     "name": "Genie Prince (Jan. 2026)",
     "icon": "/home-base/skins/262.png",
     "full": "",
-    "index": "210"
+    "index": 210
   },
   "52000263": {
     "name": "Ox Prince (Feb. 2026)",
     "icon": "/home-base/skins/263.png",
     "full": "",
-    "index": "214"
+    "index": 214
   },
   "52000295": {
     "name": "Mirage Champion (Jan. 2026)",
     "icon": "/home-base/skins/262.png",
     "full": "",
-    "index": "208"
+    "index": 208
   },
   "52000296": {
     "name": "Red Champion (Feb. 2026)",
     "icon": "/home-base/skins/296.png",
     "full": "",
-    "index": "211"
+    "index": 211
   },
   "52000306": {
     "name": "Meteorite Builder (Nov. 2025)",
     "icon": "/home-base/skins/306.png",
     "full": "",
-    "index": "200"
+    "index": 200
   },
   "82000000": {
     "name": "Brown Fence",
     "icon": "/home-base/clancapital/0.png",
-    "index": "0"
+    "index": 0
   },
   "82000001": {
     "name": "Terrace",
     "icon": "/home-base/clancapital/1.png",
-    "index": "1"
+    "index": 1
   },
   "82000002": {
     "name": "Stone Floor",
     "icon": "/home-base/clancapital/2.png",
-    "index": "2"
+    "index": 2
   },
   "82000003": {
     "name": "Checkered Floor",
     "icon": "/home-base/clancapital/3.png",
-    "index": "3"
+    "index": 3
   },
   "82000004": {
     "name": "Gold Floor",
     "icon": "/home-base/clancapital/4.png",
-    "index": "4"
+    "index": 4
   },
   "82000005": {
     "name": "Snow",
     "icon": "/home-base/clancapital/5.png",
-    "index": "73"
+    "index": 73
   },
   "82000006": {
     "name": "Gingerbread Floor",
     "icon": "/home-base/clancapital/6.png",
-    "index": "77"
+    "index": 77
   },
   "82000007": {
     "name": "Grass Ground",
     "icon": "/home-base/clancapital/7.png",
-    "index": "5"
+    "index": 5
   },
   "82000008": {
     "name": "Orange Classic Roof",
     "icon": "/home-base/clancapital/8.png",
-    "index": "6"
+    "index": 6
   },
   "82000009": {
     "name": "Blue Classic Roof",
     "icon": "/home-base/clancapital/9.png",
-    "index": "7"
+    "index": 7
   },
   "82000010": {
     "name": "Black Classic Roof",
     "icon": "/home-base/clancapital/10.png",
-    "index": "8"
+    "index": 8
   },
   "82000011": {
     "name": "Red Classic Roof",
     "icon": "/home-base/clancapital/11.png",
-    "index": "9"
+    "index": 9
   },
   "82000013": {
     "name": "Thatched Roof",
     "icon": "/home-base/clancapital/13.png",
-    "index": "10"
+    "index": 10
   },
   "82000014": {
     "name": "Gable Thatched Roof",
     "icon": "/home-base/clancapital/14.png",
-    "index": "11"
+    "index": 11
   },
   "82000015": {
     "name": "Orange Square Roof",
     "icon": "/home-base/clancapital/15.png",
-    "index": "12"
+    "index": 12
   },
   "82000016": {
     "name": "Blue Square Roof",
     "icon": "/home-base/clancapital/16.png",
-    "index": "13"
+    "index": 13
   },
   "82000017": {
     "name": "Green Square Roof",
     "icon": "/home-base/clancapital/17.png",
-    "index": "14"
+    "index": 14
   },
   "82000019": {
     "name": "Brown Tent Roof",
     "icon": "/home-base/clancapital/19.png",
-    "index": "15"
+    "index": 15
   },
   "82000020": {
     "name": "Red Tent Roof",
     "icon": "/home-base/clancapital/20.png",
-    "index": "16"
+    "index": 16
   },
   "82000021": {
     "name": "Yellow Tent Roof",
     "icon": "/home-base/clancapital/21.png",
-    "index": "17"
+    "index": 17
   },
   "82000022": {
     "name": "Blue Tent Roof",
     "icon": "/home-base/clancapital/22.png",
-    "index": "18"
+    "index": 18
   },
   "82000023": {
     "name": "Blue Cross Roof",
     "icon": "/home-base/clancapital/23.png",
-    "index": "19"
+    "index": 19
   },
   "82000024": {
     "name": "Green Cross Roof",
     "icon": "/home-base/clancapital/24.png",
-    "index": "20"
+    "index": 20
   },
   "82000025": {
     "name": "Red Cross Roof",
     "icon": "/home-base/clancapital/25.png",
-    "index": "21"
+    "index": 21
   },
   "82000026": {
     "name": "Orange Castle Roof",
     "icon": "/home-base/clancapital/26.png",
-    "index": "22"
+    "index": 22
   },
   "82000027": {
     "name": "Blue Castle Roof",
     "icon": "/home-base/clancapital/27.png",
-    "index": "23"
+    "index": 23
   },
   "82000028": {
     "name": "Black Castle Roof",
     "icon": "/home-base/clancapital/28.png",
-    "index": "24"
+    "index": 24
   },
   "82000029": {
     "name": "Red Castle Roof",
     "icon": "/home-base/clancapital/29.png",
-    "index": "25"
+    "index": 25
   },
   "82000030": {
     "name": "Yellow Castle Roof",
     "icon": "/home-base/clancapital/30.png",
-    "index": "26"
+    "index": 26
   },
   "82000031": {
     "name": "Gable Brick Roof (Type 1)",
     "icon": "/home-base/clancapital/31.png",
-    "index": "27"
+    "index": 27
   },
   "82000032": {
     "name": "Gable Brick Roof (Type 2)",
     "icon": "/home-base/clancapital/32.png",
-    "index": "28"
+    "index": 28
   },
   "82000033": {
     "name": "Red Pagoda Roof",
     "icon": "/home-base/clancapital/33.png",
-    "index": "29"
+    "index": 29
   },
   "82000034": {
     "name": "Blue Pagoda Roof",
     "icon": "/home-base/clancapital/34.png",
-    "index": "30"
+    "index": 30
   },
   "82000035": {
     "name": "Black Pagoda Roof",
     "icon": "/home-base/clancapital/35.png",
-    "index": "31"
+    "index": 31
   },
   "82000036": {
     "name": "Green Pagoda Roof",
     "icon": "/home-base/clancapital/36.png",
-    "index": "32"
+    "index": 32
   },
   "82000037": {
     "name": "White Pagoda Roof",
     "icon": "/home-base/clancapital/37.png",
-    "index": "33"
+    "index": 33
   },
   "82000038": {
     "name": "Stone Roof",
     "icon": "/home-base/clancapital/38.png",
-    "index": "34"
+    "index": 34
   },
   "82000039": {
     "name": "Grass Roof (Type 1)",
     "icon": "/home-base/clancapital/39.png",
-    "index": "35"
+    "index": 35
   },
   "82000040": {
     "name": "Grass Roof (Type 2)",
     "icon": "/home-base/clancapital/40.png",
-    "index": "36"
+    "index": 36
   },
   "82000041": {
     "name": "White Windmill Roof",
     "icon": "/home-base/clancapital/41.png",
-    "index": "37"
+    "index": 37
   },
   "82000042": {
     "name": "Blue Windmill Roof",
     "icon": "/home-base/clancapital/42.png",
-    "index": "38"
+    "index": 38
   },
   "82000043": {
     "name": "Orange Windmill Roof",
     "icon": "/home-base/clancapital/43.png",
-    "index": "39"
+    "index": 39
   },
   "82000044": {
     "name": "Red Windmill Roof",
     "icon": "/home-base/clancapital/44.png",
-    "index": "40"
+    "index": 40
   },
   "82000045": {
     "name": "Green Windmill Roof",
     "icon": "/home-base/clancapital/45.png",
-    "index": "41"
+    "index": 41
   },
   "82000046": {
     "name": "Gingerbread Roof",
     "icon": "/home-base/clancapital/46.png",
-    "index": "75"
+    "index": 75
   },
   "82000047": {
     "name": "Winter Roof",
     "icon": "/home-base/clancapital/47.png",
-    "index": "42"
+    "index": 42
   },
   "82000048": {
     "name": "Classic Walls",
     "icon": "/home-base/clancapital/48.png",
-    "index": "43"
+    "index": 43
   },
   "82000049": {
     "name": "Stone Walls",
     "icon": "/home-base/clancapital/49.png",
-    "index": "44"
+    "index": 44
   },
   "82000050": {
     "name": "Dark Stone Walls",
     "icon": "/home-base/clancapital/50.png",
-    "index": "45"
+    "index": 45
   },
   "82000051": {
     "name": "Stilt Walls",
     "icon": "/home-base/clancapital/51.png",
-    "index": "46"
+    "index": 46
   },
   "82000052": {
     "name": "Concentric Diamond Walls",
     "icon": "/home-base/clancapital/52.png",
-    "index": "47"
+    "index": 47
   },
   "82000053": {
     "name": "Thatched Walls",
     "icon": "/home-base/clancapital/53.png",
-    "index": "48"
+    "index": 48
   },
   "82000054": {
     "name": "Grass Walls",
     "icon": "/home-base/clancapital/54.png",
-    "index": "49"
+    "index": 49
   },
   "82000055": {
     "name": "Gingerbread Walls",
     "icon": "/home-base/clancapital/55.png",
-    "index": "76"
+    "index": 76
   },
   "82000056": {
     "name": "Winter Walls",
     "icon": "/home-base/clancapital/56.png",
-    "index": "50"
+    "index": 50
   },
   "82000057": {
     "name": "Igloo Walls",
     "icon": "/home-base/clancapital/57.png",
-    "index": "72"
+    "index": 72
   },
   "82000058": {
     "name": "Barrel",
     "icon": "/home-base/clancapital/58.png",
-    "index": "51"
+    "index": 51
   },
   "82000059": {
     "name": "Practice Target",
     "icon": "/home-base/clancapital/59.png",
-    "index": "52"
+    "index": 52
   },
   "82000060": {
     "name": "Axe",
     "icon": "/home-base/clancapital/60.png",
-    "index": "53"
+    "index": 53
   },
   "82000061": {
     "name": "Anvil",
     "icon": "/home-base/clancapital/61.png",
-    "index": "54"
+    "index": 54
   },
   "82000062": {
     "name": "Bomb",
     "icon": "/home-base/clancapital/62.png",
-    "index": "55"
+    "index": 55
   },
   "82000063": {
     "name": "Sword Rack",
     "icon": "/home-base/clancapital/63.png",
-    "index": "56"
+    "index": 56
   },
   "82000064": {
     "name": "Campfire",
     "icon": "/home-base/clancapital/64.png",
-    "index": "57"
+    "index": 57
   },
   "82000065": {
     "name": "Tree",
     "icon": "/home-base/clancapital/65.png",
-    "index": "58"
+    "index": 58
   },
   "82000066": {
     "name": "Capital Symbol",
     "icon": "/home-base/clancapital/66.png",
-    "index": "59"
+    "index": 59
   },
   "82000067": {
     "name": "Gingerbread Archer",
     "icon": "/home-base/clancapital/67.png",
-    "index": "78"
+    "index": 78
   },
   "82000068": {
     "name": "Candy Cane",
     "icon": "/home-base/clancapital/68.png",
-    "index": "79"
+    "index": 79
   },
   "82000070": {
     "name": "Snowman",
     "icon": "/home-base/clancapital/70.png",
-    "index": "74"
+    "index": 74
   },
   "82000071": {
     "name": "Flamingo",
     "icon": "/home-base/clancapital/71.png",
-    "index": "60"
+    "index": 60
   },
   "82000078": {
     "name": "Black Capital Symbol Roof",
     "icon": "/home-base/clancapital/78.png",
-    "index": "61"
+    "index": 61
   },
   "82000079": {
     "name": "Fancy Walls",
     "icon": "/home-base/clancapital/79.png",
-    "index": "62"
+    "index": 62
   },
   "82000080": {
     "name": "Barbarian Statue",
     "icon": "/home-base/clancapital/80.png",
-    "index": "63"
+    "index": 63
   },
   "82000081": {
     "name": "Capital Symbol Roof",
     "icon": "/home-base/clancapital/81.png",
-    "index": "64"
+    "index": 64
   },
   "82000082": {
     "name": "Clan Symbol Roof",
     "icon": "/home-base/clancapital/82.png",
-    "index": "65"
+    "index": 65
   },
   "82000083": {
     "name": "Stone",
     "icon": "/home-base/clancapital/83.png",
-    "index": "66"
+    "index": 66
   },
   "82000084": {
     "name": "White Fence",
     "icon": "/home-base/clancapital/84.png",
-    "index": "67"
+    "index": 67
   },
   "82000085": {
     "name": "Igloo Roof",
     "icon": "/home-base/clancapital/85.png",
-    "index": "71"
+    "index": 71
   },
   "82000086": {
     "name": "Gold",
     "icon": "/home-base/clancapital/86.png",
-    "index": "68"
+    "index": 68
   },
   "82000087": {
     "name": "Goblin Roof",
     "icon": "/home-base/clancapital/87.png",
-    "index": "80"
+    "index": 80
   },
   "82000088": {
     "name": "Goblin Walls",
     "icon": "/home-base/clancapital/88.png",
-    "index": "82"
+    "index": 82
   },
   "82000089": {
     "name": "Goblin Spears",
     "icon": "/home-base/clancapital/89.png",
-    "index": "81"
+    "index": 81
   },
   "82000090": {
     "name": "Goblin Ground",
     "icon": "/home-base/clancapital/90.png",
-    "index": "83"
+    "index": 83
   },
   "82000092": {
     "name": "White Chess Walls",
     "icon": "/home-base/clancapital/92.png",
-    "index": "84"
+    "index": 84
   },
   "82000094": {
     "name": "Chess Floor",
     "icon": "/home-base/clancapital/94.png",
-    "index": "85"
+    "index": 85
   },
   "82000108": {
     "name": "Halloween Roof",
     "icon": "/home-base/clancapital/108.png",
-    "index": "86"
+    "index": 86
   },
   "82000109": {
     "name": "Dinosaur",
     "icon": "/home-base/clancapital/109.png",
-    "index": "87"
+    "index": 87
   },
   "82000110": {
     "name": "Bakery Roof",
     "icon": "/home-base/clancapital/110.png",
-    "index": "88"
+    "index": 88
   },
   "82000111": {
     "name": "Bakery Decoration",
     "icon": "/home-base/clancapital/111.png",
-    "index": "91"
+    "index": 91
   },
   "82000112": {
     "name": "Bakery Walls",
     "icon": "/home-base/clancapital/112.png",
-    "index": "89"
+    "index": 89
   },
   "82000113": {
     "name": "Bakery Ground",
     "icon": "/home-base/clancapital/113.png",
-    "index": "90"
+    "index": 90
   },
   "82000114": {
     "name": "LNY 2024 Roof",
     "icon": "/home-base/clancapital/114.png",
-    "index": "92"
+    "index": 92
   },
   "82000115": {
     "name": "LNY 2024 Sign",
     "icon": "/home-base/clancapital/115.png",
-    "index": "95"
+    "index": 95
   },
   "82000116": {
     "name": "LNY 2024 Walls",
     "icon": "/home-base/clancapital/116.png",
-    "index": "93"
+    "index": 93
   },
   "82000117": {
     "name": "LNY 2024 Ground",
     "icon": "/home-base/clancapital/117.png",
-    "index": "94"
+    "index": 94
   },
   "82000120": {
     "name": "Football Roof",
     "icon": "/home-base/clancapital/120.png",
-    "index": "96"
+    "index": 96
   },
   "82000121": {
     "name": "Football Decoration",
     "icon": "/home-base/clancapital/121.png",
-    "index": "99"
+    "index": 99
   },
   "82000122": {
     "name": "Football Walls",
     "icon": "/home-base/clancapital/122.png",
-    "index": "97"
+    "index": 97
   },
   "82000123": {
     "name": "Football Ground",
     "icon": "/home-base/clancapital/123.png",
-    "index": "98"
+    "index": 98
   },
   "82000124": {
     "name": "Torch",
     "icon": "/home-base/clancapital/124.png",
-    "index": "69"
+    "index": 69
   },
   "82000125": {
     "name": "Sports Track Ground",
     "icon": "/home-base/clancapital/125.png",
-    "index": "70"
+    "index": 70
   },
   "82000126": {
     "name": "Anime Roof",
     "icon": "/home-base/clancapital/126.png",
-    "index": "100"
+    "index": 100
   },
   "82000127": {
     "name": "Vending Machine",
     "icon": "/home-base/clancapital/127.png",
-    "index": "103"
+    "index": 103
   },
   "82000128": {
     "name": "Anime Walls",
     "icon": "/home-base/clancapital/128.png",
-    "index": "101"
+    "index": 101
   },
   "82000129": {
     "name": "Anime Ground",
     "icon": "/home-base/clancapital/129.png",
-    "index": "102"
+    "index": 102
   },
   "82000130": {
     "name": "TTRPG Roof",
     "icon": "/home-base/clancapital/130.png",
-    "index": "104"
+    "index": 104
   },
   "82000131": {
     "name": "Dice",
     "icon": "/home-base/clancapital/131.png",
-    "index": "105"
+    "index": 105
   },
   "82000132": {
     "name": "Cyan Crystal Roof",
     "icon": "/home-base/clancapital/132.png",
-    "index": "106"
+    "index": 106
   },
   "82000133": {
     "name": "Jack-o'Lantern",
     "icon": "/home-base/clancapital/133.png",
-    "index": "107"
+    "index": 107
   },
   "82000134": {
     "name": "Toyshop Roof",
     "icon": "/home-base/clancapital/134.png",
-    "index": "108"
+    "index": 108
   },
   "82000135": {
     "name": "Nutcracker",
     "icon": "/home-base/clancapital/135.png",
-    "index": "109"
+    "index": 109
   },
   "82000136": {
     "name": "Lunar New Year 2025 Roof",
     "icon": "/home-base/clancapital/136.png",
-    "index": "110"
+    "index": 110
   },
   "82000137": {
     "name": "Snake",
     "icon": "/home-base/clancapital/137.png",
-    "index": "111"
+    "index": 111
   },
   "82000138": {
     "name": "Tombstone",
     "icon": "/home-base/clancapital/138.png",
-    "index": "113"
+    "index": 113
   },
   "82000139": {
     "name": "ClashaMania Ground",
     "icon": "/home-base/clancapital/139.png",
-    "index": "112"
+    "index": 112
   },
   "82000140": {
     "name": "Dark Days Walls",
     "icon": "/home-base/clancapital/140.png",
-    "index": "114"
+    "index": 114
   },
   "82000141": {
     "name": "Dark Days Ground",
     "icon": "/home-base/clancapital/141.png",
-    "index": "115"
+    "index": 115
   },
   "82000142": {
     "name": "Clash-A-Rama Roof",
     "icon": "/home-base/clancapital/142.png",
-    "index": "116"
+    "index": 116
   },
   "82000143": {
     "name": "Cartoon Barrel",
     "icon": "/home-base/clancapital/143.png",
-    "index": "119"
+    "index": 119
   },
   "82000144": {
     "name": "Clash-A-Rama Walls",
     "icon": "/home-base/clancapital/144.png",
-    "index": "117"
+    "index": 117
   },
   "82000145": {
     "name": "Clash-A-Rama Ground",
     "icon": "/home-base/clancapital/145.png",
-    "index": "118"
+    "index": 118
   },
   "82000146": {
     "name": "Cosmic Rock Ground",
     "icon": "/home-base/clancapital/146.png",
-    "index": "121"
+    "index": 121
   },
   "82000147": {
     "name": "Cosmic Rock Walls",
     "icon": "/home-base/clancapital/147.png",
-    "index": "120"
+    "index": 120
   },
   "82000148": {
     "name": "Meltdown Barrel",
     "icon": "/home-base/clancapital/148.png",
-    "index": "123"
+    "index": 123
   },
   "82000149": {
     "name": "Meltdown Roof",
     "icon": "/home-base/clancapital/149.png",
-    "index": "122"
+    "index": 122
   },
   "82000150": {
     "name": "LNY 2026 Roof",
     "icon": "/home-base/clancapital/150.png",
-    "index": "124"
+    "index": 124
   },
   "82000151": {
     "name": "LNY 2026 Walls",
     "icon": "/home-base/clancapital/151.png",
-    "index": "125"
+    "index": 125
   },
   "26000000": {
     "name": "Lightning Spell",
