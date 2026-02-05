@@ -556,32 +556,74 @@ public class stats extends ListenerAdapter {
 				// Group by data ID and format
 				sb.append(formatGroupedData(arr, jsonTimestamp));
 			} else {
-				// Original formatting for simple arrays
-				for (int i = 0; i < arr.length(); i++) {
-					Object item = arr.get(i);
-					if (item instanceof JSONObject) {
-						sb.append(formatObject((JSONObject) item, 0, jsonTimestamp));
-						if (i < arr.length() - 1) {
-							sb.append("\n");
-						}
-					} else {
-						// Simple values (e.g., house_parts, skins, sceneries)
-						String rawVal = item.toString();
-						if (FilteredIdsCache.isFiltered(rawVal)) {
-							// skip filtered ids
-							continue;
-						}
-						String value = getMappedValue(rawVal);
-						sb.append("- ").append(value);
-						if (i < arr.length() - 1) {
-							sb.append("\n");
-						}
-					}
-				}
-			}
-		} else if (data instanceof JSONObject) {
-			sb.append(formatObject((JSONObject) data, 0, jsonTimestamp));
 		} else {
+			// Simple arrays (skins, sceneries, house_parts) - sort by index before display
+			// Fetch image map once for sorting
+			org.json.JSONObject imageMapCache = null;
+			try {
+				imageMapCache = lostmanager.util.ImageMapCache.fetchFullMapOnce();
+			} catch (Exception e) {
+				System.err.println("Failed to fetch image map for sorting simple arrays: " + e.getMessage());
+			}
+			final org.json.JSONObject finalImageMapCache = imageMapCache;
+			
+			// Collect all items
+			java.util.List<Object> items = new java.util.ArrayList<>();
+			for (int i = 0; i < arr.length(); i++) {
+				items.add(arr.get(i));
+			}
+			
+			// Sort by index (for simple string values)
+			items.sort((item1, item2) -> {
+				// Only sort simple string values (data IDs), not JSONObjects
+				if (item1 instanceof String && item2 instanceof String) {
+					String id1 = item1.toString();
+					String id2 = item2.toString();
+					
+					try {
+						if (finalImageMapCache != null) {
+							JSONObject d1 = finalImageMapCache.has(id1) ? finalImageMapCache.getJSONObject(id1) : null;
+							JSONObject d2 = finalImageMapCache.has(id2) ? finalImageMapCache.getJSONObject(id2) : null;
+							
+							int i1 = d1 != null && d1.has("index") ? d1.getInt("index") : Integer.MAX_VALUE;
+							int i2 = d2 != null && d2.has("index") ? d2.getInt("index") : Integer.MAX_VALUE;
+							
+							if (i1 != i2) {
+								return Integer.compare(i1, i2);
+							}
+						}
+					} catch (Exception ex) {
+						// Fallback to string comparison
+					}
+					return id1.compareTo(id2);
+				}
+				return 0; // Keep JSONObjects in original order
+			});
+			
+			// Display sorted items
+			boolean firstItem = true;
+			for (Object item : items) {
+				if (item instanceof JSONObject) {
+					if (!firstItem) {
+						sb.append("\n");
+					}
+					sb.append(formatObject((JSONObject) item, 0, jsonTimestamp));
+				} else {
+					// Simple values (e.g., house_parts, skins, sceneries)
+					String rawVal = item.toString();
+					if (FilteredIdsCache.isFiltered(rawVal)) {
+						// skip filtered ids
+						continue;
+					}
+					if (!firstItem) {
+						sb.append("\n");
+					}
+					String value = getMappedValue(rawVal);
+					sb.append("- ").append(value);
+				}
+				firstItem = false;
+			}
+		}
 			sb.append(data.toString());
 		}
 
