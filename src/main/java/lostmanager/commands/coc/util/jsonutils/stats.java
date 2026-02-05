@@ -629,6 +629,15 @@ public class stats extends ListenerAdapter {
 	 * Format grouped data by data ID
 	 */
 	private String formatGroupedData(JSONArray arr, java.sql.Timestamp jsonTimestamp) {
+		// Fetch image map once for this request to avoid multiple HTTP calls during sorting
+		org.json.JSONObject imageMapCache = null;
+		try {
+			imageMapCache = lostmanager.util.ImageMapCache.fetchFullMapOnce();
+		} catch (Exception e) {
+			System.err.println("Failed to fetch image map for sorting: " + e.getMessage());
+		}
+		final org.json.JSONObject finalImageMapCache = imageMapCache;
+		
 		// Group objects by their data ID
 		Map<String, List<JSONObject>> groupedByData = new LinkedHashMap<>();
 
@@ -654,10 +663,16 @@ public class stats extends ListenerAdapter {
 		List<Map.Entry<String, List<JSONObject>>> entryList = new ArrayList<>(groupedByData.entrySet());
 		entryList.sort((e1, e2) -> {
 			try {
-				JSONObject d1 = lostmanager.util.ImageMapCache.getItemData(e1.getKey());
-				JSONObject d2 = lostmanager.util.ImageMapCache.getItemData(e2.getKey());
-				int i1 = d1 != null && d1.has("index") ? d1.optInt("index", Integer.MAX_VALUE) : Integer.MAX_VALUE;
-				int i2 = d2 != null && d2.has("index") ? d2.optInt("index", Integer.MAX_VALUE) : Integer.MAX_VALUE;
+				// Use cached image map to avoid HTTP requests per comparison
+				JSONObject d1 = null;
+				JSONObject d2 = null;
+				if (finalImageMapCache != null) {
+					d1 = finalImageMapCache.has(e1.getKey()) ? finalImageMapCache.getJSONObject(e1.getKey()) : null;
+					d2 = finalImageMapCache.has(e2.getKey()) ? finalImageMapCache.getJSONObject(e2.getKey()) : null;
+				}
+				
+				int i1 = d1 != null && d1.has("index") ? d1.getInt("index") : Integer.MAX_VALUE;
+				int i2 = d2 != null && d2.has("index") ? d2.getInt("index") : Integer.MAX_VALUE;
 				if (i1 != i2)
 					return Integer.compare(i1, i2);
 			} catch (Exception ex) {

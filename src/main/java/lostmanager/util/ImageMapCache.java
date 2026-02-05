@@ -53,6 +53,15 @@ public class ImageMapCache {
   }
   
   /**
+   * Fetch the full image map once per request
+   * Exposed for per-request caching to avoid multiple HTTP calls
+   * @return JSONObject containing the full image map or null if fetch fails
+   */
+  public static JSONObject fetchFullMapOnce() {
+    return fetchFullMap();
+  }
+  
+  /**
    * Get item data by data ID
    * @param dataId The data ID to lookup
    * @return JSONObject with item data or null if not found
