@@ -1694,32 +1694,37 @@ public class ListeningEvent {
 
 		// Get the event's configured clan
 		String eventClanTag = getClanTag();
-		Clan eventClan = eventClanTag != null ? new Clan(eventClanTag) : null;
+		
+		// Resolve sideclan -> main clan for member check and kickpoint assignment
+		String mainClanTag = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
+		String effectiveClanTag = (mainClanTag != null && !mainClanTag.isEmpty()) ? mainClanTag : eventClanTag;
+		
+		Clan eventClan = new Clan(effectiveClanTag);
 
 		// Check if the player is in the clan we're checking for this event
-		// Only add kickpoints if player is in the event's clan DB
+		// Only add kickpoints if player is in the effective clan DB
 		Clan playerClanDB = player.getClanDB();
 		boolean playerIsInEventClan = false;
 
-		if (playerClanDB != null && eventClanTag != null) {
-			playerIsInEventClan = playerClanDB.getTag().equals(eventClanTag);
+		if (playerClanDB != null) {
+			playerIsInEventClan = playerClanDB.getTag().equals(effectiveClanTag);
 		}
 
-		// If player is not in the event's clan DB, skip adding kickpoint
+		// If player is not in the effective clan DB, skip adding kickpoint
 		if (!playerIsInEventClan) {
 			System.out.println("Skipping kickpoint for player " + player.getTag() +
-					" - not in clan DB for event clan " + eventClanTag);
+					" - not in clan DB for effective clan " + effectiveClanTag + " (event clan: " + eventClanTag + ")");
 			return;
 		}
 
-		// Verify the event's clan exists in DB before proceeding
-		if (eventClan == null || !eventClan.ExistsDB()) {
+		// Verify the effective clan exists in DB before proceeding
+		if (!eventClan.ExistsDB()) {
 			System.out.println("Cannot add kickpoint for player " + player.getTag() +
-					" - event clan " + eventClanTag + " does not exist in DB");
+					" - effective clan " + effectiveClanTag + " does not exist in DB");
 			return;
 		}
 
-		// Use the event's clan for kickpoint assignment
+		// Use the effective clan for kickpoint assignment
 		Clan clan = eventClan;
 
 		if (clan != null) {
