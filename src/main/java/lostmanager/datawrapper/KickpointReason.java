@@ -42,7 +42,7 @@ public class KickpointReason {
 		String sql = "SELECT 1 FROM kickpoint_reasons WHERE name = ? AND clan_tag = ?";
 		try (PreparedStatement pstmt = Connection.getConnection().prepareStatement(sql)) {
 			pstmt.setString(1, kpreason);
-			pstmt.setString(2, clan_tag);
+			pstmt.setString(2, getEffectiveClanTag());
 			try (ResultSet rs = pstmt.executeQuery()) {
 				return rs.next(); // true, wenn mindestens eine Zeile existiert
 			}
@@ -64,10 +64,18 @@ public class KickpointReason {
 		return clan_tag;
 	}
 
+	/**
+	 * Resolves sideclan -> main clan via belongs_to if necessary.
+	 */
+	public String getEffectiveClanTag() {
+		String mainClanTag = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class, clan_tag);
+		return (mainClanTag != null && !mainClanTag.isEmpty()) ? mainClanTag : clan_tag;
+	}
+
 	public long getAmount() {
 		if(amount == null) {
 			String sql = "SELECT amount FROM kickpoint_reasons WHERE clan_tag = ? AND name = ?";
-			amount = DBUtil.getValueFromSQL(sql, Long.class, clan_tag, kpreason);
+			amount = DBUtil.getValueFromSQL(sql, Long.class, getEffectiveClanTag(), kpreason);
 		}
 		return amount;
 	}
