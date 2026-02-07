@@ -5401,12 +5401,12 @@
     "index": 122
   },
   "82000150": {
-    "name": "LNY 2026 Roof",
+    "name": "LNY 2026 Ground",
     "icon": "/home-base/clancapital/150.png",
     "index": 124
   },
   "82000151": {
-    "name": "LNY 2026 Walls",
+    "name": "LNY 2026 Decoration",
     "icon": "/home-base/clancapital/151.png",
     "index": 125
   },

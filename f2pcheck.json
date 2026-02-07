@@ -776,24 +776,20 @@
                                 "allowed": 1,
                                 "elements": [{
                                     "type": "element",
-                                    "name": "LNY 2026 Roof",
+                                    "name": "LNY 2026 Ground",
                                     "id": "82000150"
                                 }, {
                                     "type": "element",
-                                    "name": "LNY 2026 Walls",
+                                    "name": "LNY 2026 Decoration",
                                     "id": "82000151"
                                 }]
                             }
                         },{
-                            "name":"Hat 'Stick Horse Equipment' oder 'Stick Horse Deco' sowie 'Handsome Scroll Deco' oder 'Lucky Shoe Deco'",
+                            "name":"Hat 'Stick Horse Equipment' oder 'Stick Horse Deco' sowie 'Lucky Shoe Deco'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
-                                "elements": [{
-                                    "type": "element",
-                                    "name": "Handsome Scroll",
-                                    "id": "18000193"
-                                },
+                                "elements": [
                                 {
                                     "type": "element",
                                     "name": "Lucky Shoe",
