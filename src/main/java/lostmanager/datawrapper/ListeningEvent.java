@@ -1065,7 +1065,7 @@ public class ListeningEvent {
 
 			// Build initial message with missed attacks data
 			CWMissedAttacksResult result = buildCWLDayMissedAttacksMessage(clan, ourClanData,
-					targetRound, false);
+					cachedWarData, targetRound, false);
 
 			// Determine if this is an end-of-war event (duration = 0)
 			boolean isEndOfWarEvent = getDurationUntilEnd() <= 0;
@@ -1112,22 +1112,45 @@ public class ListeningEvent {
 	 * 
 	 * @param clan                The clan
 	 * @param ourClanData         The JSON object containing our clan's war data
+	 * @param warData             The full war JSON data (contains endTime)
 	 * @param roundNumber         The round number (0-indexed)
 	 * @param isVerificationPhase Whether this is the 5-minute verification phase
 	 * @return CWMissedAttacksResult containing the message and list of players
 	 */
 	private CWMissedAttacksResult buildCWLDayMissedAttacksMessage(Clan clan, org.json.JSONObject ourClanData,
-			int roundNumber, boolean isVerificationPhase) {
+			org.json.JSONObject warData, int roundNumber, boolean isVerificationPhase) {
 
 		org.json.JSONArray members = ourClanData.getJSONArray("members");
 
-		StringBuilder message = new StringBuilder();
-		message.append("## CWL Day ").append(roundNumber + 1).append(" - ");
+		// Calculate time remaining from war end time
+		String endTimeStr = warData.getString("endTime");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'").withZone(ZoneOffset.UTC);
+		Instant endInstant = Instant.from(formatter.parse(endTimeStr));
+		long millisRemaining = endInstant.toEpochMilli() - System.currentTimeMillis();
 
-		if (isVerificationPhase) {
+		StringBuilder message = new StringBuilder();
+		message.append("## CWL Day ").append(roundNumber + 1).append(" - Verpasste Angriffe - ");
+
+		if (isVerificationPhase || millisRemaining <= 0) {
 			message.append("**Krieg beendet.**\n\n");
 		} else {
-			message.append("Missed Attacks\n\n");
+			int secondsLeft = (int) (millisRemaining / 1000);
+			int minutesLeft = secondsLeft / 60;
+			int hoursLeft = minutesLeft / 60;
+
+			secondsLeft = secondsLeft % 60;
+			minutesLeft = minutesLeft % 60;
+
+			if (hoursLeft > 0) {
+				message.append("**").append(hoursLeft).append("h** ");
+			}
+			if (minutesLeft > 0) {
+				message.append("**").append(minutesLeft).append("m** ");
+			}
+			if (secondsLeft > 0) {
+				message.append("**").append(secondsLeft).append("s** ");
+			}
+			message.append("verbleibend\n\n");
 		}
 
 		boolean hasMissedAttacks = false;
@@ -1204,7 +1227,7 @@ public class ListeningEvent {
 				org.json.JSONObject opponentData = warData.getJSONObject("opponent");
 				org.json.JSONObject ourClanData = clanData.getString("tag").equals(clanTag) ? clanData : opponentData;
 
-				result = buildCWLDayMissedAttacksMessage(clan, ourClanData, roundNumber, true);
+				result = buildCWLDayMissedAttacksMessage(clan, ourClanData, warData, roundNumber, true);
 				updatedMessage = result.message + "\n*Daten nach 5min überprüft*";
 				shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
 			} else {
