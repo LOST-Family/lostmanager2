@@ -1717,38 +1717,42 @@ public class ListeningEvent {
 
 		// Get the event's configured clan
 		String eventClanTag = getClanTag();
-		
-		// Resolve sideclan -> main clan for member check and kickpoint assignment
-		String mainClanTag = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
-		String effectiveClanTag = (mainClanTag != null && !mainClanTag.isEmpty()) ? mainClanTag : eventClanTag;
-		
-		Clan eventClan = new Clan(effectiveClanTag);
 
-		// Check if the player is in the clan we're checking for this event
-		// Only add kickpoints if player is in the effective clan DB
+		// Resolve potential sideclan mappings (belongs_to and belongs_to_2)
+		String belongsTo1 = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
+		String belongsTo2 = DBUtil.getValueFromSQL("SELECT belongs_to_2 FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
+
+		// Candidate clans in priority order: eventClanTag, belongsTo1, belongsTo2
+		String chosenClanTag = null;
+
 		Clan playerClanDB = player.getClanDB();
-		boolean playerIsInEventClan = false;
-
 		if (playerClanDB != null) {
-			playerIsInEventClan = playerClanDB.getTag().equals(effectiveClanTag);
+			String playerClanTag = playerClanDB.getTag();
+
+			if (playerClanTag.equals(eventClanTag)) {
+				chosenClanTag = eventClanTag;
+			} else if (belongsTo1 != null && !belongsTo1.isEmpty() && playerClanTag.equals(belongsTo1)) {
+				chosenClanTag = belongsTo1;
+			} else if (belongsTo2 != null && !belongsTo2.isEmpty() && playerClanTag.equals(belongsTo2)) {
+				chosenClanTag = belongsTo2;
+			}
 		}
 
-		// If player is not in the effective clan DB, skip adding kickpoint
-		if (!playerIsInEventClan) {
+		// If we couldn't determine a matching clan for the player, skip adding kickpoint
+		if (chosenClanTag == null) {
 			System.out.println("Skipping kickpoint for player " + player.getTag() +
-					" - not in clan DB for effective clan " + effectiveClanTag + " (event clan: " + eventClanTag + ")");
+					" - player not found in belongs_to, belongs_to_2, or event clan DB (event clan: " + eventClanTag + ")");
 			return;
 		}
 
-		// Verify the effective clan exists in DB before proceeding
-		if (!eventClan.ExistsDB()) {
+		Clan clan = new Clan(chosenClanTag);
+
+		// Verify the chosen clan exists in DB before proceeding
+		if (!clan.ExistsDB()) {
 			System.out.println("Cannot add kickpoint for player " + player.getTag() +
-					" - effective clan " + effectiveClanTag + " does not exist in DB");
+					" - chosen clan " + chosenClanTag + " does not exist in DB");
 			return;
 		}
-
-		// Use the effective clan for kickpoint assignment
-		Clan clan = eventClan;
 
 		if (clan != null) {
 			Integer daysExpire = clan.getDaysKickpointsExpireAfter();
