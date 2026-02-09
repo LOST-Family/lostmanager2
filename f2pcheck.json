@@ -747,7 +747,7 @@
                             {
                                 "type": "element",
                                 "name": "Flame Horse Deco",
-                                "id": "18000195"
+                                "id": "18000202"
                             }
                         ]
                     },
@@ -765,7 +765,7 @@
                                     {
                                         "type": "element",
                                         "name": "Flame Horse Deco",
-                                        "id": "18000195"
+                                        "id": "18000202"
                                     }
                                 ]
                             }
@@ -789,11 +789,10 @@
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
-                                "elements": [
-                                {
+                                "elements": [{
                                     "type": "element",
                                     "name": "Lucky Shoe",
-                                    "id": "18000194"
+                                    "id": "18000198"
                                 }]
                             }
                         }]
