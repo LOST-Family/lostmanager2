@@ -15,53 +15,55 @@ public class restart extends ListenerAdapter {
 		event.deferReply().queue();
 
 		new Thread(() -> {
-		String title = "Restart";
+			String title = "Restart";
 
-		User userexecuted = new User(event.getUser().getId());
-		if (!userexecuted.isAdmin()) {
-			event.getHook()
-					.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-							"Du musst Admin sein, um diesen Befehl ausführen zu können.", MessageUtil.EmbedType.ERROR))
-					.queue();
-			return;
-		}
+			User userexecuted = new User(event.getUser().getId());
+			if (!userexecuted.isAdmin()) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Du musst Admin sein, um diesen Befehl ausführen zu können.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
 
-		int activeTasks = lostmanager.Bot.activeVerificationTasks.get();
-		if (activeTasks > 0) {
-			event.getHook()
-					.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-							"Es laufen noch " + activeTasks
-									+ " Verifizierungs-Tasks (z.B. 5min Überprüfung nach CW).\nDer Bot wartet, bis diese abgeschlossen sind, bevor er neustartet.",
-							MessageUtil.EmbedType.WARNING))
-					.queue();
+			int activeTasks = lostmanager.Bot.activeVerificationTasks.get();
+			if (activeTasks > 0) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Es laufen noch " + activeTasks
+										+ " Verifizierungs-Tasks (z.B. 5min Überprüfung nach CW).\nDer Bot wartet, bis diese abgeschlossen sind, bevor er neustartet.",
+								MessageUtil.EmbedType.WARNING))
+						.queue();
 
-			long startTime = System.currentTimeMillis();
-			while (lostmanager.Bot.activeVerificationTasks.get() > 0) {
-				try {
-					Thread.sleep(10000); // Check every 10 seconds
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				// Safety timeout: 6 minutes
-				if (System.currentTimeMillis() - startTime > 360000) {
-					break;
+				long startTime = System.currentTimeMillis();
+				while (lostmanager.Bot.activeVerificationTasks.get() > 0) {
+					try {
+						Thread.sleep(10000); // Check every 10 seconds
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					// Safety timeout: 6 minutes
+					if (System.currentTimeMillis() - startTime > 360000) {
+						break;
+					}
 				}
 			}
-		}
 
-		event.getHook()
-				.editOriginalEmbeds(
-						MessageUtil.buildEmbed(title, "Der Bot wird neugestartet.", MessageUtil.EmbedType.SUCCESS))
-				.queue();
-		
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+			event.getHook()
+					.editOriginalEmbeds(
+							MessageUtil.buildEmbed(title, "Der Bot wird neugestartet.", MessageUtil.EmbedType.SUCCESS))
+					.queue();
 
-		 System.exit(0);
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			System.exit(0);
 
 		}, "RestartCommand-" + event.getUser().getId()).start();
 
-	}}
+	}
+}
