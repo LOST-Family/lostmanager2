@@ -26,6 +26,29 @@ public class restart extends ListenerAdapter {
 			return;
 		}
 
+		int activeTasks = lostmanager.Bot.activeVerificationTasks.get();
+		if (activeTasks > 0) {
+			event.getHook()
+					.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Es laufen noch " + activeTasks
+									+ " Verifizierungs-Tasks (z.B. 5min Überprüfung nach CW).\nDer Bot wartet, bis diese abgeschlossen sind, bevor er neustartet.",
+							MessageUtil.EmbedType.WARNING))
+					.queue();
+
+			long startTime = System.currentTimeMillis();
+			while (lostmanager.Bot.activeVerificationTasks.get() > 0) {
+				try {
+					Thread.sleep(10000); // Check every 10 seconds
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				// Safety timeout: 6 minutes
+				if (System.currentTimeMillis() - startTime > 360000) {
+					break;
+				}
+			}
+		}
+
 		event.getHook()
 				.editOriginalEmbeds(
 						MessageUtil.buildEmbed(title, "Der Bot wird neugestartet.", MessageUtil.EmbedType.SUCCESS))

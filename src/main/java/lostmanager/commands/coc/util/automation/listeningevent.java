@@ -209,7 +209,7 @@ public class listeningevent extends ListenerAdapter {
 		else if (type.equals("raid")
 				&& (actionTypeStr.equals("raidfails") || actionTypeStr.equals("raidfails_kickpoint"))) {
 			needsModal = true;
-			modalId = "listeningevent_raidfails_" + clantag + "_" + duration + "_" + channelId + "_"
+			modalId = "listeningevent_raidfails_" + clantag + "|" + duration + "|" + channelId + "|"
 					+ (kickpointReasonName != null ? kickpointReasonName : "");
 
 			TextInput capitalPeakInput = TextInput
@@ -659,74 +659,24 @@ public class listeningevent extends ListenerAdapter {
 
 			processEventCreation(event.getHook(), title, clantag, "cw", duration, actionTypeStr, channelId,
 					kickpointReasonName, null, requiredAttacks);
-		} else if (modalId.startsWith("listeningevent_raid_districts_")) {
-			event.deferReply().queue();
-			String title = "Listening Event";
-
-			// Parse:
-			// listeningevent_raid_districts_{clantag}_{duration}_{actiontype}_{channelid}_{kpreason}
-			String[] parts = modalId.split("_");
-			if (parts.length < 7) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			String clantag = parts[3];
-			long duration = Long.parseLong(parts[4]);
-			String actionTypeStr = parts[5];
-			String channelId = parts[6];
-			String kickpointReasonName = parts.length > 7 && !parts[7].isEmpty() ? parts[7] : null;
-
-			// Parse the three threshold values
-			String capitalPeakMaxStr = event.getValue("capital_peak_max").getAsString();
-			String otherDistrictsMaxStr = event.getValue("other_districts_max").getAsString();
-			String penalizeBothStr = event.getValue("penalize_both").getAsString();
-
-			int capitalPeakMax, otherDistrictsMax, penalizeBoth;
-			try {
-				capitalPeakMax = Integer.parseInt(capitalPeakMaxStr);
-				otherDistrictsMax = Integer.parseInt(otherDistrictsMaxStr);
-				penalizeBoth = Integer.parseInt(penalizeBothStr);
-
-				if (capitalPeakMax < 1 || otherDistrictsMax < 1) {
-					throw new NumberFormatException("Thresholds must be at least 1");
-				}
-
-				if (penalizeBoth != 1 && penalizeBoth != 2) {
-					throw new NumberFormatException("Penalize both must be 1 or 2");
-				}
-			} catch (NumberFormatException e) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Ungültige Werte eingegeben. Capital Peak und Distrikte müssen >= 1 sein, 'beide bestrafen' muss 1 oder 2 sein.",
-						MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			// Create map with thresholds
-			java.util.Map<String, Integer> raidDistrictThresholds = new java.util.HashMap<>();
-			raidDistrictThresholds.put("capital_peak_max", capitalPeakMax);
-			raidDistrictThresholds.put("other_districts_max", otherDistrictsMax);
-			raidDistrictThresholds.put("penalize_both", penalizeBoth);
-
-			processEventCreation(event.getHook(), title, clantag, "raid", duration, actionTypeStr, channelId,
-					kickpointReasonName, null, null, raidDistrictThresholds);
 		} else if (modalId.startsWith("listeningevent_raidfails_")) {
 			event.deferReply().queue();
 			String title = "Listening Event";
 
-			// Parse: listeningevent_raidfails_{clantag}_{duration}_{channelid}_{kpreason}
-			String[] parts = modalId.split("_");
-			if (parts.length < 5) {
+			// Parse: listeningevent_raidfails_{clantag}|{duration}|{channelid}|{kpreason}
+			// Remove the prefix, then split by pipe to safely handle underscores in reason names
+			String payload = modalId.substring("listeningevent_raidfails_".length());
+			String[] parts = payload.split("\\|");
+			if (parts.length < 3) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
 						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
 
-			String clantag = parts[2];
-			long duration = Long.parseLong(parts[3]);
-			String channelId = parts[4];
-			String kickpointReasonName = parts.length > 5 && !parts[5].isEmpty() ? parts[5] : null;
+			String clantag = parts[0];
+			long duration = Long.parseLong(parts[1]);
+			String channelId = parts[2];
+			String kickpointReasonName = parts.length > 3 && !parts[3].isEmpty() ? parts[3] : null;
 
 			// Parse the threshold values (penalize_both is only present in kickpoint mode)
 			String capitalPeakMaxStr = event.getValue("capital_peak_max").getAsString();
@@ -905,7 +855,7 @@ public class listeningevent extends ListenerAdapter {
 			String input = event.getFocusedOption().getValue();
 
 			if (focused.equals("clan")) {
-				List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
+				List<Command.Choice> choices = DBManager.getClansAutocompleteWithSideclans(input);
 				event.replyChoices(choices).queue(_ -> {
 				}, _ -> {
 				});

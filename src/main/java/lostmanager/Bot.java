@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.genai.Client;
 
@@ -78,7 +79,10 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 public class Bot extends ListenerAdapter {
 
 	private static ScheduledExecutorService schedulernames = Executors.newSingleThreadScheduledExecutor();
-	private static ScheduledExecutorService schedulertasks = Executors.newSingleThreadScheduledExecutor();
+	private static ScheduledExecutorService schedulertasks = Executors.newScheduledThreadPool(10);
+	public static AtomicInteger activeVerificationTasks = new AtomicInteger(0);
+	public static final java.net.http.HttpClient httpClient = java.net.http.HttpClient.newBuilder()
+			.followRedirects(java.net.http.HttpClient.Redirect.ALWAYS).build();
 
 	private static JDA jda;
 	public static String VERSION;
@@ -772,7 +776,8 @@ public class Bot extends ListenerAdapter {
 							continue;
 						}
 
-						long timeUntilFire = timestamp - currentTime;
+						// Use fresh current time for calculation to avoid processing delays
+						long timeUntilFire = timestamp - System.currentTimeMillis();
 
 						// If event is within threshold and not yet scheduled, schedule it
 						if (timeUntilFire <= schedulingThreshold && timeUntilFire > 0) {
@@ -791,7 +796,20 @@ public class Bot extends ListenerAdapter {
 									// Keep in set even on error to prevent retry loops
 								}
 							}, timeUntilFire, TimeUnit.MILLISECONDS);
-						} else if (timeUntilFire <= 0) {
+						} else if (timeUntilFire <= 0 && timeUntilFire > -5 * 60 * 1000) {
+							// Event is overdue but very recently (e.g. within 5 mins)
+							// This can happen if the polling loop was slow or the bot just started
+							System.out.println("Firing recently overdue event " + id + " immediately");
+							scheduledEvents.add(id);
+							scheduledEventTimestamps.put(id, timestamp);
+							schedulertasks.execute(() -> {
+								try {
+									executeEventWithRetry(le, id, 3);
+								} catch (Exception e) {
+									System.err.println("Error executing overdue event " + id + ": " + e.getMessage());
+								}
+							});
+						} else if (timeUntilFire <= -5 * 60 * 1000) {
 							// Event is overdue - skip it instead of firing to prevent duplicate triggers
 							// after restart
 							// Mark as scheduled so we don't keep trying to process it

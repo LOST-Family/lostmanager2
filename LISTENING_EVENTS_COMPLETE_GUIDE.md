@@ -324,12 +324,12 @@ Result:
 
 ## Action Type Compatibility Matrix
 
-| Listening Type | infomessage | kickpoint | custommessage | filler | cwdonator |
-|---------------|-------------|-----------|---------------|--------|-----------|
-| **CS** (Clan Games) | ✅ | ✅ | ✅ | ❌ | ❌ |
-| **CW** (Clan War) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **CWLDAY** (CWL Day) | ✅ | ✅ | ✅ | ❌ | ❌ |
-| **RAID** (Raid Weekend) | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Listening Type | infomessage | kickpoint | custommessage | filler | cwdonator | raidfails |
+|---------------|-------------|-----------|---------------|--------|-----------|----------|
+| **CS** (Clan Games) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| **CW** (Clan War) | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| **CWLDAY** (CWL Day) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| **RAID** (Raid Weekend) | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
 
 ## Duration Timing Guide
 

@@ -8,7 +8,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.PreparedStatement;
@@ -630,14 +629,13 @@ public class Player {
 	 * @return HttpResponse or null if all retries failed
 	 */
 	private HttpResponse<String> performHttpRequestWithRetry(String url, int maxRetries) {
-		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
 				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
 
 		int attempt = 0;
 		while (attempt <= maxRetries) {
 			try {
-				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				HttpResponse<String> response = Bot.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
 				// If successful (200) or client error (4xx), return immediately (no retry for
 				// client errors)

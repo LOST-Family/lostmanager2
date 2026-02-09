@@ -709,6 +709,7 @@ public class ListeningEvent {
 
 				// Schedule 5-minute delayed verification using Bot's scheduler
 				// Using a single-use scheduler that shuts down after execution
+				lostmanager.Bot.activeVerificationTasks.incrementAndGet();
 				ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 				scheduler.schedule(() -> {
 					try {
@@ -718,6 +719,7 @@ public class ListeningEvent {
 						System.err.println("Error in delayed CW verification: " + e.getMessage());
 						e.printStackTrace();
 					} finally {
+						lostmanager.Bot.activeVerificationTasks.decrementAndGet();
 						scheduler.shutdown();
 					}
 				}, 5, TimeUnit.MINUTES);
@@ -1083,6 +1085,7 @@ public class ListeningEvent {
 					final ListeningEvent thisEvent = this;
 					final String originalMessage = result.message;
 
+					lostmanager.Bot.activeVerificationTasks.incrementAndGet();
 					ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 					scheduler.schedule(() -> {
 						try {
@@ -1092,6 +1095,7 @@ public class ListeningEvent {
 							System.err.println("Error in delayed CWL day verification: " + e.getMessage());
 							e.printStackTrace();
 						} finally {
+							lostmanager.Bot.activeVerificationTasks.decrementAndGet();
 							scheduler.shutdown();
 						}
 					}, 5, TimeUnit.MINUTES);
@@ -1129,12 +1133,21 @@ public class ListeningEvent {
 		long millisRemaining = endInstant.toEpochMilli() - System.currentTimeMillis();
 
 		StringBuilder message = new StringBuilder();
-		message.append("## CWL Day ").append(roundNumber + 1).append(" - Verpasste Angriffe - ");
+		message.append("## CWL Day ").append(roundNumber + 1);
 
 		if (isVerificationPhase || millisRemaining <= 0) {
-			message.append("**Krieg beendet.**\n\n");
+			message.append(" - Verpasste Angriffe - **Krieg beendet.**\n\n");
 		} else {
-			int secondsLeft = (int) (millisRemaining / 1000);
+			message.append(" - Offene Hits - ");
+			
+			// Use configured duration for a cleaner display (e.g., "6h" instead of "5h 58m 40s")
+			long durationToShow = getDurationUntilEnd();
+			if (durationToShow <= 0) {
+				// Fallback to actual remaining time if duration is not available or -1
+				durationToShow = millisRemaining;
+			}
+			
+			int secondsLeft = (int) (durationToShow / 1000);
 			int minutesLeft = secondsLeft / 60;
 			int hoursLeft = minutesLeft / 60;
 
@@ -1147,10 +1160,10 @@ public class ListeningEvent {
 			if (minutesLeft > 0) {
 				message.append("**").append(minutesLeft).append("m** ");
 			}
-			if (secondsLeft > 0) {
+			if (secondsLeft > 0 && hoursLeft == 0) {
 				message.append("**").append(secondsLeft).append("s** ");
 			}
-			message.append("verbleibend\n\n");
+			message.append(" verbleibend\n\n");
 		}
 
 		boolean hasMissedAttacks = false;
@@ -1612,11 +1625,13 @@ public class ListeningEvent {
 						message.append("**Tatsächliche Angriffe:** ").append(totalAttacks).append("\n\n");
 
 						if (!shouldAddKickpoints) {
-							// Info mode - show top attackers (always penalize same players)
-							message.append("**Spieler mit den meisten Angriffen (").append(maxAttacks).append("):**\n");
-							for (String tag : topAttackers) {
+							// Info mode - show all attackers on the over-attacked district
+							message.append("**Alle Angreifer auf diesem Distrikt:**\n");
+							for (java.util.Map.Entry<String, Integer> entry : attacksByPlayer.entrySet()) {
+								String tag = entry.getKey();
+								int playerAttacks = entry.getValue();
 								String name = playerNames.get(tag);
-								message.append("- ").append(name);
+								message.append("- ").append(name).append(": ").append(playerAttacks).append(" Angriffe");
 
 								// Try to find discord user
 								try {

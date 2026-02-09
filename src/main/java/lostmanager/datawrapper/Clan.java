@@ -2,7 +2,6 @@ package lostmanager.datawrapper;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.PreparedStatement;
@@ -55,6 +54,7 @@ public class Clan {
 	private Boolean raidactive;
 	private ArrayList<Player> raidmembers;
 	private Long RaidEndTimeMillis;
+	private JSONObject raidJsonCache;
 
 	// CWL
 	private Boolean cwlactive;
@@ -552,7 +552,7 @@ public class Clan {
 				JSONObject member = members.getJSONObject(i);
 				String tag = member.getString("tag");
 				String name = member.getString("name");
-				int attacks = member.optInt("attackCount", member.optInt("attacks", 0));
+				int attacks = member.optInt("attacks", member.optInt("attackCount", 0));
 				int attackLimit = member.optInt("attackLimit", 6);
 				int bonusAttackLimit = member.optInt("bonusAttackLimit", 0);
 				int capitalResourcesLooted = member.optInt("capitalResourcesLooted", 0);
@@ -582,14 +582,13 @@ public class Clan {
 	 * @return HttpResponse or null if all retries failed
 	 */
 	private HttpResponse<String> performHttpRequestWithRetry(String url, int maxRetries) {
-		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
 				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
 
 		int attempt = 0;
 		while (attempt <= maxRetries) {
 			try {
-				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				HttpResponse<String> response = Bot.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
 				// If successful (200) or client error (4xx), return immediately (no retry for
 				// client errors except 429)
@@ -809,6 +808,10 @@ public class Clan {
 	}
 
 	private JSONObject getRaidJson() {
+		if (raidJsonCache != null) {
+			return raidJsonCache;
+		}
+
 		String json;
 
 		// Check if clan_tag is null before encoding
@@ -841,12 +844,12 @@ public class Clan {
 		}
 
 		if (json != null) {
-			JSONObject jsonObject = new JSONObject(json);
-			return jsonObject;
+			raidJsonCache = new JSONObject(json);
 		} else {
 			// Return a default JSONObject indicating no active raid
-			return new JSONObject("{\"items\":[{\"state\":\"ended\"}]}");
+			raidJsonCache = new JSONObject("{\"items\":[{\"state\":\"ended\"}]}");
 		}
+		return raidJsonCache;
 	}
 
 	public JSONObject getRaidJsonFull() {
@@ -859,14 +862,12 @@ public class Clan {
 		String encodedTag = java.net.URLEncoder.encode(warTag, java.nio.charset.StandardCharsets.UTF_8);
 		String url = "https://api.clashofclans.com/v1/clanwarleagues/wars/" + encodedTag;
 
-		HttpClient client = HttpClient.newHttpClient();
-
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
 				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
 
 		HttpResponse<String> response = null;
 		try {
-			response = client.send(request, HttpResponse.BodyHandlers.ofString());
+			response = Bot.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 			json = null;

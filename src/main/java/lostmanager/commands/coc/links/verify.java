@@ -39,7 +39,7 @@ public class verify extends ListenerAdapter {
 						MessageUtil.buildEmbed(title, "Beide Parameter sind erforderlich!", MessageUtil.EmbedType.ERROR))
 						.queue(sentMessage -> {
 							scheduler.schedule(() -> {
-								sentMessage.delete().queue();
+								sentMessage.delete().queue(null, e -> {});
 							}, 120, TimeUnit.SECONDS);
 						});
 				return;
@@ -85,7 +85,7 @@ public class verify extends ListenerAdapter {
 								.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS))
 								.queue(sentMessage -> {
 									scheduler.schedule(() -> {
-										sentMessage.delete().queue();
+										sentMessage.delete().queue(null, e -> {});
 									}, 120, TimeUnit.SECONDS);
 								});
 					} else {
@@ -93,7 +93,7 @@ public class verify extends ListenerAdapter {
 						event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.ERROR))
 								.queue(sentMessage -> {
 									scheduler.schedule(() -> {
-										sentMessage.delete().queue();
+										sentMessage.delete().queue(null, e -> {});
 									}, 120, TimeUnit.SECONDS);
 								});
 					}
@@ -105,7 +105,7 @@ public class verify extends ListenerAdapter {
 					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.ERROR))
 							.queue(sentMessage -> {
 								scheduler.schedule(() -> {
-									sentMessage.delete().queue();
+									sentMessage.delete().queue(null, e -> {});
 								}, 120, TimeUnit.SECONDS);
 							});
 				}
@@ -114,7 +114,7 @@ public class verify extends ListenerAdapter {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.ERROR))
 						.queue(sentMessage -> {
 							scheduler.schedule(() -> {
-								sentMessage.delete().queue();
+								sentMessage.delete().queue(null, e -> {});
 							}, 120, TimeUnit.SECONDS);
 						});
 			}

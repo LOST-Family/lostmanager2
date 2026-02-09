@@ -23,8 +23,9 @@ public class DBManager {
 		List<Command.Choice> choices = new ArrayList<>();
 
 		// Check if the clan is a sideclan
-		String mainClanTag = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class, clantag);
-		
+		String mainClanTag = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class,
+				clantag);
+
 		// If it is a sideclan, use the main clan's tag for kickpoint reasons
 		String queryClanTag = (mainClanTag != null && !mainClanTag.isEmpty()) ? mainClanTag : clantag;
 
@@ -71,7 +72,7 @@ public class DBManager {
 	}
 
 	@SuppressWarnings("null")
-	public static List<Command.Choice> getClansAutocomplete(String input) {
+	public static List<Command.Choice> getClansAutocompleteWithSideclans(String input) {
 		List<Command.Choice> choices = new ArrayList<>();
 
 		// 1. Get main clans first
@@ -86,7 +87,8 @@ public class DBManager {
 					if (display.toLowerCase().contains(input.toLowerCase())
 							|| tag.toLowerCase().startsWith(input.toLowerCase())) {
 						choices.add(new Command.Choice(display, tag));
-						if (choices.size() >= 25) return choices;
+						if (choices.size() >= 25)
+							return choices;
 					}
 				}
 			}
@@ -106,7 +108,36 @@ public class DBManager {
 					if (display.toLowerCase().contains(input.toLowerCase())
 							|| tag.toLowerCase().startsWith(input.toLowerCase())) {
 						choices.add(new Command.Choice(display, tag));
-						if (choices.size() >= 25) return choices;
+						if (choices.size() >= 25)
+							return choices;
+					}
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return choices;
+	}
+
+	@SuppressWarnings("null")
+	public static List<Command.Choice> getClansAutocomplete(String input) {
+		List<Command.Choice> choices = new ArrayList<>();
+
+		// 1. Get main clans first
+		String mainClansSql = "SELECT name, tag FROM clans ORDER BY index ASC";
+		try (PreparedStatement pstmt = Connection.getConnection().prepareStatement(mainClansSql)) {
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					String tag = rs.getString("tag");
+					String name = rs.getString("name");
+					String display = name + " (" + tag + ")";
+
+					if (display.toLowerCase().contains(input.toLowerCase())
+							|| tag.toLowerCase().startsWith(input.toLowerCase())) {
+						choices.add(new Command.Choice(display, tag));
+						if (choices.size() >= 25)
+							return choices;
 					}
 				}
 			}
