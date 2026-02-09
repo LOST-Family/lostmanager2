@@ -289,7 +289,7 @@ public class missinghits extends ListenerAdapter {
                         if (tagsMatch(warClan.getString("tag"), clan.getTag())
                                 || tagsMatch(warOpponent.getString("tag"), clan.getTag())) {
                             String state = warData.getString("state");
-                            if (state.equals("inWar") || state.equals("warEnded")) {
+                            if (state.equals("inWar")) {
                                 JSONObject ourWarPart = tagsMatch(warClan.getString("tag"), clan.getTag()) ? warClan
                                         : warOpponent;
                                 JSONArray members = ourWarPart.getJSONArray("members");
@@ -297,7 +297,7 @@ public class missinghits extends ListenerAdapter {
                                     JSONObject m = members.getJSONObject(i);
                                     if (tagsMatch(m.getString("tag"), player.getTag())) {
                                         int attacks = m.has("attacks") ? m.getJSONArray("attacks").length() : 0;
-                                        if (attacks < 1 && state.equals("inWar")) {
+                                        if (attacks < 1) {
                                             String endTimeStr = warData.optString("endTime", "");
                                             long cwlDayEndTime = 0;
                                             if (!endTimeStr.isEmpty()) {

@@ -1065,7 +1065,7 @@ public class ListeningEvent {
 
 			// Build initial message with missed attacks data
 			CWMissedAttacksResult result = buildCWLDayMissedAttacksMessage(clan, ourClanData,
-					targetRound, false);
+					cachedWarData, targetRound, false);
 
 			// Determine if this is an end-of-war event (duration = 0)
 			boolean isEndOfWarEvent = getDurationUntilEnd() <= 0;
@@ -1112,22 +1112,45 @@ public class ListeningEvent {
 	 * 
 	 * @param clan                The clan
 	 * @param ourClanData         The JSON object containing our clan's war data
+	 * @param warData             The full war JSON data (contains endTime)
 	 * @param roundNumber         The round number (0-indexed)
 	 * @param isVerificationPhase Whether this is the 5-minute verification phase
 	 * @return CWMissedAttacksResult containing the message and list of players
 	 */
 	private CWMissedAttacksResult buildCWLDayMissedAttacksMessage(Clan clan, org.json.JSONObject ourClanData,
-			int roundNumber, boolean isVerificationPhase) {
+			org.json.JSONObject warData, int roundNumber, boolean isVerificationPhase) {
 
 		org.json.JSONArray members = ourClanData.getJSONArray("members");
 
-		StringBuilder message = new StringBuilder();
-		message.append("## CWL Day ").append(roundNumber + 1).append(" - ");
+		// Calculate time remaining from war end time
+		String endTimeStr = warData.getString("endTime");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'").withZone(ZoneOffset.UTC);
+		Instant endInstant = Instant.from(formatter.parse(endTimeStr));
+		long millisRemaining = endInstant.toEpochMilli() - System.currentTimeMillis();
 
-		if (isVerificationPhase) {
+		StringBuilder message = new StringBuilder();
+		message.append("## CWL Day ").append(roundNumber + 1).append(" - Verpasste Angriffe - ");
+
+		if (isVerificationPhase || millisRemaining <= 0) {
 			message.append("**Krieg beendet.**\n\n");
 		} else {
-			message.append("Missed Attacks\n\n");
+			int secondsLeft = (int) (millisRemaining / 1000);
+			int minutesLeft = secondsLeft / 60;
+			int hoursLeft = minutesLeft / 60;
+
+			secondsLeft = secondsLeft % 60;
+			minutesLeft = minutesLeft % 60;
+
+			if (hoursLeft > 0) {
+				message.append("**").append(hoursLeft).append("h** ");
+			}
+			if (minutesLeft > 0) {
+				message.append("**").append(minutesLeft).append("m** ");
+			}
+			if (secondsLeft > 0) {
+				message.append("**").append(secondsLeft).append("s** ");
+			}
+			message.append("verbleibend\n\n");
 		}
 
 		boolean hasMissedAttacks = false;
@@ -1204,7 +1227,7 @@ public class ListeningEvent {
 				org.json.JSONObject opponentData = warData.getJSONObject("opponent");
 				org.json.JSONObject ourClanData = clanData.getString("tag").equals(clanTag) ? clanData : opponentData;
 
-				result = buildCWLDayMissedAttacksMessage(clan, ourClanData, roundNumber, true);
+				result = buildCWLDayMissedAttacksMessage(clan, ourClanData, warData, roundNumber, true);
 				updatedMessage = result.message + "\n*Daten nach 5min überprüft*";
 				shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
 			} else {
@@ -1694,38 +1717,42 @@ public class ListeningEvent {
 
 		// Get the event's configured clan
 		String eventClanTag = getClanTag();
-		
-		// Resolve sideclan -> main clan for member check and kickpoint assignment
-		String mainClanTag = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
-		String effectiveClanTag = (mainClanTag != null && !mainClanTag.isEmpty()) ? mainClanTag : eventClanTag;
-		
-		Clan eventClan = new Clan(effectiveClanTag);
 
-		// Check if the player is in the clan we're checking for this event
-		// Only add kickpoints if player is in the effective clan DB
+		// Resolve potential sideclan mappings (belongs_to and belongs_to_2)
+		String belongsTo1 = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
+		String belongsTo2 = DBUtil.getValueFromSQL("SELECT belongs_to_2 FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
+
+		// Candidate clans in priority order: eventClanTag, belongsTo1, belongsTo2
+		String chosenClanTag = null;
+
 		Clan playerClanDB = player.getClanDB();
-		boolean playerIsInEventClan = false;
-
 		if (playerClanDB != null) {
-			playerIsInEventClan = playerClanDB.getTag().equals(effectiveClanTag);
+			String playerClanTag = playerClanDB.getTag();
+
+			if (playerClanTag.equals(eventClanTag)) {
+				chosenClanTag = eventClanTag;
+			} else if (belongsTo1 != null && !belongsTo1.isEmpty() && playerClanTag.equals(belongsTo1)) {
+				chosenClanTag = belongsTo1;
+			} else if (belongsTo2 != null && !belongsTo2.isEmpty() && playerClanTag.equals(belongsTo2)) {
+				chosenClanTag = belongsTo2;
+			}
 		}
 
-		// If player is not in the effective clan DB, skip adding kickpoint
-		if (!playerIsInEventClan) {
+		// If we couldn't determine a matching clan for the player, skip adding kickpoint
+		if (chosenClanTag == null) {
 			System.out.println("Skipping kickpoint for player " + player.getTag() +
-					" - not in clan DB for effective clan " + effectiveClanTag + " (event clan: " + eventClanTag + ")");
+					" - player not found in belongs_to, belongs_to_2, or event clan DB (event clan: " + eventClanTag + ")");
 			return;
 		}
 
-		// Verify the effective clan exists in DB before proceeding
-		if (!eventClan.ExistsDB()) {
+		Clan clan = new Clan(chosenClanTag);
+
+		// Verify the chosen clan exists in DB before proceeding
+		if (!clan.ExistsDB()) {
 			System.out.println("Cannot add kickpoint for player " + player.getTag() +
-					" - effective clan " + effectiveClanTag + " does not exist in DB");
+					" - chosen clan " + chosenClanTag + " does not exist in DB");
 			return;
 		}
-
-		// Use the effective clan for kickpoint assignment
-		Clan clan = eventClan;
 
 		if (clan != null) {
 			Integer daysExpire = clan.getDaysKickpointsExpireAfter();

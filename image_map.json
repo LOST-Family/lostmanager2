@@ -2734,21 +2734,6 @@
     "icon": "/home-base/decorations/192.png",
     "index": 122
   },
-  "18000193": {
-    "name": "Handsome Scroll (Feb. 2026)",
-    "icon": "/home-base/decorations/193.png",
-    "index": 129
-  },
-  "18000194": {
-    "name": "Lucky Shoe (Feb. 2026)",
-    "icon": "/home-base/decorations/194.png",
-    "index": 130
-  },
-  "18000195": {
-    "name": "Flame Horse (Feb. 2026)",
-    "icon": "/home-base/decorations/195.png",
-    "index": 131
-  },
   "18000196": {
     "name": "Smokey Stove (Dec. 2025)",
     "icon": "/home-base/decorations/196.png",
@@ -2759,6 +2744,11 @@
     "icon": "/home-base/decorations/197.png",
     "index": 128
   },
+  "18000198": {
+    "name": "Lucky Shoe (Feb. 2026)",
+    "icon": "/home-base/decorations/198.png",
+    "index": 130
+  },
   "18000199": {
     "name": "Brawny Battleaxe (Dec. 2025)",
     "icon": "/home-base/decorations/199.png",
@@ -2768,6 +2758,16 @@
     "name": "Crafted Statue (Nov. 2025)",
     "icon": "/home-base/decorations/200.png",
     "index": 123
+  },
+  "18000201": {
+    "name": "Handsome Scroll (Feb. 2026)",
+    "icon": "/home-base/decorations/201.png",
+    "index": 129
+  },
+  "18000202": {
+    "name": "Flame Horse (Feb. 2026)",
+    "icon": "/home-base/decorations/202.png",
+    "index": 131
   },
   "18000203": {
     "name": "Hungry Hound (Dec. 2025)",
