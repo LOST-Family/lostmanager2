@@ -1,1327 +1,1327 @@
 {
- "52000001": {
+    "52000001": {
     "name": "Gladiator King (Apr. 2019)",
     "icon": "/home-base/skins/1.png",
     "full": "",
-    "index": "0"
+    "index": 0
   },
   "52000004": {
     "name": "P.E.K.K.A King (Jun. 2019)",
     "icon": "/home-base/skins/4.png",
     "full": "",
-    "index": "2"
+    "index": 2
   },
   "52000005": {
     "name": "Skeleton King (Oct. 2019)",
     "icon": "/home-base/skins/5.png",
     "full": "",
-    "index": "6"
+    "index": 6
   },
   "52000006": {
     "name": "Jolly King (Dec. 2019)",
     "icon": "/home-base/skins/6.png",
     "full": "",
-    "index": "8"
+    "index": 8
   },
   "52000007": {
     "name": "Primal King (Feb. 2020)",
     "icon": "/home-base/skins/7.png",
     "full": "",
-    "index": "12"
+    "index": 12
   },
   "52000008": {
     "name": "Clockwork King (May 2020)",
     "icon": "/home-base/skins/8.png",
     "full": "",
-    "index": "15"
+    "index": 15
   },
   "52000009": {
     "name": "Party King (Aug. 2020)",
     "icon": "/home-base/skins/9.png",
     "full": "",
-    "index": "18"
+    "index": 18
   },
   "52000010": {
     "name": "Champion King (Oct. 2020 WM)",
     "icon": "/home-base/skins/10.png",
     "full": "",
-    "index": "21"
+    "index": 21
   },
   "52000011": {
     "name": "Pirate King (Nov. 2020)",
     "icon": "/home-base/skins/11.png",
     "full": "",
-    "index": "22"
+    "index": 22
   },
   "52000012": {
     "name": "Gladiator Queen (May 2019)",
     "icon": "/home-base/skins/12.png",
     "full": "",
-    "index": "1"
+    "index": 1
   },
   "52000013": {
     "name": "Valkyrie Queen (Jul. 2019)",
     "icon": "/home-base/skins/13.png",
     "full": "",
-    "index": "3"
+    "index": 3
   },
   "52000014": {
     "name": "Autumn Queen (Sep. 2019)",
     "icon": "/home-base/skins/14.png",
     "full": "",
-    "index": "5"
+    "index": 5
   },
   "52000015": {
     "name": "Ice Queen (Nov. 2019)",
     "icon": "/home-base/skins/15.png",
     "full": "",
-    "index": "7"
+    "index": 7
   },
   "52000016": {
     "name": "Warrior Queen (Jan. 2020)",
     "icon": "/home-base/skins/16.png",
     "full": "",
-    "index": "10"
+    "index": 10
   },
   "52000017": {
     "name": "Primal Queen (Mar. 2020)",
     "icon": "/home-base/skins/17.png",
     "full": "",
-    "index": "13"
+    "index": 13
   },
   "52000018": {
     "name": "Clockwork Queen (Jun. 2020)",
     "icon": "/home-base/skins/18.png",
     "full": "",
-    "index": "16"
+    "index": 16
   },
   "52000019": {
     "name": "Pirate Queen (Sep. 2020)",
     "icon": "/home-base/skins/19.png",
     "full": "",
-    "index": "19"
+    "index": 19
   },
   "52000020": {
     "name": "Party Warden (Aug. 2019)",
     "icon": "/home-base/skins/20.png",
     "full": "",
-    "index": "4"
+    "index": 4
   },
   "52000021": {
     "name": "Primal Warden (Jan. 2020)",
     "icon": "/home-base/skins/21.png",
     "full": "",
-    "index": "9"
+    "index": 9
   },
   "52000022": {
     "name": "Clockwork Warden (Apr. 2020)",
     "icon": "/home-base/skins/22.png",
     "full": "",
-    "index": "14"
+    "index": 14
   },
   "52000023": {
     "name": "Gladiator Warden (Jul. 2020)",
     "icon": "/home-base/skins/23.png",
     "full": "",
-    "index": "17"
+    "index": 17
   },
   "52000024": {
     "name": "Pirate Warden (Oct. 2020)",
     "icon": "/home-base/skins/24.png",
     "full": "",
-    "index": "20"
+    "index": 20
   },
   "52000025": {
     "name": "Warden of the North (Jan. 2021)",
     "icon": "/home-base/skins/25.png",
     "full": "",
-    "index": "23"
+    "index": 23
   },
   "52000026": {
     "name": "Jungle Warden (May 2021)",
     "icon": "/home-base/skins/26.png",
     "full": "",
-    "index": "29"
+    "index": 29
   },
   "52000027": {
     "name": "Warden Master (Oct. 2021)",
     "icon": "/home-base/skins/27.png",
     "full": "",
-    "index": "36"
+    "index": 36
   },
   "52000029": {
     "name": "Winter Champion (Dec. 2020)",
     "icon": "/home-base/skins/29.png",
     "full": "",
-    "index": "22"
+    "index": 22
   },
   "52000030": {
     "name": "Rogue Champion (Apr. 2021)",
     "icon": "/home-base/skins/30.png",
     "full": "",
-    "index": "27"
+    "index": 27
   },
   "52000031": {
     "name": "Jungle Champion (Apr. 2021)",
     "icon": "/home-base/skins/31.png",
     "full": "",
-    "index": "28"
+    "index": 28
   },
   "52000032": {
     "name": "Gladiator Champion (Sep. 2021)",
     "icon": "/home-base/skins/32.png",
     "full": "",
-    "index": "35"
+    "index": 35
   },
   "52000033": {
     "name": "Shadow Champion (Mar. 2022)",
     "icon": "/home-base/skins/33.png",
     "full": "",
-    "index": "44"
+    "index": 44
   },
   "52000034": {
     "name": "Primal Champion (Mar. 2022)",
     "icon": "/home-base/skins/34.png",
     "full": "",
-    "index": "45"
+    "index": 45
   },
   "52000035": {
     "name": "Summer Champion (Jun. 2022)",
     "icon": "/home-base/skins/35.png",
     "full": "",
-    "index": "51"
+    "index": 51
   },
   "52000036": {
     "name": "Pixel Champion (Aug. 2022)",
     "icon": "/home-base/skins/36.png",
     "full": "",
-    "index": "57"
+    "index": 57
   },
   "52000037": {
     "name": "Party Champion (Aug. 2022)",
     "icon": "/home-base/skins/37.png",
     "full": "",
-    "index": "53"
+    "index": 53
   },
   "52000038": {
     "name": "Magic Champion (Oct. 2022)",
     "icon": "/home-base/skins/38.png",
     "full": "",
-    "index": "64"
+    "index": 64
   },
   "52000039": {
     "name": "Pirate Champion (Nov. 2022)",
     "icon": "/home-base/skins/39.png",
     "full": "",
-    "index": "65"
+    "index": 65
   },
   "52000040": {
     "name": "Jolly Champion (Dec. 2022)",
     "icon": "/home-base/skins/40.png",
     "full": "",
-    "index": "67"
+    "index": 67
   },
   "52000041": {
     "name": "Warrior Champion (Jan. 2023)",
     "icon": "/home-base/skins/41.png",
     "full": "",
-    "index": "68"
+    "index": 68
   },
   "52000042": {
     "name": "Painter Champion (Mar. 2023)",
     "icon": "/home-base/skins/42.png",
     "full": "",
-    "index": "75"
+    "index": 75
   },
   "52000043": {
     "name": "Dark Ages Champion (May 2023)",
     "icon": "/home-base/skins/43.png",
     "full": "",
-    "index": "79"
+    "index": 79
   },
   "52000044": {
     "name": "Ghost Champion (Oct. 2023)",
     "icon": "/home-base/skins/44.png",
     "full": "",
-    "index": "94"
+    "index": 94
   },
   "52000045": {
     "name": "Warrior King (Feb. 2021)",
     "icon": "/home-base/skins/45.png",
     "full": "",
-    "index": "25"
+    "index": 25
   },
   "52000046": {
     "name": "Rogue King (Mar. 2021)",
     "icon": "/home-base/skins/46.png",
     "full": "",
-    "index": "26"
+    "index": 26
   },
   "52000047": {
     "name": "Fierce King (Jun. 2021)",
     "icon": "/home-base/skins/47.png",
     "full": "",
-    "index": "31"
+    "index": 31
   },
   "52000048": {
     "name": "Jungle King (Jul. 2021)",
     "icon": "/home-base/skins/48.png",
     "full": "",
-    "index": "32"
+    "index": 32
   },
   "52000049": {
     "name": "Beat King (Aug. 2021)",
     "icon": "/home-base/skins/49.png",
     "full": "",
-    "index": "34"
+    "index": 34
   },
   "52000050": {
     "name": "Golem King (Nov. 2021)",
     "icon": "/home-base/skins/50.png",
     "full": "",
-    "index": "37"
+    "index": 37
   },
   "52000051": {
     "name": "Ice King (Dec. 2021)",
     "icon": "/home-base/skins/51.png",
     "full": "",
-    "index": "40"
+    "index": 40
   },
   "52000052": {
     "name": "Lunar King (Jan. 2022)",
     "icon": "/home-base/skins/52.png",
     "full": "",
-    "index": "42"
+    "index": 42
   },
   "52000053": {
     "name": "Shadow King (Apr. 2022)",
     "icon": "/home-base/skins/53.png",
     "full": "",
-    "index": "46"
+    "index": 46
   },
   "52000054": {
     "name": "Summer King (Jun. 2022)",
     "icon": "/home-base/skins/54.png",
     "full": "",
-    "index": "50"
+    "index": 50
   },
   "52000055": {
     "name": "Pixel King (Aug. 2022)",
     "icon": "/home-base/skins/55.png",
     "full": "",
-    "index": "54"
+    "index": 54
   },
   "52000056": {
     "name": "Clash Fest King (Sep. 2022)",
     "icon": "/home-base/skins/56.png",
     "full": "",
-    "index": "58"
+    "index": 58
   },
   "52000057": {
     "name": "Rogue Queen (Feb. 2021)",
     "icon": "/home-base/skins/57.png",
     "full": "",
-    "index": "24"
+    "index": 24
   },
   "52000058": {
     "name": "Jungle Queen (Jun. 2021)",
     "icon": "/home-base/skins/58.png",
     "full": "",
-    "index": "30"
+    "index": 30
   },
   "52000059": {
     "name": "Party Queen (Aug. 2021)",
     "icon": "/home-base/skins/59.png",
     "full": "",
-    "index": "33"
+    "index": 33
   },
   "52000060": {
     "name": "Champion Queen (Nov. 2021 WM)",
     "icon": "/home-base/skins/60.png",
     "full": "",
-    "index": "38"
+    "index": 38
   },
   "52000061": {
     "name": "Shadow Queen (Jan. 2022)",
     "icon": "/home-base/skins/61.png",
     "full": "",
-    "index": "41"
+    "index": 41
   },
   "52000062": {
     "name": "Miner Queen (May 2022)",
     "icon": "/home-base/skins/62.png",
     "full": "",
-    "index": "48"
+    "index": 48
   },
   "52000063": {
     "name": "Summer Queen (Jul. 2022)",
     "icon": "/home-base/skins/63.png",
     "full": "",
-    "index": "52"
+    "index": 52
   },
   "52000064": {
     "name": "Pixel Queen (Aug. 2022)",
     "icon": "/home-base/skins/64.png",
     "full": "",
-    "index": "55"
+    "index": 55
   },
   "52000065": {
     "name": "Spooky Queen (Oct. 2022)",
     "icon": "/home-base/skins/65.png",
     "full": "",
-    "index": "60"
+    "index": 60
   },
   "52000066": {
     "name": "Magic Queen (Oct. 2022)",
     "icon": "/home-base/skins/66.png",
     "full": "",
-    "index": "62"
+    "index": 62
   },
   "52000067": {
     "name": "Jolly Queen (Dec. 2022)",
     "icon": "/home-base/skins/67.png",
     "full": "",
-    "index": "66"
+    "index": 66
   },
   "52000068": {
     "name": "Dark Ages Queen (Apr. 2023)",
     "icon": "/home-base/skins/68.png",
     "full": "",
-    "index": "77"
+    "index": 77
   },
   "52000069": {
     "name": "Jolly Warden (Dec. 2021)",
     "icon": "/home-base/skins/69.png",
     "full": "",
-    "index": "39"
+    "index": 39
   },
   "52000070": {
     "name": "Warrior Warden (Feb. 2022)",
     "icon": "/home-base/skins/70.png",
     "full": "",
-    "index": "43"
+    "index": 43
   },
   "52000071": {
     "name": "Shadow Warden (Apr. 2022)",
     "icon": "/home-base/skins/71.png",
     "full": "",
-    "index": "47"
+    "index": 47
   },
   "52000072": {
     "name": "Summer Warden (Jun. 2022)",
     "icon": "/home-base/skins/72.png",
     "full": "",
-    "index": "49"
+    "index": 49
   },
   "52000073": {
     "name": "Pixel Warden (Aug. 2022)",
     "icon": "/home-base/skins/73.png",
     "full": "",
-    "index": "56"
+    "index": 56
   },
   "52000074": {
     "name": "Champion Warden (Nov. 2021 WM)",
     "icon": "/home-base/skins/74.png",
     "full": "",
-    "index": "59"
+    "index": 59
   },
   "52000075": {
     "name": "Magic Warden (Nov. 2021)",
     "icon": "/home-base/skins/75.png",
     "full": "",
-    "index": "63"
+    "index": 63
   },
   "52000076": {
     "name": "Painter Warden (Mar. 2023)",
     "icon": "/home-base/skins/76.png",
     "full": "",
-    "index": "74"
+    "index": 74
   },
   "52000077": {
     "name": "Dark Ages Warden (Apr. 2023)",
     "icon": "/home-base/skins/77.png",
     "full": "",
-    "index": "76"
+    "index": 76
   },
   "52000078": {
     "name": "Ghost Warden (Oct. 2023)",
     "icon": "/home-base/skins/78.png",
     "full": "",
-    "index": "95"
+    "index": 95
   },
   "52000079": {
     "name": "Goblin Warden (Jun. 2023)",
     "icon": "/home-base/skins/79.png",
     "full": "",
-    "index": "81"
+    "index": 81
   },
   "52000080": {
     "name": "League Warden (Jun. 2023)",
     "icon": "/home-base/skins/80.png",
     "full": "",
-    "index": "84"
+    "index": 84
   },
   "52000087": {
     "name": "Magic King (Oct. 2022)",
     "icon": "/home-base/skins/87.png",
     "full": "",
-    "index": "61"
+    "index": 61
   },
   "52000088": {
     "name": "Dark Ages King (May 2023)",
     "icon": "/home-base/skins/88.png",
     "full": "",
-    "index": "78"
+    "index": 78
   },
   "52000089": {
     "name": "Painter King (Mar. 2023)",
     "icon": "/home-base/skins/89.png",
     "full": "",
-    "index": "72"
+    "index": 72
   },
   "52000090": {
     "name": "Beast King (Feb. 2023)",
     "icon": "/home-base/skins/90.png",
     "full": "",
-    "index": "70"
+    "index": 70
   },
   "52000091": {
     "name": "League King (Jun. 2023)",
     "icon": "/home-base/skins/90.png",
     "full": "",
-    "index": "82"
+    "index": 82
   },
   "52000092": {
     "name": "Goblin King (Jul. 2023)",
     "icon": "/home-base/skins/92.png",
     "full": "",
-    "index": "86"
+    "index": 86
   },
   "52000093": {
     "name": "Future King (Aug. 2023)",
     "icon": "/home-base/skins/93.png",
     "full": "",
-    "index": "89"
+    "index": 89
   },
   "52000094": {
     "name": "Gingerbread King (Dec. 2023)",
     "icon": "/home-base/skins/94.png",
     "full": "",
-    "index": "101"
+    "index": 101
   },
   "52000095": {
     "name": "Ghost King (Oct. 2023)",
     "icon": "/home-base/skins/95.png",
     "full": "",
-    "index": "97"
+    "index": 97
   },
   "52000096": {
     "name": "Chess King (Sep. 2023)",
     "icon": "/home-base/skins/96.png",
     "full": "",
-    "index": "93"
+    "index": 93
   },
   "52000097": {
     "name": "Lunar Queen (Jan. 2023)",
     "icon": "/home-base/skins/97.png",
     "full": "",
-    "index": "69"
+    "index": 69
   },
   "52000098": {
     "name": "Painter Queen (Mar. 2023)",
     "icon": "/home-base/skins/98.png",
     "full": "",
-    "index": "73"
+    "index": 73
   },
   "52000099": {
     "name": "Heart Hunter Queen (Feb. 2023)",
     "icon": "/home-base/skins/99.png",
     "full": "",
-    "index": "71"
+    "index": 71
   },
   "52000100": {
     "name": "Goblin Queen (Jun. 2023)",
     "icon": "/home-base/skins/100.png",
     "full": "",
-    "index": "80"
+    "index": 80
   },
   "52000101": {
     "name": "Ghost Queen (Oct. 2023)",
     "icon": "/home-base/skins/101.png",
     "full": "",
-    "index": "96"
+    "index": 96
   },
   "52000102": {
     "name": "League Queen (Jun. 2023)",
     "icon": "/home-base/skins/102.png",
     "full": "",
-    "index": "83"
+    "index": 83
   },
   "52000103": {
     "name": "Future Queen (Aug. 2023)",
     "icon": "/home-base/skins/103.png",
     "full": "",
-    "index": "90"
+    "index": 90
   },
   "52000104": {
     "name": "Gingerbread Queen (Dec. 2023)",
     "icon": "/home-base/skins/104.png",
     "full": "",
-    "index": "100"
+    "index": 100
   },
   "52000105": {
     "name": "Chess Queen (Sep. 2023)",
     "icon": "/home-base/skins/105.png",
     "full": "",
-    "index": "92"
+    "index": 92
   },
   "52000106": {
     "name": "Queen of the North (Jan. 2024)",
     "icon": "/home-base/skins/106.png",
     "full": "",
-    "index": "104"
+    "index": 104
   },
   "52000112": {
     "name": "League Champion (Jun. 2023)",
     "icon": "/home-base/skins/112.png",
     "full": "",
-    "index": "85"
+    "index": 85
   },
   "52000113": {
     "name": "Goblin Champion (Jul. 2023)",
     "icon": "/home-base/skins/113.png",
     "full": "",
-    "index": "87"
+    "index": 87
   },
   "52000114": {
     "name": "Future Champion (Aug. 2023)",
     "icon": "/home-base/skins/114.png",
     "full": "",
-    "index": "91"
+    "index": 91
   },
   "52000115": {
     "name": "Gingerbread Champion (Dec. 2023)",
     "icon": "/home-base/skins/115.png",
     "full": "",
-    "index": "102"
+    "index": 102
   },
   "52000116": {
     "name": "Champions' Champion (Nov. 2023 WM)",
     "icon": "/home-base/skins/116.png",
     "full": "",
-    "index": "98"
+    "index": 98
   },
   "52000117": {
     "name": "Dragon Champion (Feb. 2024)",
     "icon": "/home-base/skins/117.png",
     "full": "",
-    "index": "105"
+    "index": 105
   },
   "52000118": {
     "name": "Space Champion (Mar. 2024)",
     "icon": "/home-base/skins/118.png",
     "full": "",
-    "index": "112"
+    "index": 112
   },
   "52000119": {
     "name": "Egypt Champion (Apr. 2024)",
     "icon": "/home-base/skins/119.png",
     "full": "",
-    "index": "115"
+    "index": 115
   },
   "52000120": {
     "name": "Football Champion (May 2024)",
     "icon": "/home-base/skins/120.png",
     "full": "",
-    "index": "117"
+    "index": 117
   },
   "52000121": {
     "name": "Wild West Champion (Jun. 2024)",
     "icon": "/home-base/skins/121.png",
     "full": "",
-    "index": "125"
+    "index": 125
   },
   "52000122": {
     "name": "Future Warden (Aug. 2023)",
     "icon": "/home-base/skins/122.png",
     "full": "",
-    "index": "88"
+    "index": 88
   },
   "52000123": {
     "name": "Gingerbread Warden (Dec. 2023)",
     "icon": "/home-base/skins/123.png",
     "full": "",
-    "index": "99"
+    "index": 99
   },
   "52000124": {
     "name": "Dragon Warden (Feb. 2024)",
     "icon": "/home-base/skins/124.png",
     "full": "",
-    "index": "106"
+    "index": 106
   },
   "52000125": {
     "name": "Space Warden (Mar. 2024)",
     "icon": "/home-base/skins/125.png",
     "full": "",
-    "index": "111"
+    "index": 111
   },
   "52000126": {
     "name": "Egypt Warden (Apr. 2024)",
     "icon": "/home-base/skins/126.png",
     "full": "",
-    "index": "113"
+    "index": 113
   },
   "52000127": {
     "name": "Football Warden (May 2024)",
     "icon": "/home-base/skins/127.png",
     "full": "",
-    "index": "120"
+    "index": 120
   },
   "52000128": {
     "name": "Wild West Warden (Jun. 2024)",
     "icon": "/home-base/skins/128.png",
     "full": "",
-    "index": "123"
+    "index": 123
   },
   "52000129": {
     "name": "Clash Games Warden (Jul. 2024)",
     "icon": "/home-base/skins/129.png",
-    "full": ""
+    "full": "",
+    "index": 129
   },
   "52000130": {
     "name": "Anime Warden (Aug. 2024)",
     "icon": "/home-base/skins/130.png",
     "full": "",
-    "index": "132"
+    "index": 133
   },
   "52000131": {
     "name": "Grand Dwarf (Sep. 2024)",
     "icon": "/home-base/skins/131.png",
     "full": "",
-    "index": "136"
+    "index": 137
   },
   "52000132": {
     "name": "Dragon King (Feb. 2024)",
     "icon": "/home-base/skins/132.png",
     "full": "",
-    "index": "108"
+    "index": 108
   },
   "52000133": {
     "name": "King of the North (Jan. 2024)",
     "icon": "/home-base/skins/133.png",
     "full": "",
-    "index": "103"
+    "index": 103
   },
   "52000134": {
     "name": "Egypt King (Apr. 2024)",
     "icon": "/home-base/skins/134.png",
     "full": "",
-    "index": "114"
+    "index": 114
   },
   "52000135": {
     "name": "Space King (Mar. 2024)",
     "icon": "/home-base/skins/135.png",
     "full": "",
-    "index": "110"
+    "index": 110
   },
   "52000136": {
     "name": "Super Squad King (May 2024 Squad Busters)",
     "icon": "/home-base/skins/136.png",
     "full": "",
-    "index": "122"
+    "index": 122
   },
   "52000137": {
     "name": "King Haaland (May 2024 (exclusive!))",
     "icon": "/home-base/skins/137.png",
     "full": "",
-    "index": "118"
+    "index": 118
   },
   "52000138": {
     "name": "Football King (May 2024)",
     "icon": "/home-base/skins/138.png",
     "full": "",
-    "index": "121"
+    "index": 121
   },
   "52000139": {
     "name": "Wild West King (Jun. 2024)",
     "icon": "/home-base/skins/139.png",
     "full": "",
-    "index": "126"
+    "index": 126
   },
   "52000141": {
     "name": "Clash Games King (Jul. 2024)",
     "icon": "/home-base/skins/141.png",
     "full": "",
-    "index": "127"
+    "index": 127
   },
   "52000142": {
     "name": "Dragon Queen (Feb. 2024)",
     "icon": "/home-base/skins/142.png",
     "full": "",
-    "index": "107"
+    "index": 107
   },
   "52000143": {
     "name": "Space Queen (Mar. 2024)",
     "icon": "/home-base/skins/143.png",
     "full": "",
-    "index": "109"
+    "index": 109
   },
   "52000144": {
     "name": "Egypt Queen (Apr. 202)",
     "icon": "/home-base/skins/144.png",
     "full": "",
-    "index": "116"
+    "index": 116
   },
   "52000145": {
     "name": "Football Queen (May 2024)",
     "icon": "/home-base/skins/145.png",
     "full": "",
-    "index": "119"
+    "index": 119
   },
   "52000146": {
     "name": "Wild West Queen (Jun. 2024)",
     "icon": "/home-base/skins/146.png",
     "full": "",
-    "index": "124"
+    "index": 124
   },
   "52000147": {
     "name": "Clash Games Queen (Jul. 2024)",
     "icon": "/home-base/skins/147.png",
     "full": "",
-    "index": "128"
+    "index": 128
   },
   "52000148": {
     "name": "Anime Queen (Aug. 2024)",
     "icon": "/home-base/skins/148.png",
     "full": "",
-    "index": "131"
+    "index": 132
   },
   "52000149": {
     "name": "Archer Satyr (Sep. 2024)",
     "icon": "/home-base/skins/149.png",
     "full": "",
-    "index": "135"
+    "index": 136
   },
   "52000150": {
     "name": "Dark Minion Queen (Oct. 2024)",
     "icon": "/home-base/skins/150.png",
     "full": "",
-    "index": "137"
+    "index": 138
   },
   "52000151": {
     "name": "Justice Queen (Nov. 2024)",
     "icon": "/home-base/skins/151.png",
     "full": "",
-    "index": "141"
+    "index": 142
   },
   "52000153": {
     "name": "Armored Machine (May 2023)",
     "icon": "/builder-base/skins/153.png",
     "full": "",
-    "index": "0"
+    "index": 0
   },
   "52000154": {
     "name": "Steampunk Copter (Jul. 2024)",
     "icon": "/builder-base/skins/154.png",
     "full": "",
-    "index": "2"
+    "index": 2
   },
   "52000155": {
     "name": "Steampunk Machine (Dec. 2024)",
     "icon": "/builder-base/skins/155.png",
     "full": "",
-    "index": "4"
+    "index": 4
   },
   "52000156": {
     "name": "Battle Machine of the North (Jan. 2024)",
     "icon": "/builder-base/skins/156.png",
     "full": "",
-    "index": "1"
+    "index": 1
   },
   "52000166": {
     "name": "Boat Copter (Dec. 2024)",
     "icon": "/builder-base/skins/166.png",
     "full": "",
-    "index": "3"
+    "index": 3
   },
   "52000174": {
     "name": "Anime Champion (Aug. 2024)",
     "icon": "/home-base/skins/175.png",
     "full": "",
-    "index": "129"
+    "index": 130
   },
   "52000175": {
     "name": "Paladin Champion (Sep. 2024)",
     "icon": "/home-base/skins/175.png",
     "full": "",
-    "index": "134"
+    "index": 135
   },
   "52000176": {
     "name": "Ice Champion (Jan. 2025)",
     "icon": "/home-base/skins/176.png",
     "full": "",
-    "index": "145"
+    "index": 146
   },
   "52000177": {
     "name": "Snake Champion (Feb. 2025)",
     "icon": "/home-base/skins/177.png",
     "full": "",
-    "index": "150"
+    "index": 151
   },
   "52000178": {
     "name": "Sniper Champion (Mar. 2025)",
     "icon": "/home-base/skins/178.png",
     "full": "",
-    "index": "155"
+    "index": 156
   },
   "52000179": {
     "name": "The RoyalEST (Apr. 2025 (exclusive!))",
     "icon": "/home-base/skins/179.png",
     "full": "",
-    "index": "161"
+    "index": 162
   },
   "52000180": {
     "name": "Royal Ninja (May 2025)",
     "icon": "/home-base/skins/180.png",
     "full": "",
-    "index": "168"
+    "index": 169
   },
   "52000181": {
     "name": "Showtime Champion (Jun. 2025)",
     "icon": "/home-base/skins/181.png",
     "full": "",
-    "index": "169"
+    "index": 170
   },
   "52000182": {
     "name": "Royal Officer (Jul. 2025)",
     "icon": "/home-base/skins/182.png",
     "full": "",
-    "index": "176"
+    "index": 177
   },
   "52000183": {
     "name": "Clash-A-Rama Champion (Aug. 2025)",
     "icon": "/home-base/skins/183.png",
     "full": "",
-    "index": "179"
+    "index": 180
   },
   "52000184": {
     "name": "Yeti Champion (Sep. 2025)",
     "icon": "/home-base/skins/184.png",
     "full": "",
-    "index":"186"
+    "index": 187
   },
   "52000185": {
     "name": "Cursed Champion (Oct. 2025)",
     "icon": "/home-base/skins/185.png",
     "full": "",
-    "index": "191"
+    "index": 192
   },
   "52000186": {
     "name": "Nomad Champion (Nov. 2025)",
     "icon": "/home-base/skins/186.png",
     "full": "",
-    "index": "198"
+    "index": 199
   },
   "52000187": {
     "name": "Explorer Champion (Dec. 2025)",
     "icon": "/home-base/skins/187.png",
     "full": "",
-    "index": "204"
+    "index": 205
   },
   "52000191": {
     "name": "Anime King (Aug. 2024)",
     "icon": "/home-base/skins/191.png",
     "full": "",
-    "index": "130"
+    "index": 131
   },
   "52000192": {
     "name": "Barbarian Orc (Sep. 2024)",
     "icon": "/home-base/skins/192.png",
     "full": "",
-    "index": "133"
+    "index": 134
   },
   "52000193": {
     "name": "Dark Minion King (Oct. 2024)",
     "icon": "/home-base/skins/193.png",
     "full": "",
-    "index": "138"
+    "index": 139
   },
   "52000194": {
     "name": "Judgment King (Nov. 2024)",
     "icon": "/home-base/skins/194.png",
     "full": "",
-    "index": "140"
+    "index": 141
   },
   "52000195": {
     "name": "Robo King (Dec. 2024)",
     "icon": "/home-base/skins/195.png",
     "full": "",
-    "index": "144"
+    "index": 145
   },
   "52000196": {
     "name": "Fire King (Jan. 2025)",
     "icon": "/home-base/skins/196.png",
     "full": "",
-    "index": "148"
+    "index": 149
   },
   "52000197": {
     "name": "Snake King (Feb. 2025)",
     "icon": "/home-base/skins/197.png",
     "full": "",
-    "index": "152"
+    "index": 153
   },
   "52000198": {
     "name": "Combat King (Mar. 2025)",
     "icon": "/home-base/skins/198.png",
     "full": "",
-    "index": "154"
+    "index": 155
   },
   "52000199": {
     "name": "King Cody (Apr. 2025 (exclusive!))",
     "icon": "/home-base/skins/199.png",
     "full": "",
-    "index": "160"
+    "index": 161
   },
   "52000200": {
     "name": "Samurai King (May 2025)",
     "icon": "/home-base/skins/200.png",
     "full": "",
-    "index": "165"
+    "index": 166
   },
   "52000201": {
     "name": "Barbarian Butcher (Jun. 2025)",
     "icon": "/home-base/skins/201.png",
     "full": "",
-    "index": "171"
+    "index": 172
   },
   "52000202": {
     "name": "Renegade King (Jul. 2025)",
     "icon": "/home-base/skins/202.png",
     "full": "",
-    "index": "177"
+    "index": 178
   },
   "52000203": {
     "name": "Clash-A-Rama King (Aug. 2025)",
     "icon": "/home-base/skins/203.png",
     "full": "",
-    "index": "181"
+    "index": 182
   },
   "52000204": {
     "name": "Jelly King (Sep. 2025)",
     "icon": "/home-base/skins/204.png",
     "full": "",
-    "index": "188"
+    "index": 189
   },
   "52000205": {
     "name": "Berserker King (Oct. 2025)",
     "icon": "/home-base/skins/205.png",
     "full": "",
-    "index": "193"
+    "index": 194
   },
   "52000206": {
     "name": "Awakened King (Nov. 2025)",
     "icon": "/home-base/skins/206.png",
     "full": "",
-    "index": "201"
+    "index": 202
   },
   "52000207": {
     "name": "Bruiser King (Dec. 2025)",
     "icon": "/home-base/skins/207.png",
     "full": "",
-    "index": "194"
+    "index": 195
   },
   "52000208": {
     "name": "Desert King (Jan. 2025)",
     "icon": "/home-base/skins/208.png",
     "full": "",
-    "index": "205"
+    "index": 206
   },
   "52000209": {
-    "name": "Monkey King (Feb. 2025)",
+    "name": "Monkey King (Feb. 2026)",
     "icon": "/home-base/skins/209.png",
     "full": "",
-    "index": "211"
+    "index": 212
   },
   "52000210": {
     "name": "Puppet Queen (Dec. 2024)",
     "icon": "/home-base/skins/210.png",
     "full": "",
-    "index": "143"
+    "index": 144
   },
   "52000211": {
     "name": "Fire Queen (Jan. 2025)",
     "icon": "/home-base/skins/211.png",
     "full": "",
-    "index": "147"
+    "index": 148
   },
   "52000212": {
     "name": "Snake Queen (Feb. 2025)",
     "icon": "/home-base/skins/212.png",
     "full": "",
-    "index": "153"
+    "index": 154
   },
   "52000213": {
     "name": "Quickfire Queen (Mar. 2025)",
     "icon": "/home-base/skins/213.png",
     "full": "",
-    "index": "158"
+    "index": 159
   },
   "52000214": {
     "name": "Brutality Queen (Apr. 2025 (exclusive!))",
     "icon": "/home-base/skins/214.png",
     "full": "",
-    "index": "162"
+    "index": 163
   },
   "52000215": {
     "name": "Kyudo Queen (May 2025)",
     "icon": "/home-base/skins/215.png",
     "full": "",
-    "index": "164"
+    "index": 165
   },
   "52000216": {
     "name": "Queen Fatale (Jun. 2025)",
     "icon": "/home-base/skins/216.png",
     "full": "",
-    "index": "170"
+    "index": 171
   },
   "52000217": {
     "name": "Renegade Queen (Jul. 2025)",
     "icon": "/home-base/skins/217.png",
     "full": "",
-    "index": "178"
+    "index": 179
   },
   "52000218": {
     "name": "Clash-A-Rama Queen (Aug. 2025)",
     "icon": "/home-base/skins/218.png",
     "full": "",
-    "index": "180"
+    "index": 181
   },
   "52000219": {
     "name": "P.E.Q.Q.A Queen (Sep. 2025)",
     "icon": "/home-base/skins/219.png",
     "full": "",
-    "index": "185"
+    "index": 186
   },
   "52000220": {
     "name": "Archer Hunter (Oct. 2025)",
     "icon": "/home-base/skins/220.png",
     "full": "",
-    "index": "189"
+    "index": 190
   },
   "52000221": {
     "name": "Fury Queen (Nov. 2025)",
     "icon": "/home-base/skins/221.png",
     "full": "",
-    "index": "195"
+    "index": 196
   },
   "52000222": {
     "name": "Blizzard Queen (Dec. 2025)",
     "icon": "/home-base/skins/222.png",
     "full": "",
-    "index": "202"
+    "index": 203
   },
   "52000223": {
     "name": "Queen of the Dunes (Jan. 2026)",
     "icon": "/home-base/skins/223.png",
     "full": "",
-    "index": "206"
+    "index": 207
   },
   "52000224": {
     "name": "Phantom Queen (Feb. 2026)",
     "icon": "/home-base/skins/224.png",
     "full": "",
-    "index": "212"
+    "index": 213
   },
   "52000230": {
     "name": "Dark Minion Warden (Oct. 2024)",
     "icon": "/home-base/skins/230.png",
     "full": "",
-    "index": "139"
+    "index": 140
   },
   "52000231": {
     "name": "Grand Judge (Nov. 2024)",
     "icon": "/home-base/skins/231.png",
     "full": "",
-    "index": "142"
+    "index": 143
   },
   "52000232": {
     "name": "Ice Warden (Jan. 2025)",
     "icon": "/home-base/skins/232.png",
     "full": "",
-    "index": "146"
+    "index": 147
   },
   "52000233": {
     "name": "Snake Warden (Feb. 2025)",
     "icon": "/home-base/skins/233.png",
     "full": "",
-    "index": "149"
+    "index": 150
   },
   "52000234": {
     "name": "Jetpack Warden (Mar. 2025)",
     "icon": "/home-base/skins/234.png",
     "full": "",
-    "index": "157"
+    "index": 158
   },
   "52000235": {
     "name": "Darkness Warden (Apr. 2025 (exclusive!))",
     "icon": "/home-base/skins/235.png",
     "full": "",
-    "index": "163"
+    "index": 164
   },
   "52000236": {
     "name": "Grand Monk (May 2025)",
     "icon": "/home-base/skins/236.png",
     "full": "",
-    "index": "167"
+    "index": 168
   },
   "52000237": {
     "name": "Grand Godfather (Jun. 2025)",
     "icon": "/home-base/skins/237.png",
     "full": "",
-    "index": "172"
+    "index": 173
   },
   "52000238": {
     "name": "Grand Doctor (Jul. 2025)",
     "icon": "/home-base/skins/238.png",
     "full": "",
-    "index": "174"
+    "index": 175
   },
   "52000239": {
     "name": "Clash-A-Rama Warden (Aug. 2025)",
     "icon": "/home-base/skins/239.png",
     "full": "",
-    "index": "182"
+    "index": 183
   },
   "52000240": {
     "name": "Ivan Warden (Sep. 2025)",
     "icon": "/home-base/skins/240.png",
     "full": "",
-    "index": "187"
+    "index": 188
   },
   "52000241": {
     "name": "Eternal Warden (Oct. 2025)",
     "icon": "/home-base/skins/241.png",
     "full": "",
-    "index": "192"
+    "index": 193
   },
   "52000242": {
     "name": "Shaman Warden (Nov. 2025",
     "icon": "/home-base/skins/242.png",
     "full": "",
-    "index": "197"
+    "index": 198
   },
   "52000243": {
     "name": "Grand Warlock (Dec. 2025)",
     "icon": "/home-base/skins/243.png",
     "full": "",
-    "index": "200"
+    "index": 201
   },
   "52000244": {
     "name": "Grand Sorcerer (Jan. 2026)",
     "icon": "/home-base/skins/244.png",
     "full": "",
-    "index": "208"
+    "index": 209
   },
   "52000245": {
     "name": "River Warden (Feb. 2026)",
     "icon": "/home-base/skins/245.png",
     "full": "",
-    "index": "214"
+    "index": 215
   },
   "52000251": {
     "name": "Snake Prince (Feb. 2025)",
     "icon": "/home-base/skins/251.png",
     "full": "",
-    "index": "151"
+    "index": 152
   },
   "52000252": {
     "name": "Minion General (Mar. 2025)",
     "icon": "/home-base/skins/252.png",
     "full": "",
-    "index": "156"
+    "index": 157
   },
   "52000253": {
     "name": "Prince Mysterio (Apr. 2025 (exclusive!))",
     "icon": "/home-base/skins/253.png",
     "full": "",
-    "index": "159"
+    "index": 160
   },
   "52000254": {
     "name": "Cyclone Prince (May 2025)",
     "icon": "/home-base/skins/254.png",
     "full": "",
-    "index": "166"
+    "index": 167
   },
   "52000255": {
     "name": "Minion Cop (Jun. 2025)",
     "icon": "/home-base/skins/255.png",
     "full": "",
-    "index": "173"
+    "index": 174
   },
   "52000256": {
     "name": "Minion Inventor (Jul. 2025)",
     "icon": "/home-base/skins/256.png",
     "full": "",
-    "index": "175"
+    "index": 176
   },
   "52000257": {
     "name": "Clash-A-Rama Prince (Aug. 2025)",
     "icon": "/home-base/skins/257.png",
     "full": "",
-    "index": "183"
+    "index": 184
   },
   "52000258": {
     "name": "Lava Prince (Sep. 2025)",
     "icon": "/home-base/skins/258.png",
     "full": "",
-    "index": "184"
+    "index": 185
   },
   "52000259": {
     "name": "Nightmare Prince (Oct. 2025)",
     "icon": "/home-base/skins/259.png",
     "full": "",
-    "index": "190"
+    "index": 191
   },
   "52000260": {
     "name": "Armored Prince (Nov. 2025)",
     "icon": "/home-base/skins/260.png",
     "full": "",
-    "index": "196"
+    "index": 197
   },
   "52000261": {
     "name": "Frost Prince (Dec. 2025)",
     "icon": "/home-base/skins/261.png",
     "full": "",
-    "index": "203"
+    "index": 204
   },
   "52000262": {
     "name": "Genie Prince (Jan. 2026)",
     "icon": "/home-base/skins/262.png",
     "full": "",
-    "index": "209"
+    "index": 210
   },
   "52000263": {
     "name": "Ox Prince (Feb. 2026)",
     "icon": "/home-base/skins/263.png",
     "full": "",
-    "index": "213"
+    "index": 214
   },
   "52000295": {
     "name": "Mirage Champion (Jan. 2026)",
     "icon": "/home-base/skins/262.png",
     "full": "",
-    "index": "207"
+    "index": 208
   },
   "52000296": {
     "name": "Red Champion (Feb. 2026)",
     "icon": "/home-base/skins/296.png",
     "full": "",
-    "index": "210"
+    "index": 211
   },
   "52000306": {
     "name": "Meteorite Builder (Nov. 2025)",
     "icon": "/home-base/skins/306.png",
     "full": "",
-    "index": "199"
-  }
-}
+    "index": 200
+  }}
