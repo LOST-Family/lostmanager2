@@ -1946,6 +1946,11 @@
     "icon": "/home-base/pets/sneezy-icon.png",
     "character": "/home-base/pets/sneezy-character.png"
   },
+  "73000017": {
+    "name": "Greedy Raven",
+    "icon": "/home-base/pets/greedy-raven-icon.png",
+    "character": "/home-base/pets/sneezy-character.png"
+  },
   "90000000": {
     "name": "Barbarian Puppet",
     "icon": "/home-base/equipments/0.png"
