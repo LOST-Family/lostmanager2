@@ -5490,6 +5490,10 @@
     "name": "Granny",
     "icon": "/home-base/apprentice/apprentice-granny.png"
   },
+  "93000003": {
+    "name": "Pops",
+    "icon": "/home-base/apprentice/apprentice-pops.png"
+  },
   "107000000": {
     "name": "Longshot",
     "icon": "/home-base/guardians/longshot.png"
