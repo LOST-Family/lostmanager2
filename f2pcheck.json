@@ -794,7 +794,7 @@
                             "name": "Hat 'Stick Horse Equipment' oder 'Stick Horse Deco' sowie beide 'LNY 2026 Clan Houses'",
                             "IfMoreThan": {
                                 "type": "quantity",
-                                "allowed": 1,
+                                "allowed": 0,
                                 "elements": [{
                                     "type": "element",
                                     "name": "LNY 2026 Ground",
@@ -804,17 +804,18 @@
                                     "name": "LNY 2026 Walls",
                                     "id": "82000151"
                                 }]
-                            }
-                        },{
-                            "name":"Hat 'Stick Horse Equipment' oder 'Stick Horse Deco' sowie 'Lucky Shoe Deco'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 0,
-                                "elements": [{
-                                    "type": "element",
-                                    "name": "Lucky Shoe",
-                                    "id": "18000198"
-                                }]
+                            },
+                            "ThenForbidden":{
+                                "name":"Hat 'Stick Horse Equipment' oder 'Stick Horse Deco' sowie 'Lucky Shoe Deco'",
+                                "IfMoreThan": {
+                                    "type": "quantity",
+                                    "allowed": 0,
+                                    "elements": [{
+                                        "type": "element",
+                                        "name": "Lucky Shoe",
+                                        "id": "18000198"
+                                    }]
+                                }   
                             }
                         }]
                     }
