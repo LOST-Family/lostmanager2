@@ -1891,6 +1891,11 @@
     "icon": "/home-base/heroes/minion-prince-icon.png",
     "character": "/home-base/heroes/minion-prince-character.png"
   },
+  "28000007": {
+    "name": "Dragon Duke",
+    "icon": "/home-base/heroes/dragon-duke-icon.png",
+    "character": "/home-base/heroes/dragon-duke-character.png"
+  },
   "73000000": {
     "name": "L.A.S.S.I",
     "icon": "/home-base/pets/lassi-icon.png",
