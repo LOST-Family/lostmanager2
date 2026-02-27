@@ -337,7 +337,10 @@ public class Bot extends ListenerAdapter {
 											"Die Nachrichtenlink der Nachricht, die überprüft werden soll.", true)
 									.addOption(
 											OptionType.STRING, "emoji", "Der Emoji, nach dem überprüft werden soll.",
-											true),
+											true)
+									.addOption(
+											OptionType.STRING, "emoji2", "Optionaler zweiter Emoji. Wer hiermit reagiert hat, wird separat angezeigt und nicht gepingt.",
+											false),
 
 							Commands.slash("setnick",
 									"Ändert deinen Nicknamen zu deinem in-Game Namen und optional einem benutzerdefinierten Alias.")
