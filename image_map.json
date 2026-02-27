@@ -991,6 +991,8 @@
     "levels": {
       "1c": "/home-base/buildings/spell-tower/spell-tower-1.png",
       "2c": "/home-base/buildings/spell-tower/spell-tower-2.png",
+      "3a": "/home-base/buildings/spell-tower/spell-tower-3.png",
+      "3b": "/home-base/buildings/spell-tower/spell-tower-4.png",
       "3c": "/home-base/buildings/spell-tower/spell-tower-3.png",
       "4c": "/home-base/buildings/spell-tower/spell-tower-4.png"
     }
