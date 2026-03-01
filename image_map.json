@@ -2098,6 +2098,22 @@
     "name": "Stick Horse",
     "icon": "/home-base/equipments/51.png"
   },
+  "90000052": {
+    "name": "Fire Heart",
+    "icon": "/home-base/equipments/52.png"
+  },
+  "90000053": {
+    "name": "Rocket Backpack",
+    "icon": "/home-base/equipments/53.png"
+  },
+  "90000056": {
+    "name": "Stun Blaster",
+    "icon": "/home-base/equipments/56.png"
+  },
+  "90000057": {
+    "name": "Flame Blower",
+    "icon": "/home-base/equipments/57.png"
+  },
   "18000000": {
     "name": "Mighty Statue (Aug. 2012",
     "icon": "/home-base/decorations/0.png",
@@ -4786,6 +4802,42 @@
     "icon": "/home-base/skins/245.png",
     "full": "",
     "index": 215
+  },
+  "52000264": {
+    "name": "Dragonscale Prince (Mar. 2026)",
+    "icon": "/home-base/skins/264.png",
+    "full": "",
+    "index": 216
+  },
+  "52000343": {
+    "name": "Imprisoned Duke (Mar. 2026)",
+    "icon": "/home-base/skins/343.png",
+    "full": "",
+    "index": 217
+  },
+  "52000265": {
+    "name": "Dragonscale King (Mar. 2026)",
+    "icon": "/home-base/skins/265.png",
+    "full": "",
+    "index": 218
+  },
+  "52000265": {
+    "name": "Dragonscale Queen (Mar. 2026)",
+    "icon": "/home-base/skins/265.png",
+    "full": "",
+    "index": 219
+  },
+  "52000265": {
+    "name": "Dragonscale Champion (Mar. 2026)",
+    "icon": "/home-base/skins/265.png",
+    "full": "",
+    "index": 220
+  },
+  "52000265": {
+    "name": "Dragonscale Warden (Mar. 2026)",
+    "icon": "/home-base/skins/265.png",
+    "full": "",
+    "index": 221
   },
   "82000000": {
     "name": "Brown Fence",

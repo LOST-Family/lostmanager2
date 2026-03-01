@@ -166,7 +166,7 @@
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Dragon Warden' und mindestens eins davon: 'Crab at Home', 'Lucky Anchor' oder mindestens 1 'LNY 2024 Clan House'",
+                            "name": "Hat 'Dragon Warden' und mindestens eins davon: 'Lucky Anchor' oder mindestens 1 'LNY 2024 Clan House'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
@@ -190,10 +190,6 @@
                                     "type": "element",
                                     "name": "Lucky Anchor",
                                     "id": "18000119"
-                                }, {
-                                    "type": "element",
-                                    "name": "Crab at Home",
-                                    "id": "18000120"
                                 }]
                             }
                         }]
@@ -217,69 +213,16 @@
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Football Queen' sowie mindestens eins davon: 'Golden Boot', 'Bestest Ball', 'Triumphant Trophy' oder mindestens ein 'Football Clan House'",
+                            "name": "Hat 'Football Queen' sowie mindestens eins davon: 'Triumphant Trophy' oder mindestens ein 'Football Clan House'",
                             "IfMoreThan": {
                                 "name": "",
                                 "type": "count",
                                 "allowed": 0,
                                 "elements": [{
                                     "type": "element",
-                                    "name": "Golden Boot",
-                                    "id": "18000131"
-                                }, {
-                                    "type": "element",
-                                    "name": "Bestest Ball",
-                                    "id": "18000132"
-                                }, {
-                                    "type": "element",
                                     "name": "Triumphant Trophy",
                                     "id": "18000134"
                                 }, {
-                                    "type": "element",
-                                    "name": "Football Roof",
-                                    "id": "82000120"
-                                }, {
-                                    "type": "element",
-                                    "name": "Football Decoration",
-                                    "id": "82000121"
-                                }, {
-                                    "type": "element",
-                                    "name": "Football Walls",
-                                    "id": "82000122"
-                                }, {
-                                    "type": "element",
-                                    "name": "Football Ground",
-                                    "id": "82000123"
-                                }]
-                            }
-                        }]
-                    }
-                }, {
-                    "IfMoreThan": {
-                        "name": "",
-                        "type": "count",
-                        "allowed": 2,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Golden Boot",
-                            "id": "18000131"
-                        }, {
-                            "type": "element",
-                            "name": "Bestest Ball",
-                            "id": "18000132"
-                        }, {
-                            "type": "element",
-                            "name": "Triumphant Trophy",
-                            "id": "18000134"
-                        }]
-                    },
-                    "ThenForbidden": {
-                        "CasesStrict": [{
-                            "name": "Hat 'Golden Boot', 'Bestest Ball', 'Triumphant Trophy' sowie 4 'Football Clan Houses'",
-                            "IfMoreThan": {
-                                "type": "count",
-                                "allowed": 3,
-                                "elements": [{
                                     "type": "element",
                                     "name": "Football Roof",
                                     "id": "82000120"
@@ -318,10 +261,21 @@
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Kawaii Giant Deco' und mehr als ein 'Anime Clan House'",
+                            "name": "Hat 'Kawaii Giant Deco' und 'Chibi Archer Deco'",
                             "IfMoreThan": {
                                 "type": "quantity",
-                                "allowed": 1,
+                                "allowed": 0,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Chibi Archer Deco",
+                                    "id": "18000144"
+                                }]
+                            }
+                        },{
+                            "name": "",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 0,
                                 "elements": [{
                                     "type": "element",
                                     "name": "Anime Roof",
@@ -339,16 +293,271 @@
                                     "name": "Anime Ground",
                                     "id": "82000129"
                                 }]
-                            }
-                        }, {
-                            "name": "Hat 'Kawaii Giant Deco' und 'Chibi Archer Deco'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 0,
-                                "elements": [{
-                                    "type": "element",
-                                    "name": "Chibi Archer Deco",
-                                    "id": "18000144"
+                            },
+                            "ThenForbidden":{
+                                "CasesStrict":[{
+                                    "name": "Hat 'Kawaii Giant Deco' und alle 'Anime Clan Houses'",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 3,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Anime Roof",
+                                            "id": "82000126"
+                                        }, {
+                                            "type": "element",
+                                            "name": "Vending Machine",
+                                            "id": "82000127"
+                                        }, {
+                                            "type": "element",
+                                            "name": "Anime Walls",
+                                            "id": "82000128"
+                                        }, {
+                                            "type": "element",
+                                            "name": "Anime Ground",
+                                            "id": "82000129"
+                                        }]
+                                    }
+                                },{
+                                    "name": "Hat 'Kawaii Giant Deco' und 3 'Anime Clan Houses'",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 2,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Anime Roof",
+                                            "id": "82000126"
+                                        }, {
+                                            "type": "element",
+                                            "name": "Vending Machine",
+                                            "id": "82000127"
+                                        }, {
+                                            "type": "element",
+                                            "name": "Anime Walls",
+                                            "id": "82000128"
+                                        }, {
+                                            "type": "element",
+                                            "name": "Anime Ground",
+                                            "id": "82000129"
+                                        }]
+                                    },
+                                    "ThenForbidden": {
+                                        "name": "August 2025 Event",
+                                        "CasesStrict": [{
+                                            "name": "",
+                                            "IfMoreThan": {
+                                                "type": "quantity",
+                                                "allowed": 0,
+                                                "elements": [{
+                                                    "type": "element",
+                                                    "name": "Clashy Carving Deco",
+                                                    "id": "18000180"
+                                                }]
+                                            },
+                                            "ThenForbidden": {
+                                                "CasesStrict": [{
+                                                    "name": "Hat 'Clash Carving Deco' und 3 'Anime Clan Houses' und mindestens 3 'Clash-A-Rama Clan Houses'",
+                                                    "IfMoreThan": {
+                                                        "type": "quantity",
+                                                        "allowed": 2,
+                                                        "elements": [{
+                                                            "type": "element",
+                                                            "name": "Clash-A-Rama Roof",
+                                                            "id": "82000142"
+                                                        }, {
+                                                            "type": "element",
+                                                            "name": "Cartoon Barrel",
+                                                            "id": "82000143"
+                                                        }, {
+                                                            "type": "element",
+                                                            "name": "Clash-A-Rama Walls",
+                                                            "id": "82000144"
+                                                        }, {
+                                                            "type": "element",
+                                                            "name": "Clash-A-Rama Ground",
+                                                            "id": "82000145"
+                                                        }]
+                                                    }
+                                                }, {
+                                                    "name": "",
+                                                    "IfMoreThan": {
+                                                        "type": "quantity",
+                                                        "allowed": 0,
+                                                        "elements": [{
+                                                            "type": "element",
+                                                            "name": "Frozen Wizard Deco",
+                                                            "id": "18000179"
+                                                        }, {
+                                                            "type": "element",
+                                                            "name": "Soda Stand Deco",
+                                                            "id": "18000183"
+                                                        }]
+                                                    },
+                                                    "ThenForbidden": {
+                                                        "CasesStrict": [{
+                                                            "name": "Hat 'Clashy Carving Deco', 'Frozen Wizard Deco' und 'Soda Stand Deco' sowie 3 'Anime Clan Houses'",
+                                                            "IfMoreThan": {
+                                                                "type": "quantity",
+                                                                "allowed": 1,
+                                                                "elements": [{
+                                                                    "type": "element",
+                                                                    "name": "Frozen Wizard Deco",
+                                                                    "id": "18000179"
+                                                                }, {
+                                                                    "type": "element",
+                                                                    "name": "Soda Stand Deco",
+                                                                    "id": "18000183"
+                                                                }]
+                                                            }
+                                                        },{
+                                                            "name": "Hat 'Clashy Carving Deco' und '3 Anime Clan Houses'sowie 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens ein 'Clash-A-Rama Clan House'",
+                                                            "IfMoreThan": {
+                                                                "type": "quantity",
+                                                                "allowed": 0,
+                                                                "elements": [{
+                                                                    "type": "element",
+                                                                    "name": "Clash-A-Rama Roof",
+                                                                    "id": "82000142"
+                                                                }, {
+                                                                    "type": "element",
+                                                                    "name": "Cartoon Barrel",
+                                                                    "id": "82000143"
+                                                                }, {
+                                                                    "type": "element",
+                                                                    "name": "Clash-A-Rama Walls",
+                                                                    "id": "82000144"
+                                                                }, {
+                                                                    "type": "element",
+                                                                    "name": "Clash-A-Rama Ground",
+                                                                    "id": "82000145"
+                                                                }]
+                                                            }
+                                                        }]
+                                                    }
+                                                }]
+                                            }
+                                        }]
+                                    }
+                                },{
+                                    "name": "Hat 'Kawaii Giant Deco' und 3 'Anime Clan Houses'",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 1,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Anime Roof",
+                                            "id": "82000126"
+                                        }, {
+                                            "type": "element",
+                                            "name": "Vending Machine",
+                                            "id": "82000127"
+                                        }, {
+                                            "type": "element",
+                                            "name": "Anime Walls",
+                                            "id": "82000128"
+                                        }, {
+                                            "type": "element",
+                                            "name": "Anime Ground",
+                                            "id": "82000129"
+                                        }]
+                                    },
+                                    "ThenForbidden": {
+                                        "name": "August 2025 Event",
+                                        "CasesStrict": [{
+                                            "name": "",
+                                            "IfMoreThan": {
+                                                "type": "quantity",
+                                                "allowed": 0,
+                                                "elements": [{
+                                                    "type": "element",
+                                                    "name": "Clashy Carving Deco",
+                                                    "id": "18000180"
+                                                }]
+                                            },
+                                            "ThenForbidden": {
+                                                "CasesStrict": [{
+                                                    "name": "Hat 'Clash Carving Deco' und 3 'Anime Clan Houses' und mindestens 3 'Clash-A-Rama Clan Houses'",
+                                                    "IfMoreThan": {
+                                                        "type": "quantity",
+                                                        "allowed": 3,
+                                                        "elements": [{
+                                                            "type": "element",
+                                                            "name": "Clash-A-Rama Roof",
+                                                            "id": "82000142"
+                                                        }, {
+                                                            "type": "element",
+                                                            "name": "Cartoon Barrel",
+                                                            "id": "82000143"
+                                                        }, {
+                                                            "type": "element",
+                                                            "name": "Clash-A-Rama Walls",
+                                                            "id": "82000144"
+                                                        }, {
+                                                            "type": "element",
+                                                            "name": "Clash-A-Rama Ground",
+                                                            "id": "82000145"
+                                                        }]
+                                                    }
+                                                }, {
+                                                    "name": "",
+                                                    "IfMoreThan": {
+                                                        "type": "quantity",
+                                                        "allowed": 0,
+                                                        "elements": [{
+                                                            "type": "element",
+                                                            "name": "Frozen Wizard Deco",
+                                                            "id": "18000179"
+                                                        }, {
+                                                            "type": "element",
+                                                            "name": "Soda Stand Deco",
+                                                            "id": "18000183"
+                                                        }]
+                                                    },
+                                                    "ThenForbidden": {
+                                                        "CasesStrict": [{
+                                                            "name": "Hat 'Clashy Carving Deco', 'Frozen Wizard Deco' und 'Soda Stand Deco' sowie 3 'Anime Clan Houses'",
+                                                            "IfMoreThan": {
+                                                                "type": "quantity",
+                                                                "allowed": 1,
+                                                                "elements": [{
+                                                                    "type": "element",
+                                                                    "name": "Frozen Wizard Deco",
+                                                                    "id": "18000179"
+                                                                }, {
+                                                                    "type": "element",
+                                                                    "name": "Soda Stand Deco",
+                                                                    "id": "18000183"
+                                                                }]
+                                                            }
+                                                        },{
+                                                            "name": "Hat 'Clashy Carving Deco' und '3 Anime Clan Houses'sowie 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens ein 'Clash-A-Rama Clan House'",
+                                                            "IfMoreThan": {
+                                                                "type": "quantity",
+                                                                "allowed": 1,
+                                                                "elements": [{
+                                                                    "type": "element",
+                                                                    "name": "Clash-A-Rama Roof",
+                                                                    "id": "82000142"
+                                                                }, {
+                                                                    "type": "element",
+                                                                    "name": "Cartoon Barrel",
+                                                                    "id": "82000143"
+                                                                }, {
+                                                                    "type": "element",
+                                                                    "name": "Clash-A-Rama Walls",
+                                                                    "id": "82000144"
+                                                                }, {
+                                                                    "type": "element",
+                                                                    "name": "Clash-A-Rama Ground",
+                                                                    "id": "82000145"
+                                                                }]
+                                                            }
+                                                        }]
+                                                    }
+                                                }]
+                                            }
+                                        }]
+                                    }
                                 }]
                             }
                         }]
@@ -739,7 +948,7 @@
                                             "type": "element",
                                             "name": "Meltdown Barrel",
                                             "id": "82000148"
-                                        }, {
+                                        },{
                                             "type": "element",
                                             "name": "Meltdown Roof",
                                             "id": "82000149"
@@ -757,15 +966,14 @@
                 "name": "Feb. 2026 Event",
                 "CasesStrict": [{
                     "name": "",
-                    "IfMoreThan": {
+                    "IfMoreThan":   {
                         "type": "quantity",
                         "allowed": 0,
                         "elements": [{
                                 "type": "element",
                                 "name": "Stick Horse Equipment",
                                 "id": "90000051"
-                            },
-                            {
+                            },{
                                 "type": "element",
                                 "name": "Flame Horse Deco",
                                 "id": "18000202"
@@ -782,8 +990,7 @@
                                         "type": "element",
                                         "name": "Stick Horse Equipment",
                                         "id": "90000051"
-                                    },
-                                    {
+                                    },{
                                         "type": "element",
                                         "name": "Flame Horse Deco",
                                         "id": "18000202"
@@ -799,7 +1006,7 @@
                                     "type": "element",
                                     "name": "LNY 2026 Ground",
                                     "id": "82000150"
-                                }, {
+                                },{
                                     "type": "element",
                                     "name": "LNY 2026 Walls",
                                     "id": "82000151"
@@ -821,6 +1028,9 @@
                     }
                 }]
             }
+        },
+        {
+
         }
     ],
     "StrictForbidden": [52000010, 52000016, 52000034, 52000036, 52000038, 52000040, 52000042, 52000043, 52000045, 52000049, 52000051, 52000052, 52000054, 
