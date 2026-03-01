@@ -319,7 +319,7 @@
                                         }]
                                     }
                                 },{
-                                    "name": "Hat 'Kawaii Giant Deco' und 3 'Anime Clan Houses'",
+                                    "name": "",
                                     "IfMoreThan": {
                                         "type": "quantity",
                                         "allowed": 2,
@@ -395,7 +395,7 @@
                                                     },
                                                     "ThenForbidden": {
                                                         "CasesStrict": [{
-                                                            "name": "Hat 'Clashy Carving Deco', 'Frozen Wizard Deco' und 'Soda Stand Deco' sowie 3 'Anime Clan Houses'",
+                                                            "name": "Hat 'Clashy Carving Deco', 'Frozen Wizard Deco' und 'Soda Stand Deco'",
                                                             "IfMoreThan": {
                                                                 "type": "quantity",
                                                                 "allowed": 1,
@@ -410,7 +410,7 @@
                                                                 }]
                                                             }
                                                         },{
-                                                            "name": "Hat 'Clashy Carving Deco' und '3 Anime Clan Houses'sowie 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens ein 'Clash-A-Rama Clan House'",
+                                                            "name": "Hat 'Clashy Carving Deco' sowie 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens ein 'Clash-A-Rama Clan House'",
                                                             "IfMoreThan": {
                                                                 "type": "quantity",
                                                                 "allowed": 0,
