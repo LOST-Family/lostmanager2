@@ -249,7 +249,7 @@
             "Cases": {
                 "name": "August 2024 Event",
                 "CasesStrict": [{
-                    "name": "Hat 'Kawaii Giant Deco'",
+                    "name": "",
                     "IfMoreThan": {
                         "type": "quantity",
                         "allowed": 0,
@@ -261,7 +261,7 @@
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Chibi Archer Deco'",
+                            "name": "Hat 'Kawaii Giant Deco' und 'Chibi Archer Deco'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
@@ -296,7 +296,7 @@
                             },
                             "ThenForbidden":{
                                 "CasesStrict":[{
-                                    "name": "Hat alle 'Anime Clan Houses'",
+                                    "name": "Hat 'Kawaii Giant Deco' und alle 'Anime Clan Houses'",
                                     "IfMoreThan": {
                                         "type": "quantity",
                                         "allowed": 3,
@@ -343,7 +343,7 @@
                                     },
                                     "ThenForbidden": {
                                         "CasesStrict": [{
-                                            "name": "Hat 'Clash Carving Deco'",
+                                            "name": "",
                                             "IfMoreThan": {
                                                 "type": "quantity",
                                                 "allowed": 0,
@@ -355,7 +355,7 @@
                                             },
                                             "ThenForbidden": {
                                                 "CasesStrict": [{
-                                                    "name": "Hat mindestens 3 'Clash-A-Rama Clan Houses'",
+                                                    "name": "Hat 'Clash Carving Deco' und mindestens 3 'Clash-A-Rama Clan Houses'",
                                                     "IfMoreThan": {
                                                         "type": "quantity",
                                                         "allowed": 2,
@@ -394,7 +394,7 @@
                                                     },
                                                     "ThenForbidden": {
                                                         "CasesStrict": [{
-                                                            "name": "Hat 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens ein 'Clash-A-Rama Clan House'",
+                                                            "name": "Hat 'Clashy Carving Deco' sowie 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens ein 'Clash-A-Rama Clan House'",
                                                             "IfMoreThan": {
                                                                 "type": "quantity",
                                                                 "allowed": 0,
@@ -423,7 +423,7 @@
                                         }]
                                     }
                                 },{
-                                    "name": "Hat 2 'Anime Clan Houses'",
+                                    "name": "",
                                     "IfMoreThan": {
                                         "type": "quantity",
                                         "allowed": 1,
@@ -446,8 +446,9 @@
                                         }]
                                     },
                                     "ThenForbidden": {
+                                        "name": "August 2025 Event",
                                         "CasesStrict": [{
-                                            "name": "Hat 'Clash Carving Deco'",
+                                            "name": "",
                                             "IfMoreThan": {
                                                 "type": "quantity",
                                                 "allowed": 0,
@@ -459,7 +460,7 @@
                                             },
                                             "ThenForbidden": {
                                                 "CasesStrict": [{
-                                                    "name": "Hat alle 'Clash-A-Rama Clan Houses'",
+                                                    "name": "Hat 'Clash Carving Deco' und ein 'Anime Clan Houses' und alle 'Clash-A-Rama Clan Houses'",
                                                     "IfMoreThan": {
                                                         "type": "quantity",
                                                         "allowed": 3,
@@ -498,7 +499,7 @@
                                                     },
                                                     "ThenForbidden": {
                                                         "CasesStrict": [{
-                                                            "name": "Hat 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens 2 'Clash-A-Rama Clan House'",
+                                                            "name": "Hat 'Clashy Carving Deco' und ein 'Anime Clan House'sowie 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens 2 'Clash-A-Rama Clan House'",
                                                             "IfMoreThan": {
                                                                 "type": "quantity",
                                                                 "allowed": 1,
@@ -737,7 +738,7 @@
             "Cases": {
                 "name": "August 2025 Event",
                 "CasesStrict": [{
-                    "name": "Hat 'Clashy Carving Deco'",
+                    "name": "",
                     "IfMoreThan": {
                         "type": "quantity",
                         "allowed": 0,
@@ -749,7 +750,7 @@
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "",
+                            "name": "Hat 'Clash Carving Deco' und mindestens 3 'Clash-A-Rama Clan Houses'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 2,
@@ -770,234 +771,25 @@
                                     "name": "Clash-A-Rama Ground",
                                     "id": "82000145"
                                 }]
+                            }
+                        }, {
+                            "name": "",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 0,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Frozen Wizard Deco",
+                                    "id": "18000179"
+                                }, {
+                                    "type": "element",
+                                    "name": "Soda Stand Deco",
+                                    "id": "18000183"
+                                }]
                             },
-                            "ThenForbidden":{
+                            "ThenForbidden": {
                                 "CasesStrict": [{
-                                    "name": "Hat alle 'Clash-A-Rama Clan Houses'",
-                                    "IfMoreThan": {
-                                        "type": "quantity",
-                                        "allowed": 3,
-                                        "elements": [{
-                                            "type": "element",
-                                            "name": "Clash-A-Rama Roof",
-                                            "id": "82000142"
-                                        }, {
-                                            "type": "element",
-                                            "name": "Cartoon Barrel",
-                                            "id": "82000143"
-                                        }, {
-                                            "type": "element",
-                                            "name": "Clash-A-Rama Walls",
-                                            "id": "82000144"
-                                        }, {
-                                            "type": "element",
-                                            "name": "Clash-A-Rama Ground",
-                                            "id": "82000145"
-                                        }]
-                                    },
-                                    "ThenForbidden":{
-                                        "CasesStrict": [{
-                                            "name": "Hat 'Kawaii Giant Deco'",
-                                            "IfMoreThan": {
-                                                "type": "quantity",
-                                                "allowed": 0,
-                                                "elements": [{
-                                                    "type": "element",
-                                                    "name": "Kawaii Giant Deco",
-                                                    "id": "18000145"
-                                                }]
-                                            },
-                                            "ThenForbidden": {
-                                                "CasesStrict": [{
-                                                    "name": "Hat mehr als ein 'Anime Clan House'",
-                                                    "IfMoreThan": {
-                                                        "type": "quantity",
-                                                        "allowed": 1,
-                                                        "elements": [{
-                                                            "type": "element",
-                                                            "name": "Anime Roof",
-                                                            "id": "82000126"
-                                                        }, {
-                                                            "type": "element",
-                                                            "name": "Vending Machine",
-                                                            "id": "82000127"
-                                                        }, {
-                                                            "type": "element",
-                                                            "name": "Anime Walls",
-                                                            "id": "82000128"
-                                                        }, {
-                                                            "type": "element",
-                                                            "name": "Anime Ground",
-                                                            "id": "82000129"
-                                                        }]
-                                                    }
-                                                }]
-                                            }
-                                        }]
-                                    }
-                                },{
-                                    "name": "Hat mindestens 3 'Clash-A-Rama Clan Houses'",
-                                    "IfMoreThan": {
-                                        "type": "quantity",
-                                        "allowed": 2,
-                                        "elements": [{
-                                            "type": "element",
-                                            "name": "Clash-A-Rama Roof",
-                                            "id": "82000142"
-                                        }, {
-                                            "type": "element",
-                                            "name": "Cartoon Barrel",
-                                            "id": "82000143"
-                                        }, {
-                                            "type": "element",
-                                            "name": "Clash-A-Rama Walls",
-                                            "id": "82000144"
-                                        }, {
-                                            "type": "element",
-                                            "name": "Clash-A-Rama Ground",
-                                            "id": "82000145"
-                                        }]
-                                    },
-                                    "ThenForbidden":{
-                                        "CasesStrict": [{
-                                            "name": "Hat 'Kawaii Giant Deco'",
-                                            "IfMoreThan": {
-                                                "type": "quantity",
-                                                "allowed": 0,
-                                                "elements": [{
-                                                    "type": "element",
-                                                    "name": "Kawaii Giant Deco",
-                                                    "id": "18000145"
-                                                }]
-                                            },
-                                            "ThenForbidden": {
-                                                "CasesStrict": [{
-                                                    "name": "Hat mehr als 2 'Anime Clan Houses'",
-                                                    "IfMoreThan": {
-                                                        "type": "quantity",
-                                                        "allowed": 2,
-                                                        "elements": [{
-                                                            "type": "element",
-                                                            "name": "Anime Roof",
-                                                            "id": "82000126"
-                                                        }, {
-                                                            "type": "element",
-                                                            "name": "Vending Machine",
-                                                            "id": "82000127"
-                                                        }, {
-                                                            "type": "element",
-                                                            "name": "Anime Walls",
-                                                            "id": "82000128"
-                                                        }, {
-                                                            "type": "element",
-                                                            "name": "Anime Ground",
-                                                            "id": "82000129"
-                                                        }]
-                                                    }
-                                                }]
-                                            }
-                                        }]
-                                    }
-                                },{
-                                   "name": "Hat mindestens 2 'Clash-A-Rama Clan Houses'",
-                                    "IfMoreThan": {
-                                        "type": "quantity",
-                                        "allowed": 1,
-                                        "elements": [{
-                                            "type": "element",
-                                            "name": "Clash-A-Rama Roof",
-                                            "id": "82000142"
-                                        }, {
-                                            "type": "element",
-                                            "name": "Cartoon Barrel",
-                                            "id": "82000143"
-                                        }, {
-                                            "type": "element",
-                                            "name": "Clash-A-Rama Walls",
-                                            "id": "82000144"
-                                        }, {
-                                            "type": "element",
-                                            "name": "Clash-A-Rama Ground",
-                                            "id": "82000145"
-                                        }]
-                                    },
-                                    "ThenForbidden":{
-                                        "CasesStrict":[{
-                                            "name": "",
-                                            "IfMoreThan": {
-                                                "type": "quantity",
-                                                "allowed": 0,
-                                                "elements": [{
-                                                    "type": "element",
-                                                    "name": "Frozen Wizard Deco",
-                                                    "id": "18000179"
-                                                }, {
-                                                    "type": "element",
-                                                    "name": "Soda Stand Deco",
-                                                    "id": "18000183"
-                                                }]
-                                            },
-                                            "ThenForbidden":{
-                                                "CasesStrict":[{
-                                                    "name": "Hat 'Frozen Wizard Deco' und 'Soda Stand Deco'",
-                                                    "IfMoreThan": {
-                                                        "type": "quantity",
-                                                        "allowed": 1,
-                                                        "elements": [{
-                                                            "type": "element",
-                                                            "name": "Frozen Wizard Deco",
-                                                            "id": "18000179"
-                                                        }, {
-                                                            "type": "element",
-                                                            "name": "Soda Stand Deco",
-                                                            "id": "18000183"
-                                                        }]
-                                                    }
-                                                },{
-                                                    "CasesStrict": [{
-                                                        "name": "Hat 'Kawaii Giant Deco'",
-                                                        "IfMoreThan": {
-                                                            "type": "quantity",
-                                                            "allowed": 0,
-                                                            "elements": [{
-                                                                "type": "element",
-                                                                "name": "Kawaii Giant Deco",
-                                                                "id": "18000145"
-                                                            }]
-                                                        },
-                                                        "ThenForbidden": {
-                                                            "CasesStrict": [{
-                                                                "name": "Hat mehr als ein 'Anime Clan House'",
-                                                                "IfMoreThan": {
-                                                                    "type": "quantity",
-                                                                    "allowed": 1,
-                                                                    "elements": [{
-                                                                        "type": "element",
-                                                                        "name": "Anime Roof",
-                                                                        "id": "82000126"
-                                                                    }, {
-                                                                        "type": "element",
-                                                                        "name": "Vending Machine",
-                                                                        "id": "82000127"
-                                                                    }, {
-                                                                        "type": "element",
-                                                                        "name": "Anime Walls",
-                                                                        "id": "82000128"
-                                                                    }, {
-                                                                        "type": "element",
-                                                                        "name": "Anime Ground",
-                                                                        "id": "82000129"
-                                                                    }]
-                                                                }
-                                                            }]
-                                                        }
-                                                    }]
-                                                }]
-                                            }
-                                        }]
-                                    } 
-                                },{
-                                    "name": "Hat 1 'Clash-A-Rama Clan House'",
+                                    "name": "Hat 'Clashy Carving Deco' sowie 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens ein 'Clash-A-Rama Clan House'",
                                     "IfMoreThan": {
                                         "type": "quantity",
                                         "allowed": 0,
@@ -1018,80 +810,20 @@
                                             "name": "Clash-A-Rama Ground",
                                             "id": "82000145"
                                         }]
-                                    },
-                                    "ThenForbidden":{
-                                        "CasesStrict":[{
-                                            "name": "",
-                                            "IfMoreThan": {
-                                                "type": "quantity",
-                                                "allowed": 0,
-                                                "elements": [{
-                                                    "type": "element",
-                                                    "name": "Frozen Wizard Deco",
-                                                    "id": "18000179"
-                                                }, {
-                                                    "type": "element",
-                                                    "name": "Soda Stand Deco",
-                                                    "id": "18000183"
-                                                }]
-                                            },
-                                            "ThenForbidden":{
-                                                "CasesStrict":[{
-                                                    "name": "Hat 'Frozen Wizard Deco' und 'Soda Stand Deco'",
-                                                    "IfMoreThan": {
-                                                        "type": "quantity",
-                                                        "allowed": 1,
-                                                        "elements": [{
-                                                            "type": "element",
-                                                            "name": "Frozen Wizard Deco",
-                                                            "id": "18000179"
-                                                        }, {
-                                                            "type": "element",
-                                                            "name": "Soda Stand Deco",
-                                                            "id": "18000183"
-                                                        }]
-                                                    }
-                                                },{
-                                                    "CasesStrict": [{
-                                                        "name": "Hat 'Kawaii Giant Deco'",
-                                                        "IfMoreThan": {
-                                                            "type": "quantity",
-                                                            "allowed": 0,
-                                                            "elements": [{
-                                                                "type": "element",
-                                                                "name": "Kawaii Giant Deco",
-                                                                "id": "18000145"
-                                                            }]
-                                                        },
-                                                        "ThenForbidden": {
-                                                            "CasesStrict": [{
-                                                                "name": "Hat 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mehr als 2 'Anime Clan Houses'",
-                                                                "IfMoreThan": {
-                                                                    "type": "quantity",
-                                                                    "allowed": 2,
-                                                                    "elements": [{
-                                                                        "type": "element",
-                                                                        "name": "Anime Roof",
-                                                                        "id": "82000126"
-                                                                    }, {
-                                                                        "type": "element",
-                                                                        "name": "Vending Machine",
-                                                                        "id": "82000127"
-                                                                    }, {
-                                                                        "type": "element",
-                                                                        "name": "Anime Walls",
-                                                                        "id": "82000128"
-                                                                    }, {
-                                                                        "type": "element",
-                                                                        "name": "Anime Ground",
-                                                                        "id": "82000129"
-                                                                    }]
-                                                                }
-                                                            }]
-                                                        }
-                                                    }]
-                                                }]
-                                            }
+                                    }
+                                }, {
+                                    "name": "Hat 'Clashy Carving Deco', 'Frozen Wizard Deco' und 'Soda Stand Deco'",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 1,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Frozen Wizard Deco",
+                                            "id": "18000179"
+                                        }, {
+                                            "type": "element",
+                                            "name": "Soda Stand Deco",
+                                            "id": "18000183"
                                         }]
                                     }
                                 }]
