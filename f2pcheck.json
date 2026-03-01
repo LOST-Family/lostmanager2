@@ -319,7 +319,7 @@
                                         }]
                                     }
                                 },{
-                                    "name": "Hat 3 'Anime Clan Houses'",
+                                    "name": "",
                                     "IfMoreThan": {
                                         "type": "quantity",
                                         "allowed": 2,
@@ -342,6 +342,7 @@
                                         }]
                                     },
                                     "ThenForbidden": {
+                                        "name": "August 2025 Event",
                                         "CasesStrict": [{
                                             "name": "",
                                             "IfMoreThan": {
@@ -355,7 +356,7 @@
                                             },
                                             "ThenForbidden": {
                                                 "CasesStrict": [{
-                                                    "name": "Hat 'Clash Carving Deco' und mindestens 3 'Clash-A-Rama Clan Houses'",
+                                                    "name": "Hat 'Clash Carving Deco' und 3 'Anime Clan Houses' und mindestens 3 'Clash-A-Rama Clan Houses'",
                                                     "IfMoreThan": {
                                                         "type": "quantity",
                                                         "allowed": 2,
@@ -394,6 +395,21 @@
                                                     },
                                                     "ThenForbidden": {
                                                         "CasesStrict": [{
+                                                            "name": "Hat 'Clashy Carving Deco', 'Frozen Wizard Deco' und 'Soda Stand Deco'",
+                                                            "IfMoreThan": {
+                                                                "type": "quantity",
+                                                                "allowed": 1,
+                                                                "elements": [{
+                                                                    "type": "element",
+                                                                    "name": "Frozen Wizard Deco",
+                                                                    "id": "18000179"
+                                                                }, {
+                                                                    "type": "element",
+                                                                    "name": "Soda Stand Deco",
+                                                                    "id": "18000183"
+                                                                }]
+                                                            }
+                                                        },{
                                                             "name": "Hat 'Clashy Carving Deco' sowie 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens ein 'Clash-A-Rama Clan House'",
                                                             "IfMoreThan": {
                                                                 "type": "quantity",
