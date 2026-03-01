@@ -499,21 +499,6 @@
                                                     },
                                                     "ThenForbidden": {
                                                         "CasesStrict": [{
-                                                            "name": "Hat 'Clashy Carving Deco', 'Frozen Wizard Deco' und 'Soda Stand Deco' sowie 2 'Anime Clan Houses'",
-                                                            "IfMoreThan": {
-                                                                "type": "quantity",
-                                                                "allowed": 1,
-                                                                "elements": [{
-                                                                    "type": "element",
-                                                                    "name": "Frozen Wizard Deco",
-                                                                    "id": "18000179"
-                                                                }, {
-                                                                    "type": "element",
-                                                                    "name": "Soda Stand Deco",
-                                                                    "id": "18000183"
-                                                                }]
-                                                            }
-                                                        },{
                                                             "name": "Hat 'Clashy Carving Deco' und ein 'Anime Clan House'sowie 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens 2 'Clash-A-Rama Clan House'",
                                                             "IfMoreThan": {
                                                                 "type": "quantity",
