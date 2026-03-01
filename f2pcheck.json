@@ -296,7 +296,7 @@
                             },
                             "ThenForbidden":{
                                 "CasesStrict":[{
-                                    "name": "Hat alle 'Anime Clan Houses'2",
+                                    "name": "Hat alle 'Anime Clan Houses'",
                                     "IfMoreThan": {
                                         "type": "quantity",
                                         "allowed": 3,
