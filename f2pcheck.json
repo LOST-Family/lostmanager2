@@ -439,7 +439,7 @@
                                         }]
                                     }
                                 },{
-                                    "name": "Hat 'Kawaii Giant Deco' und 3 'Anime Clan Houses'",
+                                    "name": "",
                                     "IfMoreThan": {
                                         "type": "quantity",
                                         "allowed": 1,
@@ -476,7 +476,7 @@
                                             },
                                             "ThenForbidden": {
                                                 "CasesStrict": [{
-                                                    "name": "Hat 'Clash Carving Deco' und 3 'Anime Clan Houses' und mindestens 3 'Clash-A-Rama Clan Houses'",
+                                                    "name": "Hat 'Clash Carving Deco' und ein 'Anime Clan Houses' und alle 'Clash-A-Rama Clan Houses'",
                                                     "IfMoreThan": {
                                                         "type": "quantity",
                                                         "allowed": 3,
@@ -515,7 +515,7 @@
                                                     },
                                                     "ThenForbidden": {
                                                         "CasesStrict": [{
-                                                            "name": "Hat 'Clashy Carving Deco', 'Frozen Wizard Deco' und 'Soda Stand Deco' sowie 3 'Anime Clan Houses'",
+                                                            "name": "Hat 'Clashy Carving Deco', 'Frozen Wizard Deco' und 'Soda Stand Deco' sowie 2 'Anime Clan Houses'",
                                                             "IfMoreThan": {
                                                                 "type": "quantity",
                                                                 "allowed": 1,
@@ -530,7 +530,7 @@
                                                                 }]
                                                             }
                                                         },{
-                                                            "name": "Hat 'Clashy Carving Deco' und '3 Anime Clan Houses'sowie 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens ein 'Clash-A-Rama Clan House'",
+                                                            "name": "Hat 'Clashy Carving Deco' und ein 'Anime Clan House'sowie 'Frozen Wizard Deco' oder 'Soda Stand Deco' und mindestens 2 'Clash-A-Rama Clan House'",
                                                             "IfMoreThan": {
                                                                 "type": "quantity",
                                                                 "allowed": 1,
