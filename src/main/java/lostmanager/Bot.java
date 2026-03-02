@@ -165,7 +165,6 @@ public class Bot extends ListenerAdapter {
 			e.printStackTrace();
 		}
 
-		startNameUpdates();
 		restartAllEvents();
 
 		JDABuilder.createDefault(token).enableIntents(GatewayIntent.GUILD_MEMBERS)
@@ -339,7 +338,8 @@ public class Bot extends ListenerAdapter {
 											OptionType.STRING, "emoji", "Der Emoji, nach dem überprüft werden soll.",
 											true)
 									.addOption(
-											OptionType.STRING, "emoji2", "Optionaler zweiter Emoji. Wer hiermit reagiert hat, wird separat angezeigt und nicht gepingt.",
+											OptionType.STRING, "emoji2",
+											"Optionaler zweiter Emoji. Wer hiermit reagiert hat, wird separat angezeigt und nicht gepingt.",
 											false),
 
 							Commands.slash("setnick",
@@ -549,6 +549,7 @@ public class Bot extends ListenerAdapter {
 			System.err.println("Failed to start REST API Server: " + e.getMessage());
 			e.printStackTrace();
 		}
+		startNameUpdates();
 	}
 
 	@SuppressWarnings("null")
@@ -1002,15 +1003,7 @@ public class Bot extends ListenerAdapter {
 	}
 
 	public static void scheduleSeasonEndWinsSaving() {
-		// Fetch the actual season end time from the API
 		Timestamp seasonEndTime = lostmanager.util.SeasonUtil.fetchSeasonEndTime();
-
-		if (seasonEndTime == null) {
-			System.err.println("Failed to fetch season end time from API. Retrying in 1 hour...");
-			// Retry after 1 hour if fetching fails
-			schedulertasks.schedule(() -> scheduleSeasonEndWinsSaving(), 1, TimeUnit.HOURS);
-			return;
-		}
 
 		long nowMillis = System.currentTimeMillis();
 		long seasonEndMillis = seasonEndTime.getTime();
@@ -1115,15 +1108,7 @@ public class Bot extends ListenerAdapter {
 	}
 
 	public static void scheduleSeasonStartWinsSaving() {
-		// Fetch the actual season start time from the API
 		Timestamp seasonStartTime = lostmanager.util.SeasonUtil.fetchSeasonStartTime();
-
-		if (seasonStartTime == null) {
-			System.err.println("Failed to fetch season start time from API. Retrying in 1 hour...");
-			// Retry after 1 hour if fetching fails
-			schedulertasks.schedule(() -> scheduleSeasonStartWinsSaving(), 1, TimeUnit.HOURS);
-			return;
-		}
 
 		long nowMillis = System.currentTimeMillis();
 		long seasonStartMillis = seasonStartTime.getTime();
