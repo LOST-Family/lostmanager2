@@ -57,6 +57,7 @@ public class RestApiServer {
 
         // Register API endpoints
         // Note: More specific paths should be registered before more general paths
+        server.createContext("/api/manage/", new ManagementApiHandler(apiToken));
         server.createContext("/api/clans/", new ClanSpecificHandler());
         server.createContext("/api/clans", new ClansHandler());
         server.createContext("/api/sideclans", new SideclansHandler());
@@ -612,7 +613,7 @@ public class RestApiServer {
      */
     private void addCorsHeaders(HttpExchange exchange) {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-API-Token");
     }
 }

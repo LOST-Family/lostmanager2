@@ -1,7 +1,6 @@
 package lostmanager.commands.coc.kickpoints;
 
 import lostmanager.datawrapper.Kickpoint;
-import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBUtil;
 import lostmanager.util.MessageUtil;
@@ -44,9 +43,7 @@ public class kpremove extends ListenerAdapter {
 		String clantag = kp.getPlayer().getClanDB().getTag();
 
 		User userexecuted = new User(event.getUser().getId());
-		if (!(userexecuted.getClanRoles().get(clantag) == Player.RoleType.ADMIN
-				|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.LEADER
-				|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.COLEADER)) {
+		if (!userexecuted.isColeaderOrHigherInClan(clantag)) {
 			event.getHook()
 					.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 							"Du musst mindestens Vize-Anführer des Clans sein, um diesen Befehl ausführen zu können.",

@@ -25,17 +25,8 @@ public class unlink extends ListenerAdapter {
 		new Thread(() -> {
 			String title = "User-Link";
 
-			boolean b = false;
 			User userexecuted = new User(event.getUser().getId());
-			for (String clantag : DBManager.getAllClans()) {
-				if (userexecuted.getClanRoles().get(clantag) == Player.RoleType.ADMIN
-						|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.LEADER
-						|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.COLEADER) {
-					b = true;
-					break;
-				}
-			}
-			if (b == false) {
+			if (!userexecuted.isColeaderOrHigher()) {
 				event.getHook()
 						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 								"Du musst mindestens Vize-Anführer eines Clans sein, um diesen Befehl ausführen zu können.",

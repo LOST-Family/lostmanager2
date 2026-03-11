@@ -4,7 +4,6 @@ import java.util.List;
 
 import lostmanager.datawrapper.Clan;
 import lostmanager.datawrapper.KickpointReason;
-import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
 import lostmanager.dbutil.DBUtil;
@@ -41,9 +40,7 @@ public class kpremovereason extends ListenerAdapter {
 			String clantag = clanOption.getAsString();
 
 			User userexecuted = new User(event.getUser().getId());
-			if (!(userexecuted.getClanRoles().get(clantag) == Player.RoleType.ADMIN
-					|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.LEADER
-					|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.COLEADER)) {
+			if (!userexecuted.isColeaderOrHigherInClan(clantag)) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
 						"Du musst mindestens Vize-Anführer des Clans sein, um diesen Befehl ausführen zu können.",
 						MessageUtil.EmbedType.ERROR)).queue();
