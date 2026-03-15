@@ -1139,14 +1139,15 @@ public class ListeningEvent {
 			message.append(" - Verpasste Angriffe - **Krieg beendet.**\n\n");
 		} else {
 			message.append(" - Offene Hits - ");
-			
-			// Use configured duration for a cleaner display (e.g., "6h" instead of "5h 58m 40s")
+
+			// Use configured duration for a cleaner display (e.g., "6h" instead of "5h 58m
+			// 40s")
 			long durationToShow = getDurationUntilEnd();
 			if (durationToShow <= 0) {
 				// Fallback to actual remaining time if duration is not available or -1
 				durationToShow = millisRemaining;
 			}
-			
+
 			int secondsLeft = (int) (durationToShow / 1000);
 			int minutesLeft = secondsLeft / 60;
 			int hoursLeft = minutesLeft / 60;
@@ -1155,13 +1156,13 @@ public class ListeningEvent {
 			minutesLeft = minutesLeft % 60;
 
 			if (hoursLeft > 0) {
-				message.append("**").append(hoursLeft).append("h** ");
+				message.append("**").append(hoursLeft).append("h**");
 			}
 			if (minutesLeft > 0) {
-				message.append("**").append(minutesLeft).append("m** ");
+				message.append("**").append(minutesLeft).append("m**");
 			}
 			if (secondsLeft > 0 && hoursLeft == 0) {
-				message.append("**").append(secondsLeft).append("s** ");
+				message.append("**").append(secondsLeft).append("s**");
 			}
 			message.append(" verbleibend\n\n");
 		}
@@ -1631,7 +1632,8 @@ public class ListeningEvent {
 								String tag = entry.getKey();
 								int playerAttacks = entry.getValue();
 								String name = playerNames.get(tag);
-								message.append("- ").append(name).append(": ").append(playerAttacks).append(" Angriffe");
+								message.append("- ").append(name).append(": ").append(playerAttacks)
+										.append(" Angriffe");
 
 								// Try to find discord user
 								try {
@@ -1734,8 +1736,10 @@ public class ListeningEvent {
 		String eventClanTag = getClanTag();
 
 		// Resolve potential sideclan mappings (belongs_to and belongs_to_2)
-		String belongsTo1 = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
-		String belongsTo2 = DBUtil.getValueFromSQL("SELECT belongs_to_2 FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
+		String belongsTo1 = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class,
+				eventClanTag);
+		String belongsTo2 = DBUtil.getValueFromSQL("SELECT belongs_to_2 FROM sideclans WHERE clan_tag = ?",
+				String.class, eventClanTag);
 
 		// Candidate clans in priority order: eventClanTag, belongsTo1, belongsTo2
 		String chosenClanTag = null;
@@ -1753,10 +1757,12 @@ public class ListeningEvent {
 			}
 		}
 
-		// If we couldn't determine a matching clan for the player, skip adding kickpoint
+		// If we couldn't determine a matching clan for the player, skip adding
+		// kickpoint
 		if (chosenClanTag == null) {
 			System.out.println("Skipping kickpoint for player " + player.getTag() +
-					" - player not found in belongs_to, belongs_to_2, or event clan DB (event clan: " + eventClanTag + ")");
+					" - player not found in belongs_to, belongs_to_2, or event clan DB (event clan: " + eventClanTag
+					+ ")");
 			return;
 		}
 

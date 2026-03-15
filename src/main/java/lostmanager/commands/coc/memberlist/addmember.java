@@ -57,9 +57,7 @@ public class addmember extends ListenerAdapter {
 			}
 
 			User userexecuted = new User(event.getUser().getId());
-			if (!(userexecuted.getClanRoles().get(clantag) == Player.RoleType.ADMIN
-					|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.LEADER
-					|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.COLEADER)) {
+			if (!userexecuted.isColeaderOrHigherInClan(clantag)) {
 				event.getHook()
 						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 								"Du musst mindestens Vize-Anführer des Clans sein, um diesen Befehl ausführen zu können.",
