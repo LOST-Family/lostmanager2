@@ -1311,7 +1311,7 @@
             "Cases":{
                 "name":"Deco Limitation",
                 "CasesStrict":[{
-                    "name": "Hat mehr als eine 'Builder Statue ",
+                    "name": "Hat mehr als 1 'Builder Statue ",
                     "IfMoreThan": {
                         "type": "quantity",
                         "allowed": 1,
@@ -1322,7 +1322,7 @@
                         }]
                     }
                 }, {
-                    "name": "Hat mehr als eine 'Dragon Statue",
+                    "name": "Hat mehr als 1 'Dragon Statue",
                     "IfMoreThan": {
                         "type": "quantity",
                         "allowed": 1,
@@ -1333,7 +1333,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als eine 'Cherry Bonsai Deco ",
+                    "name": "Hat mehr als 1 'Cherry Bonsai Deco ",
                     "IfMoreThan": {
                         "type": "quantity",
                         "allowed": 1,
@@ -1344,7 +1344,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als eine 'Baby Dragon Deco ",
+                    "name": "Hat mehr als 1 'Baby Dragon Deco ",
                     "IfMoreThan": {
                         "type": "quantity",
                         "allowed": 1,
@@ -1363,6 +1363,39 @@
                             "type": "element",
                             "name": "Dragon Trophy",
                             "id": "18000075"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 2 'Decorated Dragon Statue",
+                    "IfMoreThan": {
+                        "type": "quantity",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Decorated Dragon Statue",
+                            "id": "18000074"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 2 'Baby Ptah Deco",
+                    "IfMoreThan": {
+                        "type": "quantity",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Baby Ptah",
+                            "id": "18000126"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 2 'Dragon Totem Deco",
+                    "IfMoreThan": {
+                        "type": "quantity",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Dragon Totem",
+                            "id": "18000139"
                         }]
                     }   
                 }]
