@@ -66,7 +66,36 @@ public class reactionsrole extends ListenerAdapter {
 
 			channel.retrieveMessageById(messageId).queue(message -> {
 				MessageReaction reaction = message.getReactions().stream()
-						.filter(r -> r.getEmoji().getFormatted().equals(emoji)).findFirst().orElse(null);
+						.filter(r -> {
+							net.dv8tion.jda.api.entities.emoji.Emoji e = r.getEmoji();
+							String searchEmoji = emoji.trim();
+							
+							// Direct matches
+							if (e.getFormatted().equalsIgnoreCase(searchEmoji) || e.getName().equalsIgnoreCase(searchEmoji)) {
+								return true;
+							}
+							
+							// Custom Emoji loose matching
+							if (e.getType() == net.dv8tion.jda.api.entities.emoji.Emoji.Type.CUSTOM) {
+								String id = ((net.dv8tion.jda.api.entities.emoji.CustomEmoji) e).getId();
+								if (searchEmoji.contains(id)) return true;
+								
+								// Name-based fallback if IDs don't match (e.g., cross-server emoji with same name)
+								String parsedName = searchEmoji;
+								if (searchEmoji.startsWith("<") && searchEmoji.endsWith(">")) {
+									String[] parts = searchEmoji.split(":");
+									if (parts.length >= 2) {
+										parsedName = parts[1]; 
+									}
+								}
+								if (e.getName().equalsIgnoreCase(parsedName)) return true;
+							}
+							
+							// Unicode Emoji loose matching
+							String eNameClean = e.getName().replace("\uFE0F", "");
+							String emojiClean = searchEmoji.replace("\uFE0F", "");
+							return eNameClean.equalsIgnoreCase(emojiClean);
+						}).findFirst().orElse(null);
 
 				if (reaction == null) {
 					event.getHook()
