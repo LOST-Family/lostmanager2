@@ -30,7 +30,7 @@ public class Connection {
 			} else {
 				return false;
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			System.out.println("Verbindungsfehler: " + e.getMessage());
 			return false;
 		}
@@ -55,7 +55,7 @@ public class Connection {
 		try (java.sql.Connection conn = DriverManager.getConnection(url, user, password)) {
 			DatabaseMetaData dbm = conn.getMetaData();
 
-			for (String tableName : tableNames) {
+			for (final String tableName : tableNames) {
 				try (ResultSet tables = dbm.getTables(null, null, tableName, null)) {
 					if (tables.next()) {
 						System.out.println("Tabelle '" + tableName + "' existiert schon.");
@@ -63,51 +63,42 @@ public class Connection {
 						System.out.println("Tabelle '" + tableName + "' existiert nicht. Erstelle sie jetzt...");
 						String createTableSQL = null;
 						switch (tableName) {
-						case "clans":
+						case "clans" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (tag TEXT PRIMARY KEY," + "name TEXT,"
 									+ "index BIGINT," + "guild_id CHARACTER VARYING(19),"
 									+ "leader_roleid CHARACTER VARYING(19)," + "coleader_roleid CHARACTER VARYING(19),"
 									+ "elder_roleid CHARACTER VARYING(19)," + "member_roleid CHARACTER VARYING(19))";
-							break;
-						case "users":
+						case "users" ->
 							createTableSQL = "CREATE TABLE " + tableName
 									+ " (discord_id CHARACTER VARYING(19) PRIMARY KEY," + "is_admin BOOLEAN)";
-							break;
-						case "players":
+						case "players" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (cr_tag TEXT PRIMARY KEY,"
 									+ "discord_id CHARACTER VARYING(19), name TEXT)";
-							break;
-						case "clan_members":
+						case "clan_members" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (player_tag TEXT PRIMARY KEY,"
 									+ "clan_tag TEXT," + "clan_role TEXT)";
-							break;
-						case "clan_settings":
+						case "clan_settings" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (clan_tag TEXT PRIMARY KEY,"
 									+ "max_kickpoints BIGINT," + "kickpoints_expire_after_days SMALLINT)";
-							break;
-						case "kickpoint_reasons":
+						case "kickpoint_reasons" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (name TEXT," + "clan_tag text,"
 									+ "amount SMALLINT," + "PRIMARY KEY (name, clan_tag))";
-							break;
-						case "kickpoints":
+						case "kickpoints" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (id BIGINT PRIMARY KEY,"
 									+ "player_tag CHARACTER VARYING(19)," + "date TIMESTAMPTZ," + "amount BIGINT,"
 									+ "description CHARACTER VARYING(100),"
 									+ "created_by_discord_id CHARACTER VARYING(19)," + "created_at TIMESTAMPTZ,"
 									+ "expires_at TIMESTAMPTZ)";
-							break;
-						case "cw_fillers":
+						case "cw_fillers" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (id BIGSERIAL PRIMARY KEY,"
 									+ "clan_tag TEXT NOT NULL," + "player_tag TEXT NOT NULL,"
 									+ "war_end_time TIMESTAMP NOT NULL," + "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
 									+ "UNIQUE(clan_tag, player_tag, war_end_time))";
-							break;
-						case "achievements":
+						case "achievements" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (tag TEXT PRIMARY KEY,"
 									+ "data JSONB NOT NULL,"
 									+ "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
-							break;
-						case "achievement_data":
+						case "achievement_data" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (id BIGSERIAL PRIMARY KEY,"
 									+ "player_tag TEXT NOT NULL,"
 									+ "type TEXT NOT NULL,"
@@ -115,26 +106,22 @@ public class Connection {
 									+ "data JSONB NOT NULL,"
 									+ "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
 									+ "UNIQUE(player_tag, type, time))";
-							break;
-						case "upload_sessions":
+						case "upload_sessions" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (session_key TEXT PRIMARY KEY,"
 									+ "userid TEXT NOT NULL,"
 									+ "expires_at TIMESTAMP NOT NULL)";
-							break;
-						case "userjsons":
+						case "userjsons" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (userid TEXT NOT NULL,"
 									+ "tag TEXT NOT NULL,"
 									+ "json JSONB NOT NULL,"
 									+ "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
 									+ "PRIMARY KEY (userid, tag))";
-							break;
-						case "datamappings":
+						case "datamappings" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (datavalue TEXT PRIMARY KEY,"
 									+ "emojiid TEXT,"
 									+ "name TEXT,"
 									+ "emojiname TEXT)";
-							break;
-						case "member_signoffs":
+						case "member_signoffs" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (id BIGSERIAL PRIMARY KEY,"
 									+ "player_tag TEXT NOT NULL,"
 									+ "start_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
@@ -143,7 +130,6 @@ public class Connection {
 									+ "created_by_discord_id TEXT NOT NULL,"
 									+ "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
 									+ "UNIQUE(player_tag))";
-							break;
 						}
 
 						try (Statement stmt = conn.createStatement()) {
@@ -175,8 +161,8 @@ public class Connection {
 
 				}
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (final SQLException e) {
+			System.out.println(e.getMessage());
 		}
 
 	}

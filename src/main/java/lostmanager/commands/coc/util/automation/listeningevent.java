@@ -27,9 +27,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 
 public class listeningevent extends ListenerAdapter {
 
@@ -70,17 +70,10 @@ public class listeningevent extends ListenerAdapter {
 		// requests
 		new Thread(() -> {
 			switch (subcommand) {
-				case "add":
-					handleAdd(event, title);
-					break;
-				case "list":
-					handleList(event, title);
-					break;
-				case "remove":
-					handleRemove(event, title);
-					break;
-				default:
-					event.replyEmbeds(
+				case "add" -> handleAdd(event, title);
+				case "list" -> handleList(event, title);
+				case "remove" -> handleRemove(event, title);
+				default -> event.replyEmbeds(
 							MessageUtil.buildEmbed(title, "Unbekannter Unterbefehl.", MessageUtil.EmbedType.ERROR))
 							.queue();
 			}
@@ -125,7 +118,7 @@ public class listeningevent extends ListenerAdapter {
 			} else {
 				duration = parseDuration(durationStr);
 			}
-		} catch (IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			event.replyEmbeds(MessageUtil.buildEmbed(title,
 					"Ungültiges Dauer-Format: " + e.getMessage() + "\nBeispiele: 0, 1h, 2d, 24h, start",
 					MessageUtil.EmbedType.ERROR)).queue();
@@ -177,7 +170,7 @@ public class listeningevent extends ListenerAdapter {
 
 		// Determine if we need a modal based on event type and action type
 		boolean needsModal = false;
-		String modalId = "";
+		String modalId;
 		Modal modal = null;
 
 		// CS + (infomessage or kickpoint) => ask for threshold
@@ -314,21 +307,21 @@ public class listeningevent extends ListenerAdapter {
 
 		// Add threshold or required attacks if provided
 		if (thresholdOrAttacks != null) {
-			ActionValue valueAV = new ActionValue((long) thresholdOrAttacks.intValue());
+			ActionValue valueAV = new ActionValue(thresholdOrAttacks.longValue());
 			actionValues.add(valueAV);
 		}
 
 		// Add raid district thresholds if provided
 		if (raidDistrictThresholds != null && !raidDistrictThresholds.isEmpty()) {
 			ActionValue capitalPeakAV = new ActionValue(
-					(long) raidDistrictThresholds.get("capital_peak_max").intValue());
+					raidDistrictThresholds.get("capital_peak_max").longValue());
 			actionValues.add(capitalPeakAV);
 
 			ActionValue otherDistrictsAV = new ActionValue(
-					(long) raidDistrictThresholds.get("other_districts_max").intValue());
+					raidDistrictThresholds.get("other_districts_max").longValue());
 			actionValues.add(otherDistrictsAV);
 
-			ActionValue penalizeBothAV = new ActionValue((long) raidDistrictThresholds.get("penalize_both").intValue());
+			ActionValue penalizeBothAV = new ActionValue(raidDistrictThresholds.get("penalize_both").longValue());
 			actionValues.add(penalizeBothAV);
 		}
 
@@ -338,8 +331,7 @@ public class listeningevent extends ListenerAdapter {
 			ObjectMapper mapper = new ObjectMapper();
 			try {
 				actionValuesJson = mapper.writeValueAsString(actionValues);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
+			} catch (final JsonProcessingException e) {
 			}
 		}
 
@@ -350,8 +342,7 @@ public class listeningevent extends ListenerAdapter {
 				ObjectMapper mapper = new ObjectMapper();
 				actionValuesJson = mapper
 						.writeValueAsString(java.util.Collections.singletonMap("message", customMessage));
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
+			} catch (final JsonProcessingException e) {
 			}
 		}
 
@@ -377,8 +368,7 @@ public class listeningevent extends ListenerAdapter {
 				if (generatedKeys.next()) {
 					id = generatedKeys.getLong(1);
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch (final SQLException e) {
 			}
 		}
 
@@ -441,7 +431,7 @@ public class listeningevent extends ListenerAdapter {
 		if (ids.isEmpty()) {
 			desc.append("Keine Events gefunden.");
 		} else {
-			for (Long id : ids) {
+			for (final Long id : ids) {
 				ListeningEvent le = new ListeningEvent(id);
 				Clan clan = new Clan(le.getClanTag());
 				desc.append("**ID:** ").append(id).append("\n");
@@ -497,7 +487,7 @@ public class listeningevent extends ListenerAdapter {
 												.append(" Minuten geendet und es wurde bisher keiner gestartet\n");
 									}
 								}
-							} catch (Exception e) {
+							} catch (final Exception e) {
 								// Fallback if we can't check war status
 								desc.append("**Feuert in:** Event bereits gefeuert vor ").append(minutesSinceFire)
 										.append(" Minuten\n");
@@ -603,7 +593,7 @@ public class listeningevent extends ListenerAdapter {
 			int threshold;
 			try {
 				threshold = Integer.parseInt(thresholdStr);
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
 						"Ungültiger Threshold-Wert: " + thresholdStr, MessageUtil.EmbedType.ERROR)).queue();
 				return;
@@ -648,7 +638,7 @@ public class listeningevent extends ListenerAdapter {
 					throw new NumberFormatException();
 				}
 				requiredAttacks = attacks;
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				event.getHook()
 						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 								"Ungültiger Wert für Angriffe: " + requiredAttacksStr + " (Erlaubt: 1 oder 2)",
@@ -703,7 +693,7 @@ public class listeningevent extends ListenerAdapter {
 				if (capitalPeakMax < 1 || otherDistrictsMax < 1) {
 					throw new NumberFormatException("Thresholds must be at least 1");
 				}
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
 						"Ungültige Werte eingegeben. Capital Peak und Distrikte müssen >= 1 sein, 'beide bestrafen' muss 1 oder 2 sein.",
 						MessageUtil.EmbedType.ERROR)).queue();
@@ -748,7 +738,7 @@ public class listeningevent extends ListenerAdapter {
 				if ((useLists != 0 && useLists != 1) || (excludeLeaders != 0 && excludeLeaders != 1)) {
 					throw new NumberFormatException("Values must be 0 or 1");
 				}
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				event.getHook()
 						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 								"Ungültige Werte eingegeben. Beide Felder müssen entweder 0 oder 1 sein.",
@@ -793,8 +783,7 @@ public class listeningevent extends ListenerAdapter {
 			ObjectMapper mapper = new ObjectMapper();
 			try {
 				actionValuesJson = mapper.writeValueAsString(actionValues);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
+			} catch (final JsonProcessingException e) {
 			}
 		}
 
@@ -820,8 +809,7 @@ public class listeningevent extends ListenerAdapter {
 				if (generatedKeys.next()) {
 					id = generatedKeys.getLong(1);
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch (final SQLException e) {
 			}
 		}
 
@@ -854,144 +842,134 @@ public class listeningevent extends ListenerAdapter {
 			String focused = event.getFocusedOption().getName();
 			String input = event.getFocusedOption().getValue();
 
-			if (focused.equals("clan")) {
-				List<Command.Choice> choices = DBManager.getClansAutocompleteWithSideclans(input);
-				event.replyChoices(choices).queue(_ -> {
-				}, _ -> {
-				});
-			} else if (focused.equals("actiontype")) {
-				// Get the event type to filter action types
-				OptionMapping typeOption = event.getOption("type");
-				String eventType = typeOption != null ? typeOption.getAsString() : "";
-
-				// Provide autocomplete for action types based on listening type
-				List<Command.Choice> choices = new ArrayList<>();
-
-				// Common action types available for all listening types
-				String[] commonActionTypes = { "infomessage", "kickpoint", "custommessage" };
-				String[] commonDisplayNames = { "Info-Nachricht", "Kickpoint", "Benutzerdefinierte Nachricht" };
-
-				// Raid-specific display names (different from common)
-				String[] raidCommonDisplayNames = { "Hits (Info)", "Hits (Kickpoints)",
-						"Benutzerdefinierte Nachricht" };
-
-				// CW-specific action types
-				String[] cwActionTypes = { "cwdonator", "filler" };
-				String[] cwDisplayNames = { "CW Donator", "Filler" };
-
-				// Raid-specific action types
-				String[] raidActionTypes = { "raidfails", "raidfails_kickpoint" };
-				String[] raidDisplayNames = { "Districts (Info)", "Districts (Kickpoints)" };
-
-				// Add common action types (use raid-specific names for raid type)
-				String[] displayNames = "raid".equals(eventType) ? raidCommonDisplayNames : commonDisplayNames;
-				for (int i = 0; i < commonActionTypes.length; i++) {
-					if (commonActionTypes[i].toLowerCase().contains(input.toLowerCase())
-							|| displayNames[i].toLowerCase().contains(input.toLowerCase())) {
-						choices.add(new Command.Choice(displayNames[i], commonActionTypes[i]));
-					}
-				}
-
-				// Add CW-specific action types only if type is "cw"
-				if ("cw".equals(eventType)) {
-					for (int i = 0; i < cwActionTypes.length; i++) {
-						if (cwActionTypes[i].toLowerCase().contains(input.toLowerCase())
-								|| cwDisplayNames[i].toLowerCase().contains(input.toLowerCase())) {
-							choices.add(new Command.Choice(cwDisplayNames[i], cwActionTypes[i]));
-						}
-					}
-				}
-
-				// Add raid-specific action types only if type is "raid"
-				if ("raid".equals(eventType)) {
-					for (int i = 0; i < raidActionTypes.length; i++) {
-						if (raidActionTypes[i].toLowerCase().contains(input.toLowerCase())
-								|| raidDisplayNames[i].toLowerCase().contains(input.toLowerCase())) {
-							choices.add(new Command.Choice(raidDisplayNames[i], raidActionTypes[i]));
-						}
-					}
-				}
-
-				// Limit to 25 choices
-				if (choices.size() > 25) {
-					choices = choices.subList(0, 25);
-				}
-
-				event.replyChoices(choices).queue(_ -> {
-				}, _ -> {
-				});
-			} else if (focused.equals("duration")) {
-				// Provide autocomplete for duration
-				List<Command.Choice> choices = new ArrayList<>();
-
-				// Get the event type to provide contextual suggestions
-				OptionMapping typeOption = event.getOption("type");
-				String eventType = typeOption != null ? typeOption.getAsString() : "";
-
-				// Check if the user's input is a valid duration format
-				boolean isValidInput = false;
-				if (!input.isEmpty()) {
-					if (input.equalsIgnoreCase("start") || input.equalsIgnoreCase("cwstart")) {
-						// "start" and "cwstart" are valid for CW events
-						isValidInput = eventType.equals("cw");
-					} else {
-						// Try to validate as a regular duration
-						try {
-							parseDuration(input);
-							isValidInput = true;
-						} catch (IllegalArgumentException e) {
-							// Input is not a valid duration, isValidInput remains false
-						}
-					}
-				}
-
-				// If the user's input is valid, add it as the first choice
-				if (isValidInput) {
-					choices.add(new Command.Choice("✓ " + input, input));
-				}
-
-				// Common suggestions
-				choices.add(new Command.Choice("Sofort / Am Ende (0)", "0"));
-				choices.add(new Command.Choice("1 Stunde vorher (1h)", "1h"));
-				choices.add(new Command.Choice("2 Stunden vorher (2h)", "2h"));
-				choices.add(new Command.Choice("3 Stunden vorher (3h)", "3h"));
-				choices.add(new Command.Choice("6 Stunden vorher (6h)", "6h"));
-				choices.add(new Command.Choice("12 Stunden vorher (12h)", "12h"));
-				choices.add(new Command.Choice("24 Stunden vorher (24h/1d)", "24h"));
-				choices.add(new Command.Choice("2 Tage vorher (2d)", "2d"));
-
-				// Add CW-specific options
-				if (eventType.equals("cw")) {
-					choices.add(new Command.Choice("⭐ Bei CW Start (start)", "start"));
-				}
-
-				// Filter based on input
-				List<Command.Choice> filtered = new ArrayList<>();
-				for (Command.Choice choice : choices) {
-					if (choice.getName().toLowerCase().contains(input.toLowerCase())
-							|| choice.getAsString().toLowerCase().contains(input.toLowerCase())) {
-						filtered.add(choice);
-						if (filtered.size() >= 25)
-							break;
-					}
-				}
-
-				event.replyChoices(filtered).queue(_ -> {
-				}, _ -> {
-				});
-			} else if (focused.equals("kickpoint_reason")) {
-				// Get the clan from the command to filter kickpoint reasons
-				OptionMapping clanOption = event.getOption("clan");
-				if (clanOption != null) {
-					String clantag = clanOption.getAsString();
-					List<Command.Choice> choices = DBManager.getKPReasonsAutocomplete(input, clantag);
-					event.replyChoices(choices).queue(_ -> {
-					}, _ -> {
-					});
-				} else {
-					event.replyChoices(new ArrayList<>()).queue();
-				}
-			}
+                    switch (focused) {
+                        case "clan" ->                             {
+                                List<Command.Choice> choices = DBManager.getClansAutocompleteWithSideclans(input);
+                                event.replyChoices(choices).queue(_ -> {
+                                }, _ -> {
+                                });
+                            }
+                        case "actiontype" ->                             {
+                                // Get the event type to filter action types
+                                OptionMapping typeOption = event.getOption("type");
+                                String eventType = typeOption != null ? typeOption.getAsString() : "";
+                                // Provide autocomplete for action types based on listening type
+                                List<Command.Choice> choices = new ArrayList<>();
+                                // Common action types available for all listening types
+                                String[] commonActionTypes = { "infomessage", "kickpoint", "custommessage" };
+                                String[] commonDisplayNames = { "Info-Nachricht", "Kickpoint", "Benutzerdefinierte Nachricht" };
+                                // Raid-specific display names (different from common)
+                                String[] raidCommonDisplayNames = { "Hits (Info)", "Hits (Kickpoints)",
+                                    "Benutzerdefinierte Nachricht" };
+                                // CW-specific action types
+                                String[] cwActionTypes = { "cwdonator", "filler" };
+                                String[] cwDisplayNames = { "CW Donator", "Filler" };
+                                // Raid-specific action types
+                                String[] raidActionTypes = { "raidfails", "raidfails_kickpoint" };
+                                String[] raidDisplayNames = { "Districts (Info)", "Districts (Kickpoints)" };
+                                // Add common action types (use raid-specific names for raid type)
+                                String[] displayNames = "raid".equals(eventType) ? raidCommonDisplayNames : commonDisplayNames;
+                                for (int i = 0; i < commonActionTypes.length; i++) {
+                                    if (commonActionTypes[i].toLowerCase().contains(input.toLowerCase())
+                                            || displayNames[i].toLowerCase().contains(input.toLowerCase())) {
+                                        choices.add(new Command.Choice(displayNames[i], commonActionTypes[i]));
+                                    }
+                                }
+                                // Add CW-specific action types only if type is "cw"
+                                if ("cw".equals(eventType)) {
+                                    for (int i = 0; i < cwActionTypes.length; i++) {
+                                        if (cwActionTypes[i].toLowerCase().contains(input.toLowerCase())
+                                                || cwDisplayNames[i].toLowerCase().contains(input.toLowerCase())) {
+                                            choices.add(new Command.Choice(cwDisplayNames[i], cwActionTypes[i]));
+                                        }
+                                    }
+                                }
+                                // Add raid-specific action types only if type is "raid"
+                                if ("raid".equals(eventType)) {
+                                    for (int i = 0; i < raidActionTypes.length; i++) {
+                                        if (raidActionTypes[i].toLowerCase().contains(input.toLowerCase())
+                                                || raidDisplayNames[i].toLowerCase().contains(input.toLowerCase())) {
+                                            choices.add(new Command.Choice(raidDisplayNames[i], raidActionTypes[i]));
+                                        }
+                                    }
+                                }
+                                // Limit to 25 choices
+                                if (choices.size() > 25) {
+                                    choices = choices.subList(0, 25);
+                                }
+                                event.replyChoices(choices).queue(_ -> {
+                                }, _ -> {
+                                });
+                            }
+                        case "duration" ->                             {
+                                // Provide autocomplete for duration
+                                List<Command.Choice> choices = new ArrayList<>();
+                                // Get the event type to provide contextual suggestions
+                                OptionMapping typeOption = event.getOption("type");
+                                String eventType = typeOption != null ? typeOption.getAsString() : "";
+                                // Check if the user's input is a valid duration format
+                                boolean isValidInput = false;
+                                if (!input.isEmpty()) {
+                                    if (input.equalsIgnoreCase("start") || input.equalsIgnoreCase("cwstart")) {
+                                        // "start" and "cwstart" are valid for CW events
+                                        isValidInput = eventType.equals("cw");
+                                    } else {
+                                        // Try to validate as a regular duration
+                                        try {
+                                            parseDuration(input);
+                                            isValidInput = true;
+                                        } catch (final IllegalArgumentException e) {
+                                            // Input is not a valid duration, isValidInput remains false
+                                        }
+                                    }
+                                }
+                                // If the user's input is valid, add it as the first choice
+                                if (isValidInput) {
+                                    choices.add(new Command.Choice("✓ " + input, input));
+                                }
+                                // Common suggestions
+                                choices.add(new Command.Choice("Sofort / Am Ende (0)", "0"));
+                                choices.add(new Command.Choice("1 Stunde vorher (1h)", "1h"));
+                                choices.add(new Command.Choice("2 Stunden vorher (2h)", "2h"));
+                                choices.add(new Command.Choice("3 Stunden vorher (3h)", "3h"));
+                                choices.add(new Command.Choice("6 Stunden vorher (6h)", "6h"));
+                                choices.add(new Command.Choice("12 Stunden vorher (12h)", "12h"));
+                                choices.add(new Command.Choice("24 Stunden vorher (24h/1d)", "24h"));
+                                choices.add(new Command.Choice("2 Tage vorher (2d)", "2d"));
+                                // Add CW-specific options
+                                if (eventType.equals("cw")) {
+                                    choices.add(new Command.Choice("⭐ Bei CW Start (start)", "start"));
+                                }
+                                // Filter based on input
+                                List<Command.Choice> filtered = new ArrayList<>();
+                                for (Command.Choice choice : choices) {
+                                    if (choice.getName().toLowerCase().contains(input.toLowerCase())
+                                            || choice.getAsString().toLowerCase().contains(input.toLowerCase())) {
+                                        filtered.add(choice);
+                                        if (filtered.size() >= 25)
+                                            break;
+                                    }
+                                }
+                                event.replyChoices(filtered).queue(_ -> {
+                                }, _ -> {
+                                });
+                            }
+                        case "kickpoint_reason" -> {
+                            // Get the clan from the command to filter kickpoint reasons
+                            OptionMapping clanOption = event.getOption("clan");
+                            if (clanOption != null) {
+                                String clantag = clanOption.getAsString();
+                                List<Command.Choice> choices = DBManager.getKPReasonsAutocomplete(input, clantag);
+                                event.replyChoices(choices).queue(_ -> {
+                                }, _ -> {
+                                });
+                            } else {
+                                event.replyChoices(new ArrayList<>()).queue();
+                            }
+                        }
+                        default -> {
+                        }
+                    }
 		}, "ListeningeventAutocomplete-" + event.getUser().getId()).start();
 	}
 
@@ -1011,7 +989,7 @@ public class listeningevent extends ListenerAdapter {
 		// Try to parse as plain number (milliseconds)
 		try {
 			return Long.parseLong(durationStr);
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			// Not a plain number, try parsing with units
 		}
 
@@ -1041,7 +1019,7 @@ public class listeningevent extends ListenerAdapter {
 		try {
 			long num = Long.parseLong(numPart.trim());
 			return num * multiplier;
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			throw new IllegalArgumentException("Ungültige Zahl: " + numPart);
 		}
 	}
@@ -1062,31 +1040,22 @@ public class listeningevent extends ListenerAdapter {
 
 		// Check if this is a "start" trigger
 		if (duration == -1) {
-			switch (type) {
-				case CW:
-					return "Feuert, wenn neuer CW startet";
-				default:
-					return "Feuert bei Event-Start";
-			}
+                    return switch (type) {
+                        case CW -> "Feuert, wenn neuer CW startet";
+                        default -> "Feuert bei Event-Start";
+                    };
 		}
 
-		// Otherwise, it's waiting for an active event
-		switch (type) {
-			case CW:
-				return "Wartet auf aktiven CW";
-			case RAID:
-				return "Wartet auf aktives Raid Weekend";
-			case CWLDAY:
-				return "Wartet auf aktive CWL";
-			case CS:
-				return "Wartet auf aktive Clan Games";
-			case FIXTIMEINTERVAL:
-				return "Zeitbasiertes Event";
-			case CWLEND:
-				return "Wartet auf CWL Ende";
-			default:
-				return "Wartet auf Event";
-		}
+            // Otherwise, it's waiting for an active event
+            return switch (type) {
+                case CW -> "Wartet auf aktiven CW";
+                case RAID -> "Wartet auf aktives Raid Weekend";
+                case CWLDAY -> "Wartet auf aktive CWL";
+                case CS -> "Wartet auf aktive Clan Games";
+                case FIXTIMEINTERVAL -> "Zeitbasiertes Event";
+                case CWLEND -> "Wartet auf CWL Ende";
+                default -> "Wartet auf Event";
+            };
 	}
 
 	/**
@@ -1120,3 +1089,4 @@ public class listeningevent extends ListenerAdapter {
 		return duration + "ms";
 	}
 }
+
