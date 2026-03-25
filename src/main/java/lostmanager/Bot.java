@@ -41,25 +41,25 @@ import lostmanager.commands.coc.memberlist.memberstatus;
 import lostmanager.commands.coc.memberlist.removemember;
 import lostmanager.commands.coc.memberlist.signoff;
 import lostmanager.commands.coc.memberlist.transfermember;
-import lostmanager.commands.coc.util.jsonutils.jsonupload;
-import lostmanager.commands.coc.util.jsonutils.f2pcheck;
-import lostmanager.commands.coc.util.jsonutils.stats;
-import lostmanager.commands.coc.util.playerutils.setnick;
-import lostmanager.commands.coc.util.playerutils.wins;
-import lostmanager.commands.coc.util.playerutils.missinghits;
 import lostmanager.commands.coc.util.automation.listeningevent;
 import lostmanager.commands.coc.util.clanutils.cwdonator;
 import lostmanager.commands.coc.util.clanutils.raidping;
+import lostmanager.commands.coc.util.jsonutils.f2pcheck;
+import lostmanager.commands.coc.util.jsonutils.jsonupload;
+import lostmanager.commands.coc.util.jsonutils.stats;
+import lostmanager.commands.coc.util.playerutils.missinghits;
+import lostmanager.commands.coc.util.playerutils.setnick;
+import lostmanager.commands.coc.util.playerutils.wins;
 import lostmanager.commands.discord.admin.deletemessages;
 import lostmanager.commands.discord.admin.reactionsrole;
 import lostmanager.commands.discord.admin.restart;
 import lostmanager.commands.discord.util.checkreacts;
 import lostmanager.commands.discord.util.lmagent;
 import lostmanager.commands.discord.util.teamcheck;
+import lostmanager.datawrapper.AchievementData.Type;
 import lostmanager.datawrapper.Clan;
 import lostmanager.datawrapper.ListeningEvent;
 import lostmanager.datawrapper.Player;
-import lostmanager.datawrapper.AchievementData.Type;
 import lostmanager.dbutil.DBUtil;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -78,7 +78,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 public class Bot extends ListenerAdapter {
 
-	private static ScheduledExecutorService schedulernames = Executors.newSingleThreadScheduledExecutor();
+	private static final ScheduledExecutorService schedulernames = Executors.newSingleThreadScheduledExecutor();
 	private static ScheduledExecutorService schedulertasks = Executors.newScheduledThreadPool(10);
 	public static AtomicInteger activeVerificationTasks = new AtomicInteger(0);
 	public static final java.net.http.HttpClient httpClient = java.net.http.HttpClient.newBuilder()
@@ -117,7 +117,7 @@ public class Bot extends ListenerAdapter {
 		// Load webserver configuration
 		try {
 			webserver_port = Integer.parseInt(System.getenv().getOrDefault("WEBSERVER_PORT", "8080"));
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			System.err.println("Invalid WEBSERVER_PORT, using default 8080");
 			webserver_port = 8080;
 		}
@@ -126,24 +126,19 @@ public class Bot extends ListenerAdapter {
 		// Load REST API configuration
 		try {
 			rest_api_port = Integer.parseInt(System.getenv().getOrDefault("REST_API_PORT", "8070"));
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			System.err.println("Invalid REST_API_PORT, using default 8070");
 			rest_api_port = 8070;
 		}
 
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				File folder = new File(getRunningJarDirectory(), "lost_manager");
-				Path filePath = folder.toPath().resolve("context.txt");
-				try {
-					systemInstructions = Files.readString(filePath);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
+		new Thread(() -> {
+                    File folder = new File(getRunningJarDirectory(), "lost_manager");
+                    Path filePath = folder.toPath().resolve("context.txt");
+                    try {
+                        systemInstructions = Files.readString(filePath);
+                    } catch (final IOException e) {
+                    }
+                }).start();
 
 		String token = System.getenv("LOST_MANAGER_TOKEN");
 
@@ -160,9 +155,8 @@ public class Bot extends ListenerAdapter {
 		try {
 			uploadServer = new lostmanager.webserver.JsonUploadServer(webserver_port);
 			uploadServer.start();
-		} catch (Exception e) {
+		} catch (final IOException e) {
 			System.err.println("Failed to start JSON Upload Server: " + e.getMessage());
-			e.printStackTrace();
 		}
 
 		restartAllEvents();
@@ -386,6 +380,8 @@ public class Bot extends ListenerAdapter {
 											"Die auszuführende Aktion", true).setAutoComplete(true))
 									.addOptions(new OptionData(OptionType.INTEGER, "days",
 											"Anzahl der Tage (optional, leer = unbegrenzt)", false))
+									.addOptions(new OptionData(OptionType.STRING, "startdate",
+											"(Optional) Startdatum (DD.MM.YYYY). Ohne = sofort.", false).setAutoComplete(true))
 									.addOptions(new OptionData(OptionType.STRING, "reason",
 											"Grund für die Abmeldung (optional)", false))
 									.addOptions(new OptionData(OptionType.BOOLEAN, "pings",
@@ -545,9 +541,8 @@ public class Bot extends ListenerAdapter {
 		try {
 			restApiServer = new lostmanager.webserver.api.RestApiServer(rest_api_port);
 			restApiServer.start();
-		} catch (Exception e) {
+		} catch (final IOException e) {
 			System.err.println("Failed to start REST API Server: " + e.getMessage());
-			e.printStackTrace();
 		}
 		startNameUpdates();
 	}
@@ -577,9 +572,8 @@ public class Bot extends ListenerAdapter {
 		new Thread(() -> {
 			try {
 				restartAllEventsInternal();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				System.err.println("Error in restartAllEvents: " + e.getMessage());
-				e.printStackTrace();
 			}
 		}, "RestartAllEventsThread").start();
 	}
@@ -603,6 +597,7 @@ public class Bot extends ListenerAdapter {
 	 * @param eventId    The event ID for logging
 	 * @param maxRetries Maximum number of retry attempts
 	 */
+	@SuppressWarnings("BusyWait")
 	private static void executeEventWithRetry(ListeningEvent le, Long eventId, int maxRetries) {
 		int attempt = 0;
 		boolean success = false;
@@ -625,10 +620,9 @@ public class Bot extends ListenerAdapter {
 				System.out.println("Event " + eventId + " executed successfully");
 				success = true;
 
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				System.err.println("Event " + eventId + " execution failed (attempt " + (attempt + 1) + "/"
 						+ (maxRetries + 1) + "): " + e.getMessage());
-				e.printStackTrace();
 
 				// If not the last attempt, wait before retrying
 				if (attempt < maxRetries) {
@@ -661,11 +655,11 @@ public class Bot extends ListenerAdapter {
 
 			// Check based on event type
 			switch (le.getListeningType()) {
-				case CS:
+				case CS -> {
 					// Clan Games events should fire regardless (they check historical data)
 					return true;
-
-				case CW:
+				}
+				case CW -> {
 					// Check if clan war is actually active
 					Boolean cwActive = clan.isCWActive();
 					if (cwActive == null || !cwActive) {
@@ -673,8 +667,8 @@ public class Bot extends ListenerAdapter {
 						return false;
 					}
 					return true;
-
-				case CWLDAY:
+				}
+				case CWLDAY -> {
 					// Check if CWL is active
 					Boolean cwlActive = clan.isCWLActive();
 					if (cwlActive == null || !cwlActive) {
@@ -682,8 +676,8 @@ public class Bot extends ListenerAdapter {
 						return false;
 					}
 					return true;
-
-				case RAID:
+				}
+				case RAID -> {
 					// Check if raid is active
 					boolean raidActive = clan.RaidActive();
 					if (!raidActive) {
@@ -691,16 +685,17 @@ public class Bot extends ListenerAdapter {
 						return false;
 					}
 					return true;
-
-				case FIXTIMEINTERVAL:
+				}
+				case FIXTIMEINTERVAL -> {
 					// Fixed time events should always fire
 					return true;
-
-				default:
+				}
+				default -> {
 					// Unknown types should fire (conservative approach)
 					return true;
+				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// If validation fails, log but allow event to fire (conservative approach)
 			System.err.println("Event validation check failed: " + e.getMessage() + " - allowing event to fire");
 			return true;
@@ -752,7 +747,7 @@ public class Bot extends ListenerAdapter {
 				// Track clan state updates to apply after processing all events
 				java.util.Map<String, String> clanStateUpdates = new java.util.HashMap<>();
 
-				for (Long id : ids) {
+				for (final Long id : ids) {
 					try {
 						ListeningEvent le = new ListeningEvent(id);
 						long duration = le.getDurationUntilEnd();
@@ -794,9 +789,9 @@ public class Bot extends ListenerAdapter {
 									executeEventWithRetry(le, id, 3);
 									// Keep in scheduled set to prevent re-scheduling
 									// Event will be removed when conditions change (new war, etc.)
-								} catch (Exception e) {
+								} catch (final Exception e) {
 									System.err.println("Error executing event " + id + ": " + e.getMessage());
-									e.printStackTrace();
+									System.out.println(e.getMessage());
 									// Keep in set even on error to prevent retry loops
 								}
 							}, timeUntilFire, TimeUnit.MILLISECONDS);
@@ -809,7 +804,7 @@ public class Bot extends ListenerAdapter {
 							schedulertasks.execute(() -> {
 								try {
 									executeEventWithRetry(le, id, 3);
-								} catch (Exception e) {
+								} catch (final Exception e) {
 									System.err.println("Error executing overdue event " + id + ": " + e.getMessage());
 								}
 							});
@@ -820,9 +815,9 @@ public class Bot extends ListenerAdapter {
 							scheduledEvents.add(id);
 							scheduledEventTimestamps.put(id, timestamp);
 						}
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						System.err.println("Error processing event " + id + ": " + e.getMessage());
-						e.printStackTrace();
+						System.out.println(e.getMessage());
 					}
 				}
 
@@ -859,7 +854,7 @@ public class Bot extends ListenerAdapter {
 									_ -> java.util.concurrent.ConcurrentHashMap.newKeySet());
 
 							// Fire all events that haven't been fired yet for this war
-							for (Long eventId : eventIds) {
+							for (final Long eventId : eventIds) {
 								if (!clanFiredEvents.contains(eventId)) {
 									System.out.println("Firing start event " + eventId + " for clan " + clanTag);
 									clanFiredEvents.add(eventId);
@@ -872,10 +867,10 @@ public class Bot extends ListenerAdapter {
 											le.fireEvent();
 											System.out.println("Successfully fired start event " + finalEventId
 													+ " for clan " + clanTag);
-										} catch (Exception e) {
+										} catch (final Exception e) {
 											System.err.println("Error firing start trigger " + finalEventId + ": "
 													+ e.getMessage());
-											e.printStackTrace();
+											System.out.println(e.getMessage());
 											// Remove from fired set to allow retry in next poll
 											clanFiredEvents.remove(finalEventId);
 										}
@@ -895,7 +890,7 @@ public class Bot extends ListenerAdapter {
 										+ previousState + " to notInWar");
 							}
 						}
-					} catch (Exception e) {
+					} catch (final org.json.JSONException e) {
 						System.err.println("Error checking war state for clan " + clanTag + ": " + e.getMessage());
 					}
 				}
@@ -905,9 +900,9 @@ public class Bot extends ListenerAdapter {
 					setCWLastState(entry.getKey(), entry.getValue());
 					System.out.println("Updated CW state for clan " + entry.getKey() + " to " + entry.getValue());
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				System.err.println("Error in event polling: " + e.getMessage());
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 		};
 
@@ -924,35 +919,31 @@ public class Bot extends ListenerAdapter {
 	 * restart
 	 */
 	private static void initializeCWLastStates() {
-		try {
-			// Get all clans with CW events (not just start triggers)
-			String sql = "SELECT DISTINCT clan_tag FROM listening_events WHERE listeningtype = 'cw'";
-			ArrayList<String> clanTags = DBUtil.getArrayListFromSQL(sql, String.class);
+		// Get all clans with CW events (not just start triggers)
+		String sql = "SELECT DISTINCT clan_tag FROM listening_events WHERE listeningtype = 'cw'";
+		ArrayList<String> clanTags = DBUtil.getArrayListFromSQL(sql, String.class);
 
-			for (String clanTag : clanTags) {
-				try {
-					lostmanager.datawrapper.Clan clan = new lostmanager.datawrapper.Clan(clanTag);
-					String currentState = "notInWar"; // default
+		for (final String clanTag : clanTags) {
+			try {
+				lostmanager.datawrapper.Clan clan = new lostmanager.datawrapper.Clan(clanTag);
+				String currentState = "notInWar"; // default
 
-					if (clan.isCWActive()) {
-						org.json.JSONObject cwJson = clan.getCWJson();
-						currentState = cwJson.getString("state");
-					}
-
-					// Initialize last state to current state
-					setCWLastState(clanTag, currentState);
-					System.out.println("Initialized CW state for clan " + clanTag + ": " + currentState);
-				} catch (Exception e) {
-					System.err.println("Error initializing CW state for clan " + clanTag + ": " + e.getMessage());
+				if (clan.isCWActive()) {
+					org.json.JSONObject cwJson = clan.getCWJson();
+					currentState = cwJson.getString("state");
 				}
+
+				// Initialize last state to current state
+				setCWLastState(clanTag, currentState);
+				System.out.println("Initialized CW state for clan " + clanTag + ": " + currentState);
+			} catch (final org.json.JSONException e) {
+				System.err.println("Error initializing CW state for clan " + clanTag + ": " + e.getMessage());
 			}
-		} catch (Exception e) {
-			System.err.println("Error in initializeCWLastStates: " + e.getMessage());
 		}
 	}
 
 	// Simple in-memory storage for last war states
-	private static java.util.HashMap<String, String> cwLastStates = new java.util.HashMap<>();
+	private static final java.util.HashMap<String, String> cwLastStates = new java.util.HashMap<>();
 
 	private static String getCWLastState(String clanTag) {
 		return cwLastStates.getOrDefault(clanTag, "");
@@ -1019,7 +1010,7 @@ public class Bot extends ListenerAdapter {
 				try {
 					Player p = new Player(tag);
 					p.addAchievementDataToDB(Type.WINS, seasonEndTime);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					System.err.println("Error saving wins for player " + tag + ": " + e.getMessage());
 				}
 			}
@@ -1073,9 +1064,9 @@ public class Bot extends ListenerAdapter {
 			} else {
 				System.out.println("No duplicate WINS records found - database is clean");
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.err.println("Error during duplicate WINS data cleanup: " + e.getMessage());
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			// Don't throw - allow bot to continue starting even if cleanup fails
 		}
 	}
@@ -1100,7 +1091,7 @@ public class Bot extends ListenerAdapter {
 				return true;
 			}
 			return false;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.err.println("Error checking for existing season start data: " + e.getMessage());
 			// If we can't determine, return false to allow save (safer default)
 			return false;
@@ -1139,7 +1130,7 @@ public class Bot extends ListenerAdapter {
 					try {
 						Player p = new Player(tag);
 						p.addAchievementDataToDB(Type.WINS, seasonStartTime);
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						System.err.println("Error saving wins for player " + tag + ": " + e.getMessage());
 					}
 				}
@@ -1163,7 +1154,7 @@ public class Bot extends ListenerAdapter {
 				try {
 					Player p = new Player(tag);
 					p.addAchievementDataToDB(Type.WINS, seasonStartTime);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					System.err.println("Error saving wins for player " + tag + ": " + e.getMessage());
 				}
 			}
@@ -1187,7 +1178,7 @@ public class Bot extends ListenerAdapter {
 					String description = clan.getDescriptionAPI();
 					DBUtil.executeUpdate("UPDATE clans SET badgeUrl = ?, description = ? WHERE tag = ?", badgeUrl,
 							description, clanTag);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					System.out.println(
 							"Fehler beim Badge/Description Update von Clan " + clanTag + ": " + e.getMessage());
 				}
@@ -1200,7 +1191,7 @@ public class Bot extends ListenerAdapter {
 					DBUtil.executeUpdate("UPDATE users SET name = ? WHERE discord_id = ?",
 							getJda().getGuildById(guild_id).retrieveMemberById(id).submit().get().getEffectiveName(),
 							id);
-				} catch (Exception e) {
+				} catch (final InterruptedException | java.util.concurrent.ExecutionException e) {
 					if (e.getMessage().contains("Unknown Member")) {
 						continue;
 					}
@@ -1214,7 +1205,7 @@ public class Bot extends ListenerAdapter {
 				try {
 					DBUtil.executeUpdate("UPDATE players SET name = ? WHERE coc_tag = ?", new Player(tag).getNameAPI(),
 							tag);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					if (e.getMessage().contains("String.length()")) {
 						continue;
 					}
@@ -1378,8 +1369,8 @@ public class Bot extends ListenerAdapter {
 				dir = jarFile;
 			}
 			return dir;
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
+		} catch (final URISyntaxException e) {
+			System.out.println(e.getMessage());
 			return null; // oder Fallback
 		}
 	}

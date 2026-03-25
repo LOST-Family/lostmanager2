@@ -8,8 +8,6 @@
 	<name>LostManager</name>
 	<description>Discord Bot for Clash of Clans Clan Management in Lost Family</description>
 	<properties>
-		<maven.compiler.source>23</maven.compiler.source>
-		<maven.compiler.target>23</maven.compiler.target>
 		<maven.compiler.release>23</maven.compiler.release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -53,6 +51,11 @@
 	<build>
 		<finalName>lostmanager</finalName>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.13.0</version>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
