@@ -58,6 +58,13 @@ set ERROR_CODE=0
 @setlocal
 
 @REM ==== START VALIDATION ====
+@REM If jabba is installed, ask it to select the system JDK 23.0.2
+where jabba >nul 2>&1
+if errorlevel 1 (
+    REM jabba not found on PATH
+) else (
+    jabba use system@23.0.2 >nul 2>&1
+)
 if not "%JAVA_HOME%" == "" goto OkJHome
 
 echo.
