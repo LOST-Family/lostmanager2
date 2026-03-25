@@ -2180,6 +2180,12 @@
     "icon": "/home-base/decorations/51.png",
     "index": 12
   },
+  "18000055": {
+    "name": "Snowman (Dec. 2018)",
+    "icon": "/home-base/decorations/55.png",
+    "price": "5€",
+    "index": 13
+  },
   "18000052": {
     "name": "Golden Hog (Feb. 2019)",
     "icon": "/home-base/decorations/52.png",
@@ -2191,12 +2197,6 @@
     "icon": "/home-base/decorations/53.png",
     "price": "5€",
     "index": 15
-  },
-  "18000055": {
-    "name": "Snowman (Dec. 2018)",
-    "icon": "/home-base/decorations/55.png",
-    "price": "5€",
-    "index": 13
   },
   "18000056": {
     "name": "Battle Machine Statue (Jun. 2019)",
@@ -2227,7 +2227,7 @@
     "icon": "/home-base/decorations/61.png",
     "index": 20
   },
-   "18000062": {
+  "18000062": {
     "name": "Clockwork Statue (May 2020)",
     "icon": "/home-base/decorations/62.png",
     "price": "10€",
@@ -2301,22 +2301,16 @@
     "icon": "/home-base/decorations/74.png",
     "index": 34
   },
-  "18000075": {
-    "name": "Dragon Trophy (Apr. 2023)",
-    "icon": "/home-base/decorations/75.png",
-    "price": "3€",
-    "index": 59
-  },
-  "18000079": {
-    "name": "Books of Clash (Jun. 2023)",
-    "icon": "/home-base/decorations/79.png",
-    "index": 36
-  },
   "18000080": {
     "name": "Master Builder's Return (BB) (May 2023)",
     "icon": "/home-base/decorations/80.png",
     "price": "3€",
     "index": 35
+  },
+  "18000079": {
+    "name": "Books of Clash (Jun. 2023)",
+    "icon": "/home-base/decorations/79.png",
+    "index": 36
   },
   "18000089": {
     "name": "Goblin Pit (Jul. 2023)",
@@ -2429,6 +2423,12 @@
     "icon": "/home-base/decorations/125.png",
     "index": 58
   },
+  "18000075": {
+    "name": "Dragon Trophy (Apr. 2023)",
+    "icon": "/home-base/decorations/75.png",
+    "price": "3€",
+    "index": 59
+  },
   "18000126": {
     "name": "Baby Ptah (Apr. 2024)",
     "icon": "/home-base/decorations/126.png",
@@ -2454,6 +2454,16 @@
     "icon": "/home-base/decorations/130.png",
     "index": 64
   },
+  "18000136": {
+    "name": "Victory Milk (May. 2024) (EP)",
+    "icon": "/home-base/decorations/136.png",
+    "index": 65
+  },
+  "18000140": {
+    "name": "Football Camp (May. 2024)",
+    "icon": "/home-base/decorations/140.png",
+    "index": 66
+  },
   "18000131": {
     "name": "Golden Boot (May. 2024)",
     "icon": "/home-base/decorations/131.png",
@@ -2463,11 +2473,6 @@
     "name": "Bestest Ball (May. 2024)",
     "icon": "/home-base/decorations/132.png",
     "index": 68
-  },
-  "18000133": {
-    "name": "Haaland Statue (May. 2024)",
-    "icon": "/home-base/decorations/133.png",
-    "index": 71
   },
   "18000134": {
     "name": "Triumphant Trophy (May. 2024)",
@@ -2479,10 +2484,10 @@
     "icon": "/home-base/decorations/135.png",
     "index": 70
   },
-  "18000136": {
-    "name": "Victory Milk (May. 2024) (EP)",
-    "icon": "/home-base/decorations/136.png",
-    "index": 65
+  "18000133": {
+    "name": "Haaland Statue (May. 2024)",
+    "icon": "/home-base/decorations/133.png",
+    "index": 71
   },
   "18000137": {
     "name": "Cactus Guy (Jun. 2024) (EP)",
@@ -2499,10 +2504,27 @@
     "icon": "/home-base/decorations/139.png",
     "index": 74
   },
-  "18000140": {
-    "name": "Football Camp (May. 2024)",
-    "icon": "/home-base/decorations/140.png",
-    "index": 66
+  "18000152": {
+    "name": "Goblin High Dive (Jul 2024)",
+    "icon": "/home-base/decorations/152.png",
+    "price": "6€",
+    "index": 75
+  },
+  "18000153": {
+    "name": "Foot Tribute (Jul. 2024)",
+    "icon": "/home-base/decorations/153.png",
+    "index": 76
+  },
+  "18000151": {
+    "name": "Champion's Flame (Jul. 2024)",
+    "icon": "/home-base/decorations/151.png",
+    "index": 77
+  },
+  "18000182": {
+    "name": "Cyber Hologram (Jul. 2024)",
+    "icon": "/home-base/decorations/182.png",
+    "price": "6€",
+    "index": 78
   },
   "18000141": {
     "name": "Wizard Vendor (Aug. 2024)",
@@ -2523,37 +2545,6 @@
     "name": "Kawaii Giant (Aug. 2024)",
     "icon": "/home-base/decorations/145.png",
     "index": 82
-  },
-  "18000147": {
-    "name": "Brawl's Star (SC-ID) (Feb. 2025)",
-    "icon": "/home-base/decorations/147.png",
-    "index": 96
-  },
-  "18000148": {
-    "name": "Gargantuan Gauntlet (SC-ID) (Dec. 2024)",
-    "icon": "/home-base/decorations/148.png",
-    "index": 90
-  },
-  "18000150": {
-    "name": "Sleepy King (SC-ID) (Feb. 2025)",
-    "icon": "/home-base/decorations/150.png",
-    "index": 97
-  },
-  "18000151": {
-    "name": "Champion's Flame (Jul. 2024)",
-    "icon": "/home-base/decorations/151.png",
-    "index": 77
-  },
-  "18000152": {
-    "name": "Goblin High Dive (Jul 2024)",
-    "icon": "/home-base/decorations/152.png",
-    "price": "6€",
-    "index": 75
-  },
-  "18000153": {
-    "name": "Foot Tribute (Jul. 2024)",
-    "icon": "/home-base/decorations/153.png",
-    "index": 76
   },
   "18000154": {
     "name": "Pretty Portal (Sep. 2024) (EP)",
@@ -2591,11 +2582,10 @@
     "price": "6€",
     "index": 89
   },
-  "18000161": {
-    "name": "Festival Lantern (Oct. 2025)",
-    "icon": "/home-base/decorations/161.png",
-    "price": "6€",
-    "index": 116
+  "18000148": {
+    "name": "Gargantuan Gauntlet (SC-ID) (Dec. 2024)",
+    "icon": "/home-base/decorations/148.png",
+    "index": 90
   },
   "18000162": {
     "name": "Rocking Reindeer (Dec. 2024)",
@@ -2617,6 +2607,22 @@
     "icon": "/home-base/decorations/165.png",
     "index": 94
   },
+  "18000168": {
+    "name": "Cozy Sauna (Jan. 2025)",
+    "icon": "/home-base/decorations/168.png",
+    "price": "6€",
+    "index": 95
+  },
+  "18000147": {
+    "name": "Brawl's Star (SC-ID) (Feb. 2025)",
+    "icon": "/home-base/decorations/147.png",
+    "index": 96
+  },
+  "18000150": {
+    "name": "Sleepy King (SC-ID) (Feb. 2025)",
+    "icon": "/home-base/decorations/150.png",
+    "index": 97
+  },
   "18000166": {
     "name": "Snake Shrine (Feb. 2025)",
     "icon": "/home-base/decorations/166.png",
@@ -2627,16 +2633,25 @@
     "icon": "/home-base/decorations/167.png",
     "index": 99
   },
-  "18000168": {
-    "name": "Cozy Sauna (Jan. 2025)",
-    "icon": "/home-base/decorations/168.png",
-    "price": "6€",
-    "index": 95
-  },
   "18000169": {
     "name": "Lucky Cookies (Feb. 2025)",
     "icon": "/home-base/decorations/169.png",
     "index": 100
+  },
+  "18000172": {
+    "name": "Rumbling Goblins (Apr. 2025)",
+    "icon": "/home-base/decorations/172.png",
+    "index": 101
+  },
+  "18000173": {
+    "name": "Golden Giant (Apr. 2025)",
+    "icon": "/home-base/decorations/173.png",
+    "index": 102
+  },
+  "18000175": {
+    "name": "Surprise Wheel (Apr. 2025)",
+    "icon": "/home-base/decorations/175.png",
+    "index": 103
   },
   "18000170": {
     "name": "Shooting Range (Mar. 2025)",
@@ -2649,25 +2664,10 @@
     "icon": "/home-base/decorations/171.png",
     "index": 105
   },
-  "18000172": {
-    "name": "Rumbling Goblins (Apr. 2025)",
-    "icon": "/home-base/decorations/172.png",
-    "index": 101
-  },
-  "18000173": {
-    "name": "Golden Giant (Apr. 2025)",
-    "icon": "/home-base/decorations/173.png",
-    "index": 102
-  },
   "18000174": {
     "name": "Creator Fountain (May 2025) (Super Creator)",
     "icon": "/home-base/decorations/174.png",
     "index": 106
-  },
-  "18000175": {
-    "name": "Surprise Wheel (Apr. 2025)",
-    "icon": "/home-base/decorations/175.png",
-    "index": 103
   },
   "18000176": {
     "name": "Sacred Gate (May 2025) (EP)",
@@ -2685,6 +2685,11 @@
     "icon": "/home-base/decorations/178.png",
     "index": 109
   },
+  "18000185": {
+    "name": "Justice Crown (Jun. 2025)",
+    "icon": "/home-base/decorations/185.png",
+    "index": 110
+  },
   "18000179": {
     "name": "Frozen Wizard (Aug. 2025)",
     "icon": "/home-base/decorations/179.png",
@@ -2694,17 +2699,6 @@
     "name": "Clashy Carving (Aug. 2025)",
     "icon": "/home-base/decorations/180.png",
     "index": 112
-  },
-  "18000181": {
-    "name": "Sketch Summoner (Sep. 2025) (EP)",
-    "icon": "/home-base/decorations/181.png",
-    "index": 115
-  },
-  "18000182": {
-    "name": "Cyber Hologram (Jul. 2024)",
-    "icon": "/home-base/decorations/182.png",
-    "price": "6€",
-    "index": 78
   },
   "18000183": {
     "name": "Soda Stand (Aug. 2025)",
@@ -2716,31 +2710,21 @@
     "icon": "/home-base/decorations/184.png",
     "index": 114
   },
-  "18000185": {
-    "name": "Justice Crown (Jun. 2025)",
-    "icon": "/home-base/decorations/185.png",
-    "index": 110
+  "18000181": {
+    "name": "Sketch Summoner (Sep. 2025) (EP)",
+    "icon": "/home-base/decorations/181.png",
+    "index": 115
+  },
+  "18000161": {
+    "name": "Festival Lantern (Oct. 2025)",
+    "icon": "/home-base/decorations/161.png",
+    "price": "6€",
+    "index": 116
   },
   "18000186": {
     "name": "Cosmic Lantern (Oct. 2025)",
     "icon": "/home-base/decorations/186.png",
     "index": 117
-  },
-  "18000187": {
-    "name": "Electro Skull (Nov. 2025)",
-    "icon": "/home-base/decorations/187.png",
-    "index": 120
-  },
-  "18000188": {
-    "name": "Meteor Observer (Jan. 2026)",
-    "icon": "/home-base/decorations/188.png",
-    "index": 129
-  },
-  "18000189": {
-    "name": "Fortune Printer (Nov. 2025)",
-    "icon": "/home-base/decorations/189.png",
-    "price": "6€",
-    "index": 121
   },
   "18000190": {
     "name": "Boom Box (Oct. 2025)",
@@ -2752,45 +2736,81 @@
     "icon": "/home-base/decorations/191.png",
     "index": 119
   },
+  "18000187": {
+    "name": "Electro Skull (Nov. 2025)",
+    "icon": "/home-base/decorations/187.png",
+    "index": 120
+  },
+  "18000189": {
+    "name": "Fortune Printer (Nov. 2025)",
+    "icon": "/home-base/decorations/189.png",
+    "price": "6€",
+    "index": 121
+  },
   "18000192": {
     "name": "Eagle Monument (Nov. 2025)",
     "icon": "/home-base/decorations/192.png",
     "index": 122
-  },
-  "18000196": {
-    "name": "Smokey Stove (Dec. 2025)",
-    "icon": "/home-base/decorations/196.png",
-    "index": 124
-  },
-  "18000197": {
-    "name": "Wish Lamp (Jan. 2026)",
-    "icon": "/home-base/decorations/197.png",
-    "index": 128
-  },
-  "18000198": {
-    "name": "Lucky Shoe (Feb. 2026)",
-    "icon": "/home-base/decorations/198.png",
-    "index": 129
-  },
-  "18000199": {
-    "name": "Brawny Battleaxe (Dec. 2025)",
-    "icon": "/home-base/decorations/199.png",
-    "index": 125
   },
   "18000200": {
     "name": "Crafted Statue (Nov. 2025)",
     "icon": "/home-base/decorations/200.png",
     "index": 123
   },
+  "18000196": {
+    "name": "Smokey Stove (Dec. 2025)",
+    "icon": "/home-base/decorations/196.png",
+    "index": 124
+  },
+  "18000199": {
+    "name": "Brawny Battleaxe (Dec. 2025)",
+    "icon": "/home-base/decorations/199.png",
+    "index": 125
+  },
+  "18000203": {
+    "name": "Hungry Hound (Dec. 2025)",
+    "icon": "/home-base/decorations/203.png",
+    "index": 126
+  },
+  "18000204": {
+    "name": "Frozen Stone (Dec. 2025)",
+    "icon": "/home-base/decorations/204.png",
+    "index": 127
+  },
+  "18000197": {
+    "name": "Wish Lamp (Jan. 2026)",
+    "icon": "/home-base/decorations/197.png",
+    "index": 128
+  },
+  "18000188": {
+    "name": "Meteor Observer (Jan. 2026)",
+    "icon": "/home-base/decorations/188.png",
+    "index": 129
+  },
+  "18000198": {
+    "name": "Lucky Shoe (Feb. 2026)",
+    "icon": "/home-base/decorations/198.png",
+    "index": 129
+  },
+  "18000202": {
+    "name": "Flame Horse (Feb. 2026)",
+    "icon": "/home-base/decorations/202.png",
+    "index": 130
+  },
   "18000201": {
     "name": "Handsome Scroll (Feb. 2026)",
     "icon": "/home-base/decorations/201.png",
     "index": 131
   },
+  "18000208": {
+    "name": "Electro Dragon Statue (Mar. 2026)",
+    "icon": "/home-base/decorations/208.png",
+    "index": 132
+  },
   "18000205": {
     "name": "Barbble Head (Mar. 2026)",
     "icon": "/home-base/decorations/202.png",
-    "index": 132
+    "index": 133
   },
   "18000206": {
     "name": "Mech Bull (Mar. 2026)",
@@ -2798,11 +2818,6 @@
     "index": 133
   },
   "18000207": {
-    "name": "Electro Dragon Statue (Mar. 2026",
-    "icon": "/home-base/decorations/204.png",
-    "index": 134
-  },
-  "18000208": {
     "name": "Builder Bust (Apr. 2026)",
     "icon": "/home-base/decorations/201.png",
     "index": 135
@@ -2823,24 +2838,9 @@
     "index": 138
   },
   "18000212": {
-    "name": "Darkness Throne (Feb. 2026)",
+    "name": "Darkness Throne (Apr. 2026)",
     "icon": "/home-base/decorations/201.png",
     "index": 139
-  },
-  "18000202": {
-    "name": "Flame Horse (Feb. 2026)",
-    "icon": "/home-base/decorations/202.png",
-    "index": 130
-  },
-  "18000203": {
-    "name": "Hungry Hound (Dec. 2025)",
-    "icon": "/home-base/decorations/203.png",
-    "index": 126
-  },
-  "18000204": {
-    "name": "Frozen Stone (Dec. 2025)",
-    "icon": "/home-base/decorations/204.png",
-    "index": 127
   },
   "8000015": {
     "name": "2012 Stone",
@@ -5490,12 +5490,12 @@
     "index": 120
   },
   "82000148": {
-    "name": "Meltdown Barrel",
+    "name": "Frost Age Barrel",
     "icon": "/home-base/clancapital/148.png",
     "index": 123
   },
   "82000149": {
-    "name": "Meltdown Roof",
+    "name": "Frost Age Roof",
     "icon": "/home-base/clancapital/149.png",
     "index": 122
   },

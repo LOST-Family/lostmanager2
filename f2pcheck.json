@@ -1219,17 +1219,17 @@
                             },
                             "ThenForbidden": {
                                 "CasesStrict": [{
-                                    "name": "Hat 'Hungry Hound Deco' sowie 'Frozen Stone Deco' und mindestens ein 'Meltdown Clan House'",
+                                    "name": "Hat 'Hungry Hound Deco' sowie 'Frozen Stone Deco' und mindestens ein 'Frost Age Clan House'",
                                     "IfMoreThan": {
                                         "type": "quantity",
                                         "allowed": 0,
                                         "elements": [{
                                             "type": "element",
-                                            "name": "Meltdown Barrel",
+                                            "name": "Frost Age Barrel",
                                             "id": "82000148"
                                         },{
                                             "type": "element",
-                                            "name": "Meltdown Roof",
+                                            "name": "Frost Age Roof",
                                             "id": "82000149"
                                         }]
                                     }
