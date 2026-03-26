@@ -1406,7 +1406,7 @@
                 "CasesStrict": [{
                     "name": "",
                     "IfMoreThan": {
-                        "type": "quantity",
+                        "type": "count",
                         "allowed": 5,
                         "elements": [{
                             "type": "element",
@@ -1418,7 +1418,7 @@
                         "CasesStrict": [{
                             "name": "Hat 6 '2023 Anniversary Cake'",
                             "IfMoreThan": {
-                                "type": "quantity",
+                                "type": "count",
                                 "allowed": 3,
                                 "elements": [{
                                     "type": "element",
@@ -1430,7 +1430,7 @@
                                 "CasesStrict":[{
                                     "name": "Hat 4 '2025 Clashmas Tree' und 4 '2025 Snake Sculpture'",
                                     "IfMoreThan":{
-                                        "type": "quantity",
+                                        "type": "count",
                                         "allowed": 3,
                                         "elements": [{
                                             "type": "element",
