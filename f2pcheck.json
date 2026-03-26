@@ -1422,7 +1422,7 @@
                                 "allowed": 3,
                                 "elements": [{
                                     "type": "element",
-                                    "id": "82000137",
+                                    "id": "8000137",
                                     "name": "2025 Clashmas Tree"
                                 }]
                             },
@@ -1434,8 +1434,8 @@
                                         "allowed": 3,
                                         "elements": [{
                                             "type": "element",
-                                            "name": "2025 Snake Sculpture",
-                                            "id": "82000128"
+                                            "id": "8000128",
+                                            "name": "2025 Snake Sculpture"
                                         }]
                                     }
                                 }]
