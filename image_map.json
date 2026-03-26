@@ -2201,7 +2201,7 @@
   "18000056": {
     "name": "Battle Machine Statue (Jun. 2019)",
     "icon": "/home-base/decorations/56.png",
-    "price": "5€",
+    "price": "5€ (1 F2P free)",
     "index": 16
   },
   "18000057": {
@@ -2399,7 +2399,7 @@
     "index": 53
   },
   "18000121": {
-    "name": "Baby Dragon Statue (Feb. 2024) (EP)",
+    "name": "Baby Dragon Statue (Feb. 2024) (EP (1 F2P free))",
     "icon": "/home-base/decorations/121.png",
     "index": 54
   },
@@ -2426,7 +2426,7 @@
   "18000075": {
     "name": "Dragon Trophy (Apr. 2023)",
     "icon": "/home-base/decorations/75.png",
-    "price": "3€",
+    "price": "3€ (1 F2P free)",
     "index": 59
   },
   "18000126": {
@@ -3515,7 +3515,13 @@
     "name": "Year of the Fire Horse Scenery (Feb. 2026)",
     "icon": "/home-base/sceneries/84.png",
     "full": "",
-    "index": 61
+    "index": 62
+  },
+  "60000085": {
+    "name": "Year of the Fire Horse Scenery (Mar. 2026)",
+    "icon": "/home-base/sceneries/85.png",
+    "full": "",
+    "index": 63
   },
   "52000001": {
     "name": "Gladiator King (Apr. 2019 GP)",
@@ -4855,27 +4861,27 @@
     "full": "",
     "index": 217
   },
-  "52000265": {
+  "52000285": {
     "name": "Dragonscale King (Mar. 2026)",
-    "icon": "/home-base/skins/265.png",
+    "icon": "/home-base/skins/285.png",
     "full": "",
     "index": 218
   },
-  "52000266": {
+  "52000225": {
     "name": "Dragonscale Queen (Mar. 2026)",
-    "icon": "/home-base/skins/265.png",
+    "icon": "/home-base/skins/225.png",
     "full": "",
     "index": 219
   },
-  "52000267": {
+  "52000297": {
     "name": "Dragonscale Champion (Mar. 2026)",
-    "icon": "/home-base/skins/265.png",
+    "icon": "/home-base/skins/297.png",
     "full": "",
     "index": 220
   },
-  "52000268": {
+  "52000246": {
     "name": "Dragonscale Warden (Mar. 2026)",
-    "icon": "/home-base/skins/265.png",
+    "icon": "/home-base/skins/246.png",
     "full": "",
     "index": 221
   },
