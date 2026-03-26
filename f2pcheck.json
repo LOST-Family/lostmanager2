@@ -1311,20 +1311,9 @@
             "Cases":{
                 "name":"Deco Limitation",
                 "CasesStrict":[{
-                    "name": "Hat mehr als 1 'Builder Statue ",
-                    "IfMoreThan": {
-                        "type": "quantity",
-                        "allowed": 1,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Builder Statue",
-                            "id": "82000046"
-                        }]
-                    }
-                }, {
                     "name": "Hat mehr als 1 'Dragon Statue",
                     "IfMoreThan": {
-                        "type": "quantity",
+                        "type": "count",
                         "allowed": 1,
                         "elements": [{
                             "type": "element",
@@ -1335,7 +1324,7 @@
                 }, {
                     "name": "Hat mehr als 1 'Cherry Bonsai Deco ",
                     "IfMoreThan": {
-                        "type": "quantity",
+                        "type": "count",
                         "allowed": 1,
                         "elements": [{
                             "type": "element",
@@ -1346,7 +1335,7 @@
                 }, {
                     "name": "Hat mehr als 1 'Baby Dragon Deco ",
                     "IfMoreThan": {
-                        "type": "quantity",
+                        "type": "count",
                         "allowed": 1,
                         "elements": [{
                             "type": "element",
@@ -1355,9 +1344,9 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 2 'Dragon Trophy",
+                    "name": "Hat mehr als 1 'Dragon Trophy",
                     "IfMoreThan": {
-                        "type": "quantity",
+                        "type": "count",
                         "allowed": 1,
                         "elements": [{
                             "type": "element",
@@ -1366,9 +1355,9 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 2 'Decorated Dragon Statue",
+                    "name": "Hat mehr als 1 'Decorated Dragon Statue",
                     "IfMoreThan": {
-                        "type": "quantity",
+                        "type": "count",
                         "allowed": 1,
                         "elements": [{
                             "type": "element",
@@ -1377,9 +1366,9 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 2 'Baby Ptah Deco",
+                    "name": "Hat mehr als 1 'Baby Ptah Deco",
                     "IfMoreThan": {
-                        "type": "quantity",
+                        "type": "count",
                         "allowed": 1,
                         "elements": [{
                             "type": "element",
@@ -1388,9 +1377,9 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 2 'Dragon Totem Deco",
+                    "name": "Hat mehr als 1 'Dragon Totem Deco",
                     "IfMoreThan": {
-                        "type": "quantity",
+                        "type": "count",
                         "allowed": 1,
                         "elements": [{
                             "type": "element",
