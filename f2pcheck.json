@@ -1428,10 +1428,9 @@
                             },
                             "ThenForbidden":{
                                 "CasesStrict":[{
-                                    "name": "Hat 4 '2025 Clashmas Tree'",
+                                    "name": "Hat 4 '2025 Clashmas Tree' und 4 '2025 Snake Sculpture'",
                                     "IfMoreThan":{
-                                        "name": "Hat 4 '2025 Snake Sculpture'",
-                                        "type": "element",
+                                        "type": "quantity",
                                         "allowed": 3,
                                         "elements": [{
                                             "type": "element",
