@@ -1151,6 +1151,7 @@
                 "name": "Sparky Stones",
                 "CasesStrict": [{
                     "IfMoreThan": {
+                        "name": "Hat 'Meteorite Builder'",
                         "type": "quantity",
                         "allowed": 0,
                         "elements": [{
@@ -1163,7 +1164,7 @@
                     "ThenForbidden":    {
                         "CasesStrict":[{
                             "IfMoreThan": {
-                                "name": "Hat 'Meteorite Builder (TH 18 exclusive)' und 'Crafted Statue Deco'",
+                                "name": "Hat 'Crafted Statue Deco'",
                                 "type": "quantity",
                                 "allowed": 0,
                                 "elements": [{
@@ -1175,7 +1176,7 @@
                             }
                         },{
                             "IfMoreThan": {
-                                "name": "Hat 'Meteorite Builder (TH 18 exclusive)' und 'Builder Bust Deco'",
+                                "name": "Hat 'Builder Bust Deco'",
                                 "type": "quantity",
                                 "allowed": 0,
                                 "elements": [{
