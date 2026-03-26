@@ -1389,50 +1389,6 @@
                     }   
                 }]
             }
-        },{
-            "Cases": {
-                "name": "Sense",
-                "CasesStrict": [{
-                    "name": "",
-                    "IfMoreThan": {
-                        "type": "quantity",
-                        "allowed": 5,
-                        "elements": [{
-                            "type": "element",
-                            "id": "8000108",
-                            "name": "2023 Anniversary Cake"
-                        }]
-                    },
-                    "ThenForbidden": {
-                        "CasesStrict": [{
-                            "name": "Hat 6 '2023 Anniversary Cake'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 3,
-                                "elements": [{
-                                    "type": "element",
-                                    "id": "8000137",
-                                    "name": "2025 Clashmas Tree"
-                                }]
-                            },
-                            "ThenForbidden":{
-                                "CasesStrict":[{
-                                    "name": "Hat 4 '2025 Clashmas Tree' und 4 '2025 Snake Sculpture'",
-                                    "IfMoreThan":{
-                                        "type": "quantity",
-                                        "allowed": 3,
-                                        "elements": [{
-                                            "type": "element",
-                                            "id": "8000128",
-                                            "name": "2025 Snake Sculpture"
-                                        }]
-                                    }
-                                }]
-                            }
-                        }]
-                    }
-                }]
-            }
         }
     ],
     "StrictForbidden": [52000010, 52000016, 52000034, 52000036, 52000038, 52000040, 52000042, 52000043, 52000045, 52000049, 52000051, 52000052, 52000054, 
