@@ -949,7 +949,7 @@ public class stats extends ListenerAdapter {
 	 */
 	private String formatObject(JSONObject obj, int indent, java.sql.Timestamp jsonTimestamp) {
 		StringBuilder sb = new StringBuilder();
-		String prefix = indent > 0 ? "· ".repeat(indent) : "";
+		String prefix = indent > 0 ? "- ".repeat(indent) : "";
 
 		// Show identifier if present
 		if (obj.has("data") && obj.get("data") != null && obj.get("data") != JSONObject.NULL) {
@@ -1009,7 +1009,7 @@ public class stats extends ListenerAdapter {
 					sb.append("\n").append(formatObject((JSONObject) value, indent + 1, jsonTimestamp));
 				} else if (value instanceof JSONArray) {
 					JSONArray arr = (JSONArray) value;
-					String nextIndent = "· ".repeat(indent + 1);
+					String nextIndent = "- ".repeat(indent + 1);
 					for (int i = 0; i < arr.length(); i++) {
 						Object item = arr.get(i);
 						if (item instanceof JSONObject) {
