@@ -1115,39 +1115,39 @@
     }
   },
   "103000007": {
-    "name": "Hero Bell",
-    "icon": "/home-base/seasonal-defenses/hero-bell/hero-bell-icon.png",
-    "tier_1": "/home-base/seasonal-defenses/hero-bell/hero-bell-1.png",
-    "tier_2": "/home-base/seasonal-defenses/hero-bell/hero-bell-2.png",
-    "tier_3": "/home-base/seasonal-defenses/hero-bell/hero-bell-3.png",
-    "tier_4": "/home-base/seasonal-defenses/hero-bell/hero-bell-4.png"
+    "name": "Air Bombs",
+    "icon": "/home-base/seasonal-defenses/air-bombs/air-bombs-4.png",
+    "tier_1": "/home-base/seasonal-defenses/air-bombs/air-bombs-1.png",
+    "tier_2": "/home-base/seasonal-defenses/air-bombs/air-bombs-2.png",
+    "tier_3": "/home-base/seasonal-defenses/air-bombs/air-bombs-3.png",
+    "tier_4": "/home-base/seasonal-defenses/air-bombs/air-bombs-4.png"
   },
   "102000021": {
     "name": "Hitpoints",
     "icon": "/home-base/seasonal-defenses/hitpoints.png"
   },
   "102000022": {
-    "name": "Hero DPS Boost",
+    "name": "Damage",
     "icon": "/home-base/seasonal-defenses/damage.png"
   },
   "102000023": {
-    "name": "Hero HP Boost",
-    "icon": "/home-base/seasonal-defenses/hitpoints.png"
+    "name": "Hero Atttack Cooldown",
+    "icon": "/home-base/seasonal-defenses/attackspeed.png"
   },
   "103000002": {
-    "name": "Bomb Hive",
-    "icon": "/home-base/seasonal-defenses/bomb-hive/bomb-hive-icon.png",
-    "tier_1": "/home-base/seasonal-defenses/bomb-hive/bomb-hive-1.png",
-    "tier_2": "/home-base/seasonal-defenses/bomb-hive/bomb-hive-2.png",
-    "tier_3": "/home-base/seasonal-defenses/bomb-hive/bomb-hive-3.png",
-    "tier_4": "/home-base/seasonal-defenses/bomb-hive/bomb-hive-4.png"
+    "name": "Lava Launcher",
+    "icon": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-4.png",
+    "tier_1": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-1.png",
+    "tier_2": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-2.png",
+    "tier_3": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-3.png",
+    "tier_4": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-4.png"
   },
   "102000006": {
     "name": "Hitpoints",
     "icon": "/home-base/seasonal-defenses/hitpoints.png"
   },
   "102000007": {
-    "name": "Damage per Hit",
+    "name": "Damage",
     "icon": "/home-base/seasonal-defenses/damage.png"
   },
   "102000008": {
@@ -1155,24 +1155,24 @@
     "icon": "/home-base/seasonal-defenses/range.png"
   },
   "103000001": {
-    "name": "Light Beam",
-    "icon": "/home-base/seasonal-defenses/light-beam/light-beam-icon.png",
-    "tier_1": "/home-base/seasonal-defenses/light-beam/light-beam-1.png",
-    "tier_2": "/home-base/seasonal-defenses/light-beam/light-beam-2.png",
-    "tier_3": "/home-base/seasonal-defenses/light-beam/light-beam-3.png",
-    "tier_4": "/home-base/seasonal-defenses/light-beam/light-beam-4.png"
+    "name": "Roaster",
+    "icon": "/home-base/seasonal-defenses/roaster/roaster-4.png",
+    "tier_1": "/home-base/seasonal-defenses/roaster/roaster-1.png",
+    "tier_2": "/home-base/seasonal-defenses/roaster/roaster-2.png",
+    "tier_3": "/home-base/seasonal-defenses/roaster/roaster-3.png",
+    "tier_4": "/home-base/seasonal-defenses/roaster/roaster-4.png"
   },
   "102000015": {
     "name": "Hitpoints",
     "icon": "/home-base/seasonal-defenses/hitpoints.png"
   },
   "102000016": {
-    "name": "Damage per Hit",
+    "name": "Damage",
     "icon": "/home-base/seasonal-defenses/damage.png"
   },
   "102000017": {
-    "name": "Attack Cooldown",
-    "icon": "/home-base/seasonal-defenses/attackspeed.png"
+    "name": "Burst Fire",
+    "icon": "/home-base/seasonal-defenses/burstfire.png"
   },
   "12000000": {
     "name": "Bomb",
