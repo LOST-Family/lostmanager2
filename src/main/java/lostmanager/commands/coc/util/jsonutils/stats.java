@@ -728,11 +728,11 @@ public class stats extends ListenerAdapter {
 				// Determine indentation based on whether we're showing counts
 				// Use 2 spaces per indent level and "· " for indented items
 				String space = EmbedBuilder.ZERO_WIDTH_SPACE;
-				String countIndent = space.repeat(2) + "· "; // 1 indent level
-				String baseIndent = showCounts ? space.repeat(4) + "· " : space.repeat(2) + "· "; // 2 or 1 indent
+				String countIndent = space.repeat(2) + "- "; // 1 indent level
+				String baseIndent = showCounts ? space.repeat(4) + "- " : space.repeat(2) + "- "; // 2 or 1 indent
 																									// levels
 				int objIndent = showCounts ? 3 : 2;
-				String arrItemIndent = showCounts ? space.repeat(6) + "· " : space.repeat(4) + "· "; // 3 or 2 indent
+				String arrItemIndent = showCounts ? space.repeat(6) + "- " : space.repeat(4) + "- "; // 3 or 2 indent
 																										// levels
 
 				// Only show count if there's actual grouping or multiple items
