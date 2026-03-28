@@ -728,11 +728,11 @@ public class stats extends ListenerAdapter {
 				// Determine indentation based on whether we're showing counts
 				// Use 2 spaces per indent level and "· " for indented items
 				String space = EmbedBuilder.ZERO_WIDTH_SPACE;
-				String countIndent = space.repeat(2) + "- "; // 1 indent level
-				String baseIndent = showCounts ? space.repeat(4) + "- " : space.repeat(2) + "- "; // 2 or 1 indent
+				String countIndent = space.repeat(2) + "· "; // 1 indent level
+				String baseIndent = showCounts ? space.repeat(4) + "· " : space.repeat(2) + "· "; // 2 or 1 indent
 																									// levels
 				int objIndent = showCounts ? 3 : 2;
-				String arrItemIndent = showCounts ? space.repeat(6) + "- " : space.repeat(4) + "- "; // 3 or 2 indent
+				String arrItemIndent = showCounts ? space.repeat(6) + "· " : space.repeat(4) + "· "; // 3 or 2 indent
 																										// levels
 
 				// Only show count if there's actual grouping or multiple items
@@ -949,7 +949,7 @@ public class stats extends ListenerAdapter {
 	 */
 	private String formatObject(JSONObject obj, int indent, java.sql.Timestamp jsonTimestamp) {
 		StringBuilder sb = new StringBuilder();
-		String prefix = indent > 0 ? "- ".repeat(indent) : "";
+		String prefix = indent > 0 ? "· ".repeat(indent) : "";
 
 		// Show identifier if present
 		if (obj.has("data") && obj.get("data") != null && obj.get("data") != JSONObject.NULL) {
@@ -977,7 +977,7 @@ public class stats extends ListenerAdapter {
 					sb.append("\n").append(formatObject((JSONObject) value, indent + 1, jsonTimestamp));
 				} else if (value instanceof JSONArray) {
 					JSONArray arr = (JSONArray) value;
-					String nextIndent = "- ".repeat(indent + 1);
+					String nextIndent = "· ".repeat(indent + 1);
 					for (int i = 0; i < arr.length(); i++) {
 						Object item = arr.get(i);
 						if (item instanceof JSONObject) {
@@ -1009,7 +1009,7 @@ public class stats extends ListenerAdapter {
 					sb.append("\n").append(formatObject((JSONObject) value, indent + 1, jsonTimestamp));
 				} else if (value instanceof JSONArray) {
 					JSONArray arr = (JSONArray) value;
-					String nextIndent = "- ".repeat(indent + 1);
+					String nextIndent = "· ".repeat(indent + 1);
 					for (int i = 0; i < arr.length(); i++) {
 						Object item = arr.get(i);
 						if (item instanceof JSONObject) {
