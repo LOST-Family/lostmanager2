@@ -12,7 +12,7 @@ import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.Roster;
 import lostmanager.datawrapper.RosterParticipant;
 import lostmanager.datawrapper.User;
-import lostmanager.dbutil.Connection;
+import lostmanager.dbutil.DBManager;
 import lostmanager.dbutil.DBUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -421,22 +421,7 @@ public class RosterCommand extends ListenerAdapter {
         String currentStr = event.getFocusedOption().getValue().toLowerCase();
 
         if (opt.equals("clan")) {
-            // Find all clans based on logic. "SELECT tag, name FROM clans"
-            List<Choice> choices = new ArrayList<>();
-            String sql = "SELECT * FROM clans";
-            try {
-                java.sql.PreparedStatement pstmt = Connection.getConnection().prepareStatement(sql);
-                java.sql.ResultSet rs = pstmt.executeQuery();
-                while(rs.next()) {
-                    String ct = rs.getString("tag");
-                    String cn = rs.getString("name");
-                    if (cn.toLowerCase().contains(currentStr) || ct.toLowerCase().contains(currentStr)) {
-                        choices.add(new Choice(cn, ct)); // Pass tag as value, show name
-                    }
-                }
-            } catch(java.sql.SQLException e) {}
-            
-            if (choices.size() > 25) choices = new ArrayList<>(choices.subList(0, 25));
+            List<Choice> choices = DBManager.getClansAutocompleteWithSideclans(currentStr);
             event.replyChoices(choices).queue();
 
         } else if (opt.equals("name") || opt.equals("base_roster")) {
