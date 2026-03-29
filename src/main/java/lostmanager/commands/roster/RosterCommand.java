@@ -15,6 +15,7 @@ import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
 import lostmanager.dbutil.DBUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -70,6 +71,8 @@ public class RosterCommand extends ListenerAdapter {
             case "close" -> handleClose(event);
             case "post" -> handlePost(event);
             case "ping" -> handlePing(event);
+            case "force_signup" -> handleForceSign(event, "signup");
+            case "force_signoff" -> handleForceSign(event, "signoff");
             default -> event.reply("Unbekannter Subcommand.").setEphemeral(true).queue();
         }
     }
@@ -220,6 +223,44 @@ public class RosterCommand extends ListenerAdapter {
         }
     }
 
+    private void handleForceSign(SlashCommandInteractionEvent event, String action) {
+        String rosterName = getOptString(event, "name", "");
+        String pTag = getOptString(event, "player", "");
+
+        Roster r = Roster.getRoster(rosterName);
+        if (r == null) {
+            event.reply("Dieser Roster existiert nicht.").setEphemeral(true).queue();
+            return;
+        }
+
+        if (r.isClosed()) {
+            event.reply("Dieser Roster ist mittlerweile geschlossen.").setEphemeral(true).queue();
+            return;
+        }
+
+        Player p = new Player(pTag);
+        if (p.getNameAPI() == null && p.getNameDB() == null) {
+            event.reply("Der ausgewählte Spieler wurde nicht gefunden.").setEphemeral(true).queue();
+            return;
+        }
+        
+        if (action.equals("signup") && p.getThLevelAPI() < r.getMinTh()) {
+            event.reply("Der Spieler erfüllt nicht die minimale Rathaus-Anforderung (" + r.getMinTh() + ")!").setEphemeral(true).queue();
+            return;
+        }
+
+        String linkedUserId = p.getUser() != null ? p.getUser().getUserID() : event.getUser().getId();
+
+        boolean set = RosterParticipant.setParticipantStatus(rosterName, linkedUserId, pTag, action, p.getThLevelAPI());
+
+        String pName = p.getNameAPI() != null ? p.getNameAPI() : p.getNameDB();
+        if (set) {
+            event.reply("Erfolgreich " + (action.equals("signup") ? "angemeldet" : "abgemeldet") + " für " + pName + "!").queue();
+        } else {
+            event.reply("Erfolgreich aus dem Roster entfernt für " + pName + "!").queue();
+        }
+    }
+
     public static EmbedBuilder buildRosterEmbed(Roster r) {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Roster: " + r.getName());
@@ -289,7 +330,7 @@ public class RosterCommand extends ListenerAdapter {
 
     public static List<ActionRow> buildActionRows(Roster r) {
         List<Button> buttons = new ArrayList<>();
-        buttons.add(Button.secondary("roster_refresh_" + r.getName(), "Refresh"));
+        buttons.add(Button.secondary("roster_refresh_" + r.getName(), "\u200B").withEmoji(Emoji.fromUnicode("🔁")));
         
         if (!r.isClosed()) {
             if (!r.isOnlySignoff()) {
@@ -318,19 +359,27 @@ public class RosterCommand extends ListenerAdapter {
         String action = id.substring(7, id.indexOf("_", 7));
         String rosterName = id.substring(7 + action.length() + 1);
 
-        Roster r = Roster.getRoster(rosterName);
-        if (r == null) {
-            event.reply("Dieser Roster existiert nicht mehr.").setEphemeral(true).queue();
+        if (action.equals("refresh")) {
+            event.deferEdit().queue();
+            Roster r = Roster.getRoster(rosterName);
+            if (r == null) {
+                event.getHook().sendMessage("Dieser Roster existiert nicht mehr.").setEphemeral(true).queue();
+                return;
+            }
+            event.getHook().editOriginalEmbeds(buildRosterEmbed(r).build()).setComponents(buildActionRows(r)).queue();
             return;
         }
 
-        if (action.equals("refresh")) {
-            event.editMessageEmbeds(buildRosterEmbed(r).build()).setComponents(buildActionRows(r)).queue();
+        event.deferReply(true).queue();
+
+        Roster r = Roster.getRoster(rosterName);
+        if (r == null) {
+            event.getHook().sendMessage("Dieser Roster existiert nicht mehr.").queue();
             return;
         }
 
         if (r.isClosed()) {
-            event.reply("Dieser Roster ist mittlerweile geschlossen.").setEphemeral(true).queue();
+            event.getHook().sendMessage("Dieser Roster ist mittlerweile geschlossen.").queue();
             return;
         }
 
@@ -338,18 +387,18 @@ public class RosterCommand extends ListenerAdapter {
         User u = new User(event.getUser().getId()).refreshData();
         List<Player> accounts = u.getAllLinkedAccounts();
         if (accounts == null || accounts.isEmpty()) {
-            event.reply("Du hast keine Accounts verlinkt! Bitte nutze `/link`.").setEphemeral(true).queue();
+            event.getHook().sendMessage("Du hast keine Accounts verlinkt! Bitte nutze `/link`.").queue();
             return;
         }
 
         List<SelectOption> options = new ArrayList<>();
         for (Player p : accounts) {
-            String name = p.getNameAPI();
+            String name = p.getNameDB(); // Use DB to avoid API call
             String tag = p.getTag();
-            int thLevel = p.getThLevelAPI();
+            int thLevel = p.getThLevelDB(); // Use DB cached level
 
-            if (action.equals("signup") && thLevel < r.getMinTh()) {
-                // Skip if below TH requirement for signing UP
+            if (thLevel < r.getMinTh()) {
+                // Skip if below TH requirement for both signup and signoff
                 continue;
             }
 
@@ -357,7 +406,7 @@ public class RosterCommand extends ListenerAdapter {
         }
 
         if (options.isEmpty()) {
-            event.reply("Du hast keine passenden Accounts für diesen Roster (Min TH: " + r.getMinTh() + ").").setEphemeral(true).queue();
+            event.getHook().sendMessage("Du hast keine passenden Accounts für diesen Roster (Min TH: " + r.getMinTh() + ").").queue();
             return;
         }
 
@@ -366,13 +415,13 @@ public class RosterCommand extends ListenerAdapter {
             options = new ArrayList<>(options.subList(0, 25));
         }
 
-        StringSelectMenu menu = StringSelectMenu.create("roster_select_" + action + "_" + rosterName)
+        StringSelectMenu menu = StringSelectMenu.create("roster_select_" + action + "_" + rosterName + "_" + event.getMessageId())
                 .setPlaceholder("Wähle einen Account aus")
                 .addOptions(options)
                 .build();
 
-        event.reply("Wähle den Account aus, den du " + (action.equals("signup") ? "anmelden" : "abmelden") + " möchtest:")
-                .setComponents(ActionRow.of(menu)).setEphemeral(true).queue();
+        event.getHook().sendMessage("Wähle den Account aus, den du " + (action.equals("signup") ? "anmelden" : "abmelden") + " möchtest:")
+                .addActionRow(menu).queue();
     }
 
     @Override
@@ -380,37 +429,56 @@ public class RosterCommand extends ListenerAdapter {
         String id = event.getComponentId();
         if (!id.startsWith("roster_select_")) return;
 
+        event.deferEdit().queue();
+
+        String componentData = id.substring("roster_select_".length());
+        int lastUnderscore = componentData.lastIndexOf("_");
+        String msgId = lastUnderscore != -1 ? componentData.substring(lastUnderscore + 1) : null;
+
         String val = event.getValues().get(0);
-        // format: roster_signupcmd_NAME_#TAG
         if (!val.startsWith("roster_")) return;
 
-        String parts[] = val.substring(7).split("_", 3);
-        if (parts.length < 3) return;
+        // val format: roster_signupcmd_ROSTERNAME_#TAG
+        String valData = val.substring(7); // removes "roster_"
+        int firstUnderscoreVal = valData.indexOf("_");
+        int lastUnderscoreVal = valData.lastIndexOf("_");
 
-        String actioncmd = parts[0];
-        String rName = parts[1];
-        String pTag = parts[2];
+        if (firstUnderscoreVal == -1 || lastUnderscoreVal == -1 || firstUnderscoreVal == lastUnderscoreVal) return;
+
+        String actioncmd = valData.substring(0, firstUnderscoreVal);
+        String rName = valData.substring(firstUnderscoreVal + 1, lastUnderscoreVal);
+        String pTag = valData.substring(lastUnderscoreVal + 1);
 
         String logicAction = actioncmd.replace("cmd", ""); // "signup" or "signoff"
 
         Roster r = Roster.getRoster(rName);
         if (r == null) {
-            event.reply("Dieser Roster existiert nicht mehr.").setEphemeral(true).queue();
+            event.getHook().editOriginal("Dieser Roster existiert nicht mehr.").setComponents().queue();
             return;
         }
 
         if (r.isClosed()) {
-            event.reply("Dieser Roster ist mittlerweile geschlossen.").setEphemeral(true).queue();
+            event.getHook().editOriginal("Dieser Roster ist mittlerweile geschlossen.").setComponents().queue();
             return;
         }
 
         Player p = new Player(pTag);
         
-        RosterParticipant.setParticipantStatus(rName, event.getUser().getId(), pTag, logicAction, p.getThLevelAPI());
+        boolean set = RosterParticipant.setParticipantStatus(rName, event.getUser().getId(), pTag, logicAction, p.getThLevelAPI());
 
-        event.reply("Erfolgreich " + (logicAction.equals("signup") ? "angemeldet" : "abgemeldet") + " für " + p.getNameAPI() + "!")
-            .setEphemeral(true).queue();
+        if (set) {
+            event.getHook().editOriginal("Erfolgreich " + (logicAction.equals("signup") ? "angemeldet" : "abgemeldet") + " für " + p.getNameAPI() + "!")
+                .setComponents().queue();
+        } else {
+            event.getHook().editOriginal("Erfolgreich aus dem Roster entfernt für " + p.getNameAPI() + "!")
+                .setComponents().queue();
+        }
 
+        if (msgId != null && msgId.matches("\\d+")) {
+            event.getChannel().retrieveMessageById(msgId).queue(msg -> {
+                msg.editMessageEmbeds(buildRosterEmbed(r).build()).setComponents(buildActionRows(r)).queue();
+            }, err -> {});
+        }
     }
 
     @Override
@@ -420,19 +488,26 @@ public class RosterCommand extends ListenerAdapter {
         String opt = event.getFocusedOption().getName();
         String currentStr = event.getFocusedOption().getValue().toLowerCase();
 
-        if (opt.equals("clan")) {
-            List<Choice> choices = DBManager.getClansAutocompleteWithSideclans(currentStr);
-            event.replyChoices(choices).queue();
-
-        } else if (opt.equals("name") || opt.equals("base_roster")) {
-            List<Choice> choices = Roster.getAllRosters().stream()
-                .map(Roster::getName)
-                .filter(n -> n.toLowerCase().contains(currentStr))
-                .map(n -> new Choice(n, n))
-                .limit(25)
-                .collect(Collectors.toList());
-
-            event.replyChoices(choices).queue();
+        switch (opt) {
+            case "clan" ->                 {
+                    List<Choice> choices = DBManager.getClansAutocompleteWithSideclans(currentStr);
+                    event.replyChoices(choices).queue();
+                }
+            case "name", "base_roster" -> {
+                List<Choice> choices = Roster.getAllRosters().stream()
+                        .map(Roster::getName)
+                        .filter(n -> n.toLowerCase().contains(currentStr))
+                        .map(n -> new Choice(n, n))
+                        .limit(25)
+                        .collect(Collectors.toList());
+                event.replyChoices(choices).queue();
+            }
+            case "player" ->                 {
+                List<Choice> choices = DBManager.getPlayerlistAutocomplete(currentStr, DBManager.InClanType.ALL);
+                event.replyChoices(choices).queue();
+                }
+            default ->                 {
+                }
         }
     }
 }

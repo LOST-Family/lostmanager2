@@ -501,7 +501,13 @@ public class Bot extends ListenerAdapter {
 											new SubcommandData("post", "Postet das Roster Embed mit den Buttons")
 													.addOption(OptionType.STRING, "name", "Der Roster", true, true),
 											new SubcommandData("ping", "Pingt Member ohne Anmeldung")
+													.addOption(OptionType.STRING, "name", "Der Roster", true, true),
+											new SubcommandData("force_signup", "Meldet einen anderen Spieler für den Roster an")
 													.addOption(OptionType.STRING, "name", "Der Roster", true, true)
+													.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true),
+											new SubcommandData("force_signoff", "Meldet einen anderen Spieler für den Roster ab")
+													.addOption(OptionType.STRING, "name", "Der Roster", true, true)
+													.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
 									)
 
 					).queue();
@@ -1237,7 +1243,8 @@ public class Bot extends ListenerAdapter {
 			String sql = "SELECT coc_tag FROM players";
 			for (String tag : DBUtil.getArrayListFromSQL(sql, String.class)) {
 				try {
-					DBUtil.executeUpdate("UPDATE players SET name = ? WHERE coc_tag = ?", new Player(tag).getNameAPI(),
+					Player p = new Player(tag);
+					DBUtil.executeUpdate("UPDATE players SET name = ?, townhall = ? WHERE coc_tag = ?", p.getNameAPI(), p.getThLevelAPI(),
 							tag);
 				} catch (final Exception e) {
 					if (e.getMessage().contains("String.length()")) {

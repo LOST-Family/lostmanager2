@@ -67,6 +67,7 @@ public class Player {
 	private Integer warmapposition;
 	private String namedb;
 	private String nameapi;
+	private Integer townhalldb;
 	private User user;
 	private Clan clandb;
 	private Clan clanapi;
@@ -92,6 +93,7 @@ public class Player {
 		warmapposition = null;
 		namedb = null;
 		nameapi = null;
+		townhalldb = null;
 		user = null;
 		clandb = null;
 		clanapi = null;
@@ -375,6 +377,14 @@ public class Player {
 	public Integer getThLevelAPI() {
 		JSONObject jsonObject = new JSONObject(getJson());
 		return jsonObject.has("townHallLevel") ? jsonObject.getInt("townHallLevel") : 1;
+	}
+
+	public Integer getThLevelDB() {
+		if (townhalldb == null) {
+			Integer val = DBUtil.getValueFromSQL("SELECT townhall FROM players WHERE coc_tag = ?", Integer.class, tag);
+			townhalldb = val != null ? val : 1;
+		}
+		return townhalldb;
 	}
 
 	public String getNameAPI() {

@@ -43,7 +43,7 @@ public class RosterParticipant {
             // Join with players table to get the account name
             PreparedStatement pstmt = Connection.getConnection().prepareStatement(
                 "SELECT rp.*, p.name as player_name FROM roster_participants rp " +
-                "LEFT JOIN players p ON rp.account_tag = p.cr_tag " +
+                "LEFT JOIN players p ON rp.account_tag = p.coc_tag " +
                 "WHERE rp.roster_name = ?"
             );
             pstmt.setString(1, rosterName);
@@ -70,7 +70,16 @@ public class RosterParticipant {
         return result;
     }
 
-    public static void setParticipantStatus(String rosterName, String discordId, String accountTag, String status, int thLevel) {
+    public static boolean setParticipantStatus(String rosterName, String discordId, String accountTag, String status, int thLevel) {
+        // Check current status
+        String currentStatus = DBUtil.getValueFromSQL("SELECT status FROM roster_participants WHERE roster_name = ? AND account_tag = ?", String.class, rosterName, accountTag);
+        
+        if (status.equals(currentStatus)) {
+            // Toggle off - remove the participant
+            DBUtil.executeUpdate("DELETE FROM roster_participants WHERE roster_name = ? AND account_tag = ?", rosterName, accountTag);
+            return false; // Indicates it was removed
+        }
+        
         // Upsert logic (insert or update)
         DBUtil.executeUpdate(
             "INSERT INTO roster_participants (roster_name, discord_id, account_tag, status, th_level) " +
@@ -78,5 +87,6 @@ public class RosterParticipant {
             "ON CONFLICT (roster_name, account_tag) DO UPDATE SET status = EXCLUDED.status, th_level = EXCLUDED.th_level",
             rosterName, discordId, accountTag, status, thLevel
         );
+        return true; // Indicates it was set/updated
     }
 }
