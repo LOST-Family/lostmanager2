@@ -52,6 +52,8 @@ public class Connection {
 		tableNames.add("userjsons");
 		tableNames.add("datamappings");
 		tableNames.add("member_signoffs");
+		tableNames.add("rosters");
+		tableNames.add("roster_participants");
 		try (java.sql.Connection conn = DriverManager.getConnection(url, user, password)) {
 			DatabaseMetaData dbm = conn.getMetaData();
 
@@ -130,6 +132,20 @@ public class Connection {
 									+ "created_by_discord_id TEXT NOT NULL,"
 									+ "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
 									+ "UNIQUE(player_tag))";
+						case "rosters" ->
+							createTableSQL = "CREATE TABLE " + tableName + " (name VARCHAR(255) PRIMARY KEY,"
+									+ "clan VARCHAR(255),"
+									+ "min_th INT,"
+									+ "delete_at TIMESTAMP,"
+									+ "only_signoff BOOLEAN,"
+									+ "is_closed BOOLEAN DEFAULT FALSE)";
+						case "roster_participants" ->
+							createTableSQL = "CREATE TABLE " + tableName + " (roster_name VARCHAR(255) REFERENCES rosters(name) ON DELETE CASCADE,"
+									+ "discord_id VARCHAR(19),"
+									+ "account_tag VARCHAR(100),"
+									+ "status VARCHAR(50),"
+									+ "th_level INT,"
+									+ "PRIMARY KEY (roster_name, account_tag))";
 						}
 
 						try (Statement stmt = conn.createStatement()) {

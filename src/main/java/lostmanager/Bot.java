@@ -72,6 +72,7 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -478,7 +479,30 @@ public class Bot extends ListenerAdapter {
 											.addChoice("Sceneries (BB)", "Sceneries (BB)")),
 
 							Commands.slash("f2pcheck", "Check ob ein Spieler F2P ist.")
-									.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
+									.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true),
+							Commands.slash("roster", "Roster-System Verwaltung")
+									.addSubcommands(
+											new SubcommandData("create", "Erstellt einen neuen Roster")
+													.addOption(OptionType.STRING, "clan", "Der Clan für den Roster", true, true)
+													.addOption(OptionType.STRING, "name", "Name des Rosters", true)
+													.addOption(OptionType.INTEGER, "min_town_hall", "Minimales Rathaus-Level", false)
+													.addOption(OptionType.INTEGER, "delete_after", "Tage bis zur Löschung (Standard: 60, -1 für nie)", false)
+													.addOption(OptionType.BOOLEAN, "only_signoff", "Nur Abmeldungen erlauben?", false),
+											new SubcommandData("clone", "Kopiert die Einstellungen eines aktiven Rosters")
+													.addOption(OptionType.STRING, "base_roster", "Roster zum Kopieren", true, true)
+													.addOption(OptionType.STRING, "new_name", "Name des neuen Rosters", true),
+											new SubcommandData("delete", "Löscht einen aktiven Roster")
+													.addOption(OptionType.STRING, "name", "Der Roster", true, true),
+											new SubcommandData("modify", "Modifiziert die Einstellungen eines Rosters")
+													.addOption(OptionType.STRING, "name", "Der Roster", true, true)
+													.addOption(OptionType.INTEGER, "min_town_hall", "Neues minimales Rathaus-Level", true),
+											new SubcommandData("close", "Schließt die Anmeldung für einen Roster")
+													.addOption(OptionType.STRING, "name", "Der Roster", true, true),
+											new SubcommandData("post", "Postet das Roster Embed mit den Buttons")
+													.addOption(OptionType.STRING, "name", "Der Roster", true, true),
+											new SubcommandData("ping", "Pingt Member ohne Anmeldung")
+													.addOption(OptionType.STRING, "name", "Der Roster", true, true)
+									)
 
 					).queue();
 		}
@@ -527,6 +551,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new jsonupload());
 		classes.add(new stats());
 		classes.add(new f2pcheck());
+		classes.add(new lostmanager.commands.roster.RosterCommand());
 
 		return classes.toArray();
 	}
@@ -544,7 +569,7 @@ public class Bot extends ListenerAdapter {
 		} catch (final IOException e) {
 			System.err.println("Failed to start REST API Server: " + e.getMessage());
 		}
-		startNameUpdates();
+		startPeriodicBackgroundTasks();
 	}
 
 	@SuppressWarnings("null")
@@ -1164,9 +1189,18 @@ public class Bot extends ListenerAdapter {
 	}
 
 	@SuppressWarnings("null")
-	public static void startNameUpdates() {
-		System.out.println("Alle 2h werden nun die Namen aktualisiert. " + System.currentTimeMillis());
+	public static void startPeriodicBackgroundTasks() {
+		System.out.println("Alle 2h werden nun die Namen aktualisiert, Clans gepulst und alte Rosters gelöscht. "
+				+ System.currentTimeMillis());
 		Runnable task = () -> {
+
+			// Clean expired rosters
+			try {
+				lostmanager.dbutil.DBUtil.executeUpdate(
+						"DELETE FROM rosters WHERE delete_at IS NOT NULL AND delete_at < NOW()");
+			} catch (Exception e) {
+				System.err.println("Fehler beim Löschen alter Rosters: " + e.getMessage());
+			}
 
 			// Update clan badges and descriptions
 			String clanSql = "SELECT tag FROM clans";
@@ -1375,3 +1409,4 @@ public class Bot extends ListenerAdapter {
 		}
 	}
 }
+
