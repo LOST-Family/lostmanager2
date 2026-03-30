@@ -21,8 +21,10 @@ import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
 import lostmanager.dbutil.DBUtil;
-import lostmanager.util.MessageUtil;
 import lostmanager.util.FilteredIdsCache;
+import lostmanager.util.MessageUtil;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -32,8 +34,6 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 public class stats extends ListenerAdapter {
 
@@ -184,7 +184,7 @@ public class stats extends ListenerAdapter {
 
 			// Decode button ID to extract parameters
 			try {
-				String[] params = null;
+				String[] params;
 				int pageNumber = 0;
 
 				if (id.startsWith(BUTTON_FORWARD_PREFIX)) {
@@ -226,7 +226,7 @@ public class stats extends ListenerAdapter {
 
 				performStatsDisplay(event.getHook(), title, playerTag, statType, pageNumber);
 
-			} catch (Exception e) {
+			} catch (IllegalArgumentException e) {
 				event.getHook()
 						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 								"Fehler: Button-Daten konnten nicht dekodiert werden.", MessageUtil.EmbedType.ERROR))
@@ -508,18 +508,15 @@ public class stats extends ListenerAdapter {
 			}
 		} catch (java.sql.SQLException e) {
 			System.err.println("Database error loading stats data: " + e.getMessage());
-			e.printStackTrace();
 			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 					"Fehler beim Laden der Daten aus der Datenbank: " + e.getMessage(), MessageUtil.EmbedType.ERROR))
 					.queue();
 		} catch (org.json.JSONException e) {
 			System.err.println("JSON parsing error: " + e.getMessage());
-			e.printStackTrace();
 			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 					"Fehler beim Verarbeiten der JSON-Daten: " + e.getMessage(), MessageUtil.EmbedType.ERROR)).queue();
 		} catch (Exception e) {
 			System.err.println("Unexpected error loading stats data: " + e.getMessage());
-			e.printStackTrace();
 			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 					"Unerwarteter Fehler beim Laden der Daten: " + e.getMessage(), MessageUtil.EmbedType.ERROR))
 					.queue();
@@ -536,8 +533,7 @@ public class stats extends ListenerAdapter {
 
 		StringBuilder sb = new StringBuilder();
 
-		if (data instanceof JSONArray) {
-			JSONArray arr = (JSONArray) data;
+		if (data instanceof JSONArray arr) {
 			if (arr.length() == 0) {
 				return "Keine Daten vorhanden";
 			}
@@ -546,7 +542,7 @@ public class stats extends ListenerAdapter {
 			boolean hasDataField = false;
 			for (int i = 0; i < arr.length(); i++) {
 				Object item = arr.get(i);
-				if (item instanceof JSONObject && ((JSONObject) item).has("data")) {
+				if (item instanceof JSONObject itemObj && itemObj.has("data")) {
 					hasDataField = true;
 					break;
 				}
@@ -590,7 +586,7 @@ public class stats extends ListenerAdapter {
 								return Integer.compare(i1, i2);
 							}
 						}
-					} catch (Exception ex) {
+					} catch (org.json.JSONException ex) {
 						// Fallback to string comparison
 					}
 					return id1.compareTo(id2);
@@ -599,14 +595,14 @@ public class stats extends ListenerAdapter {
 				// Display sorted items with original formatting
 				for (int i = 0; i < items.size(); i++) {
 					Object item = items.get(i);
-					if (item instanceof JSONObject) {
-						sb.append(formatObject((JSONObject) item, 0, jsonTimestamp));
+					if (item instanceof JSONObject jsonItem) {
+						sb.append(formatObject(jsonItem, 0, jsonTimestamp));
 						if (i < items.size() - 1) {
 							sb.append("\n");
 						}
 					} else {
 						// Simple values (e.g., house_parts, skins, sceneries)
-						String rawVal = item.toString();
+						String rawVal = String.valueOf(item);
 						if (FilteredIdsCache.isFiltered(rawVal)) {
 							// skip filtered ids
 							continue;
@@ -643,8 +639,7 @@ public class stats extends ListenerAdapter {
 
 		for (int i = 0; i < arr.length(); i++) {
 			Object item = arr.get(i);
-			if (item instanceof JSONObject) {
-				JSONObject obj = (JSONObject) item;
+			if (item instanceof JSONObject obj) {
 				if (obj.has("data")) {
 					String dataId = obj.get("data").toString();
 					if (FilteredIdsCache.isFiltered(dataId)) {
@@ -675,7 +670,7 @@ public class stats extends ListenerAdapter {
 				int i2 = d2 != null && d2.has("index") ? d2.getInt("index") : Integer.MAX_VALUE;
 				if (i1 != i2)
 					return Integer.compare(i1, i2);
-			} catch (Exception ex) {
+			} catch (org.json.JSONException ex) {
 				// ignore and fallback
 			}
 			return e1.getKey().compareTo(e2.getKey());
@@ -759,71 +754,72 @@ public class stats extends ListenerAdapter {
 						continue;
 					}
 
-					if (key.equals("timer") || key.equals("helper_cooldown")) {
-						// Special handling for timer
-						int timerSeconds = 0;
-						if (value instanceof Number) {
-							timerSeconds = ((Number) value).intValue();
+					switch (key) {
+						case "timer", "helper_cooldown" -> {
+							// Special handling for timer
+							int timerSeconds = 0;
+							if (value instanceof Number numValue) {
+								timerSeconds = numValue.intValue();
+							}
+
+							// Calculate remaining time
+							long elapsedSeconds = (System.currentTimeMillis() - jsonTimestamp.getTime()) / 1000;
+							long remainingSeconds = timerSeconds - elapsedSeconds;
+
+							if (remainingSeconds > 0) {
+								sb.append("\n").append(baseIndent);
+								String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
+								sb.append(translatedKey).append(": ");
+								String timerStr = formatTimerRemaining(remainingSeconds);
+								sb.append(timerStr);
+							}
+							// Skip timer if expired - don't add any output
 						}
-
-						// Calculate remaining time
-						long elapsedSeconds = (System.currentTimeMillis() - jsonTimestamp.getTime()) / 1000;
-						long remainingSeconds = timerSeconds - elapsedSeconds;
-
-						if (remainingSeconds > 0) {
+						case "lvl" -> {
+							// Special handling for level - add emoji for items with levels
 							sb.append("\n").append(baseIndent);
 							String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
 							sb.append(translatedKey).append(": ");
-							String timerStr = formatTimerRemaining(remainingSeconds);
-							sb.append(timerStr);
-						}
-						// Skip timer if expired - don't add any output
-					} else if (key.equals("lvl")) {
-						// Special handling for level - add emoji for items with levels
-						sb.append("\n").append(baseIndent);
-						String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
-						sb.append(translatedKey).append(": ");
-						sb.append(value.toString());
+							sb.append(value.toString());
 
-						// Add emoji if this item has levels
-						if (lostmanager.util.ImageMapCache.hasLevels(dataId)) {
-							try {
-								int levelNum = Integer.parseInt(value.toString());
-								String levelEmoji = getEmojiForLevel(dataId, levelNum);
-								if (levelEmoji != null) {
-									sb.append(" ").append(levelEmoji);
+							// Add emoji if this item has levels
+							if (lostmanager.util.ImageMapCache.hasLevels(dataId)) {
+								try {
+									int levelNum = Integer.parseInt(value.toString());
+									String levelEmoji = getEmojiForLevel(dataId, levelNum);
+									if (levelEmoji != null) {
+										sb.append(" ").append(levelEmoji);
+									}
+								} catch (NumberFormatException e) {
+									// Level is not a number, skip emoji
 								}
-							} catch (NumberFormatException e) {
-								// Level is not a number, skip emoji
 							}
 						}
-					} else {
-						sb.append("\n").append(baseIndent);
-						String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
-						sb.append(translatedKey).append(": ");
+						default -> {
+							sb.append("\n").append(baseIndent);
+							String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
+							sb.append(translatedKey).append(": ");
 
-						if (value instanceof JSONObject) {
-							sb.append("\n").append(formatObject((JSONObject) value, objIndent, jsonTimestamp));
-						} else if (value instanceof JSONArray) {
-							JSONArray valueArr = (JSONArray) value;
-							if (valueArr.length() > 0) {
-								for (int i = 0; i < valueArr.length(); i++) {
-									Object arrItem = valueArr.get(i);
-									if (arrItem instanceof JSONObject) {
-										sb.append("\n")
-												.append(formatObject((JSONObject) arrItem, objIndent, jsonTimestamp));
-									} else {
-										String mappedArrValue = getMappedValue(arrItem.toString());
-										sb.append("\n").append(arrItemIndent).append(mappedArrValue);
+							switch (value) {
+								case JSONObject jsonObj ->
+										sb.append("\n").append(formatObject(jsonObj, objIndent, jsonTimestamp));
+								case JSONArray valueArr -> {
+									if (valueArr.length() > 0) {
+										for (int i = 0; i < valueArr.length(); i++) {
+											Object arrItem = valueArr.get(i);
+											if (arrItem instanceof JSONObject arrObj) {
+												sb.append("\n")
+														.append(formatObject(arrObj, objIndent, jsonTimestamp));
+											} else {
+												String mappedArrValue = getMappedValue(String.valueOf(arrItem));
+												sb.append("\n").append(arrItemIndent).append(mappedArrValue);
+											}
+										}
 									}
 								}
+								case Boolean bValue -> sb.append(bValue ? "Ja" : "Nein");
+								default -> sb.append(String.valueOf(value));
 							}
-						} else {
-							String valueStr = value.toString();
-							if (value instanceof Boolean) {
-								valueStr = (Boolean) value ? "Ja" : "Nein";
-							}
-							sb.append(valueStr);
 						}
 					}
 				}
@@ -972,60 +968,69 @@ public class stats extends ListenerAdapter {
 			String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
 
 			if (key.equals("timer") || key.equals("helper_cooldown")) {
-				if (value instanceof JSONObject) {
-					sb.append("\n").append(prefix).append(translatedKey).append(":");
-					sb.append("\n").append(formatObject((JSONObject) value, indent + 1, jsonTimestamp));
-				} else if (value instanceof JSONArray) {
-					JSONArray arr = (JSONArray) value;
-					String nextIndent = "· ".repeat(indent + 1);
-					for (int i = 0; i < arr.length(); i++) {
-						Object item = arr.get(i);
-						if (item instanceof JSONObject) {
-							sb.append("\n").append(formatObject((JSONObject) item, indent + 1, jsonTimestamp));
-						} else {
-							String raw = item.toString();
-							if (FilteredIdsCache.isFiltered(raw))
-								continue;
-							sb.append("\n").append(nextIndent).append(getMappedValue(raw));
+				switch (value) {
+					case JSONObject jsonObj -> {
+						sb.append("\n").append(prefix).append(translatedKey).append(":");
+						sb.append("\n").append(formatObject(jsonObj, indent + 1, jsonTimestamp));
+					}
+					case JSONArray arr -> {
+						String nextIndent = "· ".repeat(indent + 1);
+						for (int i = 0; i < arr.length(); i++) {
+							Object item = arr.get(i);
+							if (item instanceof JSONObject itemObj) {
+								sb.append("\n").append(formatObject(itemObj, indent + 1, jsonTimestamp));
+							} else {
+								String raw = String.valueOf(item);
+								if (FilteredIdsCache.isFiltered(raw))
+									continue;
+								sb.append("\n").append(nextIndent).append(getMappedValue(raw));
+							}
 						}
 					}
-				} else if (value instanceof Number) {
-					int timerSeconds = ((Number) value).intValue();
-					long elapsedSeconds = (System.currentTimeMillis() - jsonTimestamp.getTime()) / 1000;
-					long remainingSeconds = timerSeconds - elapsedSeconds;
-					if (remainingSeconds > 0) {
-						sb.append("\n").append(prefix).append(translatedKey).append(": ")
-								.append(formatTimerRemaining(remainingSeconds));
+					case Number numValue -> {
+						int timerSeconds = numValue.intValue();
+						long elapsedSeconds = (System.currentTimeMillis() - jsonTimestamp.getTime()) / 1000;
+						long remainingSeconds = timerSeconds - elapsedSeconds;
+						if (remainingSeconds > 0) {
+							sb.append("\n").append(prefix).append(translatedKey).append(": ")
+									.append(formatTimerRemaining(remainingSeconds));
+						}
 					}
-				} else {
-					String valueStr = value.toString();
-					if (value instanceof Boolean)
-						valueStr = (Boolean) value ? "Ja" : "Nein";
-					sb.append("\n").append(prefix).append(translatedKey).append(": ").append(valueStr);
+					case Boolean bValue -> {
+						String valueStr = bValue ? "Ja" : "Nein";
+						sb.append("\n").append(prefix).append(translatedKey).append(": ").append(valueStr);
+					}
+					default -> {
+						sb.append("\n").append(prefix).append(translatedKey).append(": ").append(String.valueOf(value));
+					}
 				}
 			} else {
-				if (value instanceof JSONObject) {
-					sb.append("\n").append(prefix).append(translatedKey).append(":");
-					sb.append("\n").append(formatObject((JSONObject) value, indent + 1, jsonTimestamp));
-				} else if (value instanceof JSONArray) {
-					JSONArray arr = (JSONArray) value;
-					String nextIndent = "· ".repeat(indent + 1);
-					for (int i = 0; i < arr.length(); i++) {
-						Object item = arr.get(i);
-						if (item instanceof JSONObject) {
-							sb.append("\n").append(formatObject((JSONObject) item, indent + 1, jsonTimestamp));
-						} else {
-							String raw = item.toString();
-							if (FilteredIdsCache.isFiltered(raw))
-								continue;
-							sb.append("\n").append(nextIndent).append(getMappedValue(raw));
+				switch (value) {
+					case JSONObject jsonObj -> {
+						sb.append("\n").append(prefix).append(translatedKey).append(":");
+						sb.append("\n").append(formatObject(jsonObj, indent + 1, jsonTimestamp));
+					}
+					case JSONArray arr -> {
+						String nextIndent = "· ".repeat(indent + 1);
+						for (int i = 0; i < arr.length(); i++) {
+							Object item = arr.get(i);
+							if (item instanceof JSONObject itemObj) {
+								sb.append("\n").append(formatObject(itemObj, indent + 1, jsonTimestamp));
+							} else {
+								String raw = String.valueOf(item);
+								if (FilteredIdsCache.isFiltered(raw))
+									continue;
+								sb.append("\n").append(nextIndent).append(getMappedValue(raw));
+							}
 						}
 					}
-				} else {
-					String valueStr = value.toString();
-					if (value instanceof Boolean)
-						valueStr = (Boolean) value ? "Ja" : "Nein";
-					sb.append("\n").append(prefix).append(translatedKey).append(": ").append(valueStr);
+					case Boolean bValue -> {
+						String valueStr = bValue ? "Ja" : "Nein";
+						sb.append("\n").append(prefix).append(translatedKey).append(": ").append(valueStr);
+					}
+					default -> {
+						sb.append("\n").append(prefix).append(translatedKey).append(": ").append(String.valueOf(value));
+					}
 				}
 			}
 		}
@@ -1071,17 +1076,6 @@ public class stats extends ListenerAdapter {
 	 * @return Formatted string with name and emoji (if applicable)
 	 */
 	private String getMappedValue(String dataValue) {
-		return getMappedValue(dataValue, null);
-	}
-
-	/**
-	 * Get mapped value from image_map.json cache with optional level
-	 * 
-	 * @param dataValue The data ID
-	 * @param level     The level (null if not applicable)
-	 * @return Formatted string with name and emoji (if applicable)
-	 */
-	private String getMappedValue(String dataValue, Integer level) {
 		try {
 			// Get item data from cache
 			String name = lostmanager.util.ImageMapCache.getName(dataValue);

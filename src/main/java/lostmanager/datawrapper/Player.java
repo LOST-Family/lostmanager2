@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.http.HttpRequest;
@@ -57,7 +58,7 @@ public class Player {
 		return role != null && (role.equals("admin") || role.equals("coLeader") || role.equals("leader"));
 	}
 
-	private String tag;
+	private final String tag;
 	private Integer currentRaidAttacks;
 	private Integer currentRaidGoldLooted;
 	private Integer currentRaidAttackLimit;
@@ -66,6 +67,7 @@ public class Player {
 	private Integer warmapposition;
 	private String namedb;
 	private String nameapi;
+	private Integer townhalldb;
 	private User user;
 	private Clan clandb;
 	private Clan clanapi;
@@ -91,6 +93,7 @@ public class Player {
 		warmapposition = null;
 		namedb = null;
 		nameapi = null;
+		townhalldb = null;
 		user = null;
 		clandb = null;
 		clanapi = null;
@@ -251,7 +254,6 @@ public class Player {
 				return rs.next(); // true, wenn mindestens eine Zeile existiert
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return false;
 	}
@@ -270,21 +272,20 @@ public class Player {
 			int responseCode = connection.getResponseCode();
 
 			if (responseCode == 200) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-				String line;
-				StringBuilder responseContent = new StringBuilder();
-				while ((line = in.readLine()) != null) {
-					responseContent.append(line);
-				}
-				in.close();
+                            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                                String line;
+                                StringBuilder responseContent = new StringBuilder();
+                                while ((line = in.readLine()) != null) {
+                                    responseContent.append(line);
+                                }
+                            }
 
 				return true;
 			} else {
 				System.out.println("Verifizierung fehlgeschlagen. Fehlercode: " + responseCode);
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException | URISyntaxException e) {
 		}
 		return false;
 	}
@@ -313,16 +314,16 @@ public class Player {
 			// Wenn 200: Antwort lesen und JSON prüfen (expect: { "status":"ok" } wenn
 			// richtig)
 			if (responseCode == 200) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-				String responseLine = in.readLine();
-				in.close();
+                            String responseLine;
+                            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                                responseLine = in.readLine();
+                            }
 				return responseLine != null && responseLine.contains("\"status\":\"ok\"");
 			} else {
 				System.out.println("Verifizierung fehlgeschlagen. Fehlercode: " + responseCode);
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException | URISyntaxException e) {
 		}
 		return false;
 	}
@@ -357,7 +358,6 @@ public class Player {
 		try {
 			return getNameDB() + " (" + tag + ")";
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		return null;
 	}
@@ -366,13 +366,25 @@ public class Player {
 		try {
 			return getNameAPI() + " (" + tag + ")";
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		return null;
 	}
 
 	public String getTag() {
 		return tag;
+	}
+
+	public Integer getThLevelAPI() {
+		JSONObject jsonObject = new JSONObject(getJson());
+		return jsonObject.has("townHallLevel") ? jsonObject.getInt("townHallLevel") : 1;
+	}
+
+	public Integer getThLevelDB() {
+		if (townhalldb == null) {
+			Integer val = DBUtil.getValueFromSQL("SELECT townhall FROM players WHERE coc_tag = ?", Integer.class, tag);
+			townhalldb = val != null ? val : 1;
+		}
+		return townhalldb;
 	}
 
 	public String getNameAPI() {
@@ -469,7 +481,6 @@ public class Player {
 					}
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
 			}
 		}
 		return roledb;
@@ -486,7 +497,6 @@ public class Player {
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return false;
 	}
@@ -514,7 +524,6 @@ public class Player {
 							new TypeReference<HashMap<Type, ArrayList<AchievementData>>>() {
 							});
 				} catch (JsonProcessingException e) {
-					e.printStackTrace();
 				}
 			} else {
 				achievementDatasInDB = new HashMap<>();
@@ -527,7 +536,6 @@ public class Player {
 					String jsonData = insertMapper.writeValueAsString(achievementDatasInDB);
 					DBUtil.executeUpdate("INSERT INTO achievements (tag, data) VALUES (?, ?)", tag, jsonData);
 				} catch (JsonProcessingException e) {
-					e.printStackTrace();
 				}
 			}
 		}
@@ -566,7 +574,6 @@ public class Player {
 		try {
 			jsonlist = mapper.writeValueAsString(datalists);
 		} catch (JsonProcessingException e) {
-			e.printStackTrace();
 		}
 		if (exists) {
 			DBUtil.executeUpdate("UPDATE achievements SET data = ? WHERE tag = ?", jsonlist, tag);
@@ -588,19 +595,12 @@ public class Player {
 
 	public AchievementData getAchievementDataAPI(AchievementData.Type type, Timestamp timestamp) {
 		if (achievementDataAPI == null) {
-			Integer value = null;
-
 			switch (type) {
-			case WINS:
-				value = Integer.valueOf(getAchievementAPI("Conqueror"));
-				achievementDataAPI = new AchievementData(timestamp, value, Type.WINS);
-				break;
-			case CLANGAMES_POINTS:
-				value = Integer.valueOf(getAchievementAPI("Games Champion"));
-				achievementDataAPI = new AchievementData(timestamp, value, Type.CLANGAMES_POINTS);
-				break;
-			default:
-				return null;
+				case WINS -> achievementDataAPI = new AchievementData(timestamp, getAchievementAPI("Conqueror"), Type.WINS);
+				case CLANGAMES_POINTS -> achievementDataAPI = new AchievementData(timestamp, getAchievementAPI("Games Champion"), Type.CLANGAMES_POINTS);
+				default -> {
+					return null;
+				}
 			}
 		}
 		return achievementDataAPI;
@@ -648,7 +648,7 @@ public class Player {
 					long waitTime = (long) Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
 					System.err.println("Request failed with status " + response.statusCode() + ", retrying in "
 							+ waitTime + "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
-					Thread.sleep(waitTime);
+						java.util.concurrent.TimeUnit.MILLISECONDS.sleep(waitTime);
 				}
 			} catch (IOException | InterruptedException e) {
 				if (attempt < maxRetries) {
@@ -656,13 +656,13 @@ public class Player {
 					System.err.println("Request failed with exception: " + e.getMessage() + ", retrying in " + waitTime
 							+ "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
 					try {
-						Thread.sleep(waitTime);
+						java.util.concurrent.TimeUnit.MILLISECONDS.sleep(waitTime);
 					} catch (InterruptedException ie) {
 						Thread.currentThread().interrupt();
 						return null;
 					}
 				} else {
-					e.printStackTrace();
+					System.err.println("Exception: " + e.getMessage());
 					return null;
 				}
 			}
@@ -825,7 +825,7 @@ public class Player {
 				try {
 					seasonStart = lostmanager.util.SeasonUtil.fetchSeasonStartTime();
 				} catch (Throwable t) {
-					seasonStart = null;
+					// Ignore exception and keep seasonStart null
 				}
 
 				boolean linkedMid = false;

@@ -12,11 +12,11 @@ public class AchievementData {
 		WINS, CLANGAMES_POINTS
 	};
 
-	private Timestamp timeextracted;
+	private final Timestamp timeextracted;
 
-	private Integer data;
+	private final Integer data;
 
-	private Type type;
+	private final Type type;
 
 	@JsonCreator
 	public AchievementData(@JsonProperty("time") @JsonAlias("timeExtracted") Timestamp timeextracted, @JsonProperty("data") Integer data,

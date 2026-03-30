@@ -40,8 +40,7 @@ public class DBUtil {
 				try {
 					Thread.sleep(10000);
 					finalPstmt.close();
-				} catch (Exception e) {
-					e.printStackTrace();
+				} catch (InterruptedException | SQLException e) {
 				}
 			}).start();
 
@@ -57,7 +56,6 @@ public class DBUtil {
 						try {
 							pstmt.close();
 						} catch (SQLException ex) {
-							ex.printStackTrace();
 						}
 					}
 					
@@ -84,12 +82,10 @@ public class DBUtil {
 					}
 				}
 			}
-			e.printStackTrace();
 			if (pstmt != null) {
 				try {
 					pstmt.close();
 				} catch (SQLException ex) {
-					ex.printStackTrace();
 				}
 			}
 		}
@@ -251,13 +247,9 @@ public class DBUtil {
 						result = rs.getObject(columnName, clazz);
 					}
 				}
-				Statement stmt = rs.getStatement();
-				stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return result;
 	}
@@ -277,14 +269,9 @@ public class DBUtil {
 					String columnName = metaData.getColumnName(1);
 					a = rs.getObject(columnName, OffsetDateTime.class);
 				}
-				Statement stmt = rs.getStatement();
-				rs.close();
-				stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return a;
 	}
@@ -310,14 +297,9 @@ public class DBUtil {
 						result.add(rs.getObject(columnName, clazz));
 					}
 				}
-				Statement stmt = rs.getStatement();
-				rs.close();
-				stmt.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 
 		return result;
