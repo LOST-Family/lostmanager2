@@ -1116,11 +1116,17 @@
   },
   "103000007": {
     "name": "Air Bombs",
-    "icon": "/home-base/seasonal-defenses/air-bombs/air-bombs-4.png",
+    "icon": "/home-base/seasonal-defenses/air-bombs/air-bombs-10.png",
     "tier_1": "/home-base/seasonal-defenses/air-bombs/air-bombs-1.png",
     "tier_2": "/home-base/seasonal-defenses/air-bombs/air-bombs-2.png",
     "tier_3": "/home-base/seasonal-defenses/air-bombs/air-bombs-3.png",
-    "tier_4": "/home-base/seasonal-defenses/air-bombs/air-bombs-4.png"
+    "tier_4": "/home-base/seasonal-defenses/air-bombs/air-bombs-4.png",
+    "tier_5": "/home-base/seasonal-defenses/air-bombs/air-bombs-5.png",
+    "tier_6": "/home-base/seasonal-defenses/air-bombs/air-bombs-6.png",
+    "tier_7": "/home-base/seasonal-defenses/air-bombs/air-bombs-7.png",
+    "tier_8": "/home-base/seasonal-defenses/air-bombs/air-bombs-8.png",
+    "tier_9": "/home-base/seasonal-defenses/air-bombs/air-bombs-9.png",
+    "tier_10": "/home-base/seasonal-defenses/air-bombs/air-bombs-10.png"
   },
   "102000021": {
     "name": "Hitpoints",
@@ -1136,11 +1142,14 @@
   },
   "103000002": {
     "name": "Lava Launcher",
-    "icon": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-4.png",
+    "icon": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-7.png",
     "tier_1": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-1.png",
     "tier_2": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-2.png",
     "tier_3": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-3.png",
-    "tier_4": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-4.png"
+    "tier_4": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-4.png",
+    "tier_5": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-5.png",
+    "tier_6": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-6.png",
+    "tier_7": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-7.png"
   },
   "102000006": {
     "name": "Hitpoints",
@@ -1156,11 +1165,17 @@
   },
   "103000001": {
     "name": "Roaster",
-    "icon": "/home-base/seasonal-defenses/roaster/roaster-4.png",
+    "icon": "/home-base/seasonal-defenses/roaster/roaster-10.png",
     "tier_1": "/home-base/seasonal-defenses/roaster/roaster-1.png",
     "tier_2": "/home-base/seasonal-defenses/roaster/roaster-2.png",
     "tier_3": "/home-base/seasonal-defenses/roaster/roaster-3.png",
-    "tier_4": "/home-base/seasonal-defenses/roaster/roaster-4.png"
+    "tier_4": "/home-base/seasonal-defenses/roaster/roaster-4.png",
+    "tier_5": "/home-base/seasonal-defenses/roaster/roaster-5.png",
+    "tier_6": "/home-base/seasonal-defenses/roaster/roaster-6.png",
+    "tier_7": "/home-base/seasonal-defenses/roaster/roaster-7.png",
+    "tier_8": "/home-base/seasonal-defenses/roaster/roaster-8.png",
+    "tier_9": "/home-base/seasonal-defenses/roaster/roaster-9.png",
+    "tier_10": "/home-base/seasonal-defenses/roaster/roaster-10.png"
   },
   "102000015": {
     "name": "Hitpoints",
@@ -2809,41 +2824,42 @@
     "icon": "/home-base/decorations/208.png",
     "index": 132
   },
-  "18000205": {
-    "name": "Barbble Head (Mar. 2026)",
-    "icon": "/home-base/decorations/202.png",
-    "index": 133
-  },
-  "18000206": {
-    "name": "Mech Bull (Mar. 2026)",
-    "icon": "/home-base/decorations/203.png",
-    "index": 133
-  },
-  "18000207": {
-    "name": "Builder Bust (Apr. 2026)",
-    "icon": "/home-base/decorations/201.png",
-    "index": 135
-  },
   "18000209": {
-    "name": "Face Melter (Apr. 2026)",
-    "icon": "/home-base/decorations/201.png",
-    "index": 136
+    "name": "Builder Bust (Apr. 2026)",
+    "icon": "/home-base/decorations/209.png",
+    "index": 133
   },
   "18000210": {
-    "name": "Hog Skull (Apr. 2026)",
-    "icon": "/home-base/decorations/201.png",
-    "index": 137
+    "name": "Darkness Throne (Apr. 2026)",
+    "icon": "/home-base/decorations/210.png",
+    "index": 134
   },
   "18000211": {
-    "name": "Bone Idol (Apr. 2026)",
-    "icon": "/home-base/decorations/201.png",
-    "index": 138
+    "name": "Barbble Head (Mar. 2026)",
+    "icon": "/home-base/decorations/211.png",
+    "index": 135
   },
   "18000212": {
-    "name": "Darkness Throne (Apr. 2026)",
-    "icon": "/home-base/decorations/201.png",
+    "name": "Mech Bull (Mar. 2026)",
+    "icon": "/home-base/decorations/212.png",
+    "index": 136
+  },
+  "18000213": {
+    "name": "Face Melter (Apr. 2026)",
+    "icon": "/home-base/decorations/213.png",
+    "index": 137
+  },
+  "18000214": {
+    "name": "Hog Skull (Apr. 2026)",
+    "icon": "/home-base/decorations/214.png",
+    "index": 138
+  },
+  "18000215": {
+    "name": "Bone Idol (Apr. 2026)",
+    "icon": "/home-base/decorations/215.png",
     "index": 139
   },
+  
   "8000015": {
     "name": "2012 Stone",
     "icon": "/home-base/obstacles/15.png",
