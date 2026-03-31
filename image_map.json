@@ -3344,7 +3344,7 @@
     "index": 45
   },
   "60000063": {
-    "name": "Clash of Dragons (Sep. 2025)",
+    "name": "Clash of Dragons (Sep. 2025, Legendary)",
     "icon": "/home-base/sceneries/63.png",
     "index": 40
   },
@@ -3379,7 +3379,7 @@
     "index": 53
   },
   "60000070": {
-    "name": "Year of the Snake (Feb. 2025)",
+    "name": "Year of the Snake (Feb. 2025, Legendary)",
     "icon": "/home-base/sceneries/70.png",
     "index": 47
   },
@@ -3409,17 +3409,17 @@
     "index": 52
   },
   "60000076": {
-    "name": "13th Clash-A-Versary Scenery (Aug. 2025)",
+    "name": "13th Clash-A-Versary Scenery (Aug. 2025, XL)",
     "icon": "/home-base/sceneries/76.png",
     "index": 54
   },
   "60000077": {
-    "name": "Mash-A-Rama Scenery (Sep. 2025)",
+    "name": "Mash-A-Rama Scenery (Sep. 2025, XL)",
     "icon": "/home-base/sceneries/77.png",
     "index": 55
   },
   "60000078": {
-    "name": "Cosmic Scenery (Oct. 2025)",
+    "name": "Cosmic Scenery (Oct. 2025, XL)",
     "icon": "/home-base/sceneries/78.png",
     "index": 56
   },
@@ -3429,12 +3429,12 @@
     "index": 57
   },
   "60000080": {
-    "name": "Wasteland Scenery (Nov. 2025)",
+    "name": "Wasteland Scenery (Nov. 2025, XL)",
     "icon": "/home-base/sceneries/80.png",
     "index": 58
   },
   "60000081": {
-    "name": "Frost Age Scenery (Dec. 2025)",
+    "name": "Frost Age Scenery (Dec. 2025, XL)",
     "icon": "/home-base/sceneries/81.png",
     "index": 59
   },
@@ -3444,22 +3444,22 @@
     "index": 61
   },
   "60000083": {
-    "name": "Desert Nights Scenery (Jan. 2026)",
+    "name": "Desert Nights Scenery (Jan. 2026, XL)",
     "icon": "/home-base/sceneries/83.png",
     "index": 60
   },
   "60000084": {
-    "name": "Year of the Fire Horse Scenery (Feb. 2026)",
+    "name": "Year of the Fire Horse Scenery (Feb. 2026, XL)",
     "icon": "/home-base/sceneries/84.png",
     "index": 62
   },
   "60000085": {
-    "name": "Year of the Fire Horse Scenery (Mar. 2026)",
+    "name": "Dragon Escape Scenery (Mar. 2026, XL)",
     "icon": "/home-base/sceneries/85.png",
     "index": 63
   },
   "60000086": {
-    "name": "Sound of Clash XL Scenery (Apr. 2026)",
+    "name": "Sound of Clash XL Scenery (Apr. 2026, XL)",
     "icon": "/home-base/sceneries/86.png",
     "index": 66
   },
