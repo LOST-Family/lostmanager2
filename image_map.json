@@ -1114,7 +1114,7 @@
       "2": "/home-base/buildings/super-wizard-tower/swt-2.png"
     }
   },
-  "103000007": {
+  "103000009": {
     "name": "Air Bombs",
     "icon": "/home-base/seasonal-defenses/air-bombs/air-bombs-10.png",
     "tier_1": "/home-base/seasonal-defenses/air-bombs/air-bombs-1.png",
@@ -1128,19 +1128,19 @@
     "tier_9": "/home-base/seasonal-defenses/air-bombs/air-bombs-9.png",
     "tier_10": "/home-base/seasonal-defenses/air-bombs/air-bombs-10.png"
   },
-  "102000021": {
+  "102000027": {
     "name": "Hitpoints",
     "icon": "/home-base/seasonal-defenses/hitpoints.png"
   },
-  "102000022": {
+  "102000028": {
     "name": "Damage",
     "icon": "/home-base/seasonal-defenses/damage.png"
   },
-  "102000023": {
+  "102000029": {
     "name": "Hero Atttack Cooldown",
     "icon": "/home-base/seasonal-defenses/attackspeed.png"
   },
-  "103000002": {
+  "103000010": {
     "name": "Lava Launcher",
     "icon": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-7.png",
     "tier_1": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-1.png",
@@ -1151,19 +1151,19 @@
     "tier_6": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-6.png",
     "tier_7": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-7.png"
   },
-  "102000006": {
+  "102000030": {
     "name": "Hitpoints",
     "icon": "/home-base/seasonal-defenses/hitpoints.png"
   },
-  "102000007": {
+  "102000031": {
     "name": "Damage",
     "icon": "/home-base/seasonal-defenses/damage.png"
   },
-  "102000008": {
+  "102000032": {
     "name": "Range",
     "icon": "/home-base/seasonal-defenses/range.png"
   },
-  "103000001": {
+  "103000008": {
     "name": "Roaster",
     "icon": "/home-base/seasonal-defenses/roaster/roaster-10.png",
     "tier_1": "/home-base/seasonal-defenses/roaster/roaster-1.png",
@@ -1177,15 +1177,15 @@
     "tier_9": "/home-base/seasonal-defenses/roaster/roaster-9.png",
     "tier_10": "/home-base/seasonal-defenses/roaster/roaster-10.png"
   },
-  "102000015": {
+  "102000024": {
     "name": "Hitpoints",
     "icon": "/home-base/seasonal-defenses/hitpoints.png"
   },
-  "102000016": {
+  "102000025": {
     "name": "Damage",
     "icon": "/home-base/seasonal-defenses/damage.png"
   },
-  "102000017": {
+  "102000026": {
     "name": "Burst Fire",
     "icon": "/home-base/seasonal-defenses/burstfire.png"
   },
