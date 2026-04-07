@@ -54,6 +54,7 @@ import lostmanager.commands.discord.admin.deletemessages;
 import lostmanager.commands.discord.admin.reactionsrole;
 import lostmanager.commands.discord.admin.restart;
 import lostmanager.commands.discord.util.checkreacts;
+import lostmanager.commands.discord.util.giveaway;
 import lostmanager.commands.discord.util.lmagent;
 import lostmanager.commands.discord.util.teamcheck;
 import lostmanager.datawrapper.AchievementData.Type;
@@ -80,7 +81,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 public class Bot extends ListenerAdapter {
 
 	private static final ScheduledExecutorService schedulernames = Executors.newSingleThreadScheduledExecutor();
-	private static ScheduledExecutorService schedulertasks = Executors.newScheduledThreadPool(10);
+	public static ScheduledExecutorService schedulertasks = Executors.newScheduledThreadPool(10);
 	public static AtomicInteger activeVerificationTasks = new AtomicInteger(0);
 	public static final java.net.http.HttpClient httpClient = java.net.http.HttpClient.newBuilder()
 			.followRedirects(java.net.http.HttpClient.Redirect.ALWAYS).build();
@@ -508,7 +509,25 @@ public class Bot extends ListenerAdapter {
 											new SubcommandData("force_signoff", "Meldet einen anderen Spieler für den Roster ab")
 													.addOption(OptionType.STRING, "name", "Der Roster", true, true)
 													.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
-									)
+											),
+
+							Commands.slash("giveaway", "Giveaway-System")
+									.addSubcommands(
+											new SubcommandData("create", "Erstelle ein neues Giveaway")
+													.addOption(OptionType.STRING, "duration", "Dauer (z.B. 30m, 2h, 5d)", true)
+													.addOption(OptionType.INTEGER, "winners", "Anzahl der Gewinner", true)
+													.addOption(OptionType.STRING, "prize", "Preis / Titel des Giveaways", true),
+											new SubcommandData("end", "Beende ein Giveaway")
+													.addOption(OptionType.INTEGER, "giveaway_id", "Die ID des Giveaways", true),
+											new SubcommandData("participants", "Zeige die Teilnehmer eines Giveaways")
+													.addOption(OptionType.INTEGER, "giveaway_id", "Die ID des Giveaways", true),
+											new SubcommandData("list", "Liste alle Giveaways auf")
+													.addOptions(new OptionData(OptionType.STRING, "type", "Filter nach Status", false)
+															.addChoice("Aktiv", "Active")
+															.addChoice("Beendet", "Inactive")),
+											new SubcommandData("reroll", "Lost ein neues Set an Gewinnern aus, auch wenn es beendet ist")
+													.addOption(OptionType.INTEGER, "giveaway_id", "Die ID des Giveaways", true)
+											)
 
 					).queue();
 		}
@@ -558,6 +577,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new stats());
 		classes.add(new f2pcheck());
 		classes.add(new lostmanager.commands.roster.RosterCommand());
+		classes.add(new giveaway());
 
 		return classes.toArray();
 	}
@@ -616,6 +636,9 @@ public class Bot extends ListenerAdapter {
 		startClanGamesSavings();
 		scheduleSeasonEndWinsSaving();
 		scheduleSeasonStartWinsSaving();
+		
+		// Schedule active giveaways exactly at their end time
+		lostmanager.commands.discord.util.giveaway.scheduleAllActiveGiveaways(getJda());
 
 		// Start unified event polling system that checks all events periodically
 		startEventPolling();

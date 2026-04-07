@@ -268,21 +268,47 @@ public class cwlmemberstatus extends ListenerAdapter {
 			}
 			description.append("\n");
 
-			description.append("**Nicht im Clan (").append(notInClan.size()).append("):**\n");
+			StringBuilder notInClanDesc = new StringBuilder();
+			notInClanDesc.append("**Nicht im Clan (").append(notInClan.size()).append("):**\n");
 			if (!notInClan.isEmpty()) {
 				for (int i = 0; i < notInClan.size(); i++) {
 					String memberMention = notInClan.get(i);
 					User user = notInClanUsers.get(i);
 					ArrayList<Player> linkedAccounts = user.getAllLinkedAccounts();
 
-					// Show all linked accounts for users not in clan
-					for (Player player : linkedAccounts) {
-						description.append(player.getInfoStringDB()).append(" (").append(memberMention).append(")\n");
+					if (linkedAccounts.isEmpty()) {
+						notInClanDesc.append(memberMention).append("\n");
+					} else {
+						notInClanDesc.append(memberMention).append(":\n");
+						for (Player player : linkedAccounts) {
+							notInClanDesc.append(" - ").append(player.getInfoStringDB()).append("\n");
+						}
 					}
 				}
 			} else {
-				description.append("---\n");
+				notInClanDesc.append("---\n");
 			}
+
+			// First fallback: only show pings if > 4096 chars
+			if (description.length() + notInClanDesc.length() > 4096) {
+				notInClanDesc = new StringBuilder();
+				notInClanDesc.append("**Nicht im Clan (").append(notInClan.size()).append("):**\n");
+				if (!notInClan.isEmpty()) {
+					for (int i = 0; i < notInClan.size(); i++) {
+						notInClanDesc.append(notInClan.get(i)).append("\n");
+					}
+				} else {
+					notInClanDesc.append("---\n");
+				}
+			}
+
+			// Second fallback: only show count if still > 4096 chars
+			if (description.length() + notInClanDesc.length() > 4096) {
+				notInClanDesc = new StringBuilder();
+				notInClanDesc.append("**Nicht im Clan (").append(notInClan.size()).append(")**\n");
+			}
+
+			description.append(notInClanDesc);
 
 			// Create refresh button
 			Button refreshButton = Button.secondary(buttonId, "\u200B").withEmoji(Emoji.fromUnicode("🔁"));

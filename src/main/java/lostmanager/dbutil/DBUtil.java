@@ -88,6 +88,7 @@ public class DBUtil {
 				} catch (SQLException ex) {
 				}
 			}
+			e.printStackTrace();
 		}
 		return null;
 	}
