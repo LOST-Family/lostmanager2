@@ -1350,11 +1350,11 @@
                                 "elements": [{
                                     "type": "element",
                                     "name": "Sound of Clash Roof",
-                                    "id": "82000152"
+                                    "id": "82000153"
                                 },{
                                     "type": "element",
                                     "name": "Sound of Clash Decoration",
-                                    "id": "82000153"
+                                    "id": "82000152"
                                 }]
                             }
                         },{
