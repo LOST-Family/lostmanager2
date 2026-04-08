@@ -2824,24 +2824,24 @@
     "icon": "/home-base/decorations/208.png",
     "index": 132
   },
-  "18000209": {
+  "18000211": {
     "name": "Builder Bust (Apr. 2026)",
-    "icon": "/home-base/decorations/209.png",
+    "icon": "/home-base/decorations/211.png",
     "index": 133
   },
-  "18000210": {
+  "18000212": {
     "name": "Face Melter (Apr. 2026)",
-    "icon": "/home-base/decorations/210.png",
+    "icon": "/home-base/decorations/212.png",
     "index": 134
   },
-  "18000211": {
+  "18000209": {
     "name": "Barbble Head (Apr. 2026)",
-    "icon": "/home-base/decorations/211.png",
+    "icon": "/home-base/decorations/209.png",
     "index": 135
   },
-  "18000212": {
+  "18000210": {
     "name": "Mech Bull (Apr. 2026)",
-    "icon": "/home-base/decorations/212.png",
+    "icon": "/home-base/decorations/210.png",
     "index": 136
   },
   "18000213": {
@@ -5257,16 +5257,6 @@
     "name": "LNY 2026 Walls",
     "icon": "/home-base/clancapital/151.png",
     "index": 125
-  },
-  "82000152": {
-    "name": "Sound of Clash Roof",
-    "icon": "/home-base/clancapital/152.png",
-    "index": 126
-  },
-  "82000153": {
-    "name": "Sound of Clash Decoration",
-    "icon": "/home-base/clancapital/153.png",
-    "index": 127
   },
   "26000000": {
     "name": "Lightning Spell",
