@@ -1309,6 +1309,71 @@
             }
         },
         {
+            "Cases": {
+                "name": "Apr. 2026 Event",
+                "CasesStrict": [{
+                    "name": "",
+                    "IfMoreThan":   {
+                        "type": "quantity",
+                        "allowed": 0,
+                        "elements": [{
+                                "type": "element",
+                                "name": "Rocket Backpack Equipment",
+                                "id": "90000053"
+                            },{
+                                "type": "element",
+                                "name": "Barbble Head Deco",
+                                "id": "18000209"
+                            }]
+                    },
+                    "ThenForbidden": {
+                        "CasesStrict": [{
+                            "name": "Hat 'Rocket Backpack Equipment' und 'Barbble Head Deco'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 1,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Rocket Backpack Equipment",
+                                    "id": "90000053"
+                                },{
+                                    "type": "element",
+                                    "name": "Barbble Head Deco",
+                                    "id": "18000209"
+                                }]
+                            }
+                        },{
+                            "name": "Hat 'Rocket Backpack Equipment' oder 'Barbble Head Deco' sowie beide 'Sound of Clash Clan Houses'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 1,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Sound of Clash Roof",
+                                    "id": "82000152"
+                                },{
+                                    "type": "element",
+                                    "name": "Sound of Clash Decoration",
+                                    "id": "82000153"
+                                }]
+                            }
+                        },{
+                            "name":"Hat 'Rocket Backpack Equipment' oder 'Barbble Head Deco' sowie 'Face Melter Deco'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 0,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Face Melter",
+                                    "id": "18000212"
+                                }]
+                            }
+                        }]
+                    }
+                }]
+            }
+        },
+        {
             "Cases":{
                 "name":"Deco Limitation",
                 "CasesStrict":[{
