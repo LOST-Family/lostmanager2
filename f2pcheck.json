@@ -1323,7 +1323,7 @@
                             },{
                                 "type": "element",
                                 "name": "Barbble Head Deco",
-                                "id": "18000211"
+                                "id": "18000209"
                             }]
                     },
                     "ThenForbidden": {
@@ -1339,7 +1339,7 @@
                                 },{
                                     "type": "element",
                                     "name": "Barbble Head Deco",
-                                    "id": "18000211"
+                                    "id": "18000209"
                                 }]
                             }
                         },{
@@ -1364,8 +1364,8 @@
                                 "allowed": 0,
                                 "elements": [{
                                     "type": "element",
-                                    "name": "Lucky Shoe",
-                                    "id": "18000210"
+                                    "name": "Face Melter",
+                                    "id": "18000212"
                                 }]
                             }
                         }]
