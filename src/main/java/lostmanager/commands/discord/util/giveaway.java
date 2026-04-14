@@ -457,8 +457,14 @@ public class giveaway extends ListenerAdapter {
     private static void editGiveawayMessage(Giveaway giveaway, JDA jda, List<String> winnerIds) {
         if (giveaway.getChannelId() == null || giveaway.getMessageId() == null) return;
 
+        JDA finalJda = jda != null ? jda : lostmanager.Bot.getJda();
+        if (finalJda == null) {
+            System.err.println("Error editing giveaway message: JDA is null.");
+            return;
+        }
+
         try {
-            MessageChannel channel = jda.getChannelById(MessageChannel.class, giveaway.getChannelId());
+            MessageChannel channel = finalJda.getChannelById(MessageChannel.class, giveaway.getChannelId());
             if (channel == null) return;
 
             long endEpoch = giveaway.getEndTime().toInstant().getEpochSecond();
@@ -483,8 +489,14 @@ public class giveaway extends ListenerAdapter {
     private static void pingWinners(Giveaway giveaway, JDA jda, List<String> winnerIds) {
         if (giveaway.getChannelId() == null || winnerIds == null || winnerIds.isEmpty()) return;
 
+        JDA finalJda = jda != null ? jda : lostmanager.Bot.getJda();
+        if (finalJda == null) {
+            System.err.println("Error pinging giveaway winners: JDA is null.");
+            return;
+        }
+
         try {
-            MessageChannel channel = jda.getChannelById(MessageChannel.class, giveaway.getChannelId());
+            MessageChannel channel = finalJda.getChannelById(MessageChannel.class, giveaway.getChannelId());
             if (channel == null) return;
 
             String mentions = winnerIds.stream()
@@ -511,12 +523,18 @@ public class giveaway extends ListenerAdapter {
         long delayMs = giveaway.getEndTime().getTime() - System.currentTimeMillis();
         
         if (delayMs <= 0) {
-            rollAndEndGiveaway(giveaway.getId(), jda);
+            Bot.schedulertasks.schedule(() -> {
+                try {
+                    rollAndEndGiveaway(giveaway.getId(), jda != null ? jda : Bot.getJda());
+                } catch (Exception e) {
+                    System.err.println("Error auto-ending giveaway " + giveaway.getId() + ": " + e.getMessage());
+                }
+            }, 10, TimeUnit.SECONDS);
         } else {
             System.out.println("Scheduling giveaway " + giveaway.getId() + " to end in " + (delayMs / 1000) + " seconds.");
             Bot.schedulertasks.schedule(() -> {
                 try {
-                    rollAndEndGiveaway(giveaway.getId(), jda);
+                    rollAndEndGiveaway(giveaway.getId(), jda != null ? jda : Bot.getJda());
                 } catch (Exception e) {
                     System.err.println("Error auto-ending giveaway " + giveaway.getId() + ": " + e.getMessage());
                 }

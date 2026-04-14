@@ -84,7 +84,13 @@ public class User {
 			} else {
 				for (Player p : linkedaccs) {
 					if (p.getClanDB() != null) {
-						clanroles.put(p.getClanDB().getTag(), p.getRoleDB());
+						String tag = p.getClanDB().getTag();
+						Player.RoleType role = p.getRoleDB();
+						if (role != null) {
+							if (!clanroles.containsKey(tag) || role.ordinal() < clanroles.get(tag).ordinal()) {
+								clanroles.put(tag, role);
+							}
+						}
 					}
 				}
 			}
