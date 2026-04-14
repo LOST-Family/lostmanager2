@@ -595,7 +595,7 @@
                     },
                     "ThenForbidden":{
                         "CasesStrict":[{
-                            "name": "Hat 'Crossover SC-ID Scenery' und mindestens eine SC-ID Deco: 'Brawl's Star Deco', 'Gargantuan Gauntlet Deco', 'Sleepy King Deco'",
+                            "name": "Hat 'Crossover SC-ID Scenery' und mindestens zwei SC-ID Decos: 'Brawl's Star Deco', 'Gargantuan Gauntlet Deco', 'Sleepy King Deco'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
@@ -616,27 +616,6 @@
                                 }]
                             }
                         }] 
-                    }
-                },{
-                "name": "Hat alle SC-ID Decos: 'Brawl's Star Deco', 'Gargantuan Gauntlet Deco', 'Sleepy King Deco'",
-                    "IfMoreThan": {
-                        "type": "quantity",
-                        "allowed": 2,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Brawl's Star",
-                            "id": "18000147"
-                        },
-                        {    
-                            "type": "element",
-                            "name": "Gargantuan Gauntlet",
-                            "id": "18000148"
-                        },
-                        {    
-                            "type": "element",
-                            "name": "Sleepy King",
-                            "id": "18000150"
-                        }]
                     }
                 }]  
             }
@@ -1166,7 +1145,7 @@
                             "IfMoreThan": {
                                 "name": "Hat 'Crafted Statue Deco'",
                                 "type": "quantity",
-                                "allowed": 0,
+                                "allowed": 1,
                                 "elements": [{
                                         "type": "element",
                                         "name": "Crafted Statue",
