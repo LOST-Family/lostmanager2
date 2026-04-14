@@ -2197,6 +2197,12 @@
     "icon": "/home-base/decorations/51.png",
     "index": 12
   },
+  "18000054": {
+    "name": "Original Snowman (Dec. 2018)",
+    "icon": "/home-base/decorations/55.png",
+    "price": "5€",
+    "index": 13
+  },
   "18000055": {
     "name": "Snowman (Dec. 2018)",
     "icon": "/home-base/decorations/55.png",
