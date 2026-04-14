@@ -2175,12 +2175,12 @@
   "18000047": {
     "name": "CWL The Champion Statue (Oct. 2018)",
     "icon": "/home-base/decorations/47.png",
-    "index": 8
+    "index": 12
   },
   "18000048": {
     "name": "CWL The Master Statue (Oct. 2018)",
     "icon": "/home-base/decorations/48.png",
-    "index": 9
+    "index": 11
   },
   "18000049": {
     "name": "CWL The Contender Statue (Oct. 2018)",
@@ -2190,12 +2190,12 @@
   "18000050": {
     "name": "CWL The Challenger Statue (Oct. 2018)",
     "icon": "/home-base/decorations/50.png",
-    "index": 11
+    "index": 9
   },
   "18000051": {
     "name": "CWL The Warrior Statue (Oct. 2018)",
     "icon": "/home-base/decorations/51.png",
-    "index": 12
+    "index": 8
   },
   "18000054": {
     "name": "Original Snowman (Dec. 2018)",
