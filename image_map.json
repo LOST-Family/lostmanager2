@@ -2175,12 +2175,12 @@
   "18000047": {
     "name": "CWL The Champion Statue (Oct. 2018)",
     "icon": "/home-base/decorations/47.png",
-    "index": 8
+    "index": 12
   },
   "18000048": {
     "name": "CWL The Master Statue (Oct. 2018)",
     "icon": "/home-base/decorations/48.png",
-    "index": 9
+    "index": 11
   },
   "18000049": {
     "name": "CWL The Contender Statue (Oct. 2018)",
@@ -2190,12 +2190,18 @@
   "18000050": {
     "name": "CWL The Challenger Statue (Oct. 2018)",
     "icon": "/home-base/decorations/50.png",
-    "index": 11
+    "index": 9
   },
   "18000051": {
     "name": "CWL The Warrior Statue (Oct. 2018)",
     "icon": "/home-base/decorations/51.png",
-    "index": 12
+    "index": 8
+  },
+  "18000054": {
+    "name": "Original Snowman (Dec. 2018)",
+    "icon": "/home-base/decorations/55.png",
+    "price": "5€",
+    "index": 13
   },
   "18000055": {
     "name": "Snowman (Dec. 2018)",
@@ -2216,15 +2222,15 @@
     "index": 15
   },
   "18000056": {
-    "name": "Battle Machine Statue (Jun. 2019)",
+    "name": "Battle Machine Statue (BB) (Jun. 2019)",
     "icon": "/home-base/decorations/56.png",
-    "price": "5€ (1 F2P free)",
+    "price": "5€",
     "index": 16
   },
   "18000057": {
     "name": "Dragon Statue (Oct. 2019)",
     "icon": "/home-base/decorations/57.png",
-    "price": "10€",
+    "price": "10€ (1 F2P free)",
     "index": 17
   },
   "18000058": {
