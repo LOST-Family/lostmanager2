@@ -1230,10 +1230,6 @@
                         "allowed": 0,
                         "elements": [{
                                 "type": "element",
-                                "name": "Stick Horse Equipment",
-                                "id": "90000051"
-                            },{
-                                "type": "element",
                                 "name": "Flame Horse Deco",
                                 "id": "18000202"
                             }
@@ -1241,22 +1237,6 @@
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Stick Horse Equipment' und 'Flame Horse Deco'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 1,
-                                "elements": [{
-                                        "type": "element",
-                                        "name": "Stick Horse Equipment",
-                                        "id": "90000051"
-                                    },{
-                                        "type": "element",
-                                        "name": "Flame Horse Deco",
-                                        "id": "18000202"
-                                    }
-                                ]
-                            }
-                        },{
                             "name": "Hat 'Stick Horse Equipment' oder 'Stick Horse Deco' sowie beide 'LNY 2026 Clan Houses'",
                             "IfMoreThan": {
                                 "type": "quantity",
