@@ -117,7 +117,15 @@ public class MemberSignoff {
 
     public static boolean create(String playerTag, Timestamp startDate, Timestamp endDate, String reason, String createdByDiscordId,
             boolean receivePings) {
-        String sql = "INSERT INTO member_signoffs (player_tag, start_date, end_date, reason, created_by_discord_id, receive_pings) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO member_signoffs (player_tag, start_date, end_date, reason, created_by_discord_id, receive_pings) "
+            + "VALUES (?, ?, ?, ?, ?, ?) "
+            + "ON CONFLICT (player_tag) DO UPDATE SET "
+            + "start_date = EXCLUDED.start_date, "
+            + "end_date = EXCLUDED.end_date, "
+            + "reason = EXCLUDED.reason, "
+            + "created_by_discord_id = EXCLUDED.created_by_discord_id, "
+            + "receive_pings = EXCLUDED.receive_pings, "
+            + "created_at = NOW()";
         return DBUtil.executeUpdate(sql, playerTag, startDate, endDate, reason, createdByDiscordId, receivePings) != null;
     }
 

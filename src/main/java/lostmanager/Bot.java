@@ -463,21 +463,60 @@ public class Bot extends ListenerAdapter {
 									"Generiere einen Link zum Hochladen von JSON-Daten aus dem Spiel"),
 
 							Commands.slash("stats", "Zeige Spieler-Statistiken aus hochgeladenen JSON-Daten an")
-									.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
-									.addOptions(new OptionData(OptionType.STRING, "stat", "Die anzuzeigende Statistik",
-											true).addChoice("Helpers", "Helpers").addChoice("Guardians", "Guardians")
-											.addChoice("Buildings", "Buildings")
-											.addChoice("Buildings (BB)", "Buildings (BB)").addChoice("Traps", "Traps")
-											.addChoice("Traps (BB)", "Traps (BB)").addChoice("Decos", "Decos")
-											.addChoice("Decos (BB)", "Decos (BB)").addChoice("Obstacles", "Obstacles")
-											.addChoice("Obstacles (BB)", "Obstacles (BB)").addChoice("Units", "Units")
-											.addChoice("Units (BB)", "Units (BB)").addChoice("Sieges", "Sieges")
-											.addChoice("Heroes", "Heroes").addChoice("Heroes (BB)", "Heroes (BB)")
-											.addChoice("Spells", "Spells").addChoice("Pets", "Pets")
-											.addChoice("Equips", "Equips").addChoice("House Parts", "House Parts")
-											.addChoice("Skins", "Skins").addChoice("Skins (BB)", "Skins (BB)")
-											.addChoice("Sceneries", "Sceneries")
-											.addChoice("Sceneries (BB)", "Sceneries (BB)")),
+									.addSubcommands(
+											new SubcommandData("show", "Zeigt die vorhandenen Statistiken eines Spielers")
+													.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
+													.addOptions(new OptionData(OptionType.STRING, "stat",
+															"Die anzuzeigende Statistik", true).addChoice("Helpers", "Helpers")
+																	.addChoice("Guardians", "Guardians")
+																	.addChoice("Buildings", "Buildings")
+																	.addChoice("Buildings (BB)", "Buildings (BB)")
+																	.addChoice("Traps", "Traps")
+																	.addChoice("Traps (BB)", "Traps (BB)")
+																	.addChoice("Decos", "Decos")
+																	.addChoice("Decos (BB)", "Decos (BB)")
+																	.addChoice("Obstacles", "Obstacles")
+																	.addChoice("Obstacles (BB)", "Obstacles (BB)")
+																	.addChoice("Units", "Units")
+																	.addChoice("Units (BB)", "Units (BB)")
+																	.addChoice("Sieges", "Sieges")
+																	.addChoice("Heroes", "Heroes")
+																	.addChoice("Heroes (BB)", "Heroes (BB)")
+																	.addChoice("Spells", "Spells")
+																	.addChoice("Pets", "Pets")
+																	.addChoice("Equips", "Equips")
+																	.addChoice("House Parts", "House Parts")
+																	.addChoice("Skins", "Skins")
+																	.addChoice("Skins (BB)", "Skins (BB)")
+																	.addChoice("Sceneries", "Sceneries")
+																	.addChoice("Sceneries (BB)", "Sceneries (BB)")),
+											new SubcommandData("missing",
+													"Zeigt die fehlenden Statistiken eines Spielers anhand der Full Map")
+													.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
+													.addOptions(new OptionData(OptionType.STRING, "stat",
+															"Die anzuzeigende Statistik", true).addChoice("Helpers", "Helpers")
+																	.addChoice("Guardians", "Guardians")
+																	.addChoice("Buildings", "Buildings")
+																	.addChoice("Buildings (BB)", "Buildings (BB)")
+																	.addChoice("Traps", "Traps")
+																	.addChoice("Traps (BB)", "Traps (BB)")
+																	.addChoice("Decos", "Decos")
+																	.addChoice("Decos (BB)", "Decos (BB)")
+																	.addChoice("Obstacles", "Obstacles")
+																	.addChoice("Obstacles (BB)", "Obstacles (BB)")
+																	.addChoice("Units", "Units")
+																	.addChoice("Units (BB)", "Units (BB)")
+																	.addChoice("Sieges", "Sieges")
+																	.addChoice("Heroes", "Heroes")
+																	.addChoice("Heroes (BB)", "Heroes (BB)")
+																	.addChoice("Spells", "Spells")
+																	.addChoice("Pets", "Pets")
+																	.addChoice("Equips", "Equips")
+																	.addChoice("House Parts", "House Parts")
+																	.addChoice("Skins", "Skins")
+																	.addChoice("Skins (BB)", "Skins (BB)")
+																	.addChoice("Sceneries", "Sceneries")
+																	.addChoice("Sceneries (BB)", "Sceneries (BB)"))),
 
 							Commands.slash("f2pcheck", "Check ob ein Spieler F2P ist.")
 									.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true),
@@ -527,6 +566,7 @@ public class Bot extends ListenerAdapter {
 															.addChoice("Beendet", "Inactive")),
 											new SubcommandData("reroll", "Lost ein neues Set an Gewinnern aus, auch wenn es beendet ist")
 													.addOption(OptionType.INTEGER, "giveaway_id", "Die ID des Giveaways", true)
+													.addOption(OptionType.STRING, "who", "Gewinner, der ersetzt werden soll", false, true)
 											)
 
 					).queue();
