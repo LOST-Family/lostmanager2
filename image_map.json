@@ -2323,133 +2323,133 @@
     "name": "Decorated Dragon Statue (Mar. 2023)",
     "icon": "/home-base/decorations/74.png",
     "index": 34
+  },  
+  "18000075": {
+    "name": "Dragon Trophy (Apr. 2024)",
+    "icon": "/home-base/decorations/75.png",
+    "price": "3€ (1 F2P free)",
+    "index": 35
   },
   "18000080": {
     "name": "Master Builder's Return (BB) (May 2023)",
     "icon": "/home-base/decorations/80.png",
     "price": "3€",
-    "index": 35
+    "index": 36
   },
   "18000079": {
     "name": "Books of Clash (Jun. 2023)",
     "icon": "/home-base/decorations/79.png",
-    "index": 36
+    "index": 37
   },
   "18000089": {
     "name": "Goblin Pit (Jul. 2023)",
     "icon": "/home-base/decorations/89.png",
     "price": "10€",
-    "index": 37
+    "index": 38
   },
   "18000090": {
     "name": "Goblin Dragon Statue (Jul. 2023) (GP)",
     "icon": "/home-base/decorations/90.png",
-    "index": 38
+    "index": 39
   },
   "18000096": {
     "name": "Cosy Coffin (Oct. 2023)",
     "icon": "/home-base/decorations/96.png",
-    "index": 39
+    "index": 40
   },
   "18000097": {
     "name": "Friendly Clown (Oct. 2023)",
     "icon": "/home-base/decorations/97.png",
-    "index": 40
+    "index": 41
   },
   "18000098": {
     "name": "Spooky Spa (Oct. 2023)",
     "icon": "/home-base/decorations/98.png",
-    "index": 41
+    "index": 42
   },
   "18000099": {
     "name": "Pumpkin Scarecrow (Oct. 2023)",
     "icon": "/home-base/decorations/99.png",
-    "index": 42
+    "index": 43
   },
   "18000100": {
     "name": "Sour Elixir Cauldron (Oct. 2023)",
     "icon": "/home-base/decorations/100.png",
-    "index": 43
+    "index": 44
   },
   "18000101": {
     "name": "World Finals 23 Statue (Nov. 2023)",
     "icon": "/home-base/decorations/101.png",
-    "index": 44
+    "index": 45
   },
   "18000103": {
     "name": "Duck Bath (Nov. 2023)",
     "icon": "/home-base/decorations/103.png",
-    "index": 45
+    "index": 46
   },
   "18000109": {
     "name": "Hog Pen (Nov. 2023)",
     "icon": "/home-base/decorations/109.png",
-    "index": 46
+    "index": 47
   },
   "18000114": {
     "name": "Cozy Clam (Nov. 2023)",
     "icon": "/home-base/decorations/114.png",
-    "index": 47
+    "index": 48
   },
   "18000115": {
     "name": "Gingerbread Bakery (Dec. 2023)",
     "icon": "/home-base/decorations/115.png",
-    "index": 48
+    "index": 49
   },
   "18000116": {
     "name": "Jingle Bell (Dec. 2023)",
     "icon": "/home-base/decorations/116.png",
-    "index": 49
+    "index": 50
   },
   "18000117": {
     "name": "Barbarian Santa (Dec. 2023)",
     "icon": "/home-base/decorations/117.png",
-    "index": 50
+    "index": 51
   },
   "18000118": {
     "name": "Skeleton Sock (Dec. 2023)",
     "icon": "/home-base/decorations/118.png",
-    "index": 51
+    "index": 52
   },
   "18000119": {
     "name": "Lucky Anchor (Feb. 2024)",
     "icon": "/home-base/decorations/119.png",
-    "index": 52
+    "index": 53
   },
   "18000120": {
     "name": "Crab at home (Feb. 2024)",
     "icon": "/home-base/decorations/120.png",
-    "index": 53
+    "index": 54
   },
   "18000121": {
     "name": "Baby Dragon Statue (Feb. 2024) (EP (1 F2P free))",
     "icon": "/home-base/decorations/121.png",
-    "index": 54
+    "index": 55
   },
   "18000122": {
     "name": "Dragon Pinata (Feb. 2024)",
     "icon": "/home-base/decorations/122.png",
-    "index": 55
+    "index": 56
   },
   "18000123": {
     "name": "Clashy Crater (Mar. 2024)",
     "icon": "/home-base/decorations/123.png",
-    "index": 56
+    "index": 57
   },
   "18000124": {
     "name": "Stone Globe (Mar. 2024) (EP)",
     "icon": "/home-base/decorations/124.png",
-    "index": 57
+    "index": 58
   },
   "18000125": {
     "name": "Goblin Explorer (Mar. 2024)",
     "icon": "/home-base/decorations/125.png",
-    "index": 58
-  },
-  "18000075": {
-    "name": "Dragon Trophy (Apr. 2023)",
-    "icon": "/home-base/decorations/75.png",
-    "price": "3€ (1 F2P free)",
     "index": 59
   },
   "18000126": {
@@ -2851,17 +2851,17 @@
     "index": 136
   },
   "18000213": {
-    "name": "Darkness Throne (Apr. 2026)",
+    "name": "Darkness Throne (May. 2026)",
     "icon": "/home-base/decorations/213.png",
     "index": 137
   },
   "18000214": {
-    "name": "Hog Skull (Apr. 2026)",
+    "name": "Hog Skull (May. 2026)",
     "icon": "/home-base/decorations/214.png",
     "index": 138
   },
   "18000215": {
-    "name": "Bone Idol (Apr. 2026)",
+    "name": "Bone Idol (May. 2026)",
     "icon": "/home-base/decorations/215.png",
     "index": 139
   },
