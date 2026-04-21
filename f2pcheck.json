@@ -1347,6 +1347,149 @@
                         }]
                     }   
                 }, {
+                    "name": "Hat mehr als 1 'Dragon Trophy",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Dragon Trophy",
+                            "id": "18000075"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 3 'Spooky Spa Deco ",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 3,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Spooky Spa",
+                            "id": "18000098"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 3 'Cozy Coffin Deco ",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 3,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Cozy Coffin",
+                            "id": "18000096"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 3 'Pumpkin Scarecrow Deco ",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 3,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Spooky Spa",
+                            "id": "18000099"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Barbarian Santa Deco ",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Barbarian Santa",
+                            "id": "18000117"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Lucky Anchor Deco ",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Lucky Anchor",
+                            "id": "18000119"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Crab at Home Deco ",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Crab at Home",
+                            "id": "18000120"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Baby Dragon Statue",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Baby Dragon Statue",
+                            "id": "18000121"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Clashy Crater Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Clashy Crater",
+                            "id": "18000123"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Hog Sphinx Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Hog Sphinx",
+                            "id": "18000128"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Dragon Totem Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Dragon Totem",
+                            "id": "18000139"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Foot Tribute Deco (sus)",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Foot Tribute",
+                            "id": "18000153"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Champions Flame Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Champions Flame",
+                            "id": "18000151"
+                        }]
+                    }   
+                }, {
                     "name": "Hat mehr als 1 'Cherry Bonsai Deco ",
                     "IfMoreThan": {
                         "type": "count",
@@ -1358,25 +1501,267 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Baby Dragon Deco ",
+                    "name": "Hat mehr als 1 'Jailbroken Box Deco",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
                         "elements": [{
                             "type": "element",
-                            "name": "Baby Dragon Statue",
-                            "id": "18000121"
+                            "name": "Jailbroken Box",
+                            "id": "18000158"
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Dragon Trophy",
+                    "name": "Hat mehr als 1 'Bubble Boil Cauldron Deco",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
                         "elements": [{
                             "type": "element",
-                            "name": "Dragon Trophy",
-                            "id": "18000075"
+                            "name": "Bubble Boil Cauldron",
+                            "id": "18000159"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Rocking Reindeer Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Rocking Reindeer",
+                            "id": "18000162"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Clockwork Choir Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Clockwork Choir",
+                            "id": "18000163"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Snow Globe Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Snow Globe",
+                            "id": "18000164"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Gift Bag Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Gift Bag",
+                            "id": "18000165"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Monk Statue",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Monk Statue",
+                            "id": "18000167"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Lucky Cookies Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Lucky Cookies",
+                            "id": "18000169"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Rumbling Goblins Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Rumbling Goblins",
+                            "id": "18000172"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Golden Giant Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Golden Giant",
+                            "id": "18000173"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Surprise Wheel Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Surprise Wheel",
+                            "id": "18000175"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Frozen Wizard Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Frozen Wizard",
+                            "id": "18000179"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Clashy Carving Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Clashy Carving",
+                            "id": "18000180"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Cosmic Lantern Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Cosmic Lantern",
+                            "id": "18000186"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Cursed Tome Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Cursed Tome",
+                            "id": "18000191"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Wish Lamp Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Wish Lamp",
+                            "id": "18000192"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Lucky Shoe Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Lucky Shoe",
+                            "id": "18000198"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Flame Horse Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Flame Horse",
+                            "id": "18000202"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Frozen Stone Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Frozen Stone",
+                            "id": "18000204"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Hungry Hound Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Hungry Hound",
+                            "id": "18000203"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Handsome Scroll Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Handsome Scroll",
+                            "id": "18000201"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Face Melter Deco",
+                    "IfMoreThan": { 
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Face Melter",
+                            "id": "18000212"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Barbble Head Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Barbble Head",
+                            "id": "18000209"
+                        }]
+                    }   
+                }, {
+                    "name": "Hat mehr als 1 'Mech Bull Deco",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Mech Bull",
+                            "id": "18000210"
                         }]
                     }   
                 }]
