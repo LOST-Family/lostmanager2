@@ -595,7 +595,7 @@
                     },
                     "ThenForbidden":{
                         "CasesStrict":[{
-                            "name": "Hat 'Crossover SC-ID Scenery' und mindestens zwei SC-ID Decos: 'Brawl's Star Deco', 'Gargantuan Gauntlet Deco', 'Sleepy King Deco'",
+                            "name": "Hat 'Crossover SC-ID Scenery' und mindestens eine SC-ID Deco: 'Brawl's Star Deco', 'Gargantuan Gauntlet Deco', 'Sleepy King Deco'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
@@ -1157,7 +1157,7 @@
                             "IfMoreThan": {
                                 "name": "Hat 'Builder Bust Deco'",
                                 "type": "quantity",
-                                "allowed": 0,
+                                "allowed": 1,
                                 "elements": [{
                                         "type": "element",
                                         "name": "Builder Bust",
@@ -1336,7 +1336,7 @@
             "Cases":{
                 "name":"Deco Limitation",
                 "CasesStrict":[{
-                    "name": "Hat mehr als 1 'Dragon Statue",
+                    "name": "Hat mehr als 1 'Dragon Statue'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1347,7 +1347,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Dragon Trophy",
+                    "name": "Hat mehr als 1 'Dragon Trophy'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1358,7 +1358,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 3 'Spooky Spa Deco ",
+                    "name": "Hat mehr als 3 'Spooky Spa Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 3,
@@ -1369,7 +1369,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 3 'Cozy Coffin Deco ",
+                    "name": "Hat mehr als 3 'Cozy Coffin Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 3,
@@ -1380,7 +1380,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 3 'Pumpkin Scarecrow Deco ",
+                    "name": "Hat mehr als 3 'Pumpkin Scarecrow Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 3,
@@ -1391,7 +1391,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Barbarian Santa Deco ",
+                    "name": "Hat mehr als 1 'Barbarian Santa Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1402,7 +1402,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Lucky Anchor Deco ",
+                    "name": "Hat mehr als 1 'Lucky Anchor Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1413,7 +1413,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Crab at Home Deco ",
+                    "name": "Hat mehr als 1 'Crab at Home Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1424,7 +1424,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Baby Dragon Statue",
+                    "name": "Hat mehr als 1 'Baby Dragon Statue'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1435,7 +1435,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Clashy Crater Deco",
+                    "name": "Hat mehr als 1 'Clashy Crater Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1446,7 +1446,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Hog Sphinx Deco",
+                    "name": "Hat mehr als 1 'Hog Sphinx Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1457,7 +1457,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Dragon Totem Deco",
+                    "name": "Hat mehr als 1 'Dragon Totem Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1468,7 +1468,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Foot Tribute Deco (sus)",
+                    "name": "Hat mehr als 1 'Foot Tribute Deco (sus)'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1479,7 +1479,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Champions Flame Deco",
+                    "name": "Hat mehr als 1 'Champions Flame Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1490,7 +1490,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Cherry Bonsai Deco ",
+                    "name": "Hat mehr als 1 'Cherry Bonsai Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1501,7 +1501,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Jailbroken Box Deco",
+                    "name": "Hat mehr als 1 'Jailbroken Box Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1512,7 +1512,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Bubble Boil Cauldron Deco",
+                    "name": "Hat mehr als 1 'Bubble Boil Cauldron Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1523,7 +1523,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Rocking Reindeer Deco",
+                    "name": "Hat mehr als 1 'Rocking Reindeer Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1534,7 +1534,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Clockwork Choir Deco",
+                    "name": "Hat mehr als 1 'Clockwork Choir Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1545,7 +1545,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Snow Globe Deco",
+                    "name": "Hat mehr als 1 'Snow Globe Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1556,7 +1556,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Gift Bag Deco",
+                    "name": "Hat mehr als 1 'Gift Bag Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1567,7 +1567,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Monk Statue",
+                    "name": "Hat mehr als 1 'Monk Statue'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1578,7 +1578,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Lucky Cookies Deco",
+                    "name": "Hat mehr als 1 'Lucky Cookies Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1589,7 +1589,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Rumbling Goblins Deco",
+                    "name": "Hat mehr als 1 'Rumbling Goblins Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1600,7 +1600,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Golden Giant Deco",
+                    "name": "Hat mehr als 1 'Golden Giant Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1611,7 +1611,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Surprise Wheel Deco",
+                    "name": "Hat mehr als 1 'Surprise Wheel Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1622,7 +1622,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Frozen Wizard Deco",
+                    "name": "Hat mehr als 1 'Frozen Wizard Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1633,7 +1633,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Clashy Carving Deco",
+                    "name": "Hat mehr als 1 'Clashy Carving Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1644,7 +1644,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Cosmic Lantern Deco",
+                    "name": "Hat mehr als 1 'Cosmic Lantern Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1655,7 +1655,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Cursed Tome Deco",
+                    "name": "Hat mehr als 1 'Cursed Tome Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1666,7 +1666,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Wish Lamp Deco",
+                    "name": "Hat mehr als 1 'Wish Lamp Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1677,7 +1677,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Lucky Shoe Deco",
+                    "name": "Hat mehr als 1 'Lucky Shoe Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1688,7 +1688,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Flame Horse Deco",
+                    "name": "Hat mehr als 1 'Flame Horse Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1699,7 +1699,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Frozen Stone Deco",
+                    "name": "Hat mehr als 1 'Frozen Stone Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1710,7 +1710,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Hungry Hound Deco",
+                    "name": "Hat mehr als 1 'Hungry Hound Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1721,7 +1721,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Handsome Scroll Deco",
+                    "name": "Hat mehr als 1 'Handsome Scroll Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1732,7 +1732,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Face Melter Deco",
+                    "name": "Hat mehr als 1 'Face Melter Deco'",
                     "IfMoreThan": { 
                         "type": "count",
                         "allowed": 1,
@@ -1743,7 +1743,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Barbble Head Deco",
+                    "name": "Hat mehr als 1 'Barbble Head Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1754,7 +1754,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Mech Bull Deco",
+                    "name": "Hat mehr als 1 'Mech Bull Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
