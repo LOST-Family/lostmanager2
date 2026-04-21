@@ -348,10 +348,13 @@ public class Bot extends ListenerAdapter {
 											"Alias, der an deinen Namen angehängt werden soll (z.B. Pixel | [alias])."),
 
 							Commands.slash("deletemessages",
-									"Löscht eine bestimmte Anzahl an Nachrichten im aktuellen Channel")
+									"Löscht Nachrichten per amount oder bis inkl. einer Message-ID im aktuellen Channel")
 									.addOptions(new OptionData(
 											OptionType.INTEGER, "amount",
-											"Anzahl an Nachrichten, die gelöscht werden sollen.", true)),
+											"Anzahl an Nachrichten, die gelöscht werden sollen.", false))
+									.addOptions(new OptionData(OptionType.STRING, "messageid",
+											"ID der Nachricht. Es werden alle neueren Nachrichten inkl. dieser gelöscht.",
+											false)),
 
 							Commands.slash("reactionsrole",
 									"Gebe allen Benutzern, die mit einem bestimmten Emoji reagiert haben, eine Rolle")
