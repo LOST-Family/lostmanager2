@@ -19,9 +19,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 @SuppressWarnings("null")
@@ -37,6 +40,59 @@ public class giveaway extends ListenerAdapter {
         if (user.isAdmin()) return true;
         return event.getMember() != null && event.getMember().getRoles().stream()
                 .anyMatch(r -> r.getId().equals(GIVEAWAY_ROLE_ID));
+    }
+
+    // ─── Auto Complete Handler ───────────────────────────────────────
+
+    @Override
+    public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
+        if (!event.getName().equals("giveaway") || !event.getSubcommandName().equals("reroll")) return;
+
+        OptionMapping idMapping = event.getOption("giveaway_id");
+        if (idMapping == null) {
+            event.replyChoices(Collections.emptyList()).queue();
+            return;
+        }
+
+        long giveawayId;
+        try {
+            giveawayId = idMapping.getAsLong();
+        } catch (NumberFormatException e) {
+            event.replyChoices(Collections.emptyList()).queue();
+            return;
+        }
+
+        Giveaway giveaway = Giveaway.getById(giveawayId);
+        if (giveaway == null || giveaway.getWinners() == null || giveaway.getWinners().isEmpty()) {
+            event.replyChoices(Collections.emptyList()).queue();
+            return;
+        }
+
+        String input = event.getFocusedOption().getValue().toLowerCase();
+        List<String> winnerIds = java.util.Arrays.asList(giveaway.getWinners().split(","));
+        List<Command.Choice> choices = new ArrayList<>();
+
+        for (String wId : winnerIds) {
+            String idStr = wId.trim();
+            if (idStr.isEmpty()) continue;
+            
+            // wir versuchen namen vom nutzer aufzulösen
+            net.dv8tion.jda.api.entities.Member member = event.getGuild() != null ? event.getGuild().getMemberById(idStr) : null;
+            net.dv8tion.jda.api.entities.User dUser = event.getJDA().getUserById(idStr);
+            String name = idStr;
+            if (member != null) {
+                name = member.getEffectiveName();
+            } else if (dUser != null) {
+                name = dUser.getName();
+            }
+
+            if (name.toLowerCase().contains(input) || idStr.contains(input)) {
+                choices.add(new Command.Choice(name, idStr));
+            }
+            if (choices.size() >= 25) break; 
+        }
+
+        event.replyChoices(choices).queue();
     }
 
     // ─── Duration Parsing ────────────────────────────────────────────
@@ -176,6 +232,41 @@ public class giveaway extends ListenerAdapter {
 
         if (entries.isEmpty()) {
             event.reply("❌ Es gibt keine Teilnehmer zum Auslosen.").setEphemeral(true).queue();
+            return;
+        }
+
+        OptionMapping whoOption = event.getOption("who");
+        String whoId = whoOption != null ? whoOption.getAsString() : null;
+
+        if (whoId != null) {
+            if (giveaway.getWinners() == null || !java.util.Arrays.asList(giveaway.getWinners().split(",")).contains(whoId)) {
+                event.reply("❌ Dieser User ist derzeit kein Gewinner.").setEphemeral(true).queue();
+                return;
+            }
+
+            List<String> currentWinners = new ArrayList<>(java.util.Arrays.asList(giveaway.getWinners().split(",")));
+            currentWinners.remove(whoId);
+
+            List<String> candidates = new ArrayList<>(entries);
+            candidates.removeAll(currentWinners);
+            candidates.remove(whoId); 
+
+            if (candidates.isEmpty()) {
+                event.reply("❌ Es gibt keine weiteren Teilnehmer, die nicht schon gewonnen haben.").setEphemeral(true).queue();
+                return;
+            }
+
+            Collections.shuffle(candidates);
+            String newWinnerId = candidates.get(0);
+            currentWinners.add(newWinnerId);
+
+            String winnersCSV = String.join(",", currentWinners);
+            giveaway.end(winnersCSV);
+
+            editGiveawayMessage(giveaway, event.getJDA(), currentWinners);
+            pingWinners(giveaway, event.getJDA(), Collections.singletonList(newWinnerId));
+
+            event.reply("✅ <@" + whoId + "> wurde durch <@" + newWinnerId + "> ersetzt.").setEphemeral(true).queue();
             return;
         }
 

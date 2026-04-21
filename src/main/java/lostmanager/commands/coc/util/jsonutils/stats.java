@@ -42,6 +42,10 @@ public class stats extends ListenerAdapter {
 	private static final String SELECT_PREFIX = "stats_select_";
 	private static final String BUTTON_FORWARD_PREFIX = "stats_forward_";
 	private static final String BUTTON_BACKWARD_PREFIX = "stats_backward_";
+	private static final String MODE_OWNED = "owned";
+	private static final String MODE_MISSING = "missing";
+	private static final String SUBCOMMAND_SHOW = "show";
+	private static final String SUBCOMMAND_MISSING = "missing";
 
 	// Maximum characters per page (Discord embed description limit is ~4096, we use
 	// 4000 for safety)
@@ -109,7 +113,14 @@ public class stats extends ListenerAdapter {
 		if (!event.getName().equals("stats"))
 			return;
 
-		String title = "Spieler Stats";
+		String subcommand = event.getSubcommandName();
+		if (subcommand != null && !subcommand.equals(SUBCOMMAND_SHOW) && !subcommand.equals(SUBCOMMAND_MISSING)) {
+			event.reply("Unbekannter Subcommand.").setEphemeral(true).queue();
+			return;
+		}
+
+		String mode = SUBCOMMAND_MISSING.equals(subcommand) ? MODE_MISSING : MODE_OWNED;
+		String title = getTitleForMode(mode);
 		event.deferReply().queue();
 
 		new Thread(() -> {
@@ -139,7 +150,7 @@ public class stats extends ListenerAdapter {
 				return;
 			}
 
-			performStatsDisplay(event.getHook(), title, playerTag, statType, 0);
+			performStatsDisplay(event.getHook(), title, playerTag, statType, 0, mode);
 
 		}, "StatsCommand-" + event.getUser().getId()).start();
 	}
@@ -176,11 +187,10 @@ public class stats extends ListenerAdapter {
 
 		event.deferEdit().queue();
 
-		String title = "Spieler Stats";
-
 		new Thread(() -> {
 			// Check permissions
 			User userExecuted = new User(event.getUser().getId());
+			String title = getTitleForMode(MODE_OWNED);
 
 			// Decode button ID to extract parameters
 			try {
@@ -213,6 +223,8 @@ public class stats extends ListenerAdapter {
 
 				String playerTag = params[0];
 				String statType = params[1];
+				String mode = params.length >= 4 ? normalizeMode(params[3]) : MODE_OWNED;
+				title = getTitleForMode(mode);
 
 				// Verify access
 				if (!canAccessPlayer(userExecuted, playerTag)) {
@@ -224,7 +236,7 @@ public class stats extends ListenerAdapter {
 					return;
 				}
 
-				performStatsDisplay(event.getHook(), title, playerTag, statType, pageNumber);
+				performStatsDisplay(event.getHook(), title, playerTag, statType, pageNumber, mode);
 
 			} catch (IllegalArgumentException e) {
 				event.getHook()
@@ -245,21 +257,24 @@ public class stats extends ListenerAdapter {
 
 		event.deferEdit().queue();
 
-		String title = "Spieler Stats";
-
 		new Thread(() -> {
 			// Check permissions
 			User userExecuted = new User(event.getUser().getId());
+			String title = getTitleForMode(MODE_OWNED);
 
 			// Decode select menu ID to extract player tag
 			try {
-				String playerTag = decodeSelectMenuId(id);
-				if (playerTag == null) {
+				String[] params = decodeSelectMenuId(id);
+				if (params == null || params.length < 1) {
 					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
 							"Fehler: Select-Daten konnten nicht dekodiert werden.", MessageUtil.EmbedType.ERROR))
 							.queue();
 					return;
 				}
+
+				String playerTag = params[0];
+				String mode = params.length >= 2 ? normalizeMode(params[1]) : MODE_OWNED;
+				title = getTitleForMode(mode);
 
 				// Get selected stat
 				String newStatType = event.getValues().get(0);
@@ -274,7 +289,7 @@ public class stats extends ListenerAdapter {
 					return;
 				}
 
-				performStatsDisplay(event.getHook(), title, playerTag, newStatType, 0);
+				performStatsDisplay(event.getHook(), title, playerTag, newStatType, 0, mode);
 
 			} catch (Exception e) {
 				event.getHook()
@@ -396,7 +411,9 @@ public class stats extends ListenerAdapter {
 	 */
 	@SuppressWarnings("null")
 	private void performStatsDisplay(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
-			String playerTag, String statType, int pageNumber) {
+			String playerTag, String statType, int pageNumber, String mode) {
+
+		String normalizedMode = normalizeMode(mode);
 
 		// Get JSON data from database
 		String sql = "SELECT json, timestamp FROM userjsons WHERE tag = ? LIMIT 1";
@@ -432,9 +449,19 @@ public class stats extends ListenerAdapter {
 				}
 
 				Object fieldData = json.get(fieldName);
+				Object dataToDisplay = fieldData;
+
+				if (MODE_MISSING.equals(normalizedMode)) {
+					dataToDisplay = buildMissingData(statType, fieldData);
+					if (dataToDisplay instanceof JSONArray missingArr && missingArr.length() == 0) {
+						hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Für **" + statType + "** fehlen keine Einträge.", MessageUtil.EmbedType.INFO)).queue();
+						return;
+					}
+				}
 
 				// Format the data
-				String formattedData = formatData(fieldData, timestamp);
+				String formattedData = formatData(dataToDisplay, timestamp);
 
 				// Format database timestamp
 				ZonedDateTime uploadTime = timestamp.toInstant().atZone(ZoneId.of("Europe/Berlin"));
@@ -446,6 +473,7 @@ public class stats extends ListenerAdapter {
 				String playerName = p.getNameDB() != null ? p.getNameDB() : p.getNameAPI();
 				String headerText = "**Spieler:** " + (playerName != null ? playerName : playerTag) + "\n"
 						+ "**Stat:** " + statType + "\n"
+						+ "**Modus:** " + (MODE_MISSING.equals(normalizedMode) ? "Fehlend" : "Vorhanden") + "\n"
 						+ "**Hochgeladen:** " + uploadFormatiert + "\n\n";
 
 				// Split into pages if needed
@@ -474,22 +502,22 @@ public class stats extends ListenerAdapter {
 				// Add backward button if not on first page
 				if (pageNumber > 0) {
 					String backwardButtonId = encodeNavigationButtonId(playerTag, statType, pageNumber,
-							BUTTON_BACKWARD_PREFIX);
+							BUTTON_BACKWARD_PREFIX, normalizedMode);
 					buttons.add(Button.primary(backwardButtonId, "\u200B").withEmoji(Emoji.fromUnicode("⬅️")));
 				}
 
 				// Add refresh button
-				String refreshButtonId = encodeButtonId(playerTag, statType, pageNumber);
+				String refreshButtonId = encodeButtonId(playerTag, statType, pageNumber, normalizedMode);
 				buttons.add(Button.secondary(refreshButtonId, "\u200B").withEmoji(Emoji.fromUnicode("🔁")));
 
 				// Add forward button if not on last page
 				if (pageNumber < pages.size() - 1) {
 					String forwardButtonId = encodeNavigationButtonId(playerTag, statType, pageNumber,
-							BUTTON_FORWARD_PREFIX);
+							BUTTON_FORWARD_PREFIX, normalizedMode);
 					buttons.add(Button.primary(forwardButtonId, "\u200B").withEmoji(Emoji.fromUnicode("➡️")));
 				}
 
-				String selectMenuId = encodeSelectMenuId(playerTag);
+				String selectMenuId = encodeSelectMenuId(playerTag, normalizedMode);
 				StringSelectMenu selectMenu = StringSelectMenu.create(selectMenuId).setPlaceholder("Anderes Feld")
 						.addOptions(createStatOptions(statType)).build();
 
@@ -1165,6 +1193,268 @@ public class stats extends ListenerAdapter {
 		}
 	}
 
+	private String getTitleForMode(String mode) {
+		return MODE_MISSING.equals(mode) ? "Spieler Fehlende Stats" : "Spieler Stats";
+	}
+
+	private String normalizeMode(String mode) {
+		return MODE_MISSING.equals(mode) ? MODE_MISSING : MODE_OWNED;
+	}
+
+	private JSONArray buildMissingData(String statType, Object fieldData) {
+		JSONObject imageMapCache = null;
+		try {
+			imageMapCache = lostmanager.util.ImageMapCache.fetchFullMapOnce();
+		} catch (Exception e) {
+			System.err.println("Failed to fetch image map for missing-data: " + e.getMessage());
+		}
+
+		if (imageMapCache == null) {
+			return new JSONArray();
+		}
+
+		Set<String> fullMapIds = getAllIdsForStatType(statType, imageMapCache);
+		if (fullMapIds.isEmpty()) {
+			return new JSONArray();
+		}
+
+		Set<String> ownedIds = new HashSet<>();
+		collectOwnedIds(fieldData, ownedIds);
+
+		List<String> missingIds = new ArrayList<>();
+		for (String id : fullMapIds) {
+			if (!ownedIds.contains(id) && !FilteredIdsCache.isFiltered(id)) {
+				missingIds.add(id);
+			}
+		}
+
+		final JSONObject finalImageMapCache = imageMapCache;
+		missingIds.sort((id1, id2) -> compareDataIdsByIndex(id1, id2, finalImageMapCache));
+
+		JSONArray missingData = new JSONArray();
+		for (String id : missingIds) {
+			missingData.put(new JSONObject().put("data", id));
+		}
+
+		return missingData;
+	}
+
+	private int compareDataIdsByIndex(String id1, String id2, JSONObject imageMapCache) {
+		if (imageMapCache != null) {
+			JSONObject d1 = imageMapCache.optJSONObject(id1);
+			JSONObject d2 = imageMapCache.optJSONObject(id2);
+
+			int i1 = d1 != null ? d1.optInt("index", Integer.MAX_VALUE) : Integer.MAX_VALUE;
+			int i2 = d2 != null ? d2.optInt("index", Integer.MAX_VALUE) : Integer.MAX_VALUE;
+			if (i1 != i2) {
+				return Integer.compare(i1, i2);
+			}
+		}
+
+		try {
+			return Integer.compare(Integer.parseInt(id1), Integer.parseInt(id2));
+		} catch (NumberFormatException e) {
+			return id1.compareTo(id2);
+		}
+	}
+
+	private void collectOwnedIds(Object current, Set<String> ownedIds) {
+		if (current == null || current == JSONObject.NULL) {
+			return;
+		}
+
+		if (current instanceof JSONArray arr) {
+			for (int i = 0; i < arr.length(); i++) {
+				Object item = arr.get(i);
+				if (item instanceof JSONObject || item instanceof JSONArray) {
+					collectOwnedIds(item, ownedIds);
+				} else if (item != null && item != JSONObject.NULL) {
+					ownedIds.add(String.valueOf(item));
+				}
+			}
+			return;
+		}
+
+		if (current instanceof JSONObject obj) {
+			if (obj.has("data") && obj.get("data") != null && obj.get("data") != JSONObject.NULL) {
+				ownedIds.add(String.valueOf(obj.get("data")));
+			}
+
+			for (String key : obj.keySet()) {
+				Object nested = obj.get(key);
+				if (nested instanceof JSONObject || nested instanceof JSONArray) {
+					collectOwnedIds(nested, ownedIds);
+				}
+			}
+		}
+	}
+
+	private Set<String> getAllIdsForStatType(String statType, JSONObject imageMap) {
+		Set<String> ids = new HashSet<>();
+
+		for (String id : imageMap.keySet()) {
+			JSONObject entry = imageMap.optJSONObject(id);
+			if (entry == null) {
+				continue;
+			}
+
+			if (matchesStatType(statType, entry)) {
+				ids.add(id);
+			}
+		}
+
+		return ids;
+	}
+
+	private boolean matchesStatType(String statType, JSONObject entry) {
+		String path = getEntryPath(entry).toLowerCase();
+		String name = entry.optString("name", "").toLowerCase();
+
+		boolean isHome = path.contains("/home-base/");
+		boolean isBuilder = path.contains("/builder-base/");
+		boolean isBuilderVariant = isBuilderVariantName(name);
+
+		switch (statType) {
+			case "Helpers" -> {
+				return path.contains("/apprentice/") || path.contains("/helpers/") || path.contains("/helper/");
+			}
+			case "Guardians" -> {
+				return path.contains("/guardians/");
+			}
+			case "Buildings" -> {
+				return path.contains("/buildings/") && isHome;
+			}
+			case "Buildings (BB)" -> {
+				return path.contains("/buildings/") && isBuilder;
+			}
+			case "Traps" -> {
+				return path.contains("/traps/") && isHome;
+			}
+			case "Traps (BB)" -> {
+				return path.contains("/traps/") && isBuilder;
+			}
+			case "Decos" -> {
+				return path.contains("/decorations/") && !isBuilderVariant;
+			}
+			case "Decos (BB)" -> {
+				return path.contains("/decorations/") && isBuilderVariant;
+			}
+			case "Obstacles" -> {
+				return path.contains("/obstacles/") && !isBuilderVariant;
+			}
+			case "Obstacles (BB)" -> {
+				return path.contains("/obstacles/") && isBuilderVariant;
+			}
+			case "Units" -> {
+				return path.contains("/troops/") && isHome && !isSiegeMachine(name);
+			}
+			case "Units (BB)" -> {
+				return path.contains("/troops/") && isBuilder;
+			}
+			case "Sieges" -> {
+				return path.contains("/troops/") && isHome && isSiegeMachine(name);
+			}
+			case "Heroes" -> {
+				return path.contains("/heroes/") && isHome;
+			}
+			case "Heroes (BB)" -> {
+				return path.contains("/heroes/") && isBuilder;
+			}
+			case "Spells" -> {
+				return path.contains("/spells/");
+			}
+			case "Pets" -> {
+				return path.contains("/pets/");
+			}
+			case "Equips" -> {
+				return path.contains("/equipment/");
+			}
+			case "House Parts" -> {
+				return path.contains("/clancapital/") || path.contains("/capital-house/")
+						|| path.contains("/house-parts/");
+			}
+			case "Skins" -> {
+				return path.contains("/skins/") && isHome;
+			}
+			case "Skins (BB)" -> {
+				return path.contains("/skins/") && isBuilder;
+			}
+			case "Sceneries" -> {
+				return path.contains("/sceneries/") && !isBuilderVariant;
+			}
+			case "Sceneries (BB)" -> {
+				return path.contains("/builder-base/sceneries/") || (path.contains("/sceneries/") && isBuilderVariant);
+			}
+			default -> {
+				return false;
+			}
+		}
+	}
+
+	private String getEntryPath(JSONObject entry) {
+		String icon = entry.optString("icon", "");
+		if (!icon.isEmpty()) {
+			return icon;
+		}
+
+		String character = entry.optString("character", "");
+		if (!character.isEmpty()) {
+			return character;
+		}
+
+		String characterAlt = entry.optString("character_2", "");
+		if (!characterAlt.isEmpty()) {
+			return characterAlt;
+		}
+
+		String characterAlt2 = entry.optString("character-2", "");
+		if (!characterAlt2.isEmpty()) {
+			return characterAlt2;
+		}
+
+		JSONObject levels = entry.optJSONObject("levels");
+		if (levels != null && !levels.isEmpty()) {
+			String selectedPath = "";
+			int selectedLevel = Integer.MAX_VALUE;
+
+			for (String lvl : levels.keySet()) {
+				String levelPath = levels.optString(lvl, "");
+				if (levelPath.isEmpty()) {
+					continue;
+				}
+
+				try {
+					int lvlInt = Integer.parseInt(lvl);
+					if (lvlInt < selectedLevel) {
+						selectedLevel = lvlInt;
+						selectedPath = levelPath;
+					}
+				} catch (NumberFormatException e) {
+					if (selectedPath.isEmpty()) {
+						selectedPath = levelPath;
+					}
+				}
+			}
+
+			if (!selectedPath.isEmpty()) {
+				return selectedPath;
+			}
+		}
+
+		return "";
+	}
+
+	private boolean isBuilderVariantName(String nameLower) {
+		return nameLower.contains("(bb)") || nameLower.contains("builder") || nameLower.contains("battle machine")
+				|| nameLower.contains("battle copter") || nameLower.contains("warmachine");
+	}
+
+	private boolean isSiegeMachine(String nameLower) {
+		return nameLower.contains("wrecker") || nameLower.contains("blimp") || nameLower.contains("slammer")
+				|| nameLower.contains("siege") || nameLower.contains("launcher") || nameLower.contains("flinger")
+				|| nameLower.contains("drill");
+	}
+
 	/**
 	 * Create stat options for select menu
 	 */
@@ -1191,9 +1481,9 @@ public class stats extends ListenerAdapter {
 	/**
 	 * Encode parameters into a Base64 string for button ID with page number
 	 */
-	private String encodeButtonId(String playerTag, String statType, int pageNumber) {
-		// Format: playerTag|statType|pageNumber
-		String data = playerTag + "|" + statType + "|" + pageNumber;
+	private String encodeButtonId(String playerTag, String statType, int pageNumber, String mode) {
+		// Format: playerTag|statType|pageNumber|mode
+		String data = playerTag + "|" + statType + "|" + pageNumber + "|" + normalizeMode(mode);
 		return BUTTON_PREFIX + Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
 	}
 
@@ -1214,19 +1504,23 @@ public class stats extends ListenerAdapter {
 	/**
 	 * Encode player tag into select menu ID
 	 */
-	private String encodeSelectMenuId(String playerTag) {
-		return SELECT_PREFIX + Base64.getUrlEncoder().withoutPadding().encodeToString(playerTag.getBytes());
+	private String encodeSelectMenuId(String playerTag, String mode) {
+		String data = playerTag + "|" + normalizeMode(mode);
+		return SELECT_PREFIX + Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
 	}
 
 	/**
 	 * Decode select menu ID
 	 */
-	private String decodeSelectMenuId(String selectMenuId) {
+	private String[] decodeSelectMenuId(String selectMenuId) {
 		// Remove prefix
 		String encoded = selectMenuId.substring(SELECT_PREFIX.length());
 
 		// Decode Base64
-		return new String(Base64.getUrlDecoder().decode(encoded));
+		String data = new String(Base64.getUrlDecoder().decode(encoded));
+
+		// Split by | (legacy payload may only contain playerTag)
+		return data.split("\\|", -1);
 	}
 
 	/**
@@ -1283,9 +1577,10 @@ public class stats extends ListenerAdapter {
 	/**
 	 * Encode navigation button ID (forward/backward)
 	 */
-	private String encodeNavigationButtonId(String playerTag, String statType, int pageNumber, String prefix) {
-		// Format: playerTag|statType|pageNumber
-		String data = playerTag + "|" + statType + "|" + pageNumber;
+	private String encodeNavigationButtonId(String playerTag, String statType, int pageNumber, String prefix,
+			String mode) {
+		// Format: playerTag|statType|pageNumber|mode
+		String data = playerTag + "|" + statType + "|" + pageNumber + "|" + normalizeMode(mode);
 		return prefix + Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
 	}
 
