@@ -1468,7 +1468,7 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Foot Tribute Deco (sus)'",
+                    "name": "Hat mehr als 1 'Foot Tribute Deco'👀",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
@@ -1523,17 +1523,6 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Rocking Reindeer Deco'",
-                    "IfMoreThan": {
-                        "type": "count",
-                        "allowed": 1,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Rocking Reindeer",
-                            "id": "18000162"
-                        }]
-                    }   
-                }, {
                     "name": "Hat mehr als 1 'Clockwork Choir Deco'",
                     "IfMoreThan": {
                         "type": "count",
@@ -1556,17 +1545,6 @@
                         }]
                     }   
                 }, {
-                    "name": "Hat mehr als 1 'Gift Bag Deco'",
-                    "IfMoreThan": {
-                        "type": "count",
-                        "allowed": 1,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Gift Bag",
-                            "id": "18000165"
-                        }]
-                    }   
-                }, {
                     "name": "Hat mehr als 1 'Monk Statue'",
                     "IfMoreThan": {
                         "type": "count",
@@ -1586,17 +1564,6 @@
                             "type": "element",
                             "name": "Lucky Cookies",
                             "id": "18000169"
-                        }]
-                    }   
-                }, {
-                    "name": "Hat mehr als 1 'Rumbling Goblins Deco'",
-                    "IfMoreThan": {
-                        "type": "count",
-                        "allowed": 1,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Rumbling Goblins",
-                            "id": "18000172"
                         }]
                     }   
                 }, {
@@ -1718,17 +1685,6 @@
                             "type": "element",
                             "name": "Hungry Hound",
                             "id": "18000203"
-                        }]
-                    }   
-                }, {
-                    "name": "Hat mehr als 1 'Handsome Scroll Deco'",
-                    "IfMoreThan": {
-                        "type": "count",
-                        "allowed": 1,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Handsome Scroll",
-                            "id": "18000201"
                         }]
                     }   
                 }, {

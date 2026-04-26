@@ -1193,94 +1193,98 @@
     "name": "Bomb",
     "levels": {
       "1": "/home-base/traps/bomb/bomb-1.png",
-      "2": "/home-base/traps/bomb/bomb-2.png",
+      "2": "/home-base/traps/bomb/bomb-1.png",
       "3": "/home-base/traps/bomb/bomb-3.png",
-      "4": "/home-base/traps/bomb/bomb-4.png",
+      "4": "/home-base/traps/bomb/bomb-3.png",
       "5": "/home-base/traps/bomb/bomb-5.png",
-      "6": "/home-base/traps/bomb/bomb-6.png",
+      "6": "/home-base/traps/bomb/bomb-5.png",
       "7": "/home-base/traps/bomb/bomb-7.png",
-      "8": "/home-base/traps/bomb/bomb-8.png",
+      "8": "/home-base/traps/bomb/bomb-7.png",
       "9": "/home-base/traps/bomb/bomb-9.png",
-      "10": "/home-base/traps/bomb/bomb-10.png",
+      "10": "/home-base/traps/bomb/bomb-9.png",
       "11": "/home-base/traps/bomb/bomb-11.png",
-      "12": "/home-base/traps/bomb/bomb-12.png",
+      "12": "/home-base/traps/bomb/bomb-11.png",
       "13": "/home-base/traps/bomb/bomb-13.png",
-      "14": "/home-base/traps/bomb/bomb-14.png"
+      "14": "/home-base/traps/bomb/bomb-13.png"
     }
   },
   "12000001": {
     "name": "Spring Trap",
     "levels": {
       "1": "/home-base/traps/spring-trap/spring-trap-1.png",
-      "2": "/home-base/traps/spring-trap/spring-trap-2.png",
+      "2": "/home-base/traps/spring-trap/spring-trap-1.png",
       "3": "/home-base/traps/spring-trap/spring-trap-3.png",
-      "4": "/home-base/traps/spring-trap/spring-trap-4.png",
+      "4": "/home-base/traps/spring-trap/spring-trap-3.png",
       "5": "/home-base/traps/spring-trap/spring-trap-5.png",
-      "6": "/home-base/traps/spring-trap/spring-trap-6.png",
+      "6": "/home-base/traps/spring-trap/spring-trap-5.png",
       "7": "/home-base/traps/spring-trap/spring-trap-7.png",
-      "8": "/home-base/traps/spring-trap/spring-trap-8.png",
+      "8": "/home-base/traps/spring-trap/spring-trap-7.png",
       "9": "/home-base/traps/spring-trap/spring-trap-9.png",
-      "10": "/home-base/traps/spring-trap/spring-trap-10.png",
+      "10": "/home-base/traps/spring-trap/spring-trap-9.png",
       "11": "/home-base/traps/spring-trap/spring-trap-11.png",
-      "12": "/home-base/traps/spring-trap/spring-trap-12.png",
+      "12": "/home-base/traps/spring-trap/spring-trap-11.png",
       "13": "/home-base/traps/spring-trap/spring-trap-13.png",
-      "14": "/home-base/traps/spring-trap/spring-trap-14.png"
+      "14": "/home-base/traps/spring-trap/spring-trap-13.png"
     }
   },
   "12000002": {
     "name": "Giant Bomb",
     "levels": {
       "1": "/home-base/traps/giant-bomb/giant-bomb-1.png",
-      "2": "/home-base/traps/giant-bomb/giant-bomb-2.png",
+      "2": "/home-base/traps/giant-bomb/giant-bomb-1.png",
       "3": "/home-base/traps/giant-bomb/giant-bomb-3.png",
-      "4": "/home-base/traps/giant-bomb/giant-bomb-4.png",
+      "4": "/home-base/traps/giant-bomb/giant-bomb-3.png",
       "5": "/home-base/traps/giant-bomb/giant-bomb-5.png",
-      "6": "/home-base/traps/giant-bomb/giant-bomb-6.png",
+      "6": "/home-base/traps/giant-bomb/giant-bomb-5.png",
       "7": "/home-base/traps/giant-bomb/giant-bomb-7.png",
-      "8": "/home-base/traps/giant-bomb/giant-bomb-8.png",
+      "8": "/home-base/traps/giant-bomb/giant-bomb-7.png",
       "9": "/home-base/traps/giant-bomb/giant-bomb-9.png",
-      "10": "/home-base/traps/giant-bomb/giant-bomb-10.png",
-      "11": "/home-base/traps/giant-bomb/giant-bomb-11.png"
+      "10": "/home-base/traps/giant-bomb/giant-bomb-9.png",
+      "11": "/home-base/traps/giant-bomb/giant-bomb-11.png",
+      "12": "/home-base/traps/giant-bomb/giant-bomb-11.png"
     }
   },
   "12000005": {
     "name": "Air Bomb",
     "levels": {
       "1": "/home-base/traps/air-bomb/air-bomb-1.png",
-      "2": "/home-base/traps/air-bomb/air-bomb-2.png",
+      "2": "/home-base/traps/air-bomb/air-bomb-1.png",
       "3": "/home-base/traps/air-bomb/air-bomb-3.png",
-      "4": "/home-base/traps/air-bomb/air-bomb-4.png",
+      "4": "/home-base/traps/air-bomb/air-bomb-3.png",
       "5": "/home-base/traps/air-bomb/air-bomb-5.png",
-      "6": "/home-base/traps/air-bomb/air-bomb-6.png",
+      "6": "/home-base/traps/air-bomb/air-bomb-5.png",
       "7": "/home-base/traps/air-bomb/air-bomb-7.png",
-      "8": "/home-base/traps/air-bomb/air-bomb-8.png",
+      "8": "/home-base/traps/air-bomb/air-bomb-7.png",
       "9": "/home-base/traps/air-bomb/air-bomb-9.png",
-      "10": "/home-base/traps/air-bomb/air-bomb-10.png",
+      "10": "/home-base/traps/air-bomb/air-bomb-9.png",
       "11": "/home-base/traps/air-bomb/air-bomb-11.png",
-      "12": "/home-base/traps/air-bomb/air-bomb-12.png",
-      "13": "/home-base/traps/air-bomb/air-bomb-13.png"
+      "12": "/home-base/traps/air-bomb/air-bomb-11.png",
+      "13": "/home-base/traps/air-bomb/air-bomb-13.png",
+      "14": "/home-base/traps/air-bomb/air-bomb-13.png"
     }
   },
   "12000006": {
     "name": "Seeking Air Mine",
     "levels": {
       "1": "/home-base/traps/seeking-air-mine/seeking-air-mine-1.png",
-      "2": "/home-base/traps/seeking-air-mine/seeking-air-mine-2.png",
+      "2": "/home-base/traps/seeking-air-mine/seeking-air-mine-1.png",
       "3": "/home-base/traps/seeking-air-mine/seeking-air-mine-3.png",
-      "4": "/home-base/traps/seeking-air-mine/seeking-air-mine-4.png",
+      "4": "/home-base/traps/seeking-air-mine/seeking-air-mine-3.png",
       "5": "/home-base/traps/seeking-air-mine/seeking-air-mine-5.png",
-      "6": "/home-base/traps/seeking-air-mine/seeking-air-mine-6.png",
-      "7": "/home-base/traps/seeking-air-mine/seeking-air-mine-7.png"
+      "6": "/home-base/traps/seeking-air-mine/seeking-air-mine-5.png",
+      "7": "/home-base/traps/seeking-air-mine/seeking-air-mine-7.png",
+      "8": "/home-base/traps/seeking-air-mine/seeking-air-mine-7.png"
     }
   },
   "12000008": {
     "name": "Skeleton Trap",
     "levels": {
       "1": "/home-base/traps/skeleton-trap/skeleton-trap-1.png",
-      "2": "/home-base/traps/skeleton-trap/skeleton-trap-2.png",
+      "2": "/home-base/traps/skeleton-trap/skeleton-trap-1.png",
       "3": "/home-base/traps/skeleton-trap/skeleton-trap-3.png",
-      "4": "/home-base/traps/skeleton-trap/skeleton-trap-4.png",
-      "5": "/home-base/traps/skeleton-trap/skeleton-trap-5.png"
+      "4": "/home-base/traps/skeleton-trap/skeleton-trap-3.png",
+      "5": "/home-base/traps/skeleton-trap/skeleton-trap-5.png",
+      "6": "/home-base/traps/skeleton-trap/skeleton-trap-5.png"
     }
   },
   "12000010": {
@@ -1343,7 +1347,7 @@
     "levels": {
       "1": "/home-base/traps/tornado-trap/tornado-trap-1.png",
       "2": "/home-base/traps/tornado-trap/tornado-trap-2.png",
-      "3": "/home-base/traps/tornado-trap/tornado-trap-3.png"
+      "3": "/home-base/traps/tornado-trap/tornado-trap-2.png"
     }
   },
   "12000020": {
@@ -1351,7 +1355,8 @@
     "levels": {
       "1": "/home-base/traps/giga-bomb/giga-bomb-1.png",
       "2": "/home-base/traps/giga-bomb/giga-bomb-2.png",
-      "3": "/home-base/traps/giga-bomb/giga-bomb-3.png"
+      "3": "/home-base/traps/giga-bomb/giga-bomb-3.png",
+      "4": "/home-base/traps/giga-bomb/giga-bomb-4.png"
     }
   },
   "4000000": {
@@ -2122,6 +2127,10 @@
   "90000053": {
     "name": "Rocket Backpack",
     "icon": "/home-base/equipments/53.png"
+  },
+  "90000054": {
+    "name": "Electro Fangs",
+    "icon": "/home-base/equipments/54.png"
   },
   "90000056": {
     "name": "Stun Blaster",
