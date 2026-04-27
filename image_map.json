@@ -5364,5 +5364,9 @@
   "107000001": {
     "name": "Smasher",
     "icon": "/home-base/guardians/smasher.png"
+  },
+  "107000002": {
+    "name": "Logger",
+    "icon": "/home-base/guardians/logger.png"
   }
 }
