@@ -682,9 +682,9 @@ public class ListeningEvent {
 		java.time.OffsetDateTime endTime = java.time.OffsetDateTime.ofInstant(instant, ZoneOffset.UTC);
 		java.sql.Timestamp endTimeTs = java.sql.Timestamp.from(endTime.toInstant());
 
-		// Get list of fillers for this war
-		String fillerSql = "SELECT player_tag FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?";
-		ArrayList<String> fillerTags = DBUtil.getArrayListFromSQL(fillerSql, String.class, clan.getTag(), endTimeTs);
+		// Get list of fillers for this war (within 24 hours to handle API time shifts)
+		String fillerSql = "SELECT player_tag FROM cw_fillers WHERE clan_tag = ? AND war_end_time > ?::timestamp - INTERVAL '24 hours' AND war_end_time < ?::timestamp + INTERVAL '24 hours'";
+		ArrayList<String> fillerTags = DBUtil.getArrayListFromSQL(fillerSql, String.class, clan.getTag(), endTimeTs, endTimeTs);
 
 		// Build initial message with missed attacks data
 		CWMissedAttacksResult result = buildCWMissedAttacksMessage(clan, cwJson, requiredAttacks, fillerTags, false);
@@ -728,9 +728,9 @@ public class ListeningEvent {
 			}
 		} else if (isEndOfWarEvent && !result.hasMissedAttacks) {
 			// End of war but no missed attacks - nothing to send or schedule
-			// Clean up fillers - safe to delete here since no verification will occur
-			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clan.getTag(),
-					endTimeTs);
+			// Clean up fillers - safe to delete here since no verification will occur (within 24 hours)
+			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time > ?::timestamp - INTERVAL '24 hours' AND war_end_time < ?::timestamp + INTERVAL '24 hours'", clan.getTag(),
+					endTimeTs, endTimeTs);
 		} else {
 			// Not end of war (e.g., reminder during war) - use original behavior
 			if (result.hasMissedAttacks) {
@@ -794,8 +794,8 @@ public class ListeningEvent {
 				}
 			}
 
-			// Clean up fillers after processing
-			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clanTag, endTimeTs);
+			// Clean up fillers after processing (within 24 hours to handle API time shifts)
+			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time > ?::timestamp - INTERVAL '24 hours' AND war_end_time < ?::timestamp + INTERVAL '24 hours'", clanTag, endTimeTs, endTimeTs);
 
 			System.out.println("Completed 5-minute CW verification for clan " + clanTag + " (dataReliable="
 					+ dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
@@ -812,10 +812,10 @@ public class ListeningEvent {
 				System.err.println("Failed to update message with error: " + e2.getMessage());
 			}
 
-			// Still clean up fillers even on error
+			// Still clean up fillers even on error (within 24 hours)
 			try {
-				DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time = ?", clanTag,
-						endTimeTs);
+				DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time > ?::timestamp - INTERVAL '24 hours' AND war_end_time < ?::timestamp + INTERVAL '24 hours'", clanTag,
+						endTimeTs, endTimeTs);
 			} catch (Exception e3) {
 				System.err.println("Failed to delete fillers on error: " + e3.getMessage());
 			}
