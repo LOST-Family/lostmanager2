@@ -569,7 +569,13 @@ public class Bot extends ListenerAdapter {
 															.addChoice("Beendet", "Inactive")),
 											new SubcommandData("reroll", "Lost ein neues Set an Gewinnern aus, auch wenn es beendet ist")
 													.addOption(OptionType.INTEGER, "giveaway_id", "Die ID des Giveaways", true)
-													.addOption(OptionType.STRING, "who", "Gewinner, der ersetzt werden soll", false, true)
+													.addOption(OptionType.STRING, "who", "Gewinner, der ersetzt werden soll", false, true),
+											new SubcommandData("addparticipant", "Fügt einen Teilnehmer manuell hinzu")
+													.addOption(OptionType.INTEGER, "giveaway_id", "Die ID des Giveaways", true)
+													.addOption(OptionType.USER, "who", "Der Discord User, der hinzugefügt werden soll", true),
+											new SubcommandData("removeparticipant", "Entfernt einen Teilnehmer manuell")
+													.addOption(OptionType.INTEGER, "giveaway_id", "Die ID des Giveaways", true)
+													.addOption(OptionType.STRING, "who", "Der Teilnehmer, der entfernt werden soll", true, true)
 											)
 
 					).queue();

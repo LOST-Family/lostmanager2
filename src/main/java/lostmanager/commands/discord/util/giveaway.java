@@ -46,7 +46,9 @@ public class giveaway extends ListenerAdapter {
 
     @Override
     public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
-        if (!event.getName().equals("giveaway") || !event.getSubcommandName().equals("reroll")) return;
+        if (!event.getName().equals("giveaway")) return;
+        String subName = event.getSubcommandName();
+        if (!"reroll".equals(subName) && !"removeparticipant".equals(subName)) return;
 
         OptionMapping idMapping = event.getOption("giveaway_id");
         if (idMapping == null) {
@@ -63,16 +65,31 @@ public class giveaway extends ListenerAdapter {
         }
 
         Giveaway giveaway = Giveaway.getById(giveawayId);
-        if (giveaway == null || giveaway.getWinners() == null || giveaway.getWinners().isEmpty()) {
+        if (giveaway == null) {
             event.replyChoices(Collections.emptyList()).queue();
             return;
         }
 
+        List<String> userIds;
+        if ("reroll".equals(subName)) {
+            if (giveaway.getWinners() == null || giveaway.getWinners().isEmpty()) {
+                event.replyChoices(Collections.emptyList()).queue();
+                return;
+            }
+            userIds = java.util.Arrays.asList(giveaway.getWinners().split(","));
+        } else {
+            // removeparticipant
+            userIds = GiveawayEntry.getEntries(giveawayId);
+            if (userIds == null || userIds.isEmpty()) {
+                event.replyChoices(Collections.emptyList()).queue();
+                return;
+            }
+        }
+
         String input = event.getFocusedOption().getValue().toLowerCase();
-        List<String> winnerIds = java.util.Arrays.asList(giveaway.getWinners().split(","));
         List<Command.Choice> choices = new ArrayList<>();
 
-        for (String wId : winnerIds) {
+        for (String wId : userIds) {
             String idStr = wId.trim();
             if (idStr.isEmpty()) continue;
             
@@ -131,6 +148,8 @@ public class giveaway extends ListenerAdapter {
             case "participants" -> handleParticipants(event);
             case "list" -> handleList(event);
             case "reroll" -> handleReroll(event);
+            case "addparticipant" -> handleAddParticipant(event);
+            case "removeparticipant" -> handleRemoveParticipant(event);
             default -> event.reply("Unbekannter Subcommand.").setEphemeral(true).queue();
         }
     }
@@ -280,6 +299,88 @@ public class giveaway extends ListenerAdapter {
         pingWinners(giveaway, event.getJDA(), winnerIds);
 
         event.reply("✅ Giveaway erfolgreich neu ausgelost.").setEphemeral(true).queue();
+    }
+
+    private void handleAddParticipant(SlashCommandInteractionEvent event) {
+        if (!hasGiveawayPermission(event)) {
+            event.reply("❌ Keine Berechtigung!").setEphemeral(true).queue();
+            return;
+        }
+
+        long giveawayId = event.getOption("giveaway_id").getAsLong();
+        Giveaway giveaway = Giveaway.getById(giveawayId);
+
+        if (giveaway == null) {
+            event.reply("❌ Giveaway mit ID `" + giveawayId + "` nicht gefunden.").setEphemeral(true).queue();
+            return;
+        }
+
+        if (giveaway.isEnded()) {
+            event.reply("❌ Dieses Giveaway ist bereits beendet.").setEphemeral(true).queue();
+            return;
+        }
+
+        net.dv8tion.jda.api.entities.User whoUser = event.getOption("who").getAsUser();
+        String discordId = whoUser.getId();
+
+        if (GiveawayEntry.hasEntry(giveawayId, discordId)) {
+            event.reply("❌ Dieser User nimmt bereits teil.").setEphemeral(true).queue();
+            return;
+        }
+
+        boolean added = GiveawayEntry.addEntry(giveawayId, discordId);
+        if (added) {
+            String name = event.getGuild() != null && event.getGuild().getMemberById(discordId) != null 
+                    ? event.getGuild().getMemberById(discordId).getEffectiveName() 
+                    : whoUser.getName();
+            event.reply("✅ Teilnehmer `" + name + "` erfolgreich hinzugefügt.").setEphemeral(true).queue();
+            editGiveawayMessage(giveaway, event.getJDA(), null);
+        } else {
+            event.reply("❌ Fehler beim Hinzufügen.").setEphemeral(true).queue();
+        }
+    }
+
+    private void handleRemoveParticipant(SlashCommandInteractionEvent event) {
+        if (!hasGiveawayPermission(event)) {
+            event.reply("❌ Keine Berechtigung!").setEphemeral(true).queue();
+            return;
+        }
+
+        long giveawayId = event.getOption("giveaway_id").getAsLong();
+        Giveaway giveaway = Giveaway.getById(giveawayId);
+
+        if (giveaway == null) {
+            event.reply("❌ Giveaway mit ID `" + giveawayId + "` nicht gefunden.").setEphemeral(true).queue();
+            return;
+        }
+
+        if (giveaway.isEnded()) {
+            event.reply("❌ Dieses Giveaway ist bereits beendet.").setEphemeral(true).queue();
+            return;
+        }
+
+        String whoId = event.getOption("who").getAsString();
+        
+        if (!GiveawayEntry.hasEntry(giveawayId, whoId)) {
+            event.reply("❌ Dieser User nimmt nicht teil.").setEphemeral(true).queue();
+            return;
+        }
+
+        boolean removed = GiveawayEntry.removeEntry(giveawayId, whoId);
+        if (removed) {
+            String name = whoId;
+            net.dv8tion.jda.api.entities.Member member = event.getGuild() != null ? event.getGuild().getMemberById(whoId) : null;
+            net.dv8tion.jda.api.entities.User dUser = event.getJDA().getUserById(whoId);
+            if (member != null) {
+                name = member.getEffectiveName();
+            } else if (dUser != null) {
+                name = dUser.getName();
+            }
+            event.reply("✅ Teilnehmer `" + name + "` erfolgreich entfernt.").setEphemeral(true).queue();
+            editGiveawayMessage(giveaway, event.getJDA(), null);
+        } else {
+            event.reply("❌ Fehler beim Entfernen.").setEphemeral(true).queue();
+        }
     }
 
     private void handleParticipants(SlashCommandInteractionEvent event) {

@@ -19,6 +19,18 @@ public class GiveawayEntry {
     }
 
     /**
+     * Remove an entry for a user from a giveaway.
+     * @return true if the entry was removed, false if it didn't exist.
+     */
+    public static boolean removeEntry(long giveawayId, String discordId) {
+        var result = DBUtil.executeUpdate(
+            "DELETE FROM giveaway_entries WHERE giveaway_id = ? AND discord_id = ?",
+            giveawayId, discordId
+        );
+        return result != null && result.getSecond() != null && result.getSecond() > 0;
+    }
+
+    /**
      * Check if a user has already entered a giveaway.
      */
     public static boolean hasEntry(long giveawayId, String discordId) {
