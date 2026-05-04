@@ -5,11 +5,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lostmanager.dbutil.Connection;
 import lostmanager.dbutil.DBUtil;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class KickpointReason {
 
 	private String kpreason;

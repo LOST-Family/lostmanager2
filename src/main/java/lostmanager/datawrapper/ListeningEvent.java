@@ -998,6 +998,8 @@ public class ListeningEvent {
 		int targetRound = -1;
 		String targetWarTag = null;
 		org.json.JSONObject cachedWarData = null;
+		long minDiff = Long.MAX_VALUE;
+		long targetTimeMillis = System.currentTimeMillis() + getDurationUntilEnd();
 
 		for (int r = 0; r < rounds.length(); r++) {
 			org.json.JSONArray warTags = rounds.getJSONObject(r).getJSONArray("warTags");
@@ -1020,35 +1022,24 @@ public class ListeningEvent {
 					if (isOurWar) {
 						String state = warData.getString("state");
 
-						if (state.equals("inWar")) {
-							// For reminders or end-of-war firing while state is still inWar
-							targetRound = r;
-							targetWarTag = warTag;
-							cachedWarData = warData;
-							break;
-						} else if (state.equals("preparation")) {
-							// If we are in preparation for round N, the last completed round N-1 is
-							// usually what's relevant for final results
-							if (r > 0 && targetRound == -1) {
-								// Only go back if we haven't already found a more recent finished round
-								// This part is tricky - usually the loop has already found the finished round
+						if ((state.equals("inWar") || state.equals("warEnded")) && warData.has("endTime") && !warData.isNull("endTime")) {
+							String endTimeStr = warData.getString("endTime");
+							DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'").withZone(ZoneOffset.UTC);
+							Instant endInstant = Instant.from(formatter.parse(endTimeStr));
+							long endTimeMillis = endInstant.toEpochMilli();
+							
+							long diff = Math.abs(endTimeMillis - targetTimeMillis);
+							if (diff < minDiff) {
+								minDiff = diff;
+								targetRound = r;
+								targetWarTag = warTag;
+								cachedWarData = warData;
 							}
-							// Exit the search as we've hit the future
-							return;
-						} else if (state.equals("warEnded")) {
-							// This round is completed, it's our current best candidate
-							targetRound = r;
-							targetWarTag = warTag;
-							cachedWarData = warData;
 						}
 					}
 				} catch (Exception e) {
 					continue;
 				}
-			}
-			// If we found an inWar round, we stop immediately as it's the "now" day
-			if (targetRound == r && cachedWarData != null && cachedWarData.getString("state").equals("inWar")) {
-				break;
 			}
 		}
 
@@ -1159,9 +1150,11 @@ public class ListeningEvent {
 				message.append("**").append(hoursLeft).append("h**");
 			}
 			if (minutesLeft > 0) {
+				if (hoursLeft > 0) message.append(" ");
 				message.append("**").append(minutesLeft).append("m**");
 			}
 			if (secondsLeft > 0 && hoursLeft == 0) {
+				if (minutesLeft > 0) message.append(" ");
 				message.append("**").append(secondsLeft).append("s**");
 			}
 			message.append(" verbleibend\n\n");
