@@ -55,29 +55,29 @@ public class stats extends ListenerAdapter {
 	private static final Map<String, String> STAT_TO_FIELD = new HashMap<>();
 
 	static {
-		STAT_TO_FIELD.put("Helpers", "helpers");
-		STAT_TO_FIELD.put("Guardians", "guardians");
 		STAT_TO_FIELD.put("Buildings", "buildings");
 		STAT_TO_FIELD.put("Buildings (BB)", "buildings2");
-		STAT_TO_FIELD.put("Traps", "traps");
-		STAT_TO_FIELD.put("Traps (BB)", "traps2");
 		STAT_TO_FIELD.put("Decos", "decos");
 		STAT_TO_FIELD.put("Decos (BB)", "decos2");
-		STAT_TO_FIELD.put("Obstacles", "obstacles");
-		STAT_TO_FIELD.put("Obstacles (BB)", "obstacles2");
-		STAT_TO_FIELD.put("Units", "units");
-		STAT_TO_FIELD.put("Units (BB)", "units2");
-		STAT_TO_FIELD.put("Sieges", "siege_machines");
+		STAT_TO_FIELD.put("Equips", "equipment");
+		STAT_TO_FIELD.put("Helpers", "helpers");
+		STAT_TO_FIELD.put("Guardians", "guardians");
 		STAT_TO_FIELD.put("Heroes", "heroes");
 		STAT_TO_FIELD.put("Heroes (BB)", "heroes2");
-		STAT_TO_FIELD.put("Spells", "spells");
-		STAT_TO_FIELD.put("Pets", "pets");
-		STAT_TO_FIELD.put("Equips", "equipment");
 		STAT_TO_FIELD.put("House Parts", "house_parts");
-		STAT_TO_FIELD.put("Skins", "skins");
-		STAT_TO_FIELD.put("Skins (BB)", "skins2");
+		STAT_TO_FIELD.put("Obstacles", "obstacles");
+		STAT_TO_FIELD.put("Obstacles (BB)", "obstacles2");
+		STAT_TO_FIELD.put("Pets", "pets");
 		STAT_TO_FIELD.put("Sceneries", "sceneries");
 		STAT_TO_FIELD.put("Sceneries (BB)", "sceneries2");
+		STAT_TO_FIELD.put("Sieges", "siege_machines");
+		STAT_TO_FIELD.put("Skins", "skins");
+		STAT_TO_FIELD.put("Skins (BB)", "skins2");
+		STAT_TO_FIELD.put("Spells", "spells");
+		STAT_TO_FIELD.put("Traps", "traps");
+		STAT_TO_FIELD.put("Traps (BB)", "traps2");
+		STAT_TO_FIELD.put("Units", "units");
+		STAT_TO_FIELD.put("Units (BB)", "units2");
 	}
 
 	// German translations for attributes
