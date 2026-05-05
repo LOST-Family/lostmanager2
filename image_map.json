@@ -4719,6 +4719,216 @@
     "icon": "/home-base/skins/288.png",
     "index": 234
   },
+  "52000249": {
+    "name": "? Warden (Jun. 2026)",
+    "icon": "/home-base/skins/249.png",
+    "index": 228
+  },
+  "52000289": {
+    "name": "? King (Jun. 2026)",
+    "icon": "/home-base/skins/289.png",
+    "index": 229
+  },
+  "52000228": {
+    "name": "? Queen (Jun. 2026)",
+    "icon": "/home-base/skins/228.png",
+    "index": 230
+  },
+  "52000346": {
+    "name": "? Duke (Jun. 2026)",
+    "icon": "/home-base/skins/346.png",
+    "index": 231
+  },
+  "52000267": {
+    "name": "? Prince (Jun. 2026)",
+    "icon": "/home-base/skins/267.png",
+    "index": 232
+  },
+  "52000300": {
+    "name": "? Champion (Jun. 2026)",
+    "icon": "/home-base/skins/300.png",
+    "index": 233
+  },
+  "52000329": {
+    "name": "? Warden (Jul. 2026)",
+    "icon": "/home-base/skins/329.png",
+    "index": 228
+  },
+  "52000290": {
+    "name": "? King (Jul. 2026)",
+    "icon": "/home-base/skins/290.png",
+    "index": 229
+  },
+  "52000229": {
+    "name": "? Queen (Jul. 2026)",
+    "icon": "/home-base/skins/228.png",
+    "index": 230
+  },
+  "52000347": {
+    "name": "? Duke (Jul. 2026)",
+    "icon": "/home-base/skins/347.png",
+    "index": 231
+  },
+  "52000268": {
+    "name": "? Prince (Jul. 2026)",
+    "icon": "/home-base/skins/266.png",
+    "index": 232
+  },
+  "52000301": {
+    "name": "? Champion (Jul. 2026)",
+    "icon": "/home-base/skins/301.png",
+    "index": 233
+  },
+  "52000330": {
+    "name": "? Warden (Aug. 2026)",
+    "icon": "/home-base/skins/330.png",
+    "index": 228
+  },
+  "52000291": {
+    "name": "? King (Aug. 2026)",
+    "icon": "/home-base/skins/291.png",
+    "index": 229
+  },
+  "52000319": {
+    "name": "? Queen (Aug. 2026)",
+    "icon": "/home-base/skins/319.png",
+    "index": 230
+  },
+  "52000348": {
+    "name": "? Duke (Aug. 2026)",
+    "icon": "/home-base/skins/348.png",
+    "index": 231
+  },
+  "52000269": {
+    "name": "? Prince (Aug. 2026)",
+    "icon": "/home-base/skins/269.png",
+    "index": 232
+  },
+  "52000302": {
+    "name": "? Champion (Aug. 2026)",
+    "icon": "/home-base/skins/302.png",
+    "index": 233
+  },
+  "52000331": {
+    "name": "? Warden (Sep. 2026)",
+    "icon": "/home-base/skins/331.png",
+    "index": 228
+  },
+  "52000292": {
+    "name": "? King (Sep. 2026)",
+    "icon": "/home-base/skins/292.png",
+    "index": 229
+  },
+  "52000320": {
+    "name": "? Queen (Sep. 2026)",
+    "icon": "/home-base/skins/320.png",
+    "index": 230
+  },
+  "52000349": {
+    "name": "? Duke (Sep. 2026)",
+    "icon": "/home-base/skins/349.png",
+    "index": 231
+  },
+  "52000270": {
+    "name": "? Prince (Sep. 2026)",
+    "icon": "/home-base/skins/270.png",
+    "index": 232
+  },
+  "52000303": {
+    "name": "? Champion (Sep. 2026)",
+    "icon": "/home-base/skins/303.png",
+    "index": 233
+  },
+  "52000332": {
+    "name": "? Warden (Oct. 2026)",
+    "icon": "/home-base/skins/332.png",
+    "index": 228
+  },
+  "52000293": {
+    "name": "? King (Oct. 2026)",
+    "icon": "/home-base/skins/293.png",
+    "index": 229
+  },
+  "52000321": {
+    "name": "? Queen (Oct. 2026)",
+    "icon": "/home-base/skins/321.png",
+    "index": 230
+  },
+  "52000350": {
+    "name": "? Duke (Oct. 2026)",
+    "icon": "/home-base/skins/350.png",
+    "index": 231
+  },
+  "52000353": {
+    "name": "? Prince (Oct. 2026)",
+    "icon": "/home-base/skins/353.png",
+    "index": 232
+  },
+  "52000304": {
+    "name": "? Champion (Oct. 2026)",
+    "icon": "/home-base/skins/304.png",
+    "index": 233
+  },
+  "52000333": {
+    "name": "? Warden (Nov. 2026)",
+    "icon": "/home-base/skins/333.png",
+    "index": 228
+  },
+  "52000294": {
+    "name": "? King (Nov. 2026)",
+    "icon": "/home-base/skins/294.png",
+    "index": 229
+  },
+  "52000322": {
+    "name": "? Queen (Nov. 2026)",
+    "icon": "/home-base/skins/322.png",
+    "index": 230
+  },
+  "52000351": {
+    "name": "? Duke (Nov. 2026)",
+    "icon": "/home-base/skins/351.png",
+    "index": 231
+  },
+  "52000354": {
+    "name": "? Prince (Nov. 2026)",
+    "icon": "/home-base/skins/354.png",
+    "index": 232
+  },
+  "52000378": {
+    "name": "? Champion (Nov. 2026)",
+    "icon": "/home-base/skins/378.png",
+    "index": 233
+  },
+  "52000334": {
+    "name": "? Warden (Dec. 2026)",
+    "icon": "/home-base/skins/334.png",
+    "index": 228
+  },
+  "52000368": {
+    "name": "? King (Dec. 2026)",
+    "icon": "/home-base/skins/368.png",
+    "index": 229
+  },
+  "52000323": {
+    "name": "? Queen (Dec. 2026)",
+    "icon": "/home-base/skins/323.png",
+    "index": 230
+  },
+  "52000352": {
+    "name": "? Duke (Dec. 2026)",
+    "icon": "/home-base/skins/352.png",
+    "index": 231
+  },
+  "52000355": {
+    "name": "? Prince (Dec. 2026)",
+    "icon": "/home-base/skins/355.png",
+    "index": 232
+  },
+  "52000379": {
+    "name": "? Champion (Dec. 2026)",
+    "icon": "/home-base/skins/379.png",
+    "index": 233
+  },
   "82000000": {
     "name": "Brown Fence",
     "icon": "/home-base/clancapital/0.png",
