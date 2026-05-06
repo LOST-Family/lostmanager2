@@ -6,16 +6,392 @@
                     "name": "",
                     "IfMoreThan": {
                         "type": "count",
+                        "allowed": 2,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Spooky Spa",
+                            "id": "18000098"
+                        }]
+                    },
+                    "ThenForbidden": {
+                        "CasesStrict": [{
+                            "name": "",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 1,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Cozy Coffin",
+                                    "id": "18000096"
+                                },{
+                                    "type": "element",
+                                    "name": "Pumpkin Scarecrow",
+                                    "id": "18000099"
+                                }]
+                            },
+                            "ThenForbidden": {
+                                "CasesStrict": [{
+                                    "name": "",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 2,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Cozy Coffin",
+                                            "id": "18000096"
+                                        },{
+                                            "type": "element",
+                                            "name": "Pumpkin Scarecrow",
+                                            "id": "18000099"
+                                        }]
+                                    },
+                                    "ThenForbidden": {
+                                        "CasesStrict": [{
+                                            "name": "Hat 3 Spooky Spa und 3 'Pumpkin Scarecrow Deco'/'Cozy Coffin Deco' und ein 'Halloween 2023 Clan House' oder 'Friendly Clown Deco' oder 'Dragon Fountain Deco'",
+                                            "IfMoreThan": {
+                                                "type": "quantity",
+                                                "allowed": 0,
+                                                "elements": [{
+                                                    "type": "element",
+                                                    "name": "Halloween Roof",
+                                                    "id": "82000108"
+                                                }, {
+                                                    "type": "element",
+                                                    "name": "Dinosaur",
+                                                    "id": "82000109"
+                                                },{
+                                                    "type": "element",
+                                                    "name": "Friendly Clown",
+                                                    "id": "18000097"
+                                                },{
+                                                    "type": "element",
+                                                    "name": "Dragon Fountain",
+                                                    "id": "18000220"
+                                                }]
+                                            }
+                                        },{
+                                            "IfMoreThan": {
+                                                "name": "Hat 3 Spooky Spa und mehr als 3 'Pumpkin Scarecrow Decos'/'Cozy Coffin Deco'",
+                                                "type": "quantity",
+                                                "allowed": 3,
+                                                "elements": [{
+                                                    "type": "element",
+                                                    "name": "Cozy Coffin",
+                                                    "id": "18000096"
+                                                },{
+                                                    "type": "element",
+                                                    "name": "Pumpkin Scarecrow",
+                                                    "id": "18000099"
+                                                }]
+                                            }
+                                        }]
+                                    }
+                                },{
+                                    "name": "",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 0,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Friendly Clown",
+                                            "id": "18000097"
+                                        }]
+                                    },
+                                    "ThenForbidden": {
+                                        "CasesStrict": [{
+                                            "name": "Hat 3 Spooky Spa und 2 'Pumpkin Scarecrow Deco'/'Cozy Coffin Deco' sowie 'Friendly Clown Deco' und entweder 'Halloween Roof' oder 'Dinosaur Clan House'",
+                                            "IfMoreThan": {
+                                                "type": "quantity",
+                                                "allowed": 0,
+                                                "elements": [{
+                                                    "type": "element",
+                                                    "name": "Halloween Roof",
+                                                    "id": "82000108"
+                                                }, {
+                                                    "type": "element",
+                                                    "name": "Dinosaur",
+                                                    "id": "82000109"
+                                                }]
+                                            }
+                                        }]
+                                    }
+                                },{
+                                    "name": "",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 0,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Dragon Fountain",
+                                            "id": "18000220"
+                                        }]
+                                    },
+                                    "ThenForbidden": {
+                                        "name": "Hat 3 Spooky Spa und 2 'Pumpkin Scarecrow Deco'/'Cozy Coffin Deco' und 'Dragon Fountain Deco' sowie ein 'Halloween 2023 Clan House' oder 'Friendly Clown Deco'",
+                                        "IfMoreThan": {
+                                            "type": "quantity",
+                                            "allowed": 0,
+                                            "elements": [{
+                                                "type": "element",
+                                                "name": "Halloween Roof",
+                                                "id": "82000108"
+                                            }, {
+                                                "type": "element",
+                                                "name": "Dinosaur",
+                                                "id": "82000109"
+                                            },{
+                                                "type": "element",
+                                                "name": "Friendly Clown",
+                                                "id": "18000097"
+                                            }]
+                                        }
+                                    }
+                                }]
+                            }
+                        }]
+                    }
+                },{
+                    "name": "",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 1,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Spooky Spa",
+                            "id": "18000098"
+                        }]
+                    },
+                    "ThenForbidden": {
+                        "CasesStrict": [{
+                            "name": "",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 2,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Cozy Coffin",
+                                    "id": "18000096"
+                                },{
+                                    "type": "element",
+                                    "name": "Pumpkin Scarecrow",
+                                    "id": "18000099"
+                                }]
+                            },
+                            "ThenForbidden": {
+                                "CasesStrict": [{
+                                    "name": "",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 3,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Cozy Coffin",
+                                            "id": "18000096"
+                                        },{
+                                            "type": "element",
+                                            "name": "Pumpkin Scarecrow",
+                                            "id": "18000099"
+                                        }]
+                                    },
+                                    "ThenForbidden": {
+                                        "CasesStrict": [{
+                                            "name": "Hat 2 'Spooky Spa Deco' sowie 4 'Pumpkin Scarecrow Deco'/'Cozy Coffin Deco' sowie 'Dragon Fountain Deco'",
+                                            "IfMoreThan": {
+                                                "type": "quantity",
+                                                "allowed": 0,
+                                                "elements": [{
+                                                    "type": "element",
+                                                    "name": "Dragon Fountain",
+                                                    "id": "18000220"
+                                                }]
+                                            }
+                                        },{
+                                            "name": "Hat 2 'Spooky Spa' und 4 'Pumpkin Scarecrow Deco'/'Cozy Coffin Deco' und ein 'Halloween 2023 Clan House' oder 'Friendly Clown Deco'",
+                                            "IfMoreThan": {
+                                                "type": "quantity",
+                                                "allowed": 0,
+                                                "elements": [{
+                                                    "type": "element",
+                                                    "name": "Halloween Roof",
+                                                    "id": "82000108"
+                                                }, {
+                                                    "type": "element",
+                                                    "name": "Dinosaur",
+                                                    "id": "82000109"
+                                                },{
+                                                    "type": "element",
+                                                    "name": "Friendly Clown",
+                                                    "id": "18000097"
+                                                }]
+                                            }
+                                        }]
+                                    }
+                                },{
+                                    "name": "",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 0,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Friendly Clown",
+                                            "id": "18000097"
+                                        }]
+                                    },
+                                    "ThenForbidden": {
+                                        "CasesStrict": [{
+                                            "name": "Hat 2 Spooky Spa und 3 'Pumpkin Scarecrow Deco'/'Cozy Coffin Deco' sowie 'Friendly Clown Deco' und entweder 'Halloween Roof' oder 'Dinosaur Clan House'",
+                                            "IfMoreThan": {
+                                                "type": "quantity",
+                                                "allowed": 0,
+                                                "elements": [{
+                                                    "type": "element",
+                                                    "name": "Halloween Roof",
+                                                    "id": "82000108"
+                                                }, {
+                                                    "type": "element",
+                                                    "name": "Dinosaur",
+                                                    "id": "82000109"
+                                                }]
+                                            }
+                                        }]
+                                    }
+                                },{
+                                    "name": "",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 0,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Dragon Fountain",
+                                            "id": "18000220"
+                                        }]
+                                    },
+                                    "ThenForbidden": {
+                                        "name": "Hat 2 Spooky Spa und 3 'Pumpkin Scarecrow Deco'/'Cozy Coffin Deco' und 'Dragon Fountain Deco' sowie ein 'Halloween 2023 Clan House' oder 'Friendly Clown Deco'",
+                                        "IfMoreThan": {
+                                            "type": "quantity",
+                                            "allowed": 0,
+                                            "elements": [{
+                                                "type": "element",
+                                                "name": "Halloween Roof",
+                                                "id": "82000108"
+                                            }, {
+                                                "type": "element",
+                                                "name": "Dinosaur",
+                                                "id": "82000109"
+                                            },{
+                                                "type": "element",
+                                                "name": "Friendly Clown",
+                                                "id": "18000097"
+                                            }]
+                                        }
+                                    }
+                                }]
+                            }
+                        }]
+                    }
+                },{
+                    "name": "",
+                    "IfMoreThan": {
+                        "type": "count",
+                        "allowed": 0,
+                        "elements": [{
+                            "type": "element",
+                            "name": "Spooky Spa",
+                            "id": "18000098"
+                        }]
+                    },
+                    "ThenForbidden": {
+                        "CasesStrict": [{
+                            "name": "",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 3,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Cozy Coffin",
+                                    "id": "18000096"
+                                },{
+                                    "type": "element",
+                                    "name": "Pumpkin Scarecrow",
+                                    "id": "18000099"
+                                }]
+                            },
+                            "ThenForbidden": {
+                                "CasesStrict": [{
+                                    "name": "",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 0,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Friendly Clown",
+                                            "id": "18000097"
+                                        }]
+                                    },
+                                    "ThenForbidden": {
+                                        "CasesStrict": [{
+                                            "name": "Hat 1 Spooky Spa und 4 'Pumpkin Scarecrow Deco'/'Cozy Coffin Deco' sowie 'Friendly Clown Deco' und entweder 'Halloween Roof' oder 'Dinosaur Clan House'",
+                                            "IfMoreThan": {
+                                                "type": "quantity",
+                                                "allowed": 0,
+                                                "elements": [{
+                                                    "type": "element",
+                                                    "name": "Halloween Roof",
+                                                    "id": "82000108"
+                                                }, {
+                                                    "type": "element",
+                                                    "name": "Dinosaur",
+                                                    "id": "82000109"
+                                                }]
+                                            }
+                                        }]
+                                    }
+                                },{
+                                    "name": "",
+                                    "IfMoreThan": {
+                                        "type": "quantity",
+                                        "allowed": 0,
+                                        "elements": [{
+                                            "type": "element",
+                                            "name": "Dragon Fountain",
+                                            "id": "18000220"
+                                        }]
+                                    },
+                                    "ThenForbidden": {
+                                        "name": "Hat 1 Spooky Spa und 4 'Pumpkin Scarecrow Deco'/'Cozy Coffin Deco' und 'Dragon Fountain Deco' sowie ein 'Halloween 2023 Clan House' oder 'Friendly Clown Deco'",
+                                        "IfMoreThan": {
+                                            "type": "quantity",
+                                            "allowed": 0,
+                                            "elements": [{
+                                                "type": "element",
+                                                "name": "Halloween Roof",
+                                                "id": "82000108"
+                                            }, {
+                                                "type": "element",
+                                                "name": "Dinosaur",
+                                                "id": "82000109"
+                                            },{
+                                                "type": "element",
+                                                "name": "Friendly Clown",
+                                                "id": "18000097"
+                                            }]
+                                        }
+                                    }
+                                }]
+                            }
+                        }]
+                    }
+                },{
+                    "name": "",
+                    "IfMoreThan": {
+                        "type": "quantity",
                         "allowed": 3,
                         "elements": [{
                             "type": "element",
                             "name": "Cozy Coffin",
                             "id": "18000096"
-                        }, {
-                            "type": "element",
-                            "name": "Spooky Spa",
-                            "id": "18000098"
-                        }, {
+                        },{
                             "type": "element",
                             "name": "Pumpkin Scarecrow",
                             "id": "18000099"
@@ -35,7 +411,7 @@
                             },
                             "ThenForbidden": {
                                 "CasesStrict": [{
-                                    "name": "Hat 4 'Pumpkin Scarecrow Decos', 'Spooky Spa Deco' und 'Cozy Coffin Deco' sowie 'Friendly Clown Deco' und entweder 'Halloween Roof' oder 'Dinosaur Clan House'",
+                                    "name": "Hat 1 Spooky Spa und 4 'Pumpkin Scarecrow Deco'/'Cozy Coffin Deco' sowie 'Friendly Clown Deco' und entweder 'Halloween Roof' oder 'Dinosaur Clan House'",
                                     "IfMoreThan": {
                                         "type": "quantity",
                                         "allowed": 0,
@@ -49,47 +425,6 @@
                                             "id": "82000109"
                                         }]
                                     }
-                                }]
-                            }
-                        }]
-                    }
-                }, {
-                    "name": "",
-                    "IfMoreThan": {
-                        "type": "count",
-                        "allowed": 4,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Cozy Coffin",
-                            "id": "18000096"
-                        }, {
-                            "type": "element",
-                            "name": "Spooky Spa",
-                            "id": "18000098"
-                        }, {
-                            "type": "element",
-                            "name": "Pumpkin Scarecrow",
-                            "id": "18000099"
-                        }]
-                    },
-                    "ThenForbidden": {
-                        "CasesStrict": [{
-                            "name": "Hat über 4 'Pumpkin Scarecrow Decos', 'Spooky Spa Deco' und 'Cozy Coffin Deco' sowie mindestens eins davon: 'Friendly Clown Deco','Halloween Roof' oder 'Dinosaur Clan House'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 0,
-                                "elements": [{
-                                    "type": "element",
-                                    "name": "Friendly Clown",
-                                    "id": "18000097"
-                                }, {
-                                    "type": "element",
-                                    "name": "Halloween Roof",
-                                    "id": "82000108"
-                                }, {
-                                    "type": "element",
-                                    "name": "Dinosaur",
-                                    "id": "82000109"
                                 }]
                             }
                         }]
@@ -1386,7 +1721,7 @@
                         "allowed": 3,
                         "elements": [{
                             "type": "element",
-                            "name": "Spooky Spa",
+                            "name": "Pumpkin Scarecrow",
                             "id": "18000099"
                         }]
                     }   
