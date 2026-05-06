@@ -3516,6 +3516,11 @@
   },
   "60000087": {
     "name": "Skeleton Kingdom Scenery (Apr. 2026, XL)",
+    "icon": "/home-base/sceneries/87.png",
+    "index": 67
+  },
+  "60000088": {
+    "name": "Skeleton Kingdom Scenery (Apr. 2026, XL)",
     "icon": "/home-base/sceneries/86.png",
     "index": 66
   },
