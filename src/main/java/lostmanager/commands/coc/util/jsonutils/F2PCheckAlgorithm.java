@@ -55,6 +55,100 @@ public class F2PCheckAlgorithm {
         return check(rules, playerData);
     }
 
+    private String formatData(Object data, java.sql.Timestamp jsonTimestamp) {
+		if (data == null || data == JSONObject.NULL) {
+			return "Keine Daten vorhanden";
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		if (data instanceof JSONArray arr) {
+			if (arr.length() == 0) {
+				return "Keine Daten vorhanden";
+			}
+
+			// Check if array contains JSONObjects with "data" field
+			boolean hasDataField = false;
+			for (int i = 0; i < arr.length(); i++) {
+				Object item = arr.get(i);
+				if (item instanceof JSONObject itemObj && itemObj.has("data")) {
+					hasDataField = true;
+					break;
+				}
+			}
+
+			if (hasDataField) {
+				// Group by data ID and format
+				sb.append(formatGroupedData(arr, jsonTimestamp));
+			} else {
+				// Simple arrays (skins, sceneries, house_parts) - need to sort by index
+				// Fetch image map once for sorting
+				org.json.JSONObject imageMapCache = null;
+				try {
+					imageMapCache = lostmanager.util.ImageMapCache.fetchFullMapOnce();
+				} catch (Exception e) {
+					System.err.println("Failed to fetch image map for sorting simple arrays: " + e.getMessage());
+				}
+				final org.json.JSONObject finalImageMapCache = imageMapCache;
+
+				// Collect items into list for sorting
+				java.util.List<Object> items = new java.util.ArrayList<>();
+				for (int i = 0; i < arr.length(); i++) {
+					items.add(arr.get(i));
+				}
+
+				// Sort items by index (works for both Integer and String types)
+				items.sort((item1, item2) -> {
+					// Convert to string for lookup (works for both Integer and String)
+					String id1 = item1.toString();
+					String id2 = item2.toString();
+
+					try {
+						if (finalImageMapCache != null) {
+							JSONObject d1 = finalImageMapCache.has(id1) ? finalImageMapCache.getJSONObject(id1) : null;
+							JSONObject d2 = finalImageMapCache.has(id2) ? finalImageMapCache.getJSONObject(id2) : null;
+
+							int i1 = d1 != null && d1.has("index") ? d1.getInt("index") : Integer.MAX_VALUE;
+							int i2 = d2 != null && d2.has("index") ? d2.getInt("index") : Integer.MAX_VALUE;
+
+							if (i1 != i2) {
+								return Integer.compare(i1, i2);
+							}
+						}
+					} catch (org.json.JSONException ex) {
+						// Fallback to string comparison
+					}
+					return id1.compareTo(id2);
+				});
+
+				// Display sorted items with original formatting
+				for (int i = 0; i < items.size(); i++) {
+					Object item = items.get(i);
+					if (item instanceof JSONObject jsonItem) {
+						sb.append(formatObject(jsonItem, 0, jsonTimestamp));
+						if (i < items.size() - 1) {
+							sb.append("\n");
+						}
+					} else {
+						// Simple values (e.g., house_parts, skins, sceneries)
+						String rawVal = String.valueOf(item);
+						if (FilteredIdsCache.isFiltered(rawVal)) {
+							// skip filtered ids
+							continue;
+						}
+						String value = getMappedValue(rawVal);
+						sb.append("- ").append(value);
+						if (i < items.size() - 1) {
+							sb.append("\n");
+						}
+					}
+				}
+			}
+		}
+
+		return sb.toString();
+	}
+
     /**
      * Checks if a player is F2P based on their data and provided rules.
      * 
@@ -78,12 +172,8 @@ public class F2PCheckAlgorithm {
                 String forbiddenId = String.valueOf(strictForbidden.get(i));
                 if (playerData.containsKey(forbiddenId) && playerData.get(forbiddenId) > 0) {
                     String itemName = getItemName(forbiddenId);
-                    String price = ImageMapCache.getPrice(forbiddenId);
-                    String reason = "Besitzt streng verbotenes Item: " + itemName;
-                    if (price != null) {
-                        reason += " (Preis: " + price + ")";
-                    }
-                    allReasons.add(reason);
+                    String price = lostmanager.util.ImageMapCache.getPrice(forbiddenId);
+                    allReasons.add("Besitzt streng verbotenes Item: " + itemName + " Preis: " + price);
                     isF2P = false;
                 }
             }
@@ -270,9 +360,8 @@ public class F2PCheckAlgorithm {
 
     private static String getItemName(String dataId) {
         String name = ImageMapCache.getName(dataId);
-        String price = ImageMapCache.getPrice(dataId);
         if (name != null)
             return name;
-        return "Item " + dataId + " Preis: " + price;
+        return "Item " + dataId;
     }
 }
