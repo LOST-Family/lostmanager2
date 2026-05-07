@@ -5564,6 +5564,36 @@
     "icon": "/home-base/clancapital/151.png",
     "index": 125
   },
+  "82000152": {
+    "name": "LNY 2026 Walls",
+    "icon": "/home-base/clancapital/151.png",
+    "index": 126
+  },
+  "82000153": {
+    "name": "LNY 2026 Walls",
+    "icon": "/home-base/clancapital/151.png",
+    "index": 127
+  },
+  "82000154": {
+    "name": "Anime 2026 Ground",
+    "icon": "/home-base/clancapital/154.png",
+    "index": 128
+  },
+  "82000155": {
+    "name": "Anime 2026 Walls",
+    "icon": "/home-base/clancapital/155.png",
+    "index": 129
+  },
+  "82000156": {
+    "name": "Anime 2026 Deco",
+    "icon": "/home-base/clancapital/156.png",
+    "index": 130
+  },
+  "82000157": {
+    "name": "Anime 2026 Roof",
+    "icon": "/home-base/clancapital/157.png",
+    "index": 131
+  },
   "26000000": {
     "name": "Lightning Spell",
     "icon": "/home-base/spells/0.png"
