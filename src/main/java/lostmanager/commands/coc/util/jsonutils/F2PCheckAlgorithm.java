@@ -270,8 +270,9 @@ public class F2PCheckAlgorithm {
 
     private static String getItemName(String dataId) {
         String name = ImageMapCache.getName(dataId);
+        String price = ImageMapCache.getPrice(dataId);
         if (name != null)
             return name;
-        return "Item " + dataId;
+        return "Item " + dataId + " Preis: " + price;
     }
 }
