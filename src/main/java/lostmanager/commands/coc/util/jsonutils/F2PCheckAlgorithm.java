@@ -77,8 +77,9 @@ public class F2PCheckAlgorithm {
             for (int i = 0; i < strictForbidden.length(); i++) {
                 String forbiddenId = String.valueOf(strictForbidden.get(i));
                 if (playerData.containsKey(forbiddenId) && playerData.get(forbiddenId) > 0) {
+                    String price = lostmanager.util.ImageMapCache.getPrice(dataValue);
                     String itemName = getItemName(forbiddenId);
-                    allReasons.add("Besitzt streng verbotenes Item: " + itemName);
+                    allReasons.add("Besitzt streng verbotenes Item: " + itemName + " Preis: " + price);
                     isF2P = false;
                 }
             }
