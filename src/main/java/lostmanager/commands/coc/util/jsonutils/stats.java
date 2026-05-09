@@ -62,8 +62,8 @@ public class stats extends ListenerAdapter {
 		STAT_TO_FIELD.put("Equips", "equipment");
 		STAT_TO_FIELD.put("Helpers", "helpers");
 		STAT_TO_FIELD.put("Guardians", "guardians");
-		STAT_TO_FIELD.put("Heroes", "heroes");
 		STAT_TO_FIELD.put("Heroes (BB)", "heroes2");
+		STAT_TO_FIELD.put("Heroes", "heroes");
 		STAT_TO_FIELD.put("House Parts", "house_parts");
 		STAT_TO_FIELD.put("Obstacles", "obstacles");
 		STAT_TO_FIELD.put("Obstacles (BB)", "obstacles2");
