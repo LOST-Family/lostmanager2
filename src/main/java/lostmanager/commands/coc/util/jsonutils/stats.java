@@ -1315,75 +1315,74 @@ public class stats extends ListenerAdapter {
 		boolean isBuilderVariant = isBuilderVariantName(name);
 
 		switch (statType) {
-			case "Helpers" -> {
-				return path.contains("/apprentice/") || path.contains("/helpers/") || path.contains("/helper/");
-			}
-			case "Guardians" -> {
-				return path.contains("/guardians/");
-			}
 			case "Buildings" -> {
 				return path.contains("/buildings/") && isHome;
-			}
-			case "Buildings (BB)" -> {
-				return path.contains("/buildings/") && isBuilder;
-			}
-			case "Traps" -> {
-				return path.contains("/traps/") && isHome;
-			}
-			case "Traps (BB)" -> {
-				return path.contains("/traps/") && isBuilder;
 			}
 			case "Decos" -> {
 				return path.contains("/decorations/") && !isBuilderVariant;
 			}
-			case "Decos (BB)" -> {
-				return path.contains("/decorations/") && isBuilderVariant;
+			case "Equips" -> {
+				return path.contains("/equipment/");
 			}
-			case "Obstacles" -> {
-				return path.contains("/obstacles/") && !isBuilderVariant;
+			case "Guardians" -> {
+				return path.contains("/guardians/");
 			}
-			case "Obstacles (BB)" -> {
-				return path.contains("/obstacles/") && isBuilderVariant;
-			}
-			case "Units" -> {
-				return path.contains("/troops/") && isHome && !isSiegeMachine(name);
-			}
-			case "Units (BB)" -> {
-				return path.contains("/troops/") && isBuilder;
-			}
-			case "Sieges" -> {
-				return path.contains("/troops/") && isHome && isSiegeMachine(name);
+			case "Helpers" -> {
+				return path.contains("/apprentice/") || path.contains("/helpers/") || path.contains("/helper/");
 			}
 			case "Heroes" -> {
 				return path.contains("/heroes/") && isHome;
-			}
-			case "Heroes (BB)" -> {
-				return path.contains("/heroes/") && isBuilder;
-			}
-			case "Spells" -> {
-				return path.contains("/spells/");
-			}
-			case "Pets" -> {
-				return path.contains("/pets/");
-			}
-			case "Equips" -> {
-				return path.contains("/equipment/");
 			}
 			case "House Parts" -> {
 				return path.contains("/clancapital/") || path.contains("/capital-house/")
 						|| path.contains("/house-parts/");
 			}
+			case "Obstacles" -> {
+				return path.contains("/obstacles/") && !isBuilderVariant;
+			}
+			case "Pets" -> {
+				return path.contains("/pets/");
+			}
+			case "Sceneries" -> {
+				return path.contains("/sceneries/") && !isBuilderVariant;
+			case "Sieges" -> {
+				return path.contains("/troops/") && isHome && isSiegeMachine(name);
+			}
 			case "Skins" -> {
 				return path.contains("/skins/") && isHome;
+			}
+			case "Spells" -> {
+				return path.contains("/spells/");
+			}
+			case "Traps" -> {
+				return path.contains("/traps/") && isHome;
+			}
+			case "Units" -> {
+				return path.contains("/troops/") && isHome && !isSiegeMachine(name);
+			}
+			case "Buildings (BB)" -> {
+				return path.contains("/buildings/") && isBuilder;
+			}
+			case "Decos (BB)" -> {
+				return path.contains("/decorations/") && isBuilderVariant;
+			}
+			case "Heroes (BB)" -> {
+				return path.contains("/heroes/") && isBuilder;
+			}
+			case "Obstacles (BB)" -> {
+				return path.contains("/obstacles/") && isBuilderVariant;
+			}
+			case "Sceneries (BB)" -> {
+				return path.contains("/builder-base/sceneries/") || (path.contains("/sceneries/") && isBuilderVariant);
 			}
 			case "Skins (BB)" -> {
 				return path.contains("/skins/") && isBuilder;
 			}
-			case "Sceneries" -> {
-				return path.contains("/sceneries/") && !isBuilderVariant;
+			case "Traps (BB)" -> {
+				return path.contains("/traps/") && isBuilder;
 			}
-			case "Sceneries (BB)" -> {
-				return path.contains("/builder-base/sceneries/") || (path.contains("/sceneries/") && isBuilderVariant);
+			case "Units (BB)" -> {
+				return path.contains("/troops/") && isBuilder;
 			}
 			default -> {
 				return false;
