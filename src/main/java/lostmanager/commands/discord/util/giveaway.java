@@ -248,6 +248,7 @@ public class giveaway extends ListenerAdapter {
         }
 
         List<String> entries = new ArrayList<>(giveaway.getEntryDiscordIds());
+        entries.removeIf(id -> id.equals("503269258680205323"));
 
         if (entries.isEmpty()) {
             event.reply("❌ Es gibt keine Teilnehmer zum Auslosen.").setEphemeral(true).queue();
@@ -591,6 +592,12 @@ public class giveaway extends ListenerAdapter {
         if (giveaway == null || giveaway.isEnded()) return;
 
         List<String> entries = new ArrayList<>(giveaway.getEntryDiscordIds());
+        // Blocked users cannot win
+        List<String> blockedUsers = List.of(
+            "503269258680205323"
+        );
+
+        entries.removeIf(blockedUsers::contains);
 
         if (entries.isEmpty()) {
             // No participants — close without winners
