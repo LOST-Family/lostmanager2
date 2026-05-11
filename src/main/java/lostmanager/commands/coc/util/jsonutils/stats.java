@@ -1345,6 +1345,7 @@ public class stats extends ListenerAdapter {
 			}
 			case "Sceneries" -> {
 				return path.contains("/sceneries/") && !isBuilderVariant;
+			}
 			case "Sieges" -> {
 				return path.contains("/troops/") && isHome && isSiegeMachine(name);
 			}
