@@ -2854,6 +2854,16 @@
     "icon": "/home-base/decorations/210.png",
     "index": 136
   },
+  "18000206": {
+    "name": "Hog Skull (May. 2026)",
+    "icon": "/home-base/decorations/206.png",
+    "index": 100000
+  },
+  "18000205": {
+    "name": "Darkness Throne (May. 2026)",
+    "icon": "/home-base/decorations/205.png",
+    "index": 100001
+  },
   "18000214": {
     "name": "Team Jade vs. Skeletons (May. 2026)",
     "icon": "/home-base/decorations/214.png",
@@ -2880,35 +2890,25 @@
     "price": "6€",
     "index": 141
   },
-  "18000206": {
-    "name": "Hog Skull (May. 2026)",
-    "icon": "/home-base/decorations/206.png",
-    "index": 142
-  },
-  "18000205": {
-    "name": "Darkness Throne (May. 2026)",
-    "icon": "/home-base/decorations/205.png",
-    "index": 143
-  },
   "18000216": {
     "name": "Barbarian Fury (May. 2026)",
     "icon": "/home-base/decorations/216.png",
-    "index": 144
+    "index": 142
   },
   "18000218": {
     "name": "Fury Figurine (May. 2026)",
     "icon": "/home-base/decorations/218.png",
-    "index": 145
+    "index": 143
   },
   "18000217": {
     "name": "Lucky Cat (June. 2026)",
     "icon": "/home-base/decorations/217.png",
-    "index": 146
+    "index": 144
   },
   "18000219": {
     "name": "Trophy Ball (June. 2026)",
     "icon": "/home-base/decorations/219.png",
-    "index": 147
+    "index": 145
   },
   "8000015": {
     "name": "2012 Stone",
