@@ -968,7 +968,8 @@ public class ManagementApiHandler implements HttpHandler {
 			}
 		}
 		if (isClientDisconnect) {
-			System.out.println("Client disconnected in ManagementApiHandler: " + e.getMessage());
+			// Ignorieren, um Log-Spam zu vermeiden
+			// System.out.println("Client disconnected in ManagementApiHandler: " + e.getMessage());
 		} else {
 			System.err.println("Error in ManagementApiHandler: " + e.getMessage());
 			e.printStackTrace();
