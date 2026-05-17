@@ -2142,7 +2142,7 @@
     "icon": "/home-base/equipments/57.png"
   },
   "18000000": {
-    "name": "Mighty Statue (Aug. 2012",
+    "name": "Mighty Statue (Aug. 2012)",
     "icon": "/home-base/decorations/0.png",
     "index": 0
   },
@@ -2209,12 +2209,6 @@
   },
   "18000054": {
     "name": "Original Snowman (Dec. 2018)",
-    "icon": "/home-base/decorations/55.png",
-    "price": "5€",
-    "index": 13
-  },
-  "18000055": {
-    "name": "Snowman (Dec. 2018)",
     "icon": "/home-base/decorations/55.png",
     "price": "5€",
     "index": 13
@@ -2697,7 +2691,7 @@
     "index": 105
   },
   "18000176": {
-    "name": "Sacred Gate (May 2025) (EP)",
+    "name": "Sacred Gate (May 2025)",
     "icon": "/home-base/decorations/176.png",
     "index": 106
   },
@@ -2840,9 +2834,9 @@
     "icon": "/home-base/decorations/208.png",
     "index": 132
   },
-  "18000211": {
+  "18000207": {
     "name": "Builder Bust (Apr. 2026)",
-    "icon": "/home-base/decorations/211.png",
+    "icon": "/home-base/decorations/207.png",
     "index": 133
   },
   "18000212": {
@@ -2860,46 +2854,61 @@
     "icon": "/home-base/decorations/210.png",
     "index": 136
   },
-  "18000216": {
-    "name": "Team Jade vs. SKeletons (May. 2026)",
-    "icon": "/home-base/decorations/216.png",
-    "index": 137
+  "18000206": {
+    "name": "Hog Skull (May. 2026)",
+    "icon": "/home-base/decorations/206.png",
+    "index": 100000
   },
-  "18000217": {
-    "name": "Team Amethyst vs. Skeletons (May. 2026)",
-    "icon": "/home-base/decorations/217.png",
-    "index": 138
+  "18000205": {
+    "name": "Darkness Throne (May. 2026)",
+    "icon": "/home-base/decorations/205.png",
+    "index": 100001
   },
   "18000214": {
-    "name": "Hog Skull (May. 2026)",
+    "name": "Team Jade vs. Skeletons (May. 2026)",
     "icon": "/home-base/decorations/214.png",
+    "index": 137
+  },
+  "18000215": {
+    "name": "Team Amethyst vs. Skeletons (May. 2026)",
+    "icon": "/home-base/decorations/215.png",
+    "index": 138
+  },
+  "18000220": {
+    "name": "Dragon Fountain (May. 2026)",
+    "icon": "/home-base/decorations/220.png",
     "index": 139
   },
   "18000213": {
-    "name": "Darkness Throne (May. 2026)",
+    "name": "Meteor Crown (May. 2026)",
     "icon": "/home-base/decorations/213.png",
     "index": 140
   },
-  "18000215": {
+  "18000211": {
     "name": "Bone Idol (May. 2026)",
-    "icon": "/home-base/decorations/215.png",
+    "icon": "/home-base/decorations/211.png",
     "price": "6€",
     "index": 141
   },
-  "18000218": {
+  "18000216": {
     "name": "Barbarian Fury (May. 2026)",
-    "icon": "/home-base/decorations/218.png",
+    "icon": "/home-base/decorations/216.png",
     "index": 142
   },
-  "18000219": {
+  "18000218": {
     "name": "Fury Figurine (May. 2026)",
-    "icon": "/home-base/decorations/219.png",
+    "icon": "/home-base/decorations/218.png",
     "index": 143
   },
-  "18000220": {
+  "18000217": {
     "name": "Lucky Cat (June. 2026)",
-    "icon": "/home-base/decorations/220.png",
+    "icon": "/home-base/decorations/217.png",
     "index": 144
+  },
+  "18000219": {
+    "name": "Trophy Ball (June. 2026)",
+    "icon": "/home-base/decorations/219.png",
+    "index": 145
   },
   "8000015": {
     "name": "2012 Stone",
@@ -3316,7 +3325,7 @@
     "index": 29
   },
   "60000047": {
-    "name": "Crystal Caverns Scenery (Jul. 2023)",
+    "name": "Crystal Caverns Scenery (BB, Jul. 2023)",
     "icon": "/home-base/sceneries/47.png",
     "index": 0
   },
@@ -3341,7 +3350,7 @@
     "index": 32
   },
   "60000054": {
-    "name": "Of the North Scenery (Jan. 2024)",
+    "name": "Of the North Scenery (BB, Jan. 2024)",
     "icon": "/home-base/sceneries/54.png",
     "index": 1
   },
@@ -3507,8 +3516,13 @@
   },
   "60000087": {
     "name": "Skeleton Kingdom Scenery (Apr. 2026, XL)",
-    "icon": "/home-base/sceneries/86.png",
-    "index": 66
+    "icon": "/home-base/sceneries/87.png",
+    "index": 67
+  },
+  "60000088": {
+    "name": "Classic Skeleton Scenery (Apr. 2026)",
+    "icon": "/home-base/sceneries/88.png",
+    "index": 68
   },
   "52000001": {
     "name": "Gladiator King (Apr. 2019 GP)",
@@ -4705,10 +4719,220 @@
     "icon": "/home-base/skins/299.png",
     "index": 233
   },
-  "52000288": {
+  "52000289": {
     "name": "Shadow Samurai King (May. 2026 (exclusive!))",
     "icon": "/home-base/skins/288.png",
     "index": 234
+  },
+  "52000249": {
+    "name": "? Warden (Jun. 2026)",
+    "icon": "/home-base/skins/249.png",
+    "index": 228
+  },
+  "52000288": {
+    "name": "? King (Jun. 2026)",
+    "icon": "/home-base/skins/289.png",
+    "index": 229
+  },
+  "52000228": {
+    "name": "? Queen (Jun. 2026)",
+    "icon": "/home-base/skins/228.png",
+    "index": 230
+  },
+  "52000346": {
+    "name": "? Duke (Jun. 2026)",
+    "icon": "/home-base/skins/346.png",
+    "index": 231
+  },
+  "52000267": {
+    "name": "? Prince (Jun. 2026)",
+    "icon": "/home-base/skins/267.png",
+    "index": 232
+  },
+  "52000300": {
+    "name": "? Champion (Jun. 2026)",
+    "icon": "/home-base/skins/300.png",
+    "index": 233
+  },
+  "52000329": {
+    "name": "? Warden (Jul. 2026)",
+    "icon": "/home-base/skins/329.png",
+    "index": 228
+  },
+  "52000290": {
+    "name": "? King (Jul. 2026)",
+    "icon": "/home-base/skins/290.png",
+    "index": 229
+  },
+  "52000229": {
+    "name": "? Queen (Jul. 2026)",
+    "icon": "/home-base/skins/228.png",
+    "index": 230
+  },
+  "52000347": {
+    "name": "? Duke (Jul. 2026)",
+    "icon": "/home-base/skins/347.png",
+    "index": 231
+  },
+  "52000268": {
+    "name": "? Prince (Jul. 2026)",
+    "icon": "/home-base/skins/266.png",
+    "index": 232
+  },
+  "52000301": {
+    "name": "? Champion (Jul. 2026)",
+    "icon": "/home-base/skins/301.png",
+    "index": 233
+  },
+  "52000330": {
+    "name": "? Warden (Aug. 2026)",
+    "icon": "/home-base/skins/330.png",
+    "index": 228
+  },
+  "52000291": {
+    "name": "? King (Aug. 2026)",
+    "icon": "/home-base/skins/291.png",
+    "index": 229
+  },
+  "52000319": {
+    "name": "? Queen (Aug. 2026)",
+    "icon": "/home-base/skins/319.png",
+    "index": 230
+  },
+  "52000348": {
+    "name": "? Duke (Aug. 2026)",
+    "icon": "/home-base/skins/348.png",
+    "index": 231
+  },
+  "52000269": {
+    "name": "? Prince (Aug. 2026)",
+    "icon": "/home-base/skins/269.png",
+    "index": 232
+  },
+  "52000302": {
+    "name": "? Champion (Aug. 2026)",
+    "icon": "/home-base/skins/302.png",
+    "index": 233
+  },
+  "52000331": {
+    "name": "? Warden (Sep. 2026)",
+    "icon": "/home-base/skins/331.png",
+    "index": 228
+  },
+  "52000292": {
+    "name": "? King (Sep. 2026)",
+    "icon": "/home-base/skins/292.png",
+    "index": 229
+  },
+  "52000320": {
+    "name": "? Queen (Sep. 2026)",
+    "icon": "/home-base/skins/320.png",
+    "index": 230
+  },
+  "52000349": {
+    "name": "? Duke (Sep. 2026)",
+    "icon": "/home-base/skins/349.png",
+    "index": 231
+  },
+  "52000270": {
+    "name": "? Prince (Sep. 2026)",
+    "icon": "/home-base/skins/270.png",
+    "index": 232
+  },
+  "52000303": {
+    "name": "? Champion (Sep. 2026)",
+    "icon": "/home-base/skins/303.png",
+    "index": 233
+  },
+  "52000332": {
+    "name": "? Warden (Oct. 2026)",
+    "icon": "/home-base/skins/332.png",
+    "index": 228
+  },
+  "52000293": {
+    "name": "? King (Oct. 2026)",
+    "icon": "/home-base/skins/293.png",
+    "index": 229
+  },
+  "52000321": {
+    "name": "? Queen (Oct. 2026)",
+    "icon": "/home-base/skins/321.png",
+    "index": 230
+  },
+  "52000350": {
+    "name": "? Duke (Oct. 2026)",
+    "icon": "/home-base/skins/350.png",
+    "index": 231
+  },
+  "52000353": {
+    "name": "? Prince (Oct. 2026)",
+    "icon": "/home-base/skins/353.png",
+    "index": 232
+  },
+  "52000304": {
+    "name": "? Champion (Oct. 2026)",
+    "icon": "/home-base/skins/304.png",
+    "index": 233
+  },
+  "52000333": {
+    "name": "? Warden (Nov. 2026)",
+    "icon": "/home-base/skins/333.png",
+    "index": 228
+  },
+  "52000294": {
+    "name": "? King (Nov. 2026)",
+    "icon": "/home-base/skins/294.png",
+    "index": 229
+  },
+  "52000322": {
+    "name": "? Queen (Nov. 2026)",
+    "icon": "/home-base/skins/322.png",
+    "index": 230
+  },
+  "52000351": {
+    "name": "? Duke (Nov. 2026)",
+    "icon": "/home-base/skins/351.png",
+    "index": 231
+  },
+  "52000354": {
+    "name": "? Prince (Nov. 2026)",
+    "icon": "/home-base/skins/354.png",
+    "index": 232
+  },
+  "52000378": {
+    "name": "? Champion (Nov. 2026)",
+    "icon": "/home-base/skins/378.png",
+    "index": 233
+  },
+  "52000334": {
+    "name": "? Warden (Dec. 2026)",
+    "icon": "/home-base/skins/334.png",
+    "index": 228
+  },
+  "52000368": {
+    "name": "? King (Dec. 2026)",
+    "icon": "/home-base/skins/368.png",
+    "index": 229
+  },
+  "52000323": {
+    "name": "? Queen (Dec. 2026)",
+    "icon": "/home-base/skins/323.png",
+    "index": 230
+  },
+  "52000352": {
+    "name": "? Duke (Dec. 2026)",
+    "icon": "/home-base/skins/352.png",
+    "index": 231
+  },
+  "52000355": {
+    "name": "? Prince (Dec. 2026)",
+    "icon": "/home-base/skins/355.png",
+    "index": 232
+  },
+  "52000379": {
+    "name": "? Champion (Dec. 2026)",
+    "icon": "/home-base/skins/379.png",
+    "index": 233
   },
   "82000000": {
     "name": "Brown Fence",
@@ -5339,6 +5563,36 @@
     "name": "LNY 2026 Walls",
     "icon": "/home-base/clancapital/151.png",
     "index": 125
+  },
+  "82000152": {
+    "name": "LNY 2026 Walls",
+    "icon": "/home-base/clancapital/151.png",
+    "index": 126
+  },
+  "82000153": {
+    "name": "LNY 2026 Walls",
+    "icon": "/home-base/clancapital/151.png",
+    "index": 127
+  },
+  "82000154": {
+    "name": "Anime 2026 Ground",
+    "icon": "/home-base/clancapital/154.png",
+    "index": 128
+  },
+  "82000155": {
+    "name": "Anime 2026 Walls",
+    "icon": "/home-base/clancapital/155.png",
+    "index": 129
+  },
+  "82000156": {
+    "name": "Anime 2026 Deco",
+    "icon": "/home-base/clancapital/156.png",
+    "index": 130
+  },
+  "82000157": {
+    "name": "Anime 2026 Roof",
+    "icon": "/home-base/clancapital/157.png",
+    "index": 131
   },
   "26000000": {
     "name": "Lightning Spell",
