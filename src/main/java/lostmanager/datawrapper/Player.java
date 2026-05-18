@@ -653,8 +653,11 @@ public class Player {
 			} catch (IOException | InterruptedException e) {
 				if (attempt < maxRetries) {
 					long waitTime = (long) Math.pow(2, attempt) * 1000; // Exponential backoff
-					System.err.println("Request failed with exception: " + e.getMessage() + ", retrying in " + waitTime
-							+ "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
+					boolean isConnectionReset = e.getMessage() != null && e.getMessage().contains("Connection reset");
+					if (!isConnectionReset) {
+						System.err.println("Request failed with exception: " + e.getMessage() + ", retrying in " + waitTime
+								+ "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
+					}
 					try {
 						java.util.concurrent.TimeUnit.MILLISECONDS.sleep(waitTime);
 					} catch (InterruptedException ie) {

@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+
+import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -16,19 +19,15 @@ import com.sun.net.httpserver.HttpServer;
 
 import lostmanager.Bot;
 import lostmanager.datawrapper.Clan;
+import lostmanager.datawrapper.KickpointReason;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
-import lostmanager.datawrapper.KickpointReason;
 import lostmanager.dbutil.DBManager;
 import lostmanager.webserver.api.dto.ClanDTO;
-import lostmanager.webserver.api.dto.PlayerDTO;
-import lostmanager.webserver.api.dto.UserDTO;
 import lostmanager.webserver.api.dto.KickpointReasonDTO;
+import lostmanager.webserver.api.dto.PlayerDTO;
 import lostmanager.webserver.api.dto.SideclanDTO;
-
-import java.util.concurrent.Executors;
-
-import org.json.JSONObject;
+import lostmanager.webserver.api.dto.UserDTO;
 
 /**
  * REST API Server for Clans, Players, and Users
@@ -538,7 +537,10 @@ public class RestApiServer {
         }
 
         if (isClientDisconnect) {
-            System.out.println("Client disconnected in " + handlerName + ": " + e.getMessage());
+            // Dies passiert sehr oft, wenn Clients (z.B. der Browser oder das Frontend) 
+            // die Verbindung schließen, bevor der Server fertig geantwortet hat.
+            // Ignorieren, um Log-Spam zu vermeiden:
+            // System.out.println("Client disconnected in " + handlerName + ": " + e.getMessage());
         } else {
             System.err.println("Error in " + handlerName + ": " + e.getMessage());
             e.printStackTrace();
