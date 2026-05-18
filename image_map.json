@@ -3295,10 +3295,6 @@
     "icon": "/home-base/sceneries/37.png",
     "index": 23
   },
-  "60000038": {
-    "name": "Classic Scenery",
-    "icon": ""
-  },
   "60000040": {
     "name": "Dark Ages Scenery (Apr. 2023)",
     "icon": "/home-base/sceneries/40.png",
@@ -3395,7 +3391,7 @@
     "index": 45
   },
   "60000063": {
-    "name": "Clash of Dragons (Sep. 2025, Legendary)",
+    "name": "Clash of Dragons (Sep. 2024, Legendary)",
     "icon": "/home-base/sceneries/63.png",
     "index": 40
   },
@@ -3845,7 +3841,7 @@
     "index": 58
   },
   "52000074": {
-    "name": "Champion Warden (Nov. 2022 WM)",
+    "name": "Champion Warden (Sep. 2022 WM)",
     "icon": "/home-base/skins/74.png",
     "index": 59
   },
@@ -3865,7 +3861,7 @@
     "index": 62
   },
   "52000075": {
-    "name": "Magic Warden (Nov. 2021)",
+    "name": "Magic Warden (Nov. 2022)",
     "icon": "/home-base/skins/75.png",
     "index": 63
   },
@@ -4130,7 +4126,7 @@
     "index": 115
   },
   "52000144": {
-    "name": "Egypt Queen (Apr. 202)",
+    "name": "Egypt Queen (Apr. 2024)",
     "icon": "/home-base/skins/144.png",
     "index": 116
   },
@@ -4580,7 +4576,7 @@
     "index": 205
   },
   "52000208": {
-    "name": "Desert King (Jan. 2025 GP)",
+    "name": "Desert King (Jan. 2026 GP)",
     "icon": "/home-base/skins/208.png",
     "index": 206
   },
