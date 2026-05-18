@@ -3526,7 +3526,7 @@
     "index": 0
   },
   "52000153": {
-    "name": "Armored Machine (May 2023 BB Bonanza Challenge)",
+    "name": "Armored Machine (May 2023, BB Bonanza Challenge F2P)",
     "icon": "/builder-base/skins/153.png",
     "index": 0
   },
@@ -3686,7 +3686,7 @@
     "index": 27
   },
   "52000031": {
-    "name": "Jungle Champion (Apr. 2021)",
+    "name": "Jungle Champion (Apr. 2021, TH 14 Update)",
     "icon": "/home-base/skins/31.png",
     "index": 28
   },
@@ -3701,7 +3701,7 @@
     "index": 30
   },
   "52000047": {
-    "name": "Fierce King (Jun. 2021)",
+    "name": "Fierce King (Jun. 2021, Community Designed)",
     "icon": "/home-base/skins/47.png",
     "index": 31
   },
@@ -3716,7 +3716,7 @@
     "index": 33
   },
   "52000049": {
-    "name": "Beat King (Aug. 2021)",
+    "name": "Beat King (Aug. 2021 Clashiversary)",
     "icon": "/home-base/skins/49.png",
     "index": 34
   },
@@ -3816,22 +3816,22 @@
     "index": 53
   },
   "52000055": {
-    "name": "Pixel King (Aug. 2022 10th Birthday Event)",
+    "name": "Pixel King (Aug. 2022, 10th Birthday Event F2P)",
     "icon": "/home-base/skins/55.png",
     "index": 55
   },
   "52000064": {
-    "name": "Pixel Queen (Aug. 2022)",
+    "name": "Pixel Queen (Aug. 2022, 10th Birthday)",
     "icon": "/home-base/skins/64.png",
     "index": 56
   },
   "52000073": {
-    "name": "Pixel Warden (Aug. 2022)",
+    "name": "Pixel Warden (Aug. 2022, 10th Birthday)",
     "icon": "/home-base/skins/73.png",
     "index": 57
   },
   "52000036": {
-    "name": "Pixel Champion (Aug. 2022)",
+    "name": "Pixel Champion (Aug. 2022, 10th Birthday)",
     "icon": "/home-base/skins/36.png",
     "index": 54
   },
@@ -3851,22 +3851,22 @@
     "index": 60
   },
   "52000087": {
-    "name": "Magic King (Oct. 2022)",
+    "name": "Magic King (Oct. 2022, TH 15 Update)",
     "icon": "/home-base/skins/87.png",
     "index": 61
   },
   "52000066": {
-    "name": "Magic Queen (Oct. 2022)",
+    "name": "Magic Queen (Oct. 2022, TH 15 Update)",
     "icon": "/home-base/skins/66.png",
     "index": 62
   },
   "52000075": {
-    "name": "Magic Warden (Nov. 2022)",
+    "name": "Magic Warden (Oct. 2022, TH 15 Update)",
     "icon": "/home-base/skins/75.png",
     "index": 63
   },
   "52000038": {
-    "name": "Magic Champion (Oct. 2022)",
+    "name": "Magic Champion (Oct. 2022, TH 15 Update)",
     "icon": "/home-base/skins/38.png",
     "index": 64
   },
@@ -3901,7 +3901,7 @@
     "index": 70
   },
   "52000099": {
-    "name": "Heart Hunter Queen (Feb. 2023)",
+    "name": "Heart Hunter Queen (Feb. 2023, Valentine's Day)",
     "icon": "/home-base/skins/99.png",
     "index": 71
   },
@@ -3986,32 +3986,32 @@
     "index": 87
   },
   "52000122": {
-    "name": "Future Warden (Aug. 2023 GP)",
+    "name": "Future Warden (Aug. 2023 GP, 11th Clashiversary)",
     "icon": "/home-base/skins/122.png",
     "index": 88
   },
   "52000093": {
-    "name": "Future King (Aug. 2023)",
+    "name": "Future King (Aug. 2023, 11th Clashiversary)",
     "icon": "/home-base/skins/93.png",
     "index": 89
   },
   "52000103": {
-    "name": "Future Queen (Aug. 2023)",
+    "name": "Future Queen (Aug. 2023, 11th Clashiversary)",
     "icon": "/home-base/skins/103.png",
     "index": 90
   },
   "52000114": {
-    "name": "Future Champion (Aug. 2023)",
+    "name": "Future Champion (Aug. 2023, 11th Clashiversary)",
     "icon": "/home-base/skins/114.png",
     "index": 91
   },
   "52000105": {
-    "name": "Chess Queen (Sep. 2023 GP)",
+    "name": "Chess Queen (Sep. 2023 GP, Chess Collaboration)",
     "icon": "/home-base/skins/105.png",
     "index": 92
   },
   "52000096": {
-    "name": "Chess King (Sep. 2023)",
+    "name": "Chess King (Sep. 2023, Chess Collaboration)",
     "icon": "/home-base/skins/96.png",
     "index": 93
   },
@@ -4026,7 +4026,7 @@
     "index": 95
   },
   "52000101": {
-    "name": "Ghost Queen (Oct. 2023 F2P Mashup Madness Event)",
+    "name": "Ghost Queen (Oct. 2023, Mashup Madness Event F2P)",
     "icon": "/home-base/skins/101.png",
     "index": 96
   },
@@ -4051,7 +4051,7 @@
     "index": 100
   },
   "52000094": {
-    "name": "Gingerbread King (Dec. 2023)",
+    "name": "Gingerbread King (Dec. 2023, Cookie Rumble Event)",
     "icon": "/home-base/skins/94.png",
     "index": 101
   },
@@ -4076,7 +4076,7 @@
     "index": 105
   },
   "52000124": {
-    "name": "Dragon Warden (Feb. 2024)",
+    "name": "Dragon Warden (Feb. 2024, Dragon Festival Event)",
     "icon": "/home-base/skins/124.png",
     "index": 106
   },
@@ -4136,12 +4136,12 @@
     "index": 117
   },
   "52000137": {
-    "name": "King Haaland (May 2024 (exclusive!))",
+    "name": "King Haaland (May 2024, Erling Haaland Event (exclusive!))",
     "icon": "/home-base/skins/137.png",
     "index": 118
   },
   "52000145": {
-    "name": "Football Queen (May 2024)",
+    "name": "Football Queen (May 2024, Erling Haaland Event)",
     "icon": "/home-base/skins/145.png",
     "index": 119
   },
@@ -4156,7 +4156,7 @@
     "index": 121
   },
   "52000136": {
-    "name": "Super Squad King (May 2024 F2P Squad Busters)",
+    "name": "Super Squad King (May 2024, Squad Busters F2P)",
     "icon": "/home-base/skins/136.png",
     "index": 122
   },
@@ -4346,27 +4346,27 @@
     "index": 159
   },
   "52000253": {
-    "name": "Prince Mysterio (Apr. 2025 GP (exclusive!))",
+    "name": "Prince Mysterio (Apr. 2025 GP, WWE Event (exclusive!))",
     "icon": "/home-base/skins/253.png",
     "index": 160
   },
   "52000199": {
-    "name": "King Cody (Apr. 2025 (exclusive!))",
+    "name": "King Cody (Apr. 2025, WWE Event (exclusive!))",
     "icon": "/home-base/skins/199.png",
     "index": 161
   },
   "52000179": {
-    "name": "The RoyalEST (Apr. 2025 (exclusive!))",
+    "name": "The RoyalEST (Apr. 2025, WWE Event (exclusive!))",
     "icon": "/home-base/skins/179.png",
     "index": 162
   },
   "52000214": {
-    "name": "Brutality Queen (Apr. 2025 (exclusive!))",
+    "name": "Brutality Queen (Apr. 2025, WWE Event (exclusive!))",
     "icon": "/home-base/skins/214.png",
     "index": 163
   },
   "52000235": {
-    "name": "Darkness Warden (Apr. 2025 (exclusive!))",
+    "name": "Darkness Warden (Apr. 2025, WWE Event (exclusive!))",
     "icon": "/home-base/skins/235.png",
     "index": 164
   },
@@ -4691,7 +4691,7 @@
     "index": 228
   },
   "52000287": {
-    "name": "Skeleton King Resurrected (May. 2026)",
+    "name": "Skeleton King Resurrected (May. 2026, Clash vs Skeletons Event (exclusive!))",
     "icon": "/home-base/skins/287.png",
     "index": 229
   },
