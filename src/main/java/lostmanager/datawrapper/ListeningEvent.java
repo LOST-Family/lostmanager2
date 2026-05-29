@@ -435,27 +435,22 @@ public class ListeningEvent {
 
 	private void handleCWDonator(Clan clan, org.json.JSONObject cwJson) {
 		// Execute cwdonator command logic automatically
-		ArrayList<Player> warMemberList = clan.getWarMemberList();
+		ArrayList<Player> originalList = clan.getWarMemberList();
 
-		if (warMemberList == null) {
+		if (originalList == null) {
 			return; // Can't execute if no war members
 		}
 
-		int cwsize = warMemberList.size();
+		int cwsize = originalList.size();
+		ArrayList<Player> warMemberList = new ArrayList<>(originalList);
 
 		// Filter hidden co-leaders
 		warMemberList.removeIf(p -> p.isHiddenColeader());
 
-		// Filter signed-off members who don't want pings
+		// Filter signed-off members
 		warMemberList.removeIf(p -> {
 			MemberSignoff signoff = new MemberSignoff(p.getTag());
-			return signoff.isActive() && !signoff.isReceivePings();
-		});
-
-		// Filter signed-off members who don't want pings
-		warMemberList.removeIf(p -> {
-			MemberSignoff signoff = new MemberSignoff(p.getTag());
-			return signoff.isActive() && !signoff.isReceivePings();
+			return signoff.isActive();
 		});
 
 		// Check action values for parameters (backwards compatible)

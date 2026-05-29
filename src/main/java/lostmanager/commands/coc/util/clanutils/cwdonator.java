@@ -83,11 +83,11 @@ public class cwdonator extends ListenerAdapter {
 
 			Clan clan = new Clan(clantag);
 
-			ArrayList<Player> warMemberList = clan.getWarMemberList();
+			ArrayList<Player> originalList = clan.getWarMemberList();
 
-			if (warMemberList == null) {
-				warMemberList = clan.getCWLMemberList();
-				if (warMemberList == null) {
+			if (originalList == null) {
+				originalList = clan.getCWLMemberList();
+				if (originalList == null) {
 					event.getHook()
 							.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 									"Dieser Clan ist gerade nicht in einem Clankrieg oder in der Clankriegsliga.",
@@ -97,15 +97,16 @@ public class cwdonator extends ListenerAdapter {
 				}
 			}
 
-			int cwsize = warMemberList.size();
+			int cwsize = originalList.size();
+			ArrayList<Player> warMemberList = new ArrayList<>(originalList);
 
 			// Filter hidden co-leaders
 			warMemberList.removeIf(p -> p.isHiddenColeader());
 
-			// Filter signed-off members who don't want pings
+			// Filter signed-off members
 			warMemberList.removeIf(p -> {
 				MemberSignoff signoff = new MemberSignoff(p.getTag());
-				return signoff.isActive() && !signoff.isReceivePings();
+				return signoff.isActive();
 			});
 
 			HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> mappings = getMappings();
