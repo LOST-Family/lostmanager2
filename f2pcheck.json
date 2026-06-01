@@ -1764,6 +1764,79 @@
             }
         },
         {
+            "Cases": {
+                "name": "Jun. 2026 Event",
+                "CasesStrict": [{
+                    "name": "",
+                    "IfMoreThan":   {
+                        "type": "quantity",
+                        "allowed": 0,
+                        "elements": [{
+                                "type": "element",
+                                "name": "Monolith Arrow Equipment",
+                                "id": "90000055"
+                            },{
+                                "type": "element",
+                                "name": "Fury Figurine Deco",
+                                "id": "18000218"
+                            }]
+                    },
+                    "ThenForbidden": {
+                        "CasesStrict": [{
+                            "name": "Hat 'Monolith Arrow Equipment' und 'Fury Figurine Deco'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 1,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Monolith Arrow Equipment",
+                                    "id": "90000055"
+                                },{
+                                    "type": "element",
+                                    "name": "Fury Figurine Deco",
+                                    "id": "18000218"
+                                }]
+                            }
+                        },{
+                            "name": "Hat 'Monolith Arrow Equipment' oder 'Fury Figurine Deco' sowie mindestens 2 'Anime 26 Clan Houses'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 1,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Anime 26 Ground",
+                                    "id": "82000154"
+                                },{
+                                    "type": "element",
+                                    "name": "Anime 26 Walls",
+                                    "id": "82000155"
+                                },{
+                                    "type": "element",
+                                    "name": "Anime 2026 Deco",
+                                    "id": "82000156"
+                                },{
+                                    "type": "element",
+                                    "name": "Anime 2026 Roof",
+                                    "id": "82000157"
+                                }]
+                            }
+                        },{
+                            "name":"Hat 'Monolith Arrow Equipment' oder 'Fury Figurine Deco' sowie 'Lucky Cat Deco'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 0,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Lucky Cat Deco",
+                                    "id": "18000218"
+                                }]
+                            }
+                        }]
+                    }
+                }]
+            }
+        },
+        {
             "Cases":{
                 "name":"Deco Limitation",
                 "CasesStrict":[{
@@ -2152,7 +2225,7 @@
                         }]
                     }   
                 },{
-                    "name": "Hat mehr als 2 'Clash vs Skeletons Event Deco'",
+                    "name": "Hat mehr als 1 'Clash vs Skeletons Event Deco'",
                     "IfMoreThan": {
                         "type": "count",
                         "allowed": 1,
