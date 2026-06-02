@@ -915,7 +915,7 @@
   "1000064": {
     "name": "B.O.B's Hut",
     "levels": {
-      "1": "/builder-base/buildings/bobs-hut/bobs-hut-1.png"
+      "1": "/builder-base/buildings/bob-hut/bob-hut-1.png"
     }
   },
   "1000065": {
@@ -1880,6 +1880,11 @@
     "name": "Meteor Golem",
     "icon": "/home-base/troops/meteor-golem/meteor-golem-icon.png",
     "character": "/home-base/troops/meteor-golem/meteor-golem-character.png"
+  },
+  "4000188": {
+    "name": "Sky Wagon",
+    "icon": "/home-base/sky-wagon/sky-wagon/sky-wagon-icon.png",
+    "character": "/home-base/sky-wagon/sky-wagon/sky-wagon-character.png"
   },
   "28000000": {
     "name": "Barbarian King",
@@ -3524,10 +3529,15 @@
     "icon": "/home-base/sceneries/88.png",
     "index": 68
   },
-  "60000089": {
-    "name": "Anime Fury Scenery (Jun. 2026)",
-    "icon": "/home-base/sceneries/89.png",
+  "60000090": {
+    "name": "Anime Fury Scenery (Jun. 2026, XL)",
+    "icon": "/home-base/sceneries/90.png",
     "index": 69
+  },
+  "60000089": {
+    "name": "Glory Arena Scenery (Jun. 2026, XL)",
+    "icon": "/home-base/sceneries/89.png",
+    "index": 70
   },
   "52000001": {
     "name": "Gladiator King (Apr. 2019 GP)",
@@ -5706,7 +5716,7 @@
     "name": "Smasher",
     "icon": "/home-base/guardians/smasher.png"
   },
-  "107000002": {
+  "107000008": {
     "name": "Logger",
     "icon": "/home-base/guardians/logger.png"
   }
