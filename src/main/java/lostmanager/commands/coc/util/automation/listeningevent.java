@@ -129,9 +129,10 @@ public class listeningevent extends ListenerAdapter {
 		if (!actionTypeStr.equals("infomessage") && !actionTypeStr.equals("kickpoint")
 				&& !actionTypeStr.equals("cwdonator") && !actionTypeStr.equals("custommessage")
 				&& !actionTypeStr.equals("filler") && !actionTypeStr.equals("raidfails")
-				&& !actionTypeStr.equals("raidfails_kickpoint")) {
+				&& !actionTypeStr.equals("raidfails_kickpoint")
+				&& !actionTypeStr.equals("starfails") && !actionTypeStr.equals("starfails_kickpoint")) {
 			event.replyEmbeds(MessageUtil.buildEmbed(title,
-					"Ungültiger Aktionstyp. Erlaubt: infomessage, kickpoint, cwdonator, custommessage, filler, raidfails, raidfails_kickpoint",
+					"Ungültiger Aktionstyp. Erlaubt: infomessage, kickpoint, cwdonator, custommessage, filler, raidfails, raidfails_kickpoint, starfails, starfails_kickpoint",
 					MessageUtil.EmbedType.ERROR)).queue();
 			return;
 		}
@@ -164,6 +165,23 @@ public class listeningevent extends ListenerAdapter {
 		if (actionTypeStr.equals("raidfails_kickpoint") && kickpointReasonName == null) {
 			event.replyEmbeds(MessageUtil.buildEmbed(title,
 					"Kickpoint-Grund ist erforderlich, wenn actiontype=District-Analyse (Kickpoints)!",
+					MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+
+		// Validate that starfails / starfails_kickpoint are only used with cw or cwlday types
+		if ((actionTypeStr.equals("starfails") || actionTypeStr.equals("starfails_kickpoint"))
+				&& !type.equals("cw") && !type.equals("cwlday")) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title,
+					"starfails und starfails_kickpoint können nur bei CW oder CWL-Day Events verwendet werden!",
+					MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+
+		// Check if kickpoint_reason is required for starfails_kickpoint
+		if (actionTypeStr.equals("starfails_kickpoint") && kickpointReasonName == null) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title,
+					"Kickpoint-Grund ist erforderlich, wenn actiontype=starfails_kickpoint!",
 					MessageUtil.EmbedType.ERROR)).queue();
 			return;
 		}
@@ -262,6 +280,26 @@ public class listeningevent extends ListenerAdapter {
 			modal = Modal.create(modalId, "CW Donator Einstellungen")
 					.addComponents(ActionRow.of(useListsInput), ActionRow.of(excludeLeadersInput)).build();
 		}
+		// starfails / starfails_kickpoint => ask for target star count and punishment mode
+		else if (actionTypeStr.equals("starfails") || actionTypeStr.equals("starfails_kickpoint")) {
+			needsModal = true;
+			modalId = "listeningevent_starfails_" + clantag + "|" + duration + "|"
+					+ type + "|" + actionTypeStr + "|" + channelId
+					+ "|" + (kickpointReasonName != null ? kickpointReasonName : "");
+
+			TextInput starsInput = TextInput.create("star_count",
+					"Sterne-Anzahl (0, 1 oder 2)", TextInputStyle.SHORT)
+					.setPlaceholder("Angriffe mit genau X Sternen werden gemeldet/bestraft")
+					.setRequired(true).setMinLength(1).setMaxLength(1).build();
+
+			TextInput modeInput = TextInput.create("punishment_mode",
+					"Modus (1=Einmal/Spieler, 2=Pro schlechtem Angriff, 3=Nur wenn alle schlecht)",
+					TextInputStyle.SHORT)
+					.setRequired(true).setMinLength(1).setMaxLength(1).setValue("1").build();
+
+			modal = Modal.create(modalId, "Schlechte Angriffe konfigurieren")
+					.addComponents(ActionRow.of(starsInput), ActionRow.of(modeInput)).build();
+		}
 
 		if (needsModal) {
 			event.replyModal(modal).queue();
@@ -278,12 +316,21 @@ public class listeningevent extends ListenerAdapter {
 			String clantag, String type, long duration, String actionTypeStr, String channelId,
 			String kickpointReasonName, String customMessage, Integer thresholdOrAttacks) {
 		processEventCreation(hook, title, clantag, type, duration, actionTypeStr, channelId, kickpointReasonName,
-				customMessage, thresholdOrAttacks, null);
+				customMessage, thresholdOrAttacks, null, null, null);
 	}
 
 	private void processEventCreation(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
 			String clantag, String type, long duration, String actionTypeStr, String channelId,
 			String kickpointReasonName, String customMessage, Integer thresholdOrAttacks,
+			java.util.Map<String, Integer> raidDistrictThresholds) {
+		processEventCreation(hook, title, clantag, type, duration, actionTypeStr, channelId, kickpointReasonName,
+				customMessage, thresholdOrAttacks, null, null, raidDistrictThresholds);
+	}
+
+	private void processEventCreation(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
+			String clantag, String type, long duration, String actionTypeStr, String channelId,
+			String kickpointReasonName, String customMessage, Integer thresholdOrAttacks,
+			Integer starCount, Integer punishmentMode,
 			java.util.Map<String, Integer> raidDistrictThresholds) {
 
 		// Convert raidfails_kickpoint to raidfails (it's a UI-only distinction)
@@ -303,12 +350,23 @@ public class listeningevent extends ListenerAdapter {
 			// raidfails with kickpoint reason - will add kickpoints
 			KickpointReason kpReason = new KickpointReason(kickpointReasonName, clantag);
 			actionValues.add(new ActionValue(kpReason));
+		} else if (actionTypeStr.equals("starfails_kickpoint") && kickpointReasonName != null) {
+			KickpointReason kpReason = new KickpointReason(kickpointReasonName, clantag);
+			actionValues.add(new ActionValue(kpReason));
 		}
 
 		// Add threshold or required attacks if provided
 		if (thresholdOrAttacks != null) {
 			ActionValue valueAV = new ActionValue(thresholdOrAttacks.longValue());
 			actionValues.add(valueAV);
+		}
+
+		// Add star count and punishment mode for starfails events
+		if (starCount != null) {
+			actionValues.add(new ActionValue(starCount.longValue()));
+		}
+		if (punishmentMode != null) {
+			actionValues.add(new ActionValue(punishmentMode.longValue()));
 		}
 
 		// Add raid district thresholds if provided
@@ -401,6 +459,18 @@ public class listeningevent extends ListenerAdapter {
 					+ raidDistrictThresholds.get("other_districts_max") + "\n";
 			desc += "**Beide bestrafen bei Gleichstand:** "
 					+ (raidDistrictThresholds.get("penalize_both") == 1 ? "Ja" : "Nein") + "\n";
+		}
+		if (starCount != null) {
+			desc += "**Schlechte Angriffe bei:** " + starCount + " ★\n";
+		}
+		if (punishmentMode != null) {
+			String modeLabel = switch (punishmentMode) {
+				case 1 -> "Einmal pro Spieler";
+				case 2 -> "Pro schlechtem Angriff";
+				case 3 -> "Nur wenn alle Angriffe schlecht";
+				default -> String.valueOf(punishmentMode);
+			};
+			desc += "**Modus:** " + modeLabel + "\n";
 		}
 
 		hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
@@ -754,6 +824,44 @@ public class listeningevent extends ListenerAdapter {
 
 			processEventCreationWithCWDonatorParams(event.getHook(), title, clantag, type, duration, actionTypeStr,
 					channelId, cwdonatorParams);
+		} else if (modalId.startsWith("listeningevent_starfails_")) {
+			event.deferReply().queue();
+			String title = "Listening Event";
+
+			// Parse: listeningevent_starfails_{clantag}|{duration}|{type}|{actionTypeStr}|{channelId}|{kpreason}
+			String payload = modalId.substring("listeningevent_starfails_".length());
+			String[] parts = payload.split("\\|");
+			if (parts.length < 5) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+
+			String clantag = parts[0];
+			long duration = Long.parseLong(parts[1]);
+			String type = parts[2];
+			String actionTypeStr = parts[3];
+			String channelId = parts[4];
+			String kickpointReasonName = parts.length > 5 && !parts[5].isEmpty() ? parts[5] : null;
+
+			String starCountStr = event.getValue("star_count").getAsString().trim();
+			String modeStr = event.getValue("punishment_mode").getAsString().trim();
+
+			int starCount, punishmentMode;
+			try {
+				starCount = Integer.parseInt(starCountStr);
+				if (starCount < 0 || starCount > 2) throw new NumberFormatException("star_count must be 0-2");
+				punishmentMode = Integer.parseInt(modeStr);
+				if (punishmentMode < 1 || punishmentMode > 3) throw new NumberFormatException("mode must be 1-3");
+			} catch (NumberFormatException e) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Ungültige Eingabe: Sterne-Anzahl muss 0-2 sein, Modus muss 1-3 sein.",
+						MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+
+			processEventCreation(event.getHook(), title, clantag, type, duration, actionTypeStr, channelId,
+					kickpointReasonName, null, null, starCount, punishmentMode, null);
 		}
 	}
 

@@ -872,7 +872,7 @@ public class Clan {
 		try {
 			response = Bot.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
+			System.err.println("Warning: Failed to fetch CWL war data for " + warTag + ": " + e.getMessage());
 			json = null;
 		}
 

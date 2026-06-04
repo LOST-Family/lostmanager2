@@ -35,7 +35,7 @@ public class ListeningEvent {
 	}
 
 	public enum ACTIONTYPE {
-		INFOMESSAGE, CUSTOMMESSAGE, KICKPOINT, CWDONATOR, FILLER, RAIDFAILS
+		INFOMESSAGE, CUSTOMMESSAGE, KICKPOINT, CWDONATOR, FILLER, RAIDFAILS, STARFAILS, STARFAILS_KICKPOINT
 	}
 
 	private Long id;
@@ -161,7 +161,9 @@ public class ListeningEvent {
 							: type.equals("kickpoint") ? ACTIONTYPE.KICKPOINT
 									: type.equals("cwdonator") ? ACTIONTYPE.CWDONATOR
 											: type.equals("filler") ? ACTIONTYPE.FILLER
-													: type.equals("raidfails") ? ACTIONTYPE.RAIDFAILS : null;
+													: type.equals("raidfails") ? ACTIONTYPE.RAIDFAILS
+															: type.equals("starfails") ? ACTIONTYPE.STARFAILS
+																	: type.equals("starfails_kickpoint") ? ACTIONTYPE.STARFAILS_KICKPOINT : null;
 		}
 		return actiontype;
 	}
@@ -407,6 +409,13 @@ public class ListeningEvent {
 
 		org.json.JSONObject cwJson = clan.getCWJson();
 		String state = cwJson.getString("state");
+
+		if (getActionType() == ACTIONTYPE.STARFAILS || getActionType() == ACTIONTYPE.STARFAILS_KICKPOINT) {
+			if (state.equals("inWar") || state.equals("warEnded")) {
+				handleCWBadAttacks(clan, cwJson);
+			}
+			return;
+		}
 
 		// Check if it's a "filler" or "cwdonator" action at start
 		boolean isFillerAction = getActionType() == ACTIONTYPE.FILLER;
@@ -767,8 +776,18 @@ public class ListeningEvent {
 			if (dataIsReliable) {
 				// Data is reliable - build updated message with fresh data
 				result = buildCWMissedAttacksMessage(clan, cwJson, actualRequiredAttacks, fillerTags, true);
-				updatedMessage = result.message + "\n\n*Daten nach 5min überprüft*";
-				shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
+				
+				org.json.JSONObject clanData = cwJson.getJSONObject("clan");
+				boolean isPerfectWar = clanData.has("stars") && cwJson.has("teamSize") && 
+									   clanData.getInt("stars") == cwJson.getInt("teamSize") * 3;
+				
+				if (isPerfectWar) {
+					updatedMessage = result.message + "\n\n*Daten nach 5min überprüft*\n**Perfekter Krieg erreicht! Keine Kickpunkte verteilt.**";
+					shouldProcessKickpoints = false;
+				} else {
+					updatedMessage = result.message + "\n\n*Daten nach 5min überprüft*";
+					shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
+				}
 			} else {
 				// New war has already started - data is not reliable
 				// Use the original message content and just append a warning
@@ -1051,6 +1070,13 @@ public class ListeningEvent {
 
 			String finalState = cachedWarData.getString("state");
 
+			if (getActionType() == ACTIONTYPE.STARFAILS || getActionType() == ACTIONTYPE.STARFAILS_KICKPOINT) {
+				if (finalState.equals("inWar") || finalState.equals("warEnded")) {
+					handleCWLDayBadAttacks(clan, ourClanData, cachedWarData, targetRound, targetWarTag);
+				}
+				return;
+			}
+
 			// Build initial message with missed attacks data
 			CWMissedAttacksResult result = buildCWLDayMissedAttacksMessage(clan, ourClanData,
 					cachedWarData, targetRound, false);
@@ -1058,7 +1084,7 @@ public class ListeningEvent {
 			// Determine if this is an end-of-war event (duration = 0)
 			boolean isEndOfWarEvent = getDurationUntilEnd() <= 0;
 
-			if (isEndOfWarEvent && result.hasMissedAttacks && finalState.equals("warEnded")) {
+			if (isEndOfWarEvent && result.hasMissedAttacks) {
 				// At end of war: send initial message, then schedule 5-minute verification
 				Message sentMessage = sendMessageToChannelAndReturn(result.message);
 
@@ -1230,8 +1256,17 @@ public class ListeningEvent {
 				org.json.JSONObject ourClanData = clanData.getString("tag").equals(clanTag) ? clanData : opponentData;
 
 				result = buildCWLDayMissedAttacksMessage(clan, ourClanData, warData, roundNumber, true);
-				updatedMessage = result.message + "\n*Daten nach 5min überprüft*";
-				shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
+				
+				boolean isPerfectWar = ourClanData.has("stars") && warData.has("teamSize") && 
+									   ourClanData.getInt("stars") == warData.getInt("teamSize") * 3;
+				
+				if (isPerfectWar) {
+					updatedMessage = result.message + "\n*Daten nach 5min überprüft*\n**Perfekter Krieg erreicht! Keine Kickpunkte verteilt.**";
+					shouldProcessKickpoints = false;
+				} else {
+					updatedMessage = result.message + "\n*Daten nach 5min überprüft*";
+					shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
+				}
 			} else {
 				// War state changed (shouldn't happen in CWL but handle anyway)
 				updatedMessage = originalMessage
@@ -2138,6 +2173,402 @@ public class ListeningEvent {
 		System.out.println("CW Event " + getId()
 				+ ": WARNING - No configured required attacks found, falling back to API value = " + attacksPerMember);
 		return attacksPerMember;
+	}
+
+	// Returns the configured target star count (0/1/2) for starfails events, or -1 if not set.
+	private int getConfiguredStarCount() {
+		ArrayList<ActionValue> avs = getActionValues();
+		if (avs == null) return -1;
+		for (ActionValue av : avs) {
+			if (av.getSaved() == ActionValue.kind.value && av.getValue() != null)
+				return av.getValue().intValue();
+		}
+		return -1;
+	}
+
+	// Returns the configured punishment mode (1/2/3) for starfails events, defaulting to 1.
+	private int getConfiguredPunishmentMode() {
+		ArrayList<ActionValue> avs = getActionValues();
+		if (avs == null) return 1;
+		int count = 0;
+		for (ActionValue av : avs) {
+			if (av.getSaved() == ActionValue.kind.value && av.getValue() != null) {
+				count++;
+				if (count == 2) return av.getValue().intValue();
+			}
+		}
+		return 1;
+	}
+
+	private static class PlayerBadAttack {
+		Player player;
+		int stars;
+		int attackIndex;
+		int destructionPct;
+
+		PlayerBadAttack(Player player, int stars, int attackIndex, int destructionPct) {
+			this.player = player;
+			this.stars = stars;
+			this.attackIndex = attackIndex;
+			this.destructionPct = destructionPct;
+		}
+	}
+
+	private static class CWBadAttacksResult {
+		String message;
+		boolean hasBadAttacks;
+		ArrayList<PlayerBadAttack> badAttacks;
+
+		CWBadAttacksResult(String message, boolean hasBadAttacks, ArrayList<PlayerBadAttack> badAttacks) {
+			this.message = message;
+			this.hasBadAttacks = hasBadAttacks;
+			this.badAttacks = badAttacks;
+		}
+	}
+
+	private CWBadAttacksResult buildCWBadAttacksResult(Clan clan, org.json.JSONObject cwJson,
+			int targetStars, int mode, boolean isVerificationPhase) {
+
+		org.json.JSONObject clanData = cwJson.getJSONObject("clan");
+		org.json.JSONArray members = clanData.getJSONArray("members");
+
+		StringBuilder message = new StringBuilder();
+		message.append("## ").append(clan.getNameAPI())
+				.append(" Clankrieg – Schlechte Angriffe (").append(targetStars).append(" ★)\n");
+
+		if (isVerificationPhase || getDurationUntilEnd() <= 0) {
+			message.append("**Krieg beendet.**\n\n");
+		} else {
+			int secondsLeft = (int) (getDurationUntilEnd() / 1000);
+			int minutesLeft = secondsLeft / 60;
+			int hoursLeft = minutesLeft / 60;
+			secondsLeft = secondsLeft % 60;
+			minutesLeft = minutesLeft % 60;
+			if (hoursLeft > 0) message.append("**").append(hoursLeft).append("h** ");
+			if (minutesLeft > 0) message.append("**").append(minutesLeft).append("m** ");
+			if (secondsLeft > 0 && hoursLeft == 0) message.append("**").append(secondsLeft).append("s** ");
+			message.append("verbleibend\n\n");
+		}
+
+		boolean hasBadAttacks = false;
+		ArrayList<PlayerBadAttack> punishableAttacks = new ArrayList<>();
+
+		for (int i = 0; i < members.length(); i++) {
+			org.json.JSONObject member = members.getJSONObject(i);
+			String tag = member.getString("tag");
+			String name = member.getString("name");
+
+			if (!member.has("attacks")) continue;
+			org.json.JSONArray attacks = member.getJSONArray("attacks");
+			if (attacks.length() == 0) continue;
+
+			// Collect this member's bad attacks
+			ArrayList<PlayerBadAttack> memberBad = new ArrayList<>();
+			Player p = null;
+			boolean skipMember = false;
+
+			for (int a = 0; a < attacks.length(); a++) {
+				org.json.JSONObject attack = attacks.getJSONObject(a);
+				int stars = attack.optInt("stars", 0);
+				if (stars == targetStars) {
+					if (p == null) {
+						p = new Player(tag);
+						if (p.isHiddenColeader()) {
+							skipMember = true;
+							break;
+						}
+					}
+					memberBad.add(new PlayerBadAttack(p, stars,
+							attack.optInt("order", a + 1),
+							attack.optInt("destructionPercentage", 0)));
+				}
+			}
+
+			if (skipMember || p == null || memberBad.isEmpty()) continue;
+
+			// Mode 3: only punish if ALL attacks were bad (stars == targetStars)
+			if (mode == 3) {
+				boolean allBad = true;
+				for (int a = 0; a < attacks.length(); a++) {
+					if (attacks.getJSONObject(a).optInt("stars", 0) != targetStars) {
+						allBad = false;
+						break;
+					}
+				}
+				if (!allBad) continue;
+			}
+
+			hasBadAttacks = true;
+			for (PlayerBadAttack pba : memberBad) {
+				message.append("- ").append(name).append(" (").append(tag).append(")")
+						.append(" – Angriff ").append(pba.attackIndex).append(": ")
+						.append(pba.stars).append(" ★ (").append(pba.destructionPct).append("%)\n");
+			}
+
+			// Determine which attacks to punish based on mode
+			if (mode == 1) {
+				// Once per player – only the first bad attack
+				punishableAttacks.add(memberBad.get(0));
+			} else {
+				// Mode 2 or 3 – each bad attack (mode 3 already filtered above)
+				punishableAttacks.addAll(memberBad);
+			}
+		}
+
+		return new CWBadAttacksResult(message.toString(), hasBadAttacks, punishableAttacks);
+	}
+
+	private CWBadAttacksResult buildCWLDayBadAttacksResult(Clan clan, org.json.JSONObject ourClanData,
+			org.json.JSONObject warData, int roundNumber, boolean isVerificationPhase, int targetStars) {
+
+		org.json.JSONArray members = ourClanData.getJSONArray("members");
+
+		StringBuilder message = new StringBuilder();
+		message.append("## CWL Day ").append(roundNumber + 1)
+				.append(" – Schlechte Angriffe (").append(targetStars).append(" ★)\n");
+
+		String endTimeStr = warData.getString("endTime");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'").withZone(ZoneOffset.UTC);
+		Instant endInstant = Instant.from(formatter.parse(endTimeStr));
+		long millisRemaining = endInstant.toEpochMilli() - System.currentTimeMillis();
+
+		if (isVerificationPhase || millisRemaining <= 0) {
+			message.append("**Krieg beendet.**\n\n");
+		} else {
+			long durationToShow = getDurationUntilEnd() > 0 ? getDurationUntilEnd() : millisRemaining;
+			int secondsLeft = (int) (durationToShow / 1000);
+			int minutesLeft = secondsLeft / 60;
+			int hoursLeft = minutesLeft / 60;
+			secondsLeft = secondsLeft % 60;
+			minutesLeft = minutesLeft % 60;
+			if (hoursLeft > 0) message.append("**").append(hoursLeft).append("h** ");
+			if (minutesLeft > 0) message.append("**").append(minutesLeft).append("m** ");
+			if (secondsLeft > 0 && hoursLeft == 0) message.append("**").append(secondsLeft).append("s** ");
+			message.append("verbleibend\n\n");
+		}
+
+		boolean hasBadAttacks = false;
+		ArrayList<PlayerBadAttack> punishableAttacks = new ArrayList<>();
+
+		for (int i = 0; i < members.length(); i++) {
+			org.json.JSONObject member = members.getJSONObject(i);
+			String tag = member.getString("tag");
+			String name = member.getString("name");
+
+			if (!member.has("attacks")) continue;
+			org.json.JSONArray attacks = member.getJSONArray("attacks");
+			if (attacks.length() == 0) continue;
+
+			// CWL has exactly 1 attack per member
+			org.json.JSONObject attack = attacks.getJSONObject(0);
+			int stars = attack.optInt("stars", 0);
+			if (stars != targetStars) continue;
+
+			Player p = new Player(tag);
+			if (p.isHiddenColeader()) continue;
+
+			hasBadAttacks = true;
+			message.append("- ").append(name).append(" (").append(tag).append(")")
+					.append(" – ").append(stars).append(" ★ (")
+					.append(attack.optInt("destructionPercentage", 0)).append("%)\n");
+
+			punishableAttacks.add(new PlayerBadAttack(p, stars,
+					attack.optInt("order", 1),
+					attack.optInt("destructionPercentage", 0)));
+		}
+
+		return new CWBadAttacksResult(message.toString(), hasBadAttacks, punishableAttacks);
+	}
+
+	private void handleCWBadAttacks(Clan clan, org.json.JSONObject cwJson) {
+		int targetStars = getConfiguredStarCount();
+		if (targetStars < 0) return;
+		int mode = getConfiguredPunishmentMode();
+
+		CWBadAttacksResult result = buildCWBadAttacksResult(clan, cwJson, targetStars, mode, false);
+		if (!result.hasBadAttacks) return;
+
+		boolean isEndOfWarEvent = getDurationUntilEnd() <= 0;
+
+		if (isEndOfWarEvent) {
+			Message sentMessage = sendMessageToChannelAndReturn(result.message);
+			if (sentMessage != null) {
+				final String clanTag = clan.getTag();
+				final long messageId = sentMessage.getIdLong();
+				final String channelId = getChannelID();
+				final ListeningEvent thisEvent = this;
+				final String originalMessage = result.message;
+				final String endTimeStr = cwJson.has("endTime") ? cwJson.getString("endTime") : "";
+
+				Bot.activeVerificationTasks.incrementAndGet();
+				ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+				scheduler.schedule(() -> {
+					try {
+						handleCWBadAttacksDelayedVerification(clanTag, messageId, channelId, thisEvent,
+								originalMessage, endTimeStr);
+					} catch (Exception e) {
+						System.err.println("Error in delayed CW bad attacks verification: " + e.getMessage());
+						e.printStackTrace();
+					} finally {
+						Bot.activeVerificationTasks.decrementAndGet();
+						scheduler.shutdown();
+					}
+				}, 5, TimeUnit.MINUTES);
+			}
+		} else {
+			sendMessageInChunks(result.message);
+		}
+	}
+
+	private void handleCWBadAttacksDelayedVerification(String clanTag, long messageId, String channelId,
+			ListeningEvent event, String originalMessage, String endTimeStr) {
+
+		System.out.println("Starting 5-minute CW bad attacks verification for clan " + clanTag);
+
+		try {
+			Clan clan = new Clan(clanTag);
+			org.json.JSONObject cwJson = clan.getCWJson();
+			String currentState = cwJson.getString("state");
+			boolean dataIsReliable = currentState.equals("warEnded");
+			boolean sameWar = dataIsReliable && cwJson.has("endTime")
+					&& cwJson.getString("endTime").equals(endTimeStr);
+
+			int targetStars = event.getConfiguredStarCount();
+			int mode = event.getConfiguredPunishmentMode();
+
+			String updatedMessage;
+			boolean shouldProcessKickpoints = false;
+			CWBadAttacksResult result = null;
+
+			if (dataIsReliable && sameWar) {
+				result = buildCWBadAttacksResult(clan, cwJson, targetStars, mode, true);
+				updatedMessage = result.message + "\n\n*Daten nach 5min überprüft*";
+				shouldProcessKickpoints = result.hasBadAttacks
+						&& event.getActionType() == ACTIONTYPE.STARFAILS_KICKPOINT;
+			} else {
+				updatedMessage = originalMessage
+						+ "\n\n*Daten sind nicht zuverlässig, da Krieg direkt wieder gestartet wurde*";
+			}
+
+			editMessageInChannel(channelId, messageId, updatedMessage);
+
+			if (shouldProcessKickpoints && result != null) {
+				for (PlayerBadAttack pba : result.badAttacks) {
+					addKickpointForPlayer(pba.player,
+							"CW Angriff " + pba.attackIndex + ": " + pba.stars + "★");
+				}
+			}
+
+			System.out.println("Completed 5-minute CW bad attacks verification for clan " + clanTag
+					+ " (dataReliable=" + (dataIsReliable && sameWar) + ", kickpoints=" + shouldProcessKickpoints + ")");
+
+		} catch (Exception e) {
+			System.err.println("Error in CW bad attacks delayed verification for clan " + clanTag + ": " + e.getMessage());
+			e.printStackTrace();
+			try {
+				editMessageInChannel(channelId, messageId,
+						originalMessage + "\n\n*Fehler bei der 5-Minuten-Überprüfung.*");
+			} catch (Exception e2) {
+				System.err.println("Failed to update message with error: " + e2.getMessage());
+			}
+		}
+	}
+
+	private void handleCWLDayBadAttacks(Clan clan, org.json.JSONObject ourClanData,
+			org.json.JSONObject warData, int roundNumber, String warTag) {
+
+		int targetStars = getConfiguredStarCount();
+		if (targetStars < 0) return;
+
+		CWBadAttacksResult result = buildCWLDayBadAttacksResult(clan, ourClanData, warData, roundNumber, false, targetStars);
+		if (!result.hasBadAttacks) return;
+
+		boolean isEndOfWarEvent = getDurationUntilEnd() <= 0;
+
+		if (isEndOfWarEvent) {
+			Message sentMessage = sendMessageToChannelAndReturn(result.message);
+			if (sentMessage != null) {
+				final String clanTag = clan.getTag();
+				final long messageId = sentMessage.getIdLong();
+				final String channelId = getChannelID();
+				final ListeningEvent thisEvent = this;
+				final String originalMessage = result.message;
+				final int finalRound = roundNumber;
+				final String finalWarTag = warTag;
+
+				Bot.activeVerificationTasks.incrementAndGet();
+				ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+				scheduler.schedule(() -> {
+					try {
+						handleCWLDayBadAttacksDelayedVerification(clanTag, finalRound, finalWarTag,
+								messageId, channelId, thisEvent, originalMessage);
+					} catch (Exception e) {
+						System.err.println("Error in delayed CWL bad attacks verification: " + e.getMessage());
+						e.printStackTrace();
+					} finally {
+						Bot.activeVerificationTasks.decrementAndGet();
+						scheduler.shutdown();
+					}
+				}, 5, TimeUnit.MINUTES);
+			}
+		} else {
+			sendMessageInChunks(result.message);
+		}
+	}
+
+	private void handleCWLDayBadAttacksDelayedVerification(String clanTag, int roundNumber, String warTag,
+			long messageId, String channelId, ListeningEvent event, String originalMessage) {
+
+		System.out.println("Starting 5-minute CWL bad attacks verification for clan " + clanTag
+				+ " round " + (roundNumber + 1));
+
+		try {
+			org.json.JSONObject warData = Clan.getCWLDayJson(warTag);
+			String currentState = warData.getString("state");
+			boolean dataIsReliable = currentState.equals("warEnded");
+
+			int targetStars = event.getConfiguredStarCount();
+
+			String updatedMessage;
+			boolean shouldProcessKickpoints = false;
+			CWBadAttacksResult result = null;
+
+			if (dataIsReliable) {
+				Clan clan = new Clan(clanTag);
+				org.json.JSONObject clanData = warData.getJSONObject("clan");
+				org.json.JSONObject opponentData = warData.getJSONObject("opponent");
+				org.json.JSONObject ourClanData = clanData.getString("tag").equals(clanTag) ? clanData : opponentData;
+
+				result = buildCWLDayBadAttacksResult(clan, ourClanData, warData, roundNumber, true, targetStars);
+				updatedMessage = result.message + "\n*Daten nach 5min überprüft*";
+				shouldProcessKickpoints = result.hasBadAttacks
+						&& event.getActionType() == ACTIONTYPE.STARFAILS_KICKPOINT;
+			} else {
+				updatedMessage = originalMessage + "\n\n*Daten sind möglicherweise nicht zuverlässig*";
+			}
+
+			editMessageInChannel(channelId, messageId, updatedMessage);
+
+			if (shouldProcessKickpoints && result != null) {
+				for (PlayerBadAttack pba : result.badAttacks) {
+					addKickpointForPlayer(pba.player,
+							"CWL Angriff: " + pba.stars + "★ (Day " + (roundNumber + 1) + ")");
+				}
+			}
+
+			System.out.println("Completed 5-minute CWL bad attacks verification for clan " + clanTag
+					+ " (dataReliable=" + dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
+
+		} catch (Exception e) {
+			System.err.println("Error in CWL bad attacks delayed verification for clan " + clanTag + ": " + e.getMessage());
+			e.printStackTrace();
+			try {
+				editMessageInChannel(channelId, messageId,
+						originalMessage + "\n\n*Fehler bei der 5-Minuten-Überprüfung.*");
+			} catch (Exception e2) {
+				System.err.println("Failed to update message with error: " + e2.getMessage());
+			}
+		}
 	}
 
 }
