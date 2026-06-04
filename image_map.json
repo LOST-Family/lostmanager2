@@ -2138,10 +2138,6 @@
     "name": "Rocket Backpack",
     "icon": "/home-base/equipments/53.png"
   },
-  "90000054": {
-    "name": "Electro Fangs",
-    "icon": "/home-base/equipments/54.png"
-  },
   "90000056": {
     "name": "Stun Blaster",
     "icon": "/home-base/equipments/56.png"
@@ -2149,6 +2145,10 @@
   "90000057": {
     "name": "Flame Blower",
     "icon": "/home-base/equipments/57.png"
+  },
+  "90000059": {
+    "name": "Electro Fangs",
+    "icon": "/home-base/equipments/59.png"
   },
   "18000000": {
     "name": "Mighty Statue (Aug. 2012)",

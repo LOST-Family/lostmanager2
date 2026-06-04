@@ -1798,10 +1798,10 @@
                                 }]
                             }
                         },{
-                            "name": "Hat 'Monolith Arrow Equipment' oder 'Fury Figurine Deco' sowie mindestens 2 'Anime 26 Clan Houses'",
+                            "name": "Hat 'Monolith Arrow Equipment' oder 'Fury Figurine Deco' und mindestens ein 'Anime 26 Clan House'",
                             "IfMoreThan": {
                                 "type": "quantity",
-                                "allowed": 1,
+                                "allowed": 0,
                                 "elements": [{
                                     "type": "element",
                                     "name": "Anime 26 Ground",
@@ -1818,17 +1818,6 @@
                                     "type": "element",
                                     "name": "Anime 2026 Roof",
                                     "id": "82000157"
-                                }]
-                            }
-                        },{
-                            "name":"Hat 'Monolith Arrow Equipment' oder 'Fury Figurine Deco' sowie 'Lucky Cat Deco'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 0,
-                                "elements": [{
-                                    "type": "element",
-                                    "name": "Lucky Cat Deco",
-                                    "id": "18000218"
                                 }]
                             }
                         }]
