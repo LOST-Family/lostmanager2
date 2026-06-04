@@ -13,7 +13,7 @@ public class ActionValue {
 		FILLER, REMINDER, VALUE
 	}
 
-	private kind saved;
+	private final kind saved;
 	private ACTIONVALUETYPE type;
 	private KickpointReason reason;
 	private Long value;

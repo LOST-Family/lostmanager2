@@ -7,7 +7,6 @@ import java.net.http.HttpResponse;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -15,8 +14,10 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import lostmanager.Bot;
@@ -26,7 +27,7 @@ import lostmanager.dbutil.DBUtil;
 public class Clan {
 
 	// Identifier
-	private String clan_tag;
+	private final String clan_tag;
 
 	// DB Index
 	private Long index;
@@ -130,7 +131,7 @@ public class Clan {
 				return rs.next(); // true, wenn mindestens eine Zeile existiert
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 		return false;
 	}
@@ -150,7 +151,7 @@ public class Clan {
 					}
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.err.println(e.getMessage());
 			}
 		}
 		return index;
@@ -159,21 +160,12 @@ public class Clan {
 	// Roles
 
 	public String getRoleID(Role role) {
-		switch (role) {
-			case LEADER:
-				return DBUtil.getValueFromSQL("SELECT leader_role_id FROM guilds WHERE clan_tag = ?", String.class,
-						clan_tag);
-			case COLEADER:
-				return DBUtil.getValueFromSQL("SELECT co_leader_role_id FROM guilds WHERE clan_tag = ?", String.class,
-						clan_tag);
-			case ELDER:
-				return DBUtil.getValueFromSQL("SELECT elder_role_id FROM guilds WHERE clan_tag = ?", String.class,
-						clan_tag);
-			case MEMBER:
-				return DBUtil.getValueFromSQL("SELECT member_role_id FROM guilds WHERE clan_tag = ?", String.class,
-						clan_tag);
-		}
-		return null;
+		return switch (role) {
+			case LEADER -> DBUtil.getValueFromSQL("SELECT leader_role_id FROM guilds WHERE clan_tag = ?", String.class, clan_tag);
+			case COLEADER -> DBUtil.getValueFromSQL("SELECT co_leader_role_id FROM guilds WHERE clan_tag = ?", String.class, clan_tag);
+			case ELDER -> DBUtil.getValueFromSQL("SELECT elder_role_id FROM guilds WHERE clan_tag = ?", String.class, clan_tag);
+			case MEMBER -> DBUtil.getValueFromSQL("SELECT member_role_id FROM guilds WHERE clan_tag = ?", String.class, clan_tag);
+		};
 	}
 
 	// Names
@@ -193,7 +185,7 @@ public class Clan {
 					}
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.err.println(e.getMessage());
 			}
 		}
 		return namedb;
@@ -220,7 +212,7 @@ public class Clan {
 					}
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.err.println(e.getMessage());
 			}
 		}
 		return icondb;
@@ -252,7 +244,7 @@ public class Clan {
 					}
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.err.println(e.getMessage());
 			}
 		}
 		return descriptiondb;
@@ -335,14 +327,11 @@ public class Clan {
 					while (rs.next()) {
 						kickpoint_reasons.add(new KickpointReason(rs.getString("name"), rs.getString("clan_tag")));
 					}
-					Statement stmt = rs.getStatement();
-					rs.close();
-					stmt.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					System.err.println(e.getMessage());
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.err.println(e.getMessage());
 			}
 		}
 		return kickpoint_reasons;
@@ -385,12 +374,8 @@ public class Clan {
 		if (cwlactive == null) {
 			JSONObject jsonObject = getCWLJson();
 			String state = jsonObject.getString("state");
-			if (state.equals("notInWar") || state.equalsIgnoreCase("groupnotfound")
-					|| state.equalsIgnoreCase("ended")) {
-				cwlactive = false;
-			} else {
-				cwlactive = true;
-			}
+                        cwlactive = !(state.equals("notInWar") || state.equalsIgnoreCase("groupnotfound")
+                                || state.equalsIgnoreCase("ended"));
 		}
 		return cwlactive;
 	}
@@ -453,11 +438,10 @@ public class Clan {
 									}
 								}
 							}
-						} catch (Exception e) {
+						} catch (JSONException e) {
 							// Log the error for debugging and continue to next war tag
 							System.err.println(
 									"Warning: Error retrieving CWL war data for tag " + warTag + ": " + e.getMessage());
-							continue;
 						}
 					}
 				}
@@ -513,7 +497,7 @@ public class Clan {
 			JSONArray items = jsonObject.getJSONArray("items");
 			JSONObject currentitem = items.getJSONObject(0);
 			String state = currentitem.optString("state", "ended");
-			raidactive = state.equals("ongoing") ? true : false;
+			raidactive = state.equals("ongoing");
 
 			// endtimelogic here to prevent double api requests if in same result
 			// Check if endTime exists and is not null
@@ -543,7 +527,7 @@ public class Clan {
 			JSONArray items = jsonObject.getJSONArray("items");
 			JSONObject currentitem = items.getJSONObject(0);
 			String state = currentitem.optString("state", "ended");
-			raidactive = state.equals("ongoing") ? true : false;
+			raidactive = state.equals("ongoing");
 			if (!currentitem.has("members") || currentitem.isNull("members"))
 				return raidmembers;
 			JSONArray members = currentitem.getJSONArray("members");
@@ -607,7 +591,12 @@ public class Clan {
 						System.err.println("Request failed with status " + response.statusCode() + ", retrying in "
 								+ waitTime + "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
 					}
-					Thread.sleep(waitTime);
+					try {
+						TimeUnit.MILLISECONDS.sleep(waitTime);
+					} catch (InterruptedException ie) {
+						Thread.currentThread().interrupt();
+						return null;
+					}
 				}
 			} catch (IOException | InterruptedException e) {
 				if (attempt < maxRetries) {
@@ -618,13 +607,13 @@ public class Clan {
 								+ "ms (attempt " + (attempt + 1) + "/" + maxRetries + ")");
 					}
 					try {
-						Thread.sleep(waitTime);
+						TimeUnit.MILLISECONDS.sleep(waitTime);
 					} catch (InterruptedException ie) {
 						Thread.currentThread().interrupt();
 						return null;
 					}
 				} else {
-					e.printStackTrace();
+					System.err.println(e.getMessage());
 					return null;
 				}
 			}
@@ -671,11 +660,7 @@ public class Clan {
 			if (json != null) {
 				JSONObject jsonObject = new JSONObject(json);
 				String state = jsonObject.getString("state");
-				if (state.equalsIgnoreCase("notInWar")) {
-					cwactive = false;
-				} else {
-					cwactive = true;
-				}
+                                cwactive = !state.equalsIgnoreCase("notInWar");
 
 				if (cwactive) {
 					// CW Endtime logic here to prevent double api request if in same result
@@ -873,7 +858,6 @@ public class Clan {
 			response = Bot.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 		} catch (IOException | InterruptedException e) {
 			System.err.println("Warning: Failed to fetch CWL war data for " + warTag + ": " + e.getMessage());
-			json = null;
 		}
 
 		if (response != null && response.statusCode() == 200) {
