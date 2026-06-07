@@ -6,10 +6,12 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,9 +38,9 @@ import lostmanager.webserver.api.dto.UserDTO;
 public class RestApiServer {
 
     private HttpServer server;
-    private int port;
-    private ObjectMapper objectMapper;
-    private String apiToken;
+    private final int port;
+    private final ObjectMapper objectMapper;
+    private final String apiToken;
 
     public RestApiServer(int port) {
         this.port = port;
@@ -112,7 +114,7 @@ public class RestApiServer {
 
                 String json = objectMapper.writeValueAsString(list);
                 sendJsonResponse(exchange, 200, json);
-            } catch (Exception e) {
+            } catch (IOException | SQLException e) {
                 handleException(exchange, "SideclansHandler", e);
             }
         }
@@ -169,7 +171,7 @@ public class RestApiServer {
                 String json = objectMapper.writeValueAsString(clans);
                 sendJsonResponse(exchange, 200, json);
 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 handleException(exchange, "ClansHandler", e);
             }
         }
@@ -229,23 +231,12 @@ public class RestApiServer {
                     String subPath = parts[4];
 
                     switch (subPath) {
-                        case "members":
-                            handleClanMembers(exchange, clan);
-                            break;
-                        case "kickpoint-reasons":
-                            handleKickpointReasons(exchange, clan);
-                            break;
-                        case "war-members":
-                            handleWarMembers(exchange, clan);
-                            break;
-                        case "raid-members":
-                            handleRaidMembers(exchange, clan);
-                            break;
-                        case "cwl-members":
-                            handleCWLMembers(exchange, clan);
-                            break;
-                        default:
-                            sendResponse(exchange, 404, "{\"error\":\"Unknown endpoint\"}");
+                        case "members" -> handleClanMembers(exchange, clan);
+                        case "kickpoint-reasons" -> handleKickpointReasons(exchange, clan);
+                        case "war-members" -> handleWarMembers(exchange, clan);
+                        case "raid-members" -> handleRaidMembers(exchange, clan);
+                        case "cwl-members" -> handleCWLMembers(exchange, clan);
+                        default -> sendResponse(exchange, 404, "{\"error\":\"Unknown endpoint\"}");
                     }
                 } else {
                     // Return clan info (DB call only)
@@ -424,7 +415,7 @@ public class RestApiServer {
                 String json = objectMapper.writeValueAsString(playerDTO);
                 sendJsonResponse(exchange, 200, json);
 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 handleException(exchange, "PlayerHandler", e);
             }
         }
@@ -484,7 +475,7 @@ public class RestApiServer {
                 String json = objectMapper.writeValueAsString(userDTO);
                 sendJsonResponse(exchange, 200, json);
 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 handleException(exchange, "UserHandler", e);
             }
         }
@@ -517,7 +508,7 @@ public class RestApiServer {
                 String json = object.toString();
                 sendJsonResponse(exchange, 200, json);
 
-            } catch (Exception e) {
+            } catch (IOException | JSONException e) {
                 handleException(exchange, "GuildHandler", e);
             }
         }
@@ -542,7 +533,8 @@ public class RestApiServer {
             // Ignorieren, um Log-Spam zu vermeiden:
             // System.out.println("Client disconnected in " + handlerName + ": " + e.getMessage());
         } else {
-            System.err.println("Error in " + handlerName + ": " + e.getMessage());
+            String errorMessage = String.valueOf(e);
+            System.err.println("Error in " + handlerName + ": " + errorMessage);
             e.printStackTrace();
             try {
                 sendResponse(exchange, 500, "{\"error\":\"Internal Server Error\"}");

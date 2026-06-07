@@ -17,6 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.genai.Client;
 
+import lostmanager.apiutil.ApiRegistry;
+import lostmanager.commands.api.ApiCommand;
 import lostmanager.commands.coc.kickpoints.clanconfig;
 import lostmanager.commands.coc.kickpoints.kpadd;
 import lostmanager.commands.coc.kickpoints.kpaddreason;
@@ -579,7 +581,7 @@ public class Bot extends ListenerAdapter {
 													.addOption(OptionType.STRING, "who", "Der Teilnehmer, der entfernt werden soll", true, true)
 											)
 
-					).queue();
+					, ApiRegistry.buildSlashCommand()).queue();
 		}
 	}
 
@@ -628,6 +630,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new f2pcheck());
 		classes.add(new lostmanager.commands.roster.RosterCommand());
 		classes.add(new giveaway());
+		classes.add(new ApiCommand());
 
 		return classes.toArray();
 	}
