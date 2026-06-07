@@ -9,7 +9,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 
 public class MessageUtil {
 
@@ -59,9 +61,10 @@ public class MessageUtil {
 			new Thread(() -> {
 				try {
 					Thread.sleep(100);
-					sentMessage.editMessage("<@" + uuid + ">").queue();
+					sentMessage.editMessage("<@" + uuid + ">")
+							.queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 					Thread.sleep(100);
-					sentMessage.delete().queue();
+					sentMessage.delete().queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 				} catch (InterruptedException e) {
 					System.err.println(e.getMessage());
 				}
@@ -77,7 +80,8 @@ public class MessageUtil {
 			new Thread(() -> {
 				try {
 					Thread.sleep(100);
-					sentMessage.editMessage("<@" + uuid + ">").setActionRow(trashButton).queue();
+					sentMessage.editMessage("<@" + uuid + ">").setActionRow(trashButton)
+							.queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 				} catch (InterruptedException e) {
 					System.err.println(e.getMessage());
 				}

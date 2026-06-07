@@ -19,7 +19,9 @@ import lostmanager.util.MessageUtil;
 import lostmanager.util.Tuple;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -181,7 +183,7 @@ public class cwdonator extends ListenerAdapter {
 			}
 
 			event.getHook().editOriginal(".").queue(message -> {
-				message.delete().queue();
+				message.delete().queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 			});
 			event.getChannel().sendMessage(desc).queue();
 
