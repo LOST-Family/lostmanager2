@@ -84,6 +84,7 @@ public class Bot extends ListenerAdapter {
 	public static ScheduledExecutorService schedulertasks = Executors.newScheduledThreadPool(10);
 	public static AtomicInteger activeVerificationTasks = new AtomicInteger(0);
 	public static final java.net.http.HttpClient httpClient = java.net.http.HttpClient.newBuilder()
+			.connectTimeout(java.time.Duration.ofSeconds(10))
 			.followRedirects(java.net.http.HttpClient.Redirect.ALWAYS).build();
 
 	private static JDA jda;
@@ -680,7 +681,9 @@ public class Bot extends ListenerAdapter {
 
 	private static void restartAllEventsInternal() {
 		schedulertasks.shutdown();
-		schedulertasks = Executors.newSingleThreadScheduledExecutor();
+		// Use a multi-threaded pool (matching the initial field size) so a single
+		// blocked/long-running event cannot stall the polling loop or other due events.
+		schedulertasks = Executors.newScheduledThreadPool(10);
 		endClanGamesSavings();
 		startClanGamesSavings();
 		scheduleSeasonEndWinsSaving();
@@ -765,6 +768,11 @@ public class Bot extends ListenerAdapter {
 				case CW -> {
 					// Check if clan war is actually active
 					Boolean cwActive = clan.isCWActive();
+					if (clan.didApiRequestFail()) {
+						System.err.println("CW event validation: API request failed - could not confirm war state, "
+								+ "firing event to avoid skipping a real one");
+						return true;
+					}
 					if (cwActive == null || !cwActive) {
 						System.out.println("CW event validation: No active clan war");
 						return false;
@@ -774,6 +782,11 @@ public class Bot extends ListenerAdapter {
 				case CWLDAY -> {
 					// Check if CWL is active
 					Boolean cwlActive = clan.isCWLActive();
+					if (clan.didApiRequestFail()) {
+						System.err.println("CWL event validation: API request failed - could not confirm CWL state, "
+								+ "firing event to avoid skipping a real one");
+						return true;
+					}
 					if (cwlActive == null || !cwlActive) {
 						System.out.println("CWL event validation: No active CWL");
 						return false;
@@ -783,6 +796,11 @@ public class Bot extends ListenerAdapter {
 				case RAID -> {
 					// Check if raid is active
 					boolean raidActive = clan.RaidActive();
+					if (clan.didApiRequestFail()) {
+						System.err.println("Raid event validation: API request failed - could not confirm raid state, "
+								+ "firing event to avoid skipping a real one");
+						return true;
+					}
 					if (!raidActive) {
 						System.out.println("Raid event validation: No active raid");
 						return false;

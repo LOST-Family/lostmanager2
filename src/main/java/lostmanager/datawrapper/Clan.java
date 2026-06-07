@@ -565,9 +565,25 @@ public class Clan {
 	 * @param maxRetries Maximum number of retry attempts
 	 * @return HttpResponse or null if all retries failed
 	 */
+	// Tracks whether the most recent CoC API request failed (timeout / network error /
+	// exhausted retries) rather than returning a real HTTP response. Event validation uses
+	// this to avoid treating an unreachable API as "condition not met" and skipping a fire.
+	private boolean apiRequestFailed = false;
+
+	/** @return true if the most recent API request failed to get any HTTP response. */
+	public boolean didApiRequestFail() {
+		return apiRequestFailed;
+	}
+
 	private HttpResponse<String> performHttpRequestWithRetry(String url, int maxRetries) {
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
+				.timeout(java.time.Duration.ofSeconds(15))
 				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
+
+		// Assume failure until we actually receive a real HTTP response. This lets callers
+		// (e.g. event validation) distinguish "the API answered" from "the call failed",
+		// instead of a timeout being silently masked as a "no active raid/war" default.
+		apiRequestFailed = true;
 
 		int attempt = 0;
 		while (attempt <= maxRetries) {
@@ -578,6 +594,7 @@ public class Clan {
 				// client errors except 429)
 				if (response.statusCode() == 200 || (response.statusCode() >= 400 && response.statusCode() < 500
 						&& response.statusCode() != 429)) {
+					apiRequestFailed = false;
 					return response;
 				}
 
@@ -851,6 +868,7 @@ public class Clan {
 		String url = "https://api.clashofclans.com/v1/clanwarleagues/wars/" + encodedTag;
 
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
+				.timeout(java.time.Duration.ofSeconds(15))
 				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
 
 		HttpResponse<String> response = null;

@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -28,6 +29,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.json.JSONException;
+
 public class ListeningEvent {
 
 	public enum LISTENINGTYPE {
@@ -38,7 +41,7 @@ public class ListeningEvent {
 		INFOMESSAGE, CUSTOMMESSAGE, KICKPOINT, CWDONATOR, FILLER, RAIDFAILS, STARFAILS, STARFAILS_KICKPOINT
 	}
 
-	private Long id;
+	private final Long id;
 	private String clan_tag;
 	private LISTENINGTYPE listeningtype;
 	private Long durationuntilend; // in ms
@@ -117,28 +120,16 @@ public class ListeningEvent {
 				return null;
 			}
 			switch (type.toLowerCase()) {
-				case "cw":
-					listeningtype = LISTENINGTYPE.CW;
-					break;
-				case "raid":
-					listeningtype = LISTENINGTYPE.RAID;
-					break;
-				case "cwl":
-				case "cwlday":
-					listeningtype = LISTENINGTYPE.CWLDAY;
-					break;
-				case "cs":
-					listeningtype = LISTENINGTYPE.CS;
-					break;
-				case "fixtimeinterval":
-					listeningtype = LISTENINGTYPE.FIXTIMEINTERVAL;
-					break;
-				case "cwlend":
-					listeningtype = LISTENINGTYPE.CWLEND;
-					break;
-				default:
-					System.err.println("Warning: Unknown listeningtype '" + type + "' for event " + id);
-					listeningtype = null;
+				case "cw" -> listeningtype = LISTENINGTYPE.CW;
+				case "raid" -> listeningtype = LISTENINGTYPE.RAID;
+				case "cwl", "cwlday" -> listeningtype = LISTENINGTYPE.CWLDAY;
+                                case "cs" -> listeningtype = LISTENINGTYPE.CS;
+                                case "fixtimeinterval" -> listeningtype = LISTENINGTYPE.FIXTIMEINTERVAL;
+                                case "cwlend" -> listeningtype = LISTENINGTYPE.CWLEND;
+                                default -> {
+                                    System.err.println("Warning: Unknown listeningtype '" + type + "' for event " + id);
+                                    listeningtype = null;
+                        }
 			}
 		}
 		return listeningtype;
@@ -185,7 +176,8 @@ public class ListeningEvent {
 				actionvalues = mapper.readValue(json, new TypeReference<ArrayList<ActionValue>>() {
 				});
 			} catch (JsonProcessingException e) {
-				e.printStackTrace();
+				System.err.println("Error parsing actionvalues JSON for event " + id + ": " + e.getMessage());
+				actionvalues = new ArrayList<>();
 			}
 		}
 		return actionvalues;
@@ -207,40 +199,37 @@ public class ListeningEvent {
 			}
 
 			Clan c = new Clan(getClanTag());
-			Long endTimeMillis = null;
+			Long endTimeMillis;
 			switch (type) {
-				case CS:
-					endTimeMillis = c.getCGEndTimeMillis();
-					if (endTimeMillis != null) {
-						timestamptofire = endTimeMillis - getDurationUntilEnd();
-					}
-					break;
-				case CW:
-					endTimeMillis = c.getCWEndTimeMillis();
-					if (endTimeMillis != null) {
-						timestamptofire = endTimeMillis - getDurationUntilEnd();
-					}
-					break;
-				case CWLDAY:
-					endTimeMillis = c.getCWLDayEndTimeMillis();
-					if (endTimeMillis != null) {
-						timestamptofire = endTimeMillis - getDurationUntilEnd();
-					}
-					break;
-				case RAID:
-					endTimeMillis = c.getRaidEndTimeMillis();
-					if (endTimeMillis != null) {
-						timestamptofire = endTimeMillis - getDurationUntilEnd();
-					}
-					break;
-				case FIXTIMEINTERVAL:
-					timestamptofire = getDurationUntilEnd();
-					break;
-				case CWLEND:
-
-					break;
-				default:
-					break;
+				case CS -> {
+                                    endTimeMillis = c.getCGEndTimeMillis();
+                                    if (endTimeMillis != null) {
+                                        timestamptofire = endTimeMillis - getDurationUntilEnd();
+                                    }
+                        }
+				case CW -> {
+                                    endTimeMillis = c.getCWEndTimeMillis();
+                                    if (endTimeMillis != null) {
+                                        timestamptofire = endTimeMillis - getDurationUntilEnd();
+                                    }
+                        }
+				case CWLDAY -> {
+                                    endTimeMillis = c.getCWLDayEndTimeMillis();
+                                    if (endTimeMillis != null) {
+                                        timestamptofire = endTimeMillis - getDurationUntilEnd();
+                                    }
+                        }
+				case RAID -> {
+                                    endTimeMillis = c.getRaidEndTimeMillis();
+                                    if (endTimeMillis != null) {
+                                        timestamptofire = endTimeMillis - getDurationUntilEnd();
+                                    }
+                        }
+				case FIXTIMEINTERVAL -> timestamptofire = getDurationUntilEnd();
+				case CWLEND -> {
+                        }
+				default -> {
+                        }
 			}
 
 			// If timestamptofire is still null, return a far future time to prevent
@@ -266,29 +255,21 @@ public class ListeningEvent {
 			Clan clan = new Clan(getClanTag());
 
 			switch (type) {
-				case CS:
-					handleClanGamesEvent(clan);
-					break;
+				case CS -> handleClanGamesEvent(clan);
 
-				case CW:
-					handleClanWarEvent(clan);
-					break;
+				case CW -> handleClanWarEvent(clan);
 
-				case CWLDAY:
-					handleCWLDayEvent(clan);
-					break;
+				case CWLDAY -> handleCWLDayEvent(clan);
 
-				case RAID:
-					handleRaidEvent(clan);
-					break;
+				case RAID -> handleRaidEvent(clan);
 
-				case FIXTIMEINTERVAL:
-					// For custom timed events
-					break;
+				case FIXTIMEINTERVAL -> {
+                        }
 
-				default:
-					break;
+				default -> {
+                        }
 			}
+                    // For custom timed events
 
 			System.out.println("Completed fireEvent for event ID " + getId());
 		} catch (Exception e) {
@@ -322,7 +303,7 @@ public class ListeningEvent {
 		// Get all players in clan
 		ArrayList<Player> players = clan.getPlayersDB();
 		StringBuilder message = new StringBuilder();
-		message.append("## Clan Games Results (Threshold: " + threshold + ")\n\n");
+		message.append("## Clan Games Results (Threshold: ").append(threshold).append(")\n\n");
 
 		boolean hasViolations = false;
 		for (Player p : players) {
@@ -356,7 +337,7 @@ public class ListeningEvent {
 							break;
 						}
 					}
-				} catch (Exception e) {
+				} catch (JSONException e) {
 					System.err
 							.println("Error fetching fresh API data for player " + p.getTag() + ": " + e.getMessage());
 					continue;
@@ -433,7 +414,7 @@ public class ListeningEvent {
 
 		if ((isFillerAction || isCWDonatorAction)) {
 			if (isCWDonatorAction) {
-				handleCWDonator(clan, cwJson);
+				handleCWDonator(clan);
 			} else {
 				handleCWFiller(clan, cwJson);
 			}
@@ -442,7 +423,7 @@ public class ListeningEvent {
 		}
 	}
 
-	private void handleCWDonator(Clan clan, org.json.JSONObject cwJson) {
+	private void handleCWDonator(Clan clan) {
 		// Execute cwdonator command logic automatically
 		ArrayList<Player> originalList = clan.getWarMemberList();
 
@@ -496,7 +477,7 @@ public class ListeningEvent {
 		}
 
 		for (lostmanager.util.Tuple<Integer, Integer> map : currentmap) {
-			Player chosen = null;
+			Player chosen;
 
 			if (useLists) {
 				// Pick from list A
@@ -505,7 +486,7 @@ public class ListeningEvent {
 				// Original random logic
 				java.util.Collections.shuffle(warMemberList);
 				chosen = warMemberList.get(0);
-				int mapposition = chosen.getWarMapPosition();
+				int mapposition;
 				int i = 0;
 				while (i < warMemberList.size()) {
 					chosen = warMemberList.get(i);
@@ -557,47 +538,47 @@ public class ListeningEvent {
 
 		HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> mappings = new HashMap<>();
 		ArrayList<Tuple<Integer, Integer>> size5 = new ArrayList<>();
-		size5.add(new Tuple<Integer, Integer>(1, 3));
-		size5.add(new Tuple<Integer, Integer>(4, 5));
+		size5.add(new Tuple<>(1, 3));
+		size5.add(new Tuple<>(4, 5));
 		ArrayList<Tuple<Integer, Integer>> size10 = new ArrayList<>();
-		size10.add(new Tuple<Integer, Integer>(1, 5));
-		size10.add(new Tuple<Integer, Integer>(6, 10));
+		size10.add(new Tuple<>(1, 5));
+		size10.add(new Tuple<>(6, 10));
 		ArrayList<Tuple<Integer, Integer>> size15 = new ArrayList<>();
-		size15.add(new Tuple<Integer, Integer>(1, 7));
-		size15.add(new Tuple<Integer, Integer>(8, 15));
+		size15.add(new Tuple<>(1, 7));
+		size15.add(new Tuple<>(8, 15));
 		ArrayList<Tuple<Integer, Integer>> size20 = new ArrayList<>();
-		size20.add(new Tuple<Integer, Integer>(1, 10));
-		size20.add(new Tuple<Integer, Integer>(11, 20));
+		size20.add(new Tuple<>(1, 10));
+		size20.add(new Tuple<>(11, 20));
 		ArrayList<Tuple<Integer, Integer>> size25 = new ArrayList<>();
-		size25.add(new Tuple<Integer, Integer>(1, 9));
-		size25.add(new Tuple<Integer, Integer>(10, 17));
-		size25.add(new Tuple<Integer, Integer>(18, 25));
+		size25.add(new Tuple<>(1, 9));
+		size25.add(new Tuple<>(10, 17));
+		size25.add(new Tuple<>(18, 25));
 		ArrayList<Tuple<Integer, Integer>> size30 = new ArrayList<>();
-		size30.add(new Tuple<Integer, Integer>(1, 10));
-		size30.add(new Tuple<Integer, Integer>(11, 20));
-		size30.add(new Tuple<Integer, Integer>(21, 30));
+		size30.add(new Tuple<>(1, 10));
+		size30.add(new Tuple<>(11, 20));
+		size30.add(new Tuple<>(21, 30));
 		ArrayList<Tuple<Integer, Integer>> size35 = new ArrayList<>();
-		size35.add(new Tuple<Integer, Integer>(1, 9));
-		size35.add(new Tuple<Integer, Integer>(10, 18));
-		size35.add(new Tuple<Integer, Integer>(19, 27));
-		size35.add(new Tuple<Integer, Integer>(28, 35));
+		size35.add(new Tuple<>(1, 9));
+		size35.add(new Tuple<>(10, 18));
+		size35.add(new Tuple<>(19, 27));
+		size35.add(new Tuple<>(28, 35));
 		ArrayList<Tuple<Integer, Integer>> size40 = new ArrayList<>();
-		size40.add(new Tuple<Integer, Integer>(1, 10));
-		size40.add(new Tuple<Integer, Integer>(11, 20));
-		size40.add(new Tuple<Integer, Integer>(21, 30));
-		size40.add(new Tuple<Integer, Integer>(31, 40));
+		size40.add(new Tuple<>(1, 10));
+		size40.add(new Tuple<>(11, 20));
+		size40.add(new Tuple<>(21, 30));
+		size40.add(new Tuple<>(31, 40));
 		ArrayList<Tuple<Integer, Integer>> size45 = new ArrayList<>();
-		size45.add(new Tuple<Integer, Integer>(1, 9));
-		size45.add(new Tuple<Integer, Integer>(10, 18));
-		size45.add(new Tuple<Integer, Integer>(19, 27));
-		size45.add(new Tuple<Integer, Integer>(28, 36));
-		size45.add(new Tuple<Integer, Integer>(37, 45));
+		size45.add(new Tuple<>(1, 9));
+		size45.add(new Tuple<>(10, 18));
+		size45.add(new Tuple<>(19, 27));
+		size45.add(new Tuple<>(28, 36));
+		size45.add(new Tuple<>(37, 45));
 		ArrayList<Tuple<Integer, Integer>> size50 = new ArrayList<>();
-		size50.add(new Tuple<Integer, Integer>(1, 10));
-		size50.add(new Tuple<Integer, Integer>(11, 20));
-		size50.add(new Tuple<Integer, Integer>(21, 30));
-		size50.add(new Tuple<Integer, Integer>(31, 40));
-		size50.add(new Tuple<Integer, Integer>(41, 50));
+		size50.add(new Tuple<>(1, 10));
+		size50.add(new Tuple<>(11, 20));
+		size50.add(new Tuple<>(21, 30));
+		size50.add(new Tuple<>(31, 40));
+		size50.add(new Tuple<>(41, 50));
 		mappings.put(5, size5);
 		mappings.put(10, size10);
 		mappings.put(15, size15);
@@ -624,7 +605,7 @@ public class ListeningEvent {
 		java.time.OffsetDateTime endTime = java.time.OffsetDateTime.ofInstant(instant, ZoneOffset.UTC);
 
 		StringBuilder message = new StringBuilder();
-		message.append("## Filler in " + clan.getInfoString() + "\n\n");
+		message.append("## Filler in ").append(clan.getInfoString()).append("\n\n");
 
 		boolean hasOptedOut = false;
 		ArrayList<String> fillerTags = new ArrayList<>();
@@ -720,9 +701,7 @@ public class ListeningEvent {
 						handleCWMissedAttacksDelayedVerification(clanTag, finalEndTimeTs,
 								finalFillerTags, messageId, channelId, thisEvent, originalMessage);
 					} catch (Exception e) {
-						System.err.println("Error in delayed CW verification: " + e.getMessage());
-						e.printStackTrace();
-					} finally {
+						System.err.println("Error in delayed CW verification: " + e.getMessage());					} finally {
 						lostmanager.Bot.activeVerificationTasks.decrementAndGet();
 						scheduler.shutdown();
 					}
@@ -770,7 +749,7 @@ public class ListeningEvent {
 			int actualRequiredAttacks = event.getRequiredAttacksFromConfig(cwJson);
 
 			String updatedMessage;
-			boolean shouldProcessKickpoints = false;
+			boolean shouldProcessKickpoints;
 			CWMissedAttacksResult result = null;
 
 			if (dataIsReliable) {
@@ -814,10 +793,8 @@ public class ListeningEvent {
 			System.out.println("Completed 5-minute CW verification for clan " + clanTag + " (dataReliable="
 					+ dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
 
-		} catch (Exception e) {
+		} catch (JSONException e) {
 			System.err.println("Error in CW delayed verification for clan " + clanTag + ": " + e.getMessage());
-			e.printStackTrace();
-
 			// On error, try to update the message with an error note appended to original
 			try {
 				editMessageInChannel(channelId, messageId, originalMessage
@@ -881,7 +858,7 @@ public class ListeningEvent {
 		org.json.JSONArray members = clanData.getJSONArray("members");
 
 		StringBuilder message = new StringBuilder();
-		message.append("## " + clan.getNameAPI() + " Clankrieg - ");
+		message.append("## ").append(clan.getNameAPI()).append(" Clankrieg - ");
 
 		if (!isVerificationPhase && getDurationUntilEnd() > 0) {
 			int secondsLeft = (int) (getDurationUntilEnd() / 1000);
@@ -892,13 +869,13 @@ public class ListeningEvent {
 			minutesLeft = minutesLeft % 60;
 
 			if (hoursLeft > 0) {
-				message.append(" **" + hoursLeft).append("h**");
+				message.append(" **").append(hoursLeft).append("h**");
 			}
 			if (minutesLeft > 0) {
-				message.append(" **" + minutesLeft).append("m**");
+				message.append(" **").append(minutesLeft).append("m**");
 			}
 			if (secondsLeft > 0) {
-				message.append(" **" + secondsLeft).append("s**");
+				message.append(" **").append(secondsLeft).append("s**");
 			}
 			message.append(" verbleibend\n");
 		} else {
@@ -1051,8 +1028,8 @@ public class ListeningEvent {
 							}
 						}
 					}
-				} catch (Exception e) {
-					continue;
+				} catch (JSONException e) {
+					// Skip war tags whose data can't be loaded
 				}
 			}
 		}
@@ -1104,9 +1081,7 @@ public class ListeningEvent {
 							handleCWLDayMissedAttacksDelayedVerification(clanTag, finalCompletedRound,
 									finalWarTag, messageId, channelId, thisEvent, originalMessage);
 						} catch (Exception e) {
-							System.err.println("Error in delayed CWL day verification: " + e.getMessage());
-							e.printStackTrace();
-						} finally {
+							System.err.println("Error in delayed CWL day verification: " + e.getMessage());						} finally {
 							lostmanager.Bot.activeVerificationTasks.decrementAndGet();
 							scheduler.shutdown();
 						}
@@ -1118,7 +1093,7 @@ public class ListeningEvent {
 					sendMessageInChunks(result.message);
 				}
 			}
-		} catch (Exception e) {
+		} catch (JSONException e) {
 			System.err.println("Error processing target CWL round: " + e.getMessage());
 		}
 	}
@@ -1143,6 +1118,12 @@ public class ListeningEvent {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'").withZone(ZoneOffset.UTC);
 		Instant endInstant = Instant.from(formatter.parse(endTimeStr));
 		long millisRemaining = endInstant.toEpochMilli() - System.currentTimeMillis();
+
+		// Gather clan/sideclan info for footnotes
+		String eventClanTag = clan.getTag();
+		String warClanName = ourClanData.getString("name");
+		String belongsTo1 = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
+		String belongsTo2 = DBUtil.getValueFromSQL("SELECT belongs_to_2 FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
 
 		StringBuilder message = new StringBuilder();
 		message.append("## CWL Day ").append(roundNumber + 1);
@@ -1181,6 +1162,20 @@ public class ListeningEvent {
 			message.append(" verbleibend\n\n");
 		}
 
+		// Global footnote: clan name and sideclan parent(s)
+		message.append("-# Clan: ").append(warClanName);
+		if (belongsTo1 != null && !belongsTo1.isEmpty()) {
+			Clan mainClan1 = new Clan(belongsTo1);
+			String mainName1 = mainClan1.getNameDB();
+			message.append(" | Gehört zu: ").append(mainName1 != null ? mainName1 : belongsTo1);
+			if (belongsTo2 != null && !belongsTo2.isEmpty()) {
+				Clan mainClan2 = new Clan(belongsTo2);
+				String mainName2 = mainClan2.getNameDB();
+				message.append(", ").append(mainName2 != null ? mainName2 : belongsTo2);
+			}
+		}
+		message.append("\n\n");
+
 		boolean hasMissedAttacks = false;
 		ArrayList<PlayerMissedAttacks> playersWithMissedAttacks = new ArrayList<>();
 
@@ -1208,13 +1203,34 @@ public class ListeningEvent {
 				}
 
 				hasMissedAttacks = true;
-				message.append("- ").append(name);
+				message.append("- ").append(name).append(" (").append(tag).append(")");
 
 				// Only include Discord mentions if not in verification phase
 				if (!isVerificationPhase && p.getUser() != null) {
 					message.append(" (<@").append(p.getUser().getUserID()).append(">)");
 				}
 				message.append("\n");
+
+				// Footnote: warn if player won't receive a kickpoint
+				if (getActionType() == ACTIONTYPE.KICKPOINT) {
+					Clan playerClanDB = p.getClanDB();
+					boolean matchesEventClan = false;
+					if (playerClanDB != null) {
+						String pct = playerClanDB.getTag();
+						matchesEventClan = pct.equals(eventClanTag)
+								|| (belongsTo1 != null && !belongsTo1.isEmpty() && pct.equals(belongsTo1))
+								|| (belongsTo2 != null && !belongsTo2.isEmpty() && pct.equals(belongsTo2));
+					}
+					if (!matchesEventClan) {
+						if (playerClanDB != null) {
+							String foundName = playerClanDB.getNameDB();
+							message.append("-# Kein Kickpunkt – gefunden in: ")
+									.append(foundName != null ? foundName : playerClanDB.getTag()).append("\n");
+						} else {
+							message.append("-# Kein Kickpunkt – nicht in Datenbank\n");
+						}
+					}
+				}
 
 				playersWithMissedAttacks.add(new PlayerMissedAttacks(p, attacks));
 			}
@@ -1243,7 +1259,7 @@ public class ListeningEvent {
 			boolean dataIsReliable = currentState.equals("warEnded");
 
 			String updatedMessage;
-			boolean shouldProcessKickpoints = false;
+			boolean shouldProcessKickpoints;
 			CWMissedAttacksResult result = null;
 
 			if (dataIsReliable) {
@@ -1287,10 +1303,8 @@ public class ListeningEvent {
 			System.out.println("Completed 5-minute CWL day verification for clan " + clanTag + " (dataReliable="
 					+ dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
 
-		} catch (Exception e) {
+		} catch (JSONException e) {
 			System.err.println("Error in CWL day delayed verification for clan " + clanTag + ": " + e.getMessage());
-			e.printStackTrace();
-
 			// On error, try to update the message with an error note appended to original
 			try {
 				editMessageInChannel(channelId, messageId, originalMessage
@@ -1320,7 +1334,7 @@ public class ListeningEvent {
 
 		// Handle CUSTOMMESSAGE action type - post custom message with raid header
 		if (getActionType() == ACTIONTYPE.CUSTOMMESSAGE) {
-			handleRaidCustomMessage(clan, isRaidActive);
+			handleRaidCustomMessage(isRaidActive);
 			return;
 		}
 
@@ -1338,12 +1352,11 @@ public class ListeningEvent {
 					for (ActionValue av : actionValues) {
 						if (av.getSaved() == ActionValue.kind.value) {
 							valueCount++;
-							if (valueCount == 1) {
-								capitalPeakMax = av.getValue().intValue();
-							} else if (valueCount == 2) {
-								otherDistrictsMax = av.getValue().intValue();
-							} else if (valueCount == 3) {
-								penalizeBoth = av.getValue().intValue();
+							switch (valueCount) {
+								case 1 -> capitalPeakMax = av.getValue().intValue();
+								case 2 -> otherDistrictsMax = av.getValue().intValue();
+								case 3 -> penalizeBoth = av.getValue().intValue();
+								default -> { }
 							}
 						}
 					}
@@ -1508,7 +1521,7 @@ public class ListeningEvent {
 		}
 	}
 
-	private void handleRaidCustomMessage(Clan clan, boolean isRaidActive) {
+	private void handleRaidCustomMessage(boolean isRaidActive) {
 		// Get custom message from action values
 		String customMessageJson = DBUtil.getValueFromSQL("SELECT actionvalues FROM listening_events WHERE id = ?",
 				String.class, getId());
@@ -1726,10 +1739,8 @@ public class ListeningEvent {
 					}
 				}
 			}
-		} catch (Exception e) {
-			System.err.println("Error analyzing raid districts: " + e.getMessage());
-			e.printStackTrace();
-		}
+		} catch (JSONException e) {
+			System.err.println("Error analyzing raid districts: " + e.getMessage());		}
 	}
 
 	private void addKickpointForPlayer(Player player, String reason) {
@@ -1798,57 +1809,55 @@ public class ListeningEvent {
 			return;
 		}
 
-		if (clan != null) {
-			Integer daysExpire = clan.getDaysKickpointsExpireAfter();
-			// Default to 30 days if not configured
-			if (daysExpire == null) {
-				daysExpire = 30;
-			}
-
-			java.sql.Timestamp now = java.sql.Timestamp.from(java.time.Instant.now());
-			java.sql.Timestamp expires = java.sql.Timestamp
-					.valueOf(now.toLocalDateTime().plusDays(daysExpire));
-
-			Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(
-					"INSERT INTO kickpoints (player_tag, date, amount, description, created_by_discord_id, created_at, expires_at, clan_tag, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-					player.getTag(), now, amount, reason, Bot.getJda().getSelfUser().getId(), now, expires,
-					clan.getTag(), now);
-
-			if (result == null) {
-				System.err.println("Error: Failed to add kickpoint for player " + player.getTag() +
-						" in clan " + clan.getTag() + " - database error occurred");
-				return;
-			}
-
-			PreparedStatement stmt = result.getFirst();
-			int rowsAffected = result.getSecond();
-
-			Long id = null;
-
-			if (rowsAffected > 0) {
-				try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-					if (generatedKeys.next()) {
-						id = generatedKeys.getLong(1);
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			String desc = "### Es wurde ein Kickpunkt automatisch hinzugefügt.\n";
-			// Use API name for external clan players since they may not be in DB
-			String playerName = player.getNameDB();
-			if (playerName == null) {
-				playerName = player.getNameAPI();
-			}
-			desc += "Spieler: " + MessageUtil.unformat(playerName + " (" + player.getTag() + ")") + "\n";
-			desc += "Clan: " + clan.getInfoString() + "\n";
-			desc += "Anzahl: " + amount + "\n";
-			desc += "Grund: " + reason + "\n";
-			desc += "ID: " + id + "\n";
-
-			sendMessageToChannel(desc);
+		Integer daysExpire = clan.getDaysKickpointsExpireAfter();
+		// Default to 30 days if not configured
+		if (daysExpire == null) {
+			daysExpire = 30;
 		}
+
+		java.sql.Timestamp now = java.sql.Timestamp.from(java.time.Instant.now());
+		java.sql.Timestamp expires = java.sql.Timestamp
+				.valueOf(now.toLocalDateTime().plusDays(daysExpire));
+
+		Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(
+				"INSERT INTO kickpoints (player_tag, date, amount, description, created_by_discord_id, created_at, expires_at, clan_tag, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+				player.getTag(), now, amount, reason, Bot.getJda().getSelfUser().getId(), now, expires,
+				clan.getTag(), now);
+
+		if (result == null) {
+			System.err.println("Error: Failed to add kickpoint for player " + player.getTag() +
+					" in clan " + clan.getTag() + " - database error occurred");
+			return;
+		}
+
+		PreparedStatement stmt = result.getFirst();
+		int rowsAffected = result.getSecond();
+
+		Long kickpointId = null;
+
+		if (rowsAffected > 0) {
+			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+				if (generatedKeys.next()) {
+					kickpointId = generatedKeys.getLong(1);
+				}
+			} catch (SQLException e) {
+				System.err.println("Error retrieving generated kickpoint ID: " + e.getMessage());
+			}
+		}
+
+		String desc = "### Es wurde ein Kickpunkt automatisch hinzugefügt.\n";
+		// Use API name for external clan players since they may not be in DB
+		String playerName = player.getNameDB();
+		if (playerName == null) {
+			playerName = player.getNameAPI();
+		}
+		desc += "Spieler: " + MessageUtil.unformat(playerName + " (" + player.getTag() + ")") + "\n";
+		desc += "Clan: " + clan.getInfoString() + "\n";
+		desc += "Anzahl: " + amount + "\n";
+		desc += "Grund: " + reason + "\n";
+		desc += "ID: " + kickpointId + "\n";
+
+		sendMessageToChannel(desc);
 	}
 
 	@SuppressWarnings("null")
@@ -1875,17 +1884,13 @@ public class ListeningEvent {
 				if (channel != null) {
 					// Split message into chunks of max 3900 characters to be safe
 					int chunkSize = 1900;
+					// Stagger sends with a small, non-blocking delay to avoid rate limiting
+					long delayMs = 0;
 					for (int i = 0; i < message.length(); i += chunkSize) {
 						int end = Math.min(message.length(), i + chunkSize);
 						String chunk = message.substring(i, end);
-						channel.sendMessage(chunk).queue();
-
-						// Small delay between messages to avoid rate limiting
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
-							Thread.currentThread().interrupt();
-						}
+						channel.sendMessage(chunk).queueAfter(delayMs, TimeUnit.MILLISECONDS);
+						delayMs += 100;
 					}
 				}
 			} catch (Exception e) {
@@ -1916,15 +1921,11 @@ public class ListeningEvent {
 					java.sql.Array listBArray = rs.getArray("list_b");
 					if (listAArray != null) {
 						String[] listAData = (String[]) listAArray.getArray();
-						for (String tag : listAData) {
-							listA.add(tag);
-						}
+                                                listA.addAll(Arrays.asList(listAData));
 					}
 					if (listBArray != null) {
 						String[] listBData = (String[]) listBArray.getArray();
-						for (String tag : listBData) {
-							listB.add(tag);
-						}
+						listB.addAll(Arrays.asList(listBData));
 					}
 				}
 
@@ -1970,10 +1971,8 @@ public class ListeningEvent {
 					}
 				}
 			}
-		} catch (Exception e) {
-			System.err.println("Error initializing/syncing cwdonator lists for event: " + e.getMessage());
-			e.printStackTrace();
-		}
+		} catch (SQLException e) {
+			System.err.println("Error initializing/syncing cwdonator lists for event: " + e.getMessage());		}
 	}
 
 	/**
@@ -1995,15 +1994,11 @@ public class ListeningEvent {
 					java.sql.Array listBArray = rs.getArray("list_b");
 					if (listAArray != null) {
 						String[] listAData = (String[]) listAArray.getArray();
-						for (String tag : listAData) {
-							listA.add(tag);
-						}
+						listA.addAll(Arrays.asList(listAData));
 					}
 					if (listBArray != null) {
 						String[] listBData = (String[]) listBArray.getArray();
-						for (String tag : listBData) {
-							listB.add(tag);
-						}
+						listB.addAll(Arrays.asList(listBData));
 					}
 				}
 			}
@@ -2034,7 +2029,7 @@ public class ListeningEvent {
 			}
 
 			// Pick a player
-			Player chosen = null;
+			Player chosen;
 			if (!eligiblePlayers.isEmpty()) {
 				Collections.shuffle(eligiblePlayers);
 
@@ -2087,9 +2082,7 @@ public class ListeningEvent {
 
 			return chosen;
 		} catch (Exception e) {
-			System.err.println("Error picking player from List A for event: " + e.getMessage());
-			e.printStackTrace();
-			// Fallback: find an eligible player, respecting excludeLeaders if enabled
+			System.err.println("Error picking player from List A for event: " + e.getMessage());			// Fallback: find an eligible player, respecting excludeLeaders if enabled
 			if (!warMemberList.isEmpty()) {
 				java.util.Collections.shuffle(warMemberList);
 				for (Player p : warMemberList) {
@@ -2323,6 +2316,12 @@ public class ListeningEvent {
 
 		org.json.JSONArray members = ourClanData.getJSONArray("members");
 
+		// Gather clan/sideclan info for footnotes
+		String eventClanTag = clan.getTag();
+		String warClanName = ourClanData.getString("name");
+		String belongsTo1 = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
+		String belongsTo2 = DBUtil.getValueFromSQL("SELECT belongs_to_2 FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
+
 		StringBuilder message = new StringBuilder();
 		message.append("## CWL Day ").append(roundNumber + 1)
 				.append(" – Schlechte Angriffe (").append(targetStars).append(" ★)\n");
@@ -2346,6 +2345,20 @@ public class ListeningEvent {
 			if (secondsLeft > 0 && hoursLeft == 0) message.append("**").append(secondsLeft).append("s** ");
 			message.append("verbleibend\n\n");
 		}
+
+		// Global footnote: clan name and sideclan parent(s)
+		message.append("-# Clan: ").append(warClanName);
+		if (belongsTo1 != null && !belongsTo1.isEmpty()) {
+			Clan mainClan1 = new Clan(belongsTo1);
+			String mainName1 = mainClan1.getNameDB();
+			message.append(" | Gehört zu: ").append(mainName1 != null ? mainName1 : belongsTo1);
+			if (belongsTo2 != null && !belongsTo2.isEmpty()) {
+				Clan mainClan2 = new Clan(belongsTo2);
+				String mainName2 = mainClan2.getNameDB();
+				message.append(", ").append(mainName2 != null ? mainName2 : belongsTo2);
+			}
+		}
+		message.append("\n\n");
 
 		boolean hasBadAttacks = false;
 		ArrayList<PlayerBadAttack> punishableAttacks = new ArrayList<>();
@@ -2371,6 +2384,27 @@ public class ListeningEvent {
 			message.append("- ").append(name).append(" (").append(tag).append(")")
 					.append(" – ").append(stars).append(" ★ (")
 					.append(attack.optInt("destructionPercentage", 0)).append("%)\n");
+
+			// Footnote: warn if player won't receive a kickpoint
+			if (getActionType() == ACTIONTYPE.STARFAILS_KICKPOINT) {
+				Clan playerClanDB = p.getClanDB();
+				boolean matchesEventClan = false;
+				if (playerClanDB != null) {
+					String pct = playerClanDB.getTag();
+					matchesEventClan = pct.equals(eventClanTag)
+							|| (belongsTo1 != null && !belongsTo1.isEmpty() && pct.equals(belongsTo1))
+							|| (belongsTo2 != null && !belongsTo2.isEmpty() && pct.equals(belongsTo2));
+				}
+				if (!matchesEventClan) {
+					if (playerClanDB != null) {
+						String foundName = playerClanDB.getNameDB();
+						message.append("-# Kein Kickpunkt – gefunden in: ")
+								.append(foundName != null ? foundName : playerClanDB.getTag()).append("\n");
+					} else {
+						message.append("-# Kein Kickpunkt – nicht in Datenbank\n");
+					}
+				}
+			}
 
 			punishableAttacks.add(new PlayerBadAttack(p, stars,
 					attack.optInt("order", 1),
@@ -2407,9 +2441,7 @@ public class ListeningEvent {
 						handleCWBadAttacksDelayedVerification(clanTag, messageId, channelId, thisEvent,
 								originalMessage, endTimeStr);
 					} catch (Exception e) {
-						System.err.println("Error in delayed CW bad attacks verification: " + e.getMessage());
-						e.printStackTrace();
-					} finally {
+						System.err.println("Error in delayed CW bad attacks verification: " + e.getMessage());					} finally {
 						Bot.activeVerificationTasks.decrementAndGet();
 						scheduler.shutdown();
 					}
@@ -2462,10 +2494,8 @@ public class ListeningEvent {
 			System.out.println("Completed 5-minute CW bad attacks verification for clan " + clanTag
 					+ " (dataReliable=" + (dataIsReliable && sameWar) + ", kickpoints=" + shouldProcessKickpoints + ")");
 
-		} catch (Exception e) {
-			System.err.println("Error in CW bad attacks delayed verification for clan " + clanTag + ": " + e.getMessage());
-			e.printStackTrace();
-			try {
+		} catch (JSONException e) {
+			System.err.println("Error in CW bad attacks delayed verification for clan " + clanTag + ": " + e.getMessage());			try {
 				editMessageInChannel(channelId, messageId,
 						originalMessage + "\n\n*Fehler bei der 5-Minuten-Überprüfung.*");
 			} catch (Exception e2) {
@@ -2503,9 +2533,7 @@ public class ListeningEvent {
 						handleCWLDayBadAttacksDelayedVerification(clanTag, finalRound, finalWarTag,
 								messageId, channelId, thisEvent, originalMessage);
 					} catch (Exception e) {
-						System.err.println("Error in delayed CWL bad attacks verification: " + e.getMessage());
-						e.printStackTrace();
-					} finally {
+						System.err.println("Error in delayed CWL bad attacks verification: " + e.getMessage());					} finally {
 						Bot.activeVerificationTasks.decrementAndGet();
 						scheduler.shutdown();
 					}
@@ -2559,10 +2587,8 @@ public class ListeningEvent {
 			System.out.println("Completed 5-minute CWL bad attacks verification for clan " + clanTag
 					+ " (dataReliable=" + dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
 
-		} catch (Exception e) {
-			System.err.println("Error in CWL bad attacks delayed verification for clan " + clanTag + ": " + e.getMessage());
-			e.printStackTrace();
-			try {
+		} catch (JSONException e) {
+			System.err.println("Error in CWL bad attacks delayed verification for clan " + clanTag + ": " + e.getMessage());			try {
 				editMessageInChannel(channelId, messageId,
 						originalMessage + "\n\n*Fehler bei der 5-Minuten-Überprüfung.*");
 			} catch (Exception e2) {

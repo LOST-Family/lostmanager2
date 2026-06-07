@@ -630,6 +630,7 @@ public class Player {
 	 */
 	private HttpResponse<String> performHttpRequestWithRetry(String url, int maxRetries) {
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
+				.timeout(java.time.Duration.ofSeconds(15))
 				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
 
 		int attempt = 0;
