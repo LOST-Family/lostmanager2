@@ -14,7 +14,9 @@ import lostmanager.util.MessageUtil;
 import lostmanager.util.Tuple;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -173,14 +175,14 @@ public class raidping extends ListenerAdapter {
 			}
 
 			event.getHook().editOriginal(".").queue(message -> {
-				message.delete().queue();
+				message.delete().queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 			});
 			if (raidactive) {
 				event.getChannel().sendMessage(desc).queue();
 			} else {
 				final String newmessage = desc;
 				event.getChannel().sendMessage(".").queue(message -> {
-					message.editMessage(newmessage).queue();
+					message.editMessage(newmessage).queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 				});
 			}
 		}, "RaidpingCommand-" + event.getUser().getId()).start();

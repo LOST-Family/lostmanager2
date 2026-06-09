@@ -63,7 +63,7 @@ public class link extends ListenerAdapter {
 				try {
 					playername = p.getNameAPI();
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.err.println("Error fetching player name for " + tag + ": " + e.getMessage());
 				}
 				if (!p.IsLinked()) {
 					DBUtil.executeUpdate("INSERT INTO players (coc_tag, discord_id, name) VALUES (?, ?, ?)", tag, userid,

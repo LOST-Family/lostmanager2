@@ -9,7 +9,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageEmbed.Field;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 
 public class MessageUtil {
 
@@ -17,37 +19,27 @@ public class MessageUtil {
 		INFO, SUCCESS, ERROR, LOADING, WARNING
 	}
 
-	public static String footer = "Lost Manager | Made by Pixel | v" + Bot.VERSION;
+	public static String footer = "Lost Manager | Made by Pixel";
 
 	public static MessageEmbed buildEmbed(String title, String description, EmbedType type, String additionalfooter,
 			Field... fields) {
 		EmbedBuilder embedreply = new EmbedBuilder();
 		embedreply.setTitle(title);
 		embedreply.setDescription(description);
-		for (int i = 0; i < fields.length; i++) {
-			embedreply.addField(fields[i]);
-		}
+            for (Field field : fields) {
+                embedreply.addField(field);
+            }
 		if (footer.equals("")) {
 			embedreply.setFooter(footer);
 		} else {
 			embedreply.setFooter(additionalfooter + "\n" + footer);
 		}
 		switch (type) {
-			case INFO:
-				embedreply.setColor(Color.CYAN);
-				break;
-			case SUCCESS:
-				embedreply.setColor(Color.GREEN);
-				break;
-			case ERROR:
-				embedreply.setColor(Color.RED);
-				break;
-			case LOADING:
-				embedreply.setColor(Color.MAGENTA);
-				break;
-			case WARNING:
-				embedreply.setColor(Color.ORANGE);
-				break;
+			case INFO -> embedreply.setColor(Color.CYAN);
+			case SUCCESS -> embedreply.setColor(Color.GREEN);
+			case ERROR -> embedreply.setColor(Color.RED);
+			case LOADING -> embedreply.setColor(Color.MAGENTA);
+			case WARNING -> embedreply.setColor(Color.ORANGE);
 		}
 		return embedreply.build();
 	}
@@ -69,11 +61,12 @@ public class MessageUtil {
 			new Thread(() -> {
 				try {
 					Thread.sleep(100);
-					sentMessage.editMessage("<@" + uuid + ">").queue();
+					sentMessage.editMessage("<@" + uuid + ">")
+							.queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 					Thread.sleep(100);
-					sentMessage.delete().queue();
+					sentMessage.delete().queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					System.err.println(e.getMessage());
 				}
 			}).start();
 		});
@@ -87,9 +80,10 @@ public class MessageUtil {
 			new Thread(() -> {
 				try {
 					Thread.sleep(100);
-					sentMessage.editMessage("<@" + uuid + ">").setActionRow(trashButton).queue();
+					sentMessage.editMessage("<@" + uuid + ">").setActionRow(trashButton)
+							.queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					System.err.println(e.getMessage());
 				}
 			}).start();
 		});
@@ -101,26 +95,14 @@ public class MessageUtil {
 			int i = 0;
 			while (channel == null) {
 				switch (i) {
-					case 0:
-						channel = (MessageChannelUnion) Bot.getJda().getTextChannelById(channelId);
-						break;
-					case 1:
-						channel = (MessageChannelUnion) Bot.getJda().getNewsChannelById(channelId);
-						break;
-					case 2:
-						channel = (MessageChannelUnion) Bot.getJda().getVoiceChannelById(channelId);
-						break;
-					case 3:
-						channel = (MessageChannelUnion) Bot.getJda().getStageChannelById(channelId);
-						break;
-					case 4:
-						channel = (MessageChannelUnion) Bot.getJda().getThreadChannelById(channelId);
-						break;
-					case 5:
-						channel = (MessageChannelUnion) Bot.getJda().getPrivateChannelById(channelId);
-						break;
-					default:
-						break;
+					case 0 -> channel = (MessageChannelUnion) Bot.getJda().getTextChannelById(channelId);
+					case 1 -> channel = (MessageChannelUnion) Bot.getJda().getNewsChannelById(channelId);
+					case 2 -> channel = (MessageChannelUnion) Bot.getJda().getVoiceChannelById(channelId);
+					case 3 -> channel = (MessageChannelUnion) Bot.getJda().getStageChannelById(channelId);
+					case 4 -> channel = (MessageChannelUnion) Bot.getJda().getThreadChannelById(channelId);
+					case 5 -> channel = (MessageChannelUnion) Bot.getJda().getPrivateChannelById(channelId);
+					default -> {
+                                }
 				}
 				i++;
 				if (i > 5)

@@ -13,7 +13,9 @@ import lostmanager.util.MessageUtil;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class deletemessages extends ListenerAdapter {
@@ -249,7 +251,7 @@ public class deletemessages extends ListenerAdapter {
 
 		// Einzeln löschen für >14 Tage
 		for (Message msg : old) {
-			msg.delete().queue();
+			msg.delete().queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 		}
 	}
 

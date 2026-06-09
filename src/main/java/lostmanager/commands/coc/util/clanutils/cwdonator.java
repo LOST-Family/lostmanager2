@@ -4,6 +4,7 @@ import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,7 +19,9 @@ import lostmanager.util.MessageUtil;
 import lostmanager.util.Tuple;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -83,11 +86,11 @@ public class cwdonator extends ListenerAdapter {
 
 			Clan clan = new Clan(clantag);
 
-			ArrayList<Player> warMemberList = clan.getWarMemberList();
+			ArrayList<Player> originalList = clan.getWarMemberList();
 
-			if (warMemberList == null) {
-				warMemberList = clan.getCWLMemberList();
-				if (warMemberList == null) {
+			if (originalList == null) {
+				originalList = clan.getCWLMemberList();
+				if (originalList == null) {
 					event.getHook()
 							.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 									"Dieser Clan ist gerade nicht in einem Clankrieg oder in der Clankriegsliga.",
@@ -97,15 +100,16 @@ public class cwdonator extends ListenerAdapter {
 				}
 			}
 
-			int cwsize = warMemberList.size();
+			int cwsize = originalList.size();
+			ArrayList<Player> warMemberList = new ArrayList<>(originalList);
 
 			// Filter hidden co-leaders
 			warMemberList.removeIf(p -> p.isHiddenColeader());
 
-			// Filter signed-off members who don't want pings
+			// Filter signed-off members
 			warMemberList.removeIf(p -> {
 				MemberSignoff signoff = new MemberSignoff(p.getTag());
-				return signoff.isActive() && !signoff.isReceivePings();
+				return signoff.isActive();
 			});
 
 			HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> mappings = getMappings();
@@ -117,12 +121,12 @@ public class cwdonator extends ListenerAdapter {
 				initializeAndSyncLists(clantag, clan);
 			}
 
-			for (Tuple<Integer, Integer> map : currentmap) {
-				Player chosen = null;
+			for (Tuple<Integer, Integer> range : currentmap) {
+				Player chosen;
 
 				if (useLists) {
 					// Pick from list A
-					chosen = pickPlayerFromListA(clantag, warMemberList, map, excludeLeaders);
+					chosen = pickPlayerFromListA(clantag, warMemberList, range, excludeLeaders);
 				} else {
 					// Original random logic
 					Collections.shuffle(warMemberList);
@@ -130,7 +134,7 @@ public class cwdonator extends ListenerAdapter {
 					int mapposition = chosen.getWarMapPosition();
 					int i = 0;
 					while (true) {
-						if (mapposition >= map.getFirst() && mapposition <= map.getSecond()) {
+						if (mapposition >= range.getFirst() && mapposition <= range.getSecond()) {
 							chosen = warMemberList.get(i);
 							mapposition = chosen.getWarMapPosition();
 							i++;
@@ -161,25 +165,25 @@ public class cwdonator extends ListenerAdapter {
 				warMemberList.remove(chosen);
 				if (ping) {
 					if (chosen.getUser() != null) {
-						desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI() + "(<@"
+						desc += range.getFirst() + "-" + range.getSecond() + ": " + chosen.getNameAPI() + "(<@"
 								+ chosen.getUser().getUserID() + ">) (Nr. " + mapposition + ")\n";
 					} else {
-						desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI()
+						desc += range.getFirst() + "-" + range.getSecond() + ": " + chosen.getNameAPI()
 								+ "(nicht verlinkt) (Nr. " + mapposition + ")\n";
 					}
 				} else {
 					if (chosen.getUser() != null) {
-						desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI() + "(UserID: "
+						desc += range.getFirst() + "-" + range.getSecond() + ": " + chosen.getNameAPI() + "(UserID: "
 								+ chosen.getUser().getUserID() + ") (Nr. " + mapposition + ")\n";
 					} else {
-						desc += map.getFirst() + "-" + map.getSecond() + ": " + chosen.getNameAPI()
+						desc += range.getFirst() + "-" + range.getSecond() + ": " + chosen.getNameAPI()
 								+ "(nicht verlinkt) (Nr. " + mapposition + ")\n";
 					}
 				}
 			}
 
 			event.getHook().editOriginal(".").queue(message -> {
-				message.delete().queue();
+				message.delete().queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 			});
 			event.getChannel().sendMessage(desc).queue();
 
@@ -220,47 +224,47 @@ public class cwdonator extends ListenerAdapter {
 		if (map == null) {
 			HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> mappings = new HashMap<>();
 			ArrayList<Tuple<Integer, Integer>> size5 = new ArrayList<>();
-			size5.add(new Tuple<Integer, Integer>(1, 3));
-			size5.add(new Tuple<Integer, Integer>(4, 5));
+			size5.add(new Tuple<>(1, 3));
+			size5.add(new Tuple<>(4, 5));
 			ArrayList<Tuple<Integer, Integer>> size10 = new ArrayList<>();
-			size10.add(new Tuple<Integer, Integer>(1, 5));
-			size10.add(new Tuple<Integer, Integer>(6, 10));
+			size10.add(new Tuple<>(1, 5));
+			size10.add(new Tuple<>(6, 10));
 			ArrayList<Tuple<Integer, Integer>> size15 = new ArrayList<>();
-			size15.add(new Tuple<Integer, Integer>(1, 7));
-			size15.add(new Tuple<Integer, Integer>(8, 15));
+			size15.add(new Tuple<>(1, 7));
+			size15.add(new Tuple<>(8, 15));
 			ArrayList<Tuple<Integer, Integer>> size20 = new ArrayList<>();
-			size20.add(new Tuple<Integer, Integer>(1, 10));
-			size20.add(new Tuple<Integer, Integer>(11, 20));
+			size20.add(new Tuple<>(1, 10));
+			size20.add(new Tuple<>(11, 20));
 			ArrayList<Tuple<Integer, Integer>> size25 = new ArrayList<>();
-			size25.add(new Tuple<Integer, Integer>(1, 9));
-			size25.add(new Tuple<Integer, Integer>(10, 17));
-			size25.add(new Tuple<Integer, Integer>(18, 25));
+			size25.add(new Tuple<>(1, 9));
+			size25.add(new Tuple<>(10, 17));
+			size25.add(new Tuple<>(18, 25));
 			ArrayList<Tuple<Integer, Integer>> size30 = new ArrayList<>();
-			size30.add(new Tuple<Integer, Integer>(1, 10));
-			size30.add(new Tuple<Integer, Integer>(11, 20));
-			size30.add(new Tuple<Integer, Integer>(21, 30));
+			size30.add(new Tuple<>(1, 10));
+			size30.add(new Tuple<>(11, 20));
+			size30.add(new Tuple<>(21, 30));
 			ArrayList<Tuple<Integer, Integer>> size35 = new ArrayList<>();
-			size35.add(new Tuple<Integer, Integer>(1, 9));
-			size35.add(new Tuple<Integer, Integer>(10, 18));
-			size35.add(new Tuple<Integer, Integer>(19, 27));
-			size35.add(new Tuple<Integer, Integer>(28, 35));
+			size35.add(new Tuple<>(1, 9));
+			size35.add(new Tuple<>(10, 18));
+			size35.add(new Tuple<>(19, 27));
+			size35.add(new Tuple<>(28, 35));
 			ArrayList<Tuple<Integer, Integer>> size40 = new ArrayList<>();
-			size40.add(new Tuple<Integer, Integer>(1, 10));
-			size40.add(new Tuple<Integer, Integer>(11, 20));
-			size40.add(new Tuple<Integer, Integer>(21, 30));
-			size40.add(new Tuple<Integer, Integer>(31, 40));
+			size40.add(new Tuple<>(1, 10));
+			size40.add(new Tuple<>(11, 20));
+			size40.add(new Tuple<>(21, 30));
+			size40.add(new Tuple<>(31, 40));
 			ArrayList<Tuple<Integer, Integer>> size45 = new ArrayList<>();
-			size45.add(new Tuple<Integer, Integer>(1, 9));
-			size45.add(new Tuple<Integer, Integer>(10, 18));
-			size45.add(new Tuple<Integer, Integer>(19, 27));
-			size45.add(new Tuple<Integer, Integer>(28, 36));
-			size45.add(new Tuple<Integer, Integer>(37, 45));
+			size45.add(new Tuple<>(1, 9));
+			size45.add(new Tuple<>(10, 18));
+			size45.add(new Tuple<>(19, 27));
+			size45.add(new Tuple<>(28, 36));
+			size45.add(new Tuple<>(37, 45));
 			ArrayList<Tuple<Integer, Integer>> size50 = new ArrayList<>();
-			size50.add(new Tuple<Integer, Integer>(1, 10));
-			size50.add(new Tuple<Integer, Integer>(11, 20));
-			size50.add(new Tuple<Integer, Integer>(21, 30));
-			size50.add(new Tuple<Integer, Integer>(31, 40));
-			size50.add(new Tuple<Integer, Integer>(41, 50));
+			size50.add(new Tuple<>(1, 10));
+			size50.add(new Tuple<>(11, 20));
+			size50.add(new Tuple<>(21, 30));
+			size50.add(new Tuple<>(31, 40));
+			size50.add(new Tuple<>(41, 50));
 			mappings.put(5, size5);
 			mappings.put(10, size10);
 			mappings.put(15, size15);
@@ -298,15 +302,11 @@ public class cwdonator extends ListenerAdapter {
 					Array listBArray = rs.getArray("list_b");
 					if (listAArray != null) {
 						String[] listAData = (String[]) listAArray.getArray();
-						for (String tag : listAData) {
-							listA.add(tag);
-						}
+						Collections.addAll(listA, listAData);
 					}
 					if (listBArray != null) {
 						String[] listBData = (String[]) listBArray.getArray();
-						for (String tag : listBData) {
-							listB.add(tag);
-						}
+						Collections.addAll(listB, listBData);
 					}
 				}
 
@@ -352,9 +352,9 @@ public class cwdonator extends ListenerAdapter {
 					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.err.println("Error initializing/syncing cwdonator lists: " + e.getMessage());
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 	}
 
@@ -377,15 +377,11 @@ public class cwdonator extends ListenerAdapter {
 					Array listBArray = rs.getArray("list_b");
 					if (listAArray != null) {
 						String[] listAData = (String[]) listAArray.getArray();
-						for (String tag : listAData) {
-							listA.add(tag);
-						}
+						Collections.addAll(listA, listAData);
 					}
 					if (listBArray != null) {
 						String[] listBData = (String[]) listBArray.getArray();
-						for (String tag : listBData) {
-							listB.add(tag);
-						}
+						Collections.addAll(listB, listBData);
 					}
 				}
 			}
@@ -417,7 +413,7 @@ public class cwdonator extends ListenerAdapter {
 			}
 
 			// Pick a player
-			Player chosen = null;
+			Player chosen;
 			if (!eligiblePlayers.isEmpty()) {
 				Collections.shuffle(eligiblePlayers);
 
@@ -474,7 +470,7 @@ public class cwdonator extends ListenerAdapter {
 			return chosen;
 		} catch (Exception e) {
 			System.err.println("Error picking player from List A: " + e.getMessage());
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 			// Fallback: find an eligible player, respecting excludeLeaders if enabled
 			if (!warMemberList.isEmpty()) {
 				Collections.shuffle(warMemberList);
