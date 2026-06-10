@@ -1343,6 +1343,15 @@ public class ListeningEvent {
 		// at this point. Post immediately with current data, then verify after 5
 		// minutes with fresh data (kickpoints are only added after verification).
 		if (getActionType() == ACTIONTYPE.RAIDFAILS) {
+			// Legacy events may still be configured with a duration > 0 - the district
+			// analysis needs final data, so it only runs for end-of-raid events
+			// (creation now enforces duration 0)
+			if (getDurationUntilEnd() != 0) {
+				System.out.println("Skipping RAIDFAILS event " + getId() + " - duration must be 0 (configured: "
+						+ getDurationUntilEnd() + ")");
+				return;
+			}
+
 			// Parse district thresholds from action values
 			Integer capitalPeakMax = null;
 			Integer otherDistrictsMax = null;
@@ -1764,10 +1773,21 @@ public class ListeningEvent {
 	 * so it can be posted and later edited during verification.
 	 */
 	private static String truncateForDiscord(String message) {
-		if (message.length() <= 1900) {
-			return message;
+		return truncateForDiscord(message, "");
+	}
+
+	/**
+	 * Truncates a message to fit into a single Discord message (2000 char limit).
+	 * The footer (e.g. verification status notes) is always kept - only the body
+	 * is shortened.
+	 */
+	private static String truncateForDiscord(String message, String footer) {
+		if (message.length() + footer.length() <= 1900) {
+			return message + footer;
 		}
-		return message.substring(0, 1900) + "\n*… gekürzt*";
+		String marker = "\n*… gekürzt*";
+		int bodyLimit = 1900 - footer.length() - marker.length();
+		return message.substring(0, bodyLimit) + marker + footer;
 	}
 
 	private void handleRaidDistrictAnalysis(Clan clan, int capitalPeakMax, int otherDistrictsMax, int penalizeBoth) {
@@ -1859,8 +1879,8 @@ public class ListeningEvent {
 
 			if (!dataIsReliable) {
 				if (messageId != null) {
-					editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage
-							+ "\n*Daten sind nicht zuverlässig - keine Kickpunkte vergeben*"));
+					editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage,
+							"\n*Daten sind nicht zuverlässig - keine Kickpunkte vergeben*"));
 				}
 				System.out.println("Completed 5-minute raid district verification for clan " + clanTag
 						+ " (dataReliable=false, kickpoints=false)");
@@ -1876,12 +1896,12 @@ public class ListeningEvent {
 			if (messageId != null) {
 				// Update the original message with verified data
 				String updatedMessage = result.hasFails
-						? result.message + "\n*Daten nach 5min überprüft*"
+						? truncateForDiscord(result.message, "\n*Daten nach 5min überprüft*")
 						: "## Raidfails - District-Analyse\n\nKeine Verstöße nach Überprüfung gefunden.\n\n*Daten nach 5min überprüft*";
-				editMessageInChannel(channelId, messageId, truncateForDiscord(updatedMessage));
+				editMessageInChannel(channelId, messageId, updatedMessage);
 			} else if (result.hasFails) {
 				// Nothing was posted at fire time, but the fresh data shows violations
-				sendMessageToChannel(truncateForDiscord(result.message + "\n*Daten nach 5min überprüft*"));
+				sendMessageToChannel(truncateForDiscord(result.message, "\n*Daten nach 5min überprüft*"));
 			}
 
 			boolean shouldProcessKickpoints = shouldAddKickpoints && result.hasFails
@@ -1901,8 +1921,8 @@ public class ListeningEvent {
 					+ e.getMessage());
 			if (messageId != null) {
 				try {
-					editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage
-							+ "\n*Fehler bei der 5-Minuten-Überprüfung. Daten möglicherweise nicht aktuell.*"));
+					editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage,
+							"\n*Fehler bei der 5-Minuten-Überprüfung. Daten möglicherweise nicht aktuell.*"));
 				} catch (Exception e2) {
 					System.err.println("Failed to update message with error: " + e2.getMessage());
 				}
