@@ -153,6 +153,14 @@ public class listeningevent extends ListenerAdapter {
 			return;
 		}
 
+		// Raidfails analyzes final district data, so it must fire exactly at raid end
+		if ((actionTypeStr.equals("raidfails") || actionTypeStr.equals("raidfails_kickpoint")) && duration != 0) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title,
+					"Raidfails-Events müssen mit Dauer 0 erstellt werden (Analyse läuft zum Raid-Ende)!",
+					MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+
 		// Check if kickpoint_reason is required
 		if (actionTypeStr.equals("kickpoint") && kickpointReasonName == null) {
 			event.replyEmbeds(MessageUtil.buildEmbed(title,

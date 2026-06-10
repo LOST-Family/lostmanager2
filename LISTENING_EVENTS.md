@@ -24,7 +24,7 @@ Creates a new listening event for a clan with inline parameters (no modal requir
   - `Benutzerdefinierte Nachricht` - Send a custom message (available for all types)
   - `CW Donator` - CW donor selection (CW only)
   - `Filler` - Check war preferences / filler action (CW only)
-  - `Raidfails` - District attack analysis / bad hits detection (Raid only)
+  - `Raidfails` - District attack analysis / bad hits detection (Raid only, duration must be `0`; posts at raid end and re-verifies the data after 5 minutes before adding kickpoints)
 - `channel` (required): Discord channel where messages are sent (channel picker)
 - `kickpoint_reason` (optional): Kickpoint reason to use (autocomplete from clan's configured reasons)
   - **Required** when `actiontype` is `Kickpoint`

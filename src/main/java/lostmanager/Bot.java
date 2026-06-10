@@ -804,6 +804,12 @@ public class Bot extends ListenerAdapter {
 								+ "firing event to avoid skipping a real one");
 						return true;
 					}
+					// Raidfails events fire exactly at raid end - the API may already report
+					// state "ended" at that point, so "ongoing" must not be required here.
+					// The handler itself validates the raid state.
+					if (le.getActionType() == ListeningEvent.ACTIONTYPE.RAIDFAILS) {
+						return true;
+					}
 					if (!raidActive) {
 						System.out.println("Raid event validation: No active raid");
 						return false;
