@@ -1339,39 +1339,49 @@ public class ListeningEvent {
 		}
 
 		// Handle RAIDFAILS action type - district analysis only
+		// The event fires exactly at raid end, so the API may still report "ongoing"
+		// at this point. Post immediately with current data, then verify after 5
+		// minutes with fresh data (kickpoints are only added after verification).
 		if (getActionType() == ACTIONTYPE.RAIDFAILS) {
-			if (isRaidEnded) {
-				// Parse district thresholds from action values
-				Integer capitalPeakMax = null;
-				Integer otherDistrictsMax = null;
-				Integer penalizeBoth = null;
+			// Legacy events may still be configured with a duration > 0 - the district
+			// analysis needs final data, so it only runs for end-of-raid events
+			// (creation now enforces duration 0)
+			if (getDurationUntilEnd() != 0) {
+				System.out.println("Skipping RAIDFAILS event " + getId() + " - duration must be 0 (configured: "
+						+ getDurationUntilEnd() + ")");
+				return;
+			}
 
-				ArrayList<ActionValue> actionValues = getActionValues();
-				if (actionValues != null) {
-					int valueCount = 0;
-					for (ActionValue av : actionValues) {
-						if (av.getSaved() == ActionValue.kind.value) {
-							valueCount++;
-							switch (valueCount) {
-								case 1 -> capitalPeakMax = av.getValue().intValue();
-								case 2 -> otherDistrictsMax = av.getValue().intValue();
-								case 3 -> penalizeBoth = av.getValue().intValue();
-								default -> { }
-							}
+			// Parse district thresholds from action values
+			Integer capitalPeakMax = null;
+			Integer otherDistrictsMax = null;
+			Integer penalizeBoth = null;
+
+			ArrayList<ActionValue> actionValues = getActionValues();
+			if (actionValues != null) {
+				int valueCount = 0;
+				for (ActionValue av : actionValues) {
+					if (av.getSaved() == ActionValue.kind.value) {
+						valueCount++;
+						switch (valueCount) {
+							case 1 -> capitalPeakMax = av.getValue().intValue();
+							case 2 -> otherDistrictsMax = av.getValue().intValue();
+							case 3 -> penalizeBoth = av.getValue().intValue();
+							default -> { }
 						}
 					}
 				}
-
-				// Use default values if not configured
-				if (capitalPeakMax == null)
-					capitalPeakMax = 10;
-				if (otherDistrictsMax == null)
-					otherDistrictsMax = 6;
-				if (penalizeBoth == null)
-					penalizeBoth = 1;
-
-				handleRaidDistrictAnalysis(clan, capitalPeakMax, otherDistrictsMax, penalizeBoth);
 			}
+
+			// Use default values if not configured
+			if (capitalPeakMax == null)
+				capitalPeakMax = 10;
+			if (otherDistrictsMax == null)
+				otherDistrictsMax = 6;
+			if (penalizeBoth == null)
+				penalizeBoth = 1;
+
+			handleRaidDistrictAnalysis(clan, capitalPeakMax, otherDistrictsMax, penalizeBoth);
 			return; // RAIDFAILS only handles district analysis
 		}
 
@@ -1572,9 +1582,286 @@ public class ListeningEvent {
 		sendMessageToChannel(message.toString());
 	}
 
+	/**
+	 * Helper class to store a single raid district violation (player to penalize)
+	 */
+	private static class RaidDistrictFail {
+		Player player;
+		String districtName;
+		int attacks;
+		int threshold;
+
+		RaidDistrictFail(Player player, String districtName, int attacks, int threshold) {
+			this.player = player;
+			this.districtName = districtName;
+			this.attacks = attacks;
+			this.threshold = threshold;
+		}
+	}
+
+	/**
+	 * Helper class to store the raid district analysis result
+	 */
+	private static class RaidDistrictAnalysisResult {
+		String message;
+		boolean hasFails;
+		ArrayList<RaidDistrictFail> penalizedPlayers;
+
+		RaidDistrictAnalysisResult(String message, boolean hasFails, ArrayList<RaidDistrictFail> penalizedPlayers) {
+			this.message = message;
+			this.hasFails = hasFails;
+			this.penalizedPlayers = penalizedPlayers;
+		}
+	}
+
+	/**
+	 * Builds the raid district analysis from the raid attackLog. Does NOT add
+	 * kickpoints itself - candidates are collected in the result so they can be
+	 * processed after the 5-minute verification.
+	 *
+	 * @return the analysis result, or null if no usable raid data is available
+	 */
+	private RaidDistrictAnalysisResult buildRaidDistrictAnalysisResult(Clan clan, int capitalPeakMax,
+			int otherDistrictsMax, int penalizeBoth, boolean shouldAddKickpoints) {
+
+		org.json.JSONObject raidJson = clan.getRaidJsonFull();
+		org.json.JSONArray items = raidJson.getJSONArray("items");
+		if (items.length() == 0) {
+			return null;
+		}
+
+		org.json.JSONObject currentRaid = items.getJSONObject(0);
+
+		// Check if attackLog exists
+		if (!currentRaid.has("attackLog") || currentRaid.isNull("attackLog")) {
+			return null;
+		}
+
+		org.json.JSONArray attackLog = currentRaid.getJSONArray("attackLog");
+
+		StringBuilder message = new StringBuilder();
+		message.append("## Raidfails - District-Analyse\n\n");
+
+		boolean hasFails = false;
+		ArrayList<RaidDistrictFail> penalizedPlayers = new ArrayList<>();
+
+		// Process each defender (enemy clan) in the attack log
+		for (int i = 0; i < attackLog.length(); i++) {
+			org.json.JSONObject defenderEntry = attackLog.getJSONObject(i);
+
+			if (!defenderEntry.has("districts") || defenderEntry.isNull("districts")) {
+				continue;
+			}
+
+			org.json.JSONArray districts = defenderEntry.getJSONArray("districts");
+
+			// Process each district
+			for (int j = 0; j < districts.length(); j++) {
+				org.json.JSONObject district = districts.getJSONObject(j);
+				String districtName = district.getString("name");
+
+				if (!district.has("attacks") || district.isNull("attacks")) {
+					continue;
+				}
+
+				org.json.JSONArray attacks = district.getJSONArray("attacks");
+				int totalAttacks = attacks.length();
+
+				// Determine threshold based on district name
+				int threshold = districtName.equals("Capital Peak") ? capitalPeakMax : otherDistrictsMax;
+
+				if (totalAttacks <= threshold) {
+					continue;
+				}
+
+				hasFails = true;
+
+				// Count attacks per player
+				java.util.Map<String, Integer> attacksByPlayer = new java.util.HashMap<>();
+				java.util.Map<String, String> playerNames = new java.util.HashMap<>();
+
+				for (int k = 0; k < attacks.length(); k++) {
+					org.json.JSONObject attack = attacks.getJSONObject(k);
+					org.json.JSONObject attacker = attack.getJSONObject("attacker");
+					String attackerTag = attacker.getString("tag");
+					String attackerName = attacker.getString("name");
+
+					attacksByPlayer.put(attackerTag, attacksByPlayer.getOrDefault(attackerTag, 0) + 1);
+					playerNames.put(attackerTag, attackerName);
+				}
+
+				// Find max attacks
+				int maxAttacks = attacksByPlayer.values().stream().max(Integer::compareTo).orElse(0);
+
+				// Find players with max attacks
+				java.util.List<String> topAttackers = new java.util.ArrayList<>();
+				for (java.util.Map.Entry<String, Integer> entry : attacksByPlayer.entrySet()) {
+					if (entry.getValue() == maxAttacks) {
+						topAttackers.add(entry.getKey());
+					}
+				}
+
+				message.append("### ").append(districtName).append("\n");
+				message.append("**Schwellenwert:** ").append(threshold).append(" – **Tatsächliche Angriffe:** ")
+						.append(totalAttacks).append("\n");
+
+				if (!shouldAddKickpoints) {
+					// Info mode - show all attackers on the over-attacked district
+					message.append("**Alle Angreifer auf diesem Distrikt:**\n");
+					for (java.util.Map.Entry<String, Integer> entry : attacksByPlayer.entrySet()) {
+						String tag = entry.getKey();
+						int playerAttacks = entry.getValue();
+						String name = playerNames.get(tag);
+						message.append("- ").append(name).append(": ").append(playerAttacks).append(" Angriffe");
+
+						// Try to find discord user
+						try {
+							Player p = new Player(tag);
+							if (p.getUser() != null) {
+								message.append(" (<@").append(p.getUser().getUserID()).append(">)");
+							}
+						} catch (Exception e) {
+							// Player might not be in database
+						}
+						message.append("\n");
+					}
+				} else if (topAttackers.size() > 1 && penalizeBoth == 2) {
+					// Multiple players tied and penalizeBoth is 2 (No) - skip penalizing
+					message.append("**Mehrere Spieler mit gleicher Anzahl an Angriffen (").append(maxAttacks)
+							.append("), keine Bestrafung gemäß Einstellung.**\n");
+					for (String tag : topAttackers) {
+						String name = playerNames.get(tag);
+						message.append("- ").append(name).append(": ").append(maxAttacks).append(" Angriffe");
+						try {
+							Player p = new Player(tag);
+							if (p.getUser() != null) {
+								message.append(" (<@").append(p.getUser().getUserID()).append(">)");
+							}
+						} catch (Exception e) {
+							// Player might not be in database
+						}
+						message.append("\n");
+					}
+				} else {
+					// Penalize all top attackers (kickpoints are added after verification)
+					message.append("**Bestrafte Spieler (").append(maxAttacks).append(" Angriffe):**\n");
+					for (String tag : topAttackers) {
+						String name = playerNames.get(tag);
+						message.append("- ").append(name);
+
+						try {
+							Player p = new Player(tag);
+							if (p.getUser() != null) {
+								message.append(" (<@").append(p.getUser().getUserID()).append(">)");
+							}
+							penalizedPlayers.add(new RaidDistrictFail(p, districtName, maxAttacks, threshold));
+						} catch (Exception e) {
+							message.append(" (nicht in Datenbank gefunden)");
+						}
+						message.append("\n");
+					}
+				}
+				message.append("\n");
+			}
+		}
+
+		return new RaidDistrictAnalysisResult(message.toString(), hasFails, penalizedPlayers);
+	}
+
+	/**
+	 * Truncates a message to fit into a single Discord message (2000 char limit)
+	 * so it can be posted and later edited during verification.
+	 */
+	private static String truncateForDiscord(String message) {
+		return truncateForDiscord(message, "");
+	}
+
+	/**
+	 * Truncates a message to fit into a single Discord message (2000 char limit).
+	 * The footer (e.g. verification status notes) is always kept - only the body
+	 * is shortened.
+	 */
+	private static String truncateForDiscord(String message, String footer) {
+		if (message.length() + footer.length() <= 1900) {
+			return message + footer;
+		}
+		String marker = "\n*… gekürzt*";
+		int bodyLimit = 1900 - footer.length() - marker.length();
+		return message.substring(0, bodyLimit) + marker + footer;
+	}
+
 	private void handleRaidDistrictAnalysis(Clan clan, int capitalPeakMax, int otherDistrictsMax, int penalizeBoth) {
 		try {
-			// Fetch raid data with attackLog
+			// Determine if we should add kickpoints based on configured kickpoint reason
+			boolean shouldAddKickpoints = false;
+			for (ActionValue av : getActionValues()) {
+				if (av.getSaved() == ActionValue.kind.reason && av.getReason() != null) {
+					shouldAddKickpoints = true;
+					break;
+				}
+			}
+
+			RaidDistrictAnalysisResult result = buildRaidDistrictAnalysisResult(clan, capitalPeakMax,
+					otherDistrictsMax, penalizeBoth, shouldAddKickpoints);
+			if (result == null) {
+				return;
+			}
+
+			// Capture the endTime of the analyzed raid to make sure the verification
+			// still looks at the same raid
+			org.json.JSONObject currentRaid = clan.getRaidJsonFull().getJSONArray("items").getJSONObject(0);
+			final String raidEndTimeStr = currentRaid.optString("endTime", "");
+
+			// Post immediately if there are fails; the verification can still post a new
+			// message if fails only show up in the fresh data (API cache at raid end)
+			Message sentMessage = null;
+			if (result.hasFails) {
+				sentMessage = sendMessageToChannelAndReturn(truncateForDiscord(result.message));
+			}
+
+			final Long messageId = sentMessage != null ? sentMessage.getIdLong() : null;
+			final String channelId = getChannelID();
+			final String clanTag = clan.getTag();
+			final String originalMessage = result.message;
+			final ListeningEvent thisEvent = this;
+			final boolean finalShouldAddKickpoints = shouldAddKickpoints;
+
+			// Schedule 5-minute delayed verification (kickpoints only after verification)
+			lostmanager.Bot.activeVerificationTasks.incrementAndGet();
+			ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+			scheduler.schedule(() -> {
+				try {
+					handleRaidDistrictAnalysisDelayedVerification(clanTag, messageId, channelId, thisEvent,
+							originalMessage, raidEndTimeStr, capitalPeakMax, otherDistrictsMax, penalizeBoth,
+							finalShouldAddKickpoints);
+				} catch (Exception e) {
+					System.err.println("Error in delayed raid district verification: " + e.getMessage());
+				} finally {
+					lostmanager.Bot.activeVerificationTasks.decrementAndGet();
+					scheduler.shutdown();
+				}
+			}, 5, TimeUnit.MINUTES);
+
+			System.out.println("Scheduled 5-minute raid district verification for clan " + clanTag);
+		} catch (JSONException e) {
+			System.err.println("Error analyzing raid districts: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Handles the delayed verification of the raid district analysis after 5
+	 * minutes. Fetches fresh data, updates (or posts) the message, and adds
+	 * kickpoints only when the fresh data confirms the violations.
+	 */
+	private void handleRaidDistrictAnalysisDelayedVerification(String clanTag, Long messageId, String channelId,
+			ListeningEvent event, String originalMessage, String raidEndTimeStr, int capitalPeakMax,
+			int otherDistrictsMax, int penalizeBoth, boolean shouldAddKickpoints) {
+
+		System.out.println("Starting 5-minute raid district verification for clan " + clanTag);
+
+		try {
+			// Fetch fresh raid data
+			Clan clan = new Clan(clanTag);
 			org.json.JSONObject raidJson = clan.getRaidJsonFull();
 			org.json.JSONArray items = raidJson.getJSONArray("items");
 			if (items.length() == 0) {
@@ -1582,165 +1869,65 @@ public class ListeningEvent {
 			}
 
 			org.json.JSONObject currentRaid = items.getJSONObject(0);
+			String state = currentRaid.optString("state", "");
+			String endTimeStr = currentRaid.optString("endTime", "");
 
-			// Check if attackLog exists
-			if (!currentRaid.has("attackLog") || currentRaid.isNull("attackLog")) {
+			// Data is reliable once the raid is reported as ended and it is still the
+			// same raid we analyzed at fire time
+			boolean dataIsReliable = state.equals("ended")
+					&& (raidEndTimeStr.isEmpty() || endTimeStr.equals(raidEndTimeStr));
+
+			if (!dataIsReliable) {
+				if (messageId != null) {
+					editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage,
+							"\n*Daten sind nicht zuverlässig - keine Kickpunkte vergeben*"));
+				}
+				System.out.println("Completed 5-minute raid district verification for clan " + clanTag
+						+ " (dataReliable=false, kickpoints=false)");
 				return;
 			}
 
-			org.json.JSONArray attackLog = currentRaid.getJSONArray("attackLog");
+			RaidDistrictAnalysisResult result = buildRaidDistrictAnalysisResult(clan, capitalPeakMax,
+					otherDistrictsMax, penalizeBoth, shouldAddKickpoints);
+			if (result == null) {
+				return;
+			}
 
-			// Determine if we should add kickpoints based on action type and kickpoint
-			// reason
-			boolean shouldAddKickpoints = false;
-			if (getActionType() == ACTIONTYPE.RAIDFAILS) {
-				// Check if kickpoint reason is configured
-				for (ActionValue av : getActionValues()) {
-					if (av.getSaved() == ActionValue.kind.reason && av.getReason() != null) {
-						shouldAddKickpoints = true;
-						break;
-					}
+			if (messageId != null) {
+				// Update the original message with verified data
+				String updatedMessage = result.hasFails
+						? truncateForDiscord(result.message, "\n*Daten nach 5min überprüft*")
+						: "## Raidfails - District-Analyse\n\nKeine Verstöße nach Überprüfung gefunden.\n\n*Daten nach 5min überprüft*";
+				editMessageInChannel(channelId, messageId, updatedMessage);
+			} else if (result.hasFails) {
+				// Nothing was posted at fire time, but the fresh data shows violations
+				sendMessageToChannel(truncateForDiscord(result.message, "\n*Daten nach 5min überprüft*"));
+			}
+
+			boolean shouldProcessKickpoints = shouldAddKickpoints && result.hasFails
+					&& event.getActionType() == ACTIONTYPE.RAIDFAILS;
+			if (shouldProcessKickpoints) {
+				for (RaidDistrictFail fail : result.penalizedPlayers) {
+					addKickpointForPlayer(fail.player, "Zu viele Angriffe auf " + fail.districtName + " ("
+							+ fail.attacks + "/" + fail.threshold + ")");
 				}
 			}
 
-			// Process each defender (enemy clan) in the attack log
-			for (int i = 0; i < attackLog.length(); i++) {
-				org.json.JSONObject defenderEntry = attackLog.getJSONObject(i);
+			System.out.println("Completed 5-minute raid district verification for clan " + clanTag
+					+ " (dataReliable=true, kickpoints=" + shouldProcessKickpoints + ")");
 
-				if (!defenderEntry.has("districts") || defenderEntry.isNull("districts")) {
-					continue;
-				}
-
-				org.json.JSONArray districts = defenderEntry.getJSONArray("districts");
-
-				// Process each district
-				for (int j = 0; j < districts.length(); j++) {
-					org.json.JSONObject district = districts.getJSONObject(j);
-					String districtName = district.getString("name");
-
-					if (!district.has("attacks") || district.isNull("attacks")) {
-						continue;
-					}
-
-					org.json.JSONArray attacks = district.getJSONArray("attacks");
-					int totalAttacks = attacks.length();
-
-					// Determine threshold based on district name
-					int threshold = districtName.equals("Capital Peak") ? capitalPeakMax : otherDistrictsMax;
-
-					// Check if attacks exceed threshold
-					if (totalAttacks > threshold) {
-						// Count attacks per player
-						java.util.Map<String, Integer> attacksByPlayer = new java.util.HashMap<>();
-						java.util.Map<String, String> playerNames = new java.util.HashMap<>();
-
-						for (int k = 0; k < attacks.length(); k++) {
-							org.json.JSONObject attack = attacks.getJSONObject(k);
-							org.json.JSONObject attacker = attack.getJSONObject("attacker");
-							String attackerTag = attacker.getString("tag");
-							String attackerName = attacker.getString("name");
-
-							attacksByPlayer.put(attackerTag, attacksByPlayer.getOrDefault(attackerTag, 0) + 1);
-							playerNames.put(attackerTag, attackerName);
-						}
-
-						// Find max attacks
-						int maxAttacks = attacksByPlayer.values().stream().max(Integer::compareTo).orElse(0);
-
-						// Find players with max attacks
-						java.util.List<String> topAttackers = new java.util.ArrayList<>();
-						for (java.util.Map.Entry<String, Integer> entry : attacksByPlayer.entrySet()) {
-							if (entry.getValue() == maxAttacks) {
-								topAttackers.add(entry.getKey());
-							}
-						}
-
-						// Build message
-						StringBuilder message = new StringBuilder();
-						message.append("## Raidfails - ").append(districtName).append("\n\n");
-						message.append("**Schwellenwert:** ").append(threshold).append("\n");
-						message.append("**Tatsächliche Angriffe:** ").append(totalAttacks).append("\n\n");
-
-						if (!shouldAddKickpoints) {
-							// Info mode - show all attackers on the over-attacked district
-							message.append("**Alle Angreifer auf diesem Distrikt:**\n");
-							for (java.util.Map.Entry<String, Integer> entry : attacksByPlayer.entrySet()) {
-								String tag = entry.getKey();
-								int playerAttacks = entry.getValue();
-								String name = playerNames.get(tag);
-								message.append("- ").append(name).append(": ").append(playerAttacks)
-										.append(" Angriffe");
-
-								// Try to find discord user
-								try {
-									Player p = new Player(tag);
-									if (p.getUser() != null) {
-										message.append(" (<@").append(p.getUser().getUserID()).append(">)");
-									}
-								} catch (Exception e) {
-									// Player might not be in database
-								}
-								message.append("\n");
-							}
-						} else {
-							// Kickpoint mode - penalize top attacker(s)
-
-							// If multiple players tied and penalizeBoth is 2 (No), skip penalizing
-							if (topAttackers.size() > 1 && penalizeBoth == 2) {
-								message.append("**Mehrere Spieler mit gleicher Anzahl an Angriffen (")
-										.append(maxAttacks).append("), keine Bestrafung gemäß Einstellung.**\n");
-								for (String tag : topAttackers) {
-									String name = playerNames.get(tag);
-									message.append("- ").append(name).append(": ").append(maxAttacks)
-											.append(" Angriffe");
-									try {
-										Player p = new Player(tag);
-										if (p.getUser() != null) {
-											message.append(" (<@").append(p.getUser().getUserID()).append(">)");
-										}
-									} catch (Exception e) {
-										// Player might not be in database
-									}
-									message.append("\n");
-								}
-							} else {
-								// Penalize all top attackers
-								message.append("**Bestrafte Spieler (").append(maxAttacks).append(" Angriffe):**\n");
-								for (String tag : topAttackers) {
-									String name = playerNames.get(tag);
-									message.append("- ").append(name);
-
-									try {
-										Player p = new Player(tag);
-										if (p.getUser() != null) {
-											message.append(" (<@").append(p.getUser().getUserID()).append(">)");
-										}
-
-										// Add kickpoint
-										String reason = "Zu viele Angriffe auf " + districtName + " (" + maxAttacks
-												+ "/" + threshold + ")";
-										addKickpointForPlayer(p, reason);
-									} catch (Exception e) {
-										message.append(" (nicht in Datenbank gefunden)");
-									}
-									message.append("\n");
-								}
-							}
-						}
-
-						// Send message (respect 4000 character limit)
-						String messageStr = message.toString();
-						if (messageStr.length() > 3900) {
-							// Split into multiple messages
-							sendMessageInChunks(messageStr);
-						} else {
-							sendMessageToChannel(messageStr);
-						}
-					}
-				}
-			}
 		} catch (JSONException e) {
-			System.err.println("Error analyzing raid districts: " + e.getMessage());		}
+			System.err.println("Error in raid district delayed verification for clan " + clanTag + ": "
+					+ e.getMessage());
+			if (messageId != null) {
+				try {
+					editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage,
+							"\n*Fehler bei der 5-Minuten-Überprüfung. Daten möglicherweise nicht aktuell.*"));
+				} catch (Exception e2) {
+					System.err.println("Failed to update message with error: " + e2.getMessage());
+				}
+			}
+		}
 	}
 
 	private void addKickpointForPlayer(Player player, String reason) {

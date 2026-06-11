@@ -473,56 +473,58 @@ public class Bot extends ListenerAdapter {
 											new SubcommandData("show", "Zeigt die vorhandenen Statistiken eines Spielers")
 													.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
 													.addOptions(new OptionData(OptionType.STRING, "stat",
-															"Die anzuzeigende Statistik", true).addChoice("Helpers", "Helpers")
-																	.addChoice("Guardians", "Guardians")
+															"Die anzuzeigende Statistik", true)
 																	.addChoice("Buildings", "Buildings")
 																	.addChoice("Buildings (BB)", "Buildings (BB)")
-																	.addChoice("Traps", "Traps")
-																	.addChoice("Traps (BB)", "Traps (BB)")
 																	.addChoice("Decos", "Decos")
 																	.addChoice("Decos (BB)", "Decos (BB)")
-																	.addChoice("Obstacles", "Obstacles")
-																	.addChoice("Obstacles (BB)", "Obstacles (BB)")
-																	.addChoice("Units", "Units")
-																	.addChoice("Units (BB)", "Units (BB)")
-																	.addChoice("Sieges", "Sieges")
+																	.addChoice("Equips", "Equips")
+																	.addChoice("Helpers", "Helpers")
+																	.addChoice("Guardians", "Guardians")
 																	.addChoice("Heroes", "Heroes")
 																	.addChoice("Heroes (BB)", "Heroes (BB)")
-																	.addChoice("Spells", "Spells")
-																	.addChoice("Pets", "Pets")
-																	.addChoice("Equips", "Equips")
 																	.addChoice("House Parts", "House Parts")
+																	.addChoice("Obstacles", "Obstacles")
+																	.addChoice("Obstacles (BB)", "Obstacles (BB)")
+																	.addChoice("Pets", "Pets")
+																	.addChoice("Sceneries", "Sceneries")
+																	.addChoice("Sceneries (BB)", "Sceneries (BB)")
+																	.addChoice("Sieges", "Sieges")
 																	.addChoice("Skins", "Skins")
 																	.addChoice("Skins (BB)", "Skins (BB)")
-																	.addChoice("Sceneries", "Sceneries")
-																	.addChoice("Sceneries (BB)", "Sceneries (BB)")),
+																	.addChoice("Spells", "Spells")
+																	.addChoice("Traps", "Traps")
+																	.addChoice("Traps (BB)", "Traps (BB)")
+																	.addChoice("Units", "Units")
+																	.addChoice("Units (BB)", "Units (BB)")),
 											new SubcommandData("missing",
 													"Zeigt die fehlenden Statistiken eines Spielers anhand der Full Map")
 													.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
 													.addOptions(new OptionData(OptionType.STRING, "stat",
-															"Die anzuzeigende Statistik", true).addChoice("Helpers", "Helpers")
-																	.addChoice("Guardians", "Guardians")
+															"Die anzuzeigende Statistik", true)
 																	.addChoice("Buildings", "Buildings")
 																	.addChoice("Buildings (BB)", "Buildings (BB)")
-																	.addChoice("Traps", "Traps")
-																	.addChoice("Traps (BB)", "Traps (BB)")
 																	.addChoice("Decos", "Decos")
 																	.addChoice("Decos (BB)", "Decos (BB)")
-																	.addChoice("Obstacles", "Obstacles")
-																	.addChoice("Obstacles (BB)", "Obstacles (BB)")
-																	.addChoice("Units", "Units")
-																	.addChoice("Units (BB)", "Units (BB)")
-																	.addChoice("Sieges", "Sieges")
+																	.addChoice("Equips", "Equips")
+																	.addChoice("Helpers", "Helpers")
+																	.addChoice("Guardians", "Guardians")
 																	.addChoice("Heroes", "Heroes")
 																	.addChoice("Heroes (BB)", "Heroes (BB)")
-																	.addChoice("Spells", "Spells")
-																	.addChoice("Pets", "Pets")
-																	.addChoice("Equips", "Equips")
 																	.addChoice("House Parts", "House Parts")
+																	.addChoice("Obstacles", "Obstacles")
+																	.addChoice("Obstacles (BB)", "Obstacles (BB)")
+																	.addChoice("Pets", "Pets")
+																	.addChoice("Sceneries", "Sceneries")
+																	.addChoice("Sceneries (BB)", "Sceneries (BB)")
+																	.addChoice("Sieges", "Sieges")
 																	.addChoice("Skins", "Skins")
 																	.addChoice("Skins (BB)", "Skins (BB)")
-																	.addChoice("Sceneries", "Sceneries")
-																	.addChoice("Sceneries (BB)", "Sceneries (BB)"))),
+																	.addChoice("Spells", "Spells")
+																	.addChoice("Traps", "Traps")
+																	.addChoice("Traps (BB)", "Traps (BB)")
+																	.addChoice("Units", "Units")
+																	.addChoice("Units (BB)", "Units (BB)"))),
 
 							Commands.slash("f2pcheck", "Check ob ein Spieler F2P ist.")
 									.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true),
@@ -802,6 +804,12 @@ public class Bot extends ListenerAdapter {
 					if (clan.didApiRequestFail()) {
 						System.err.println("Raid event validation: API request failed - could not confirm raid state, "
 								+ "firing event to avoid skipping a real one");
+						return true;
+					}
+					// Raidfails events fire exactly at raid end - the API may already report
+					// state "ended" at that point, so "ongoing" must not be required here.
+					// The handler itself validates the raid state.
+					if (le.getActionType() == ListeningEvent.ACTIONTYPE.RAIDFAILS) {
 						return true;
 					}
 					if (!raidActive) {
