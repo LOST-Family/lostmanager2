@@ -48,7 +48,7 @@ public class stats extends ListenerAdapter {
 	private static final String SUBCOMMAND_MISSING = "missing";
 
 	// Maximum characters per page (Discord embed description limit is ~4096, we use
-	// 4000 for safety)
+	// 4000 for safety hi Pixel)
 	private static final int MAX_PAGE_LENGTH = 4000;
 
 	// Mapping of stat options to JSON field names
