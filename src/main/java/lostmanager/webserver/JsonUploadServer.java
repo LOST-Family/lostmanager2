@@ -25,8 +25,25 @@ import lostmanager.dbutil.DBUtil;
 
 public class JsonUploadServer {
 
-	/** Maximum accepted size of an uploaded JSON body (1 MB). */
-	private static final int MAX_UPLOAD_BYTES = 1024 * 1024;
+	/**
+	 * Maximum accepted size of an uploaded JSON body. Game exports can be large,
+	 * and uploads require a valid one-time session bound to a Discord user, so this
+	 * is only a generous sanity cap against accidental/runaway uploads.
+	 * Configurable via JSON_UPLOAD_MAX_BYTES (default 64 MB).
+	 */
+	private static final int MAX_UPLOAD_BYTES = resolveMaxUploadBytes();
+
+	private static int resolveMaxUploadBytes() {
+		String fromEnv = System.getenv("JSON_UPLOAD_MAX_BYTES");
+		if (fromEnv != null && !fromEnv.isEmpty()) {
+			try {
+				return Integer.parseInt(fromEnv.trim());
+			} catch (NumberFormatException e) {
+				System.err.println("Invalid JSON_UPLOAD_MAX_BYTES, using default 64 MB");
+			}
+		}
+		return 64 * 1024 * 1024;
+	}
 
 	private HttpServer server;
 	private ScheduledExecutorService scheduler;
@@ -195,7 +212,8 @@ public class JsonUploadServer {
 				try {
 					if (Long.parseLong(contentLength.trim()) > MAX_UPLOAD_BYTES) {
 						sendJsonResponse(exchange, 413,
-								"{\"success\":false,\"message\":\"Payload too large (max 1 MB)\"}");
+								"{\"success\":false,\"message\":\"Payload too large (max "
+										+ (MAX_UPLOAD_BYTES / (1024 * 1024)) + " MB)\"}");
 						return;
 					}
 				} catch (NumberFormatException ignored) {
@@ -209,7 +227,8 @@ public class JsonUploadServer {
 				byte[] bytes = is.readNBytes(MAX_UPLOAD_BYTES + 1);
 				if (bytes.length > MAX_UPLOAD_BYTES) {
 					sendJsonResponse(exchange, 413,
-							"{\"success\":false,\"message\":\"Payload too large (max 1 MB)\"}");
+							"{\"success\":false,\"message\":\"Payload too large (max "
+									+ (MAX_UPLOAD_BYTES / (1024 * 1024)) + " MB)\"}");
 					return;
 				}
 				jsonData = new String(bytes, StandardCharsets.UTF_8);
