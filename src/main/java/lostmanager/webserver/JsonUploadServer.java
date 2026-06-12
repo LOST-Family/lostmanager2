@@ -25,6 +25,9 @@ import lostmanager.dbutil.DBUtil;
 
 public class JsonUploadServer {
 
+	/** Maximum accepted size of an uploaded JSON body (1 MB). */
+	private static final int MAX_UPLOAD_BYTES = 1024 * 1024;
+
 	private HttpServer server;
 	private ScheduledExecutorService scheduler;
 	private int port;
@@ -186,10 +189,30 @@ public class JsonUploadServer {
 				return;
 			}
 
-			// Read JSON from request body
+			// Reject oversized uploads early based on the declared length.
+			String contentLength = exchange.getRequestHeaders().getFirst("Content-Length");
+			if (contentLength != null) {
+				try {
+					if (Long.parseLong(contentLength.trim()) > MAX_UPLOAD_BYTES) {
+						sendJsonResponse(exchange, 413,
+								"{\"success\":false,\"message\":\"Payload too large (max 1 MB)\"}");
+						return;
+					}
+				} catch (NumberFormatException ignored) {
+					// Fall through to the streaming cap below.
+				}
+			}
+
+			// Read JSON from request body with a hard cap to prevent memory exhaustion.
 			String jsonData;
 			try (InputStream is = exchange.getRequestBody()) {
-				jsonData = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+				byte[] bytes = is.readNBytes(MAX_UPLOAD_BYTES + 1);
+				if (bytes.length > MAX_UPLOAD_BYTES) {
+					sendJsonResponse(exchange, 413,
+							"{\"success\":false,\"message\":\"Payload too large (max 1 MB)\"}");
+					return;
+				}
+				jsonData = new String(bytes, StandardCharsets.UTF_8);
 			}
 
 			if (jsonData == null || jsonData.trim().isEmpty()) {
@@ -246,12 +269,17 @@ public class JsonUploadServer {
 
 		String[] pairs = query.split("&");
 		for (String pair : pairs) {
-			String[] keyValue = pair.split("=");
-			if (keyValue.length == 2 && keyValue[0].equals(param)) {
+			int eq = pair.indexOf('=');
+			if (eq <= 0) {
+				continue;
+			}
+			String key = pair.substring(0, eq);
+			if (key.equals(param)) {
+				String rawValue = pair.substring(eq + 1);
 				try {
-					return java.net.URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8);
+					return java.net.URLDecoder.decode(rawValue, StandardCharsets.UTF_8);
 				} catch (Exception e) {
-					return keyValue[1]; // Return raw value if decoding fails
+					return rawValue; // Return raw value if decoding fails
 				}
 			}
 		}

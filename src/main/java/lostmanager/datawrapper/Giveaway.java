@@ -95,19 +95,11 @@ public class Giveaway {
             prize, winnerCount, hostDiscordId, channelId, endTime
         );
         if (result != null) {
-            if (result.getFirst() != null) {
-                try (ResultSet rs = result.getFirst().getGeneratedKeys()) {
-                    if (rs.next()) {
-                        long id = rs.getLong(1);
-                        return getById(id);
-                    } else {
-                        System.err.println("Giveaway.create: No generated keys returned.");
-                    }
-                } catch (SQLException e) {
-                    System.err.println("Error getting generated giveaway ID: " + e.getMessage());
-                }
+            Long id = result.getFirst();
+            if (id != null) {
+                return getById(id);
             } else {
-                System.err.println("Giveaway.create: result.getFirst() is null");
+                System.err.println("Giveaway.create: No generated key returned.");
             }
         } else {
             System.err.println("Giveaway.create: DBUtil.executeUpdate returned null");

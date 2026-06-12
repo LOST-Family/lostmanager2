@@ -30,7 +30,12 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 @SuppressWarnings("null")
 public class giveaway extends ListenerAdapter {
 
-    private static final String GIVEAWAY_ROLE_ID = "1489926297000870009";
+    private static final String GIVEAWAY_ROLE_ID = resolveGiveawayRoleId();
+
+    private static String resolveGiveawayRoleId() {
+        String fromEnv = System.getenv("GIVEAWAY_ROLE_ID");
+        return (fromEnv != null && !fromEnv.isEmpty()) ? fromEnv : "1489926297000870009";
+    }
     private static final Pattern DURATION_PATTERN = Pattern.compile("^(\\d+)([mhd])$");
 
     // ─── Permission Check ────────────────────────────────────────────

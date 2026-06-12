@@ -1298,6 +1298,7 @@ public class Bot extends ListenerAdapter {
 		System.out.println("Alle 2h werden nun die Namen aktualisiert, Clans gepulst und alte Rosters gelöscht. "
 				+ System.currentTimeMillis());
 		Runnable task = () -> {
+		  try {
 
 			// Clean expired rosters
 			try {
@@ -1330,11 +1331,12 @@ public class Bot extends ListenerAdapter {
 					DBUtil.executeUpdate("UPDATE users SET name = ? WHERE discord_id = ?",
 							getJda().getGuildById(guild_id).retrieveMemberById(id).submit().get().getEffectiveName(),
 							id);
-				} catch (final InterruptedException | java.util.concurrent.ExecutionException e) {
-					if (e.getMessage().contains("Unknown Member")) {
+				} catch (final Exception e) {
+					String msg = e.getMessage();
+					if (msg != null && msg.contains("Unknown Member")) {
 						continue;
 					}
-					System.out.println("Fehler beim Namenupdate von ID " + id + "; Exception: " + e.getMessage());
+					System.out.println("Fehler beim Namenupdate von ID " + id + "; Exception: " + msg);
 				}
 			}
 
@@ -1346,12 +1348,19 @@ public class Bot extends ListenerAdapter {
 					DBUtil.executeUpdate("UPDATE players SET name = ?, townhall = ? WHERE coc_tag = ?", p.getNameAPI(), p.getThLevelAPI(),
 							tag);
 				} catch (final Exception e) {
-					if (e.getMessage().contains("String.length()")) {
+					String msg = e.getMessage();
+					if (msg != null && msg.contains("String.length()")) {
 						continue;
 					}
-					System.out.println("Fehler beim Namenupdate von Tag " + tag + "; Exception: " + e.getMessage());
+					System.out.println("Fehler beim Namenupdate von Tag " + tag + "; Exception: " + msg);
 				}
 			}
+		  } catch (final Throwable t) {
+			// Never let an uncaught exception propagate: scheduleAtFixedRate would otherwise
+			// cancel all future runs and silently stop name/badge/roster updates for good.
+			System.err.println("Unerwarteter Fehler im periodischen Hintergrund-Task: " + t.getMessage());
+			t.printStackTrace();
+		  }
 		};
 		schedulernames.scheduleAtFixedRate(task, 0, 2, TimeUnit.HOURS);
 	}
@@ -1364,7 +1373,7 @@ public class Bot extends ListenerAdapter {
 	// Helpers
 
 	public static ZonedDateTime getNext22thAt7am() {
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Berlin"));
 		int year = now.getYear();
 		int month = now.getMonthValue();
 
@@ -1380,12 +1389,12 @@ public class Bot extends ListenerAdapter {
 			target = LocalDateTime.of(year, month, 22, 7, 0, 0, 0);
 		}
 
-		ZonedDateTime zdt = target.atZone(ZoneId.systemDefault());
+		ZonedDateTime zdt = target.atZone(ZoneId.of("Europe/Berlin"));
 		return zdt;
 	}
 
 	public static ZonedDateTime getNext28thAt12pm() {
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Berlin"));
 		int year = now.getYear();
 		int month = now.getMonthValue();
 
@@ -1401,12 +1410,12 @@ public class Bot extends ListenerAdapter {
 			target = LocalDateTime.of(year, month, 28, 12, 0, 0, 0);
 		}
 
-		ZonedDateTime zdt = target.atZone(ZoneId.systemDefault());
+		ZonedDateTime zdt = target.atZone(ZoneId.of("Europe/Berlin"));
 		return zdt;
 	}
 
 	public static ZonedDateTime getPrevious22thAt7am() {
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Berlin"));
 		int year = now.getYear();
 		int month = now.getMonthValue();
 
@@ -1422,12 +1431,12 @@ public class Bot extends ListenerAdapter {
 			target = LocalDateTime.of(year, month, 22, 7, 0, 0, 0);
 		}
 
-		ZonedDateTime zdt = target.atZone(ZoneId.systemDefault());
+		ZonedDateTime zdt = target.atZone(ZoneId.of("Europe/Berlin"));
 		return zdt;
 	}
 
 	public static ZonedDateTime getPrevious28thAt12pm() {
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Berlin"));
 		int year = now.getYear();
 		int month = now.getMonthValue();
 
@@ -1443,7 +1452,7 @@ public class Bot extends ListenerAdapter {
 			target = LocalDateTime.of(year, month, 28, 12, 0, 0, 0);
 		}
 
-		ZonedDateTime zdt = target.atZone(ZoneId.systemDefault());
+		ZonedDateTime zdt = target.atZone(ZoneId.of("Europe/Berlin"));
 		return zdt;
 	}
 
@@ -1452,7 +1461,7 @@ public class Bot extends ListenerAdapter {
 	 * has propagated This is 1 hour after the actual clan games end time
 	 */
 	public static ZonedDateTime getNext28thAt1pm() {
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Berlin"));
 		int year = now.getYear();
 		int month = now.getMonthValue();
 
@@ -1468,7 +1477,7 @@ public class Bot extends ListenerAdapter {
 			target = LocalDateTime.of(year, month, 28, 13, 0, 0, 0);
 		}
 
-		ZonedDateTime zdt = target.atZone(ZoneId.systemDefault());
+		ZonedDateTime zdt = target.atZone(ZoneId.of("Europe/Berlin"));
 		return zdt;
 	}
 
@@ -1476,7 +1485,7 @@ public class Bot extends ListenerAdapter {
 	 * Get previous 28th at 13:00 (1pm) - used for listening events
 	 */
 	public static ZonedDateTime getPrevious28thAt1pm() {
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Berlin"));
 		int year = now.getYear();
 		int month = now.getMonthValue();
 
@@ -1492,7 +1501,7 @@ public class Bot extends ListenerAdapter {
 			target = LocalDateTime.of(year, month, 28, 13, 0, 0, 0);
 		}
 
-		ZonedDateTime zdt = target.atZone(ZoneId.systemDefault());
+		ZonedDateTime zdt = target.atZone(ZoneId.of("Europe/Berlin"));
 		return zdt;
 	}
 

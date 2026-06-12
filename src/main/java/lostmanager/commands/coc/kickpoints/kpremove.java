@@ -40,10 +40,19 @@ public class kpremove extends ListenerAdapter {
 			return;
 		}
 
-		String clantag = kp.getPlayer().getClanDB().getTag();
-
 		User userexecuted = new User(event.getUser().getId());
-		if (!userexecuted.isColeaderOrHigherInClan(clantag)) {
+		lostmanager.datawrapper.Clan kpClan = kp.getPlayer().getClanDB();
+
+		// If the player is no longer in a clan, only a global admin can remove the kickpoint,
+		// because there is no clan context to check coleader permissions against.
+		if (kpClan == null) {
+			if (!userexecuted.isAdmin()) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Der Spieler dieses Kickpunkts ist in keinem Clan. Nur ein Admin kann diesen Kickpunkt entfernen.",
+						MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+		} else if (!userexecuted.isColeaderOrHigherInClan(kpClan.getTag())) {
 			event.getHook()
 					.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 							"Du musst mindestens Vize-Anführer des Clans sein, um diesen Befehl ausführen zu können.",
