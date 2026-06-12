@@ -28,7 +28,9 @@ public class ApiUtil {
             }
         }
 
-        HttpClient client = HttpClient.newHttpClient();
+        // Reuse the shared client instead of allocating a new one (with its own
+        // connection pool / selector thread) on every single API call.
+        HttpClient client = Bot.httpClient;
         HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
             .uri(URI.create(urlBuilder.toString()))
             .header("Authorization", "Bearer " + Bot.api_key)

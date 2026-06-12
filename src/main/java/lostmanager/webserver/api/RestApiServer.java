@@ -41,15 +41,25 @@ public class RestApiServer {
     private final int port;
     private final ObjectMapper objectMapper;
     private final String apiToken;
+    private final boolean allowNoAuth;
+    private final String allowedOrigin;
 
     public RestApiServer(int port) {
         this.port = port;
         this.objectMapper = new ObjectMapper();
         this.apiToken = System.getenv("REST_API_TOKEN");
+        this.allowNoAuth = "true".equalsIgnoreCase(System.getenv("REST_API_ALLOW_NO_AUTH"));
+        String origin = System.getenv("REST_API_ALLOWED_ORIGIN");
+        this.allowedOrigin = (origin == null || origin.isEmpty()) ? "*" : origin;
 
         if (this.apiToken == null || this.apiToken.isEmpty()) {
-            System.err.println(
-                    "WARNING: REST_API_TOKEN is not set. API endpoints will be accessible without authentication.");
+            if (allowNoAuth) {
+                System.err.println("WARNING: REST_API_TOKEN is not set and REST_API_ALLOW_NO_AUTH=true. "
+                        + "API endpoints are accessible WITHOUT authentication.");
+            } else {
+                System.err.println("WARNING: REST_API_TOKEN is not set. All API requests will be rejected with 401. "
+                        + "Set REST_API_TOKEN, or set REST_API_ALLOW_NO_AUTH=true to explicitly allow unauthenticated access.");
+            }
         }
     }
 
@@ -550,9 +560,9 @@ public class RestApiServer {
      * @return true if token is valid or no token is required, false otherwise
      */
     private boolean validateApiToken(HttpExchange exchange) {
-        // If no token is configured, allow all requests
+        // If no token is configured, fail closed unless explicitly opted out via env.
         if (apiToken == null || apiToken.isEmpty()) {
-            return true;
+            return allowNoAuth;
         }
 
         // Check Authorization header
@@ -560,20 +570,32 @@ public class RestApiServer {
         if (authHeader != null) {
             // Support both "Bearer <token>" and direct token
             if (authHeader.startsWith("Bearer ")) {
-                String token = authHeader.substring(7);
-                return apiToken.equals(token);
+                return tokensMatch(apiToken, authHeader.substring(7));
             } else {
-                return apiToken.equals(authHeader);
+                return tokensMatch(apiToken, authHeader);
             }
         }
 
         // Check X-API-Token header
         String apiTokenHeader = exchange.getRequestHeaders().getFirst("X-API-Token");
         if (apiTokenHeader != null) {
-            return apiToken.equals(apiTokenHeader);
+            return tokensMatch(apiToken, apiTokenHeader);
         }
 
         return false;
+    }
+
+    /**
+     * Constant-time comparison of the expected token against a client-provided value
+     * to avoid leaking the token via timing side channels.
+     */
+    private static boolean tokensMatch(String expected, String provided) {
+        if (expected == null || provided == null) {
+            return false;
+        }
+        return java.security.MessageDigest.isEqual(
+                expected.getBytes(StandardCharsets.UTF_8),
+                provided.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -606,7 +628,7 @@ public class RestApiServer {
      * Add CORS headers to allow cross-origin requests
      */
     private void addCorsHeaders(HttpExchange exchange) {
-        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", allowedOrigin);
         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-API-Token");
     }

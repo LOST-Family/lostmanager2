@@ -12,17 +12,27 @@ import lostmanager.util.Tuple;
 
 public class DBUtil {
 
-	public static Tuple<PreparedStatement, Integer> executeUpdate(String sql, Object... params) {
+	/**
+	 * Execute an INSERT/UPDATE/DELETE statement.
+	 *
+	 * @return a Tuple of (generated id, rows affected). The first element is the
+	 *         first auto-generated key for INSERT statements (or {@code null} if the
+	 *         table has no generated key / none was returned), the second element is
+	 *         the number of affected rows. Returns {@code null} if the statement could
+	 *         not be executed.
+	 */
+	public static Tuple<Long, Integer> executeUpdate(String sql, Object... params) {
 		return executeUpdateWithRetry(sql, 0, params);
 	}
 
-	private static Tuple<PreparedStatement, Integer> executeUpdateWithRetry(String sql, int retryCount, Object... params) {
+	private static Tuple<Long, Integer> executeUpdateWithRetry(String sql, int retryCount, Object... params) {
 		PreparedStatement pstmt = null;
 		try {
 			// Only request generated keys for INSERT statements that need them
 			// UPDATE and DELETE don't need generated keys, and some tables don't have an "id" column
 			String trimmedSql = sql.trim().toUpperCase();
-			if (trimmedSql.startsWith("INSERT")) {
+			boolean isInsert = trimmedSql.startsWith("INSERT");
+			if (isInsert) {
 				// For INSERT statements, use RETURN_GENERATED_KEYS to let PostgreSQL decide which keys to return
 				// This avoids errors when tables don't have an "id" column
 				pstmt = Connection.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -35,16 +45,23 @@ public class DBUtil {
 			}
 			int rA = pstmt.executeUpdate();
 
-			PreparedStatement finalPstmt = pstmt;
-			new Thread(() -> {
-				try {
-					Thread.sleep(10000);
-					finalPstmt.close();
-				} catch (InterruptedException | SQLException e) {
+			// Extract the generated key eagerly while the statement is still open, so the
+			// statement can be closed immediately afterwards instead of being kept alive on
+			// a background thread for callers that want to read the generated id.
+			Long generatedId = null;
+			if (isInsert && rA > 0) {
+				try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+					if (generatedKeys.next()) {
+						generatedId = generatedKeys.getLong(1);
+					}
+				} catch (SQLException keyEx) {
+					// Tables without a numeric 'id' column (e.g. 'achievements' keyed by tag) may
+					// not return a usable generated key. This is not fatal - the id stays null.
 				}
-			}).start();
+			}
 
-			return new Tuple<>(pstmt, rA);
+			pstmt.close();
+			return new Tuple<>(generatedId, rA);
 		} catch (SQLException e) {
 			// Check for duplicate key violation (PostgreSQL error code 23505)
 			if ("23505".equals(e.getSQLState()) && retryCount < 1) {
@@ -88,6 +105,7 @@ public class DBUtil {
 				} catch (SQLException ex) {
 				}
 			}
+			System.err.println("DBUtil.executeUpdate failed (SQLState " + e.getSQLState() + "): " + e.getMessage());
 		}
 		return null;
 	}
@@ -248,8 +266,10 @@ public class DBUtil {
 					}
 				}
 			} catch (SQLException e) {
+				System.err.println("DBUtil.getValueFromSQL (resultset) failed: " + e.getMessage());
 			}
 		} catch (SQLException e) {
+			System.err.println("DBUtil.getValueFromSQL failed: " + e.getMessage());
 		}
 		return result;
 	}
@@ -270,8 +290,10 @@ public class DBUtil {
 					a = rs.getObject(columnName, OffsetDateTime.class);
 				}
 			} catch (SQLException e) {
+				System.err.println("DBUtil.getDateFromSQL (resultset) failed: " + e.getMessage());
 			}
 		} catch (SQLException e) {
+			System.err.println("DBUtil.getDateFromSQL failed: " + e.getMessage());
 		}
 		return a;
 	}
@@ -298,8 +320,10 @@ public class DBUtil {
 					}
 				}
 			} catch (SQLException e) {
+				System.err.println("DBUtil.getArrayListFromSQL (resultset) failed: " + e.getMessage());
 			}
 		} catch (SQLException e) {
+			System.err.println("DBUtil.getArrayListFromSQL failed: " + e.getMessage());
 		}
 
 		return result;

@@ -39,9 +39,14 @@ import net.dv8tion.jda.api.entities.Role;
 public class ManagementApiHandler implements HttpHandler {
 
 	private String apiToken;
+	private final boolean allowNoAuth;
+	private final String allowedOrigin;
 
 	public ManagementApiHandler(String apiToken) {
 		this.apiToken = apiToken;
+		this.allowNoAuth = "true".equalsIgnoreCase(System.getenv("REST_API_ALLOW_NO_AUTH"));
+		String origin = System.getenv("REST_API_ALLOWED_ORIGIN");
+		this.allowedOrigin = (origin == null || origin.isEmpty()) ? "*" : origin;
 	}
 
 	@Override
@@ -478,7 +483,7 @@ public class ManagementApiHandler implements HttpHandler {
 		Timestamp timestampexpires = Timestamp.valueOf(dateTime.plusDays(c.getDaysKickpointsExpireAfter()));
 		Timestamp timestampnow = Timestamp.from(Instant.now());
 
-		Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(
+		Tuple<Long, Integer> result = DBUtil.executeUpdate(
 				"INSERT INTO kickpoints (player_tag, date, amount, description, created_by_discord_id, created_at, expires_at, clan_tag, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 				playerTag, timestampcreated, amount, reason, discordUserId, timestampnow, timestampexpires,
 				c.getTag(), timestampnow);
@@ -487,18 +492,7 @@ public class ManagementApiHandler implements HttpHandler {
 			return error("Failed to add kickpoint", 500);
 		}
 
-		Long id = null;
-		PreparedStatement stmt = result.getFirst();
-		int rowsAffected = result.getSecond();
-		if (rowsAffected > 0) {
-			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-				if (generatedKeys.next()) {
-					id = generatedKeys.getLong(1);
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+		Long id = result.getFirst();
 
 		JSONObject response = new JSONObject();
 		response.put("success", true);
@@ -548,9 +542,14 @@ public class ManagementApiHandler implements HttpHandler {
 			return error("Kickpoint not found", 404);
 		}
 
-		String clanTag = kp.getPlayer().getClanDB().getTag();
+		Player kpPlayer = kp.getPlayer();
+		Clan kpClan = kpPlayer != null ? kpPlayer.getClanDB() : null;
 		User user = new User(discordUserId);
-		if (!user.isColeaderOrHigherInClan(clanTag)) {
+		if (kpClan == null) {
+			if (!user.isAdmin()) {
+				return error("Player of this kickpoint is not in a clan - only an admin can modify it", 403);
+			}
+		} else if (!user.isColeaderOrHigherInClan(kpClan.getTag())) {
 			return error("Insufficient permissions - must be coleader or higher in the clan", 403);
 		}
 
@@ -592,9 +591,13 @@ public class ManagementApiHandler implements HttpHandler {
 			return error("Kickpoint not found", 404);
 		}
 
-		String clanTag = kp.getPlayer().getClanDB().getTag();
+		Clan kpClan = kp.getPlayer().getClanDB();
 		User user = new User(discordUserId);
-		if (!user.isColeaderOrHigherInClan(clanTag)) {
+		if (kpClan == null) {
+			if (!user.isAdmin()) {
+				return error("Player of this kickpoint is not in a clan - only an admin can remove it", 403);
+			}
+		} else if (!user.isColeaderOrHigherInClan(kpClan.getTag())) {
 			return error("Insufficient permissions - must be coleader or higher in the clan", 403);
 		}
 
@@ -924,21 +927,35 @@ public class ManagementApiHandler implements HttpHandler {
 	}
 
 	private boolean validateApiToken(HttpExchange exchange) {
+		// The management API is highly privileged (restart, member/link/kickpoint mutations).
+		// If no token is configured, fail closed unless explicitly opted out via env.
 		if (apiToken == null || apiToken.isEmpty()) {
-			return true;
+			return allowNoAuth;
 		}
 		String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
 		if (authHeader != null) {
 			if (authHeader.startsWith("Bearer ")) {
-				return apiToken.equals(authHeader.substring(7));
+				return tokensMatch(apiToken, authHeader.substring(7));
 			}
-			return apiToken.equals(authHeader);
+			return tokensMatch(apiToken, authHeader);
 		}
 		String apiTokenHeader = exchange.getRequestHeaders().getFirst("X-API-Token");
 		if (apiTokenHeader != null) {
-			return apiToken.equals(apiTokenHeader);
+			return tokensMatch(apiToken, apiTokenHeader);
 		}
 		return false;
+	}
+
+	/**
+	 * Constant-time comparison to avoid leaking the token via timing side channels.
+	 */
+	private static boolean tokensMatch(String expected, String provided) {
+		if (expected == null || provided == null) {
+			return false;
+		}
+		return java.security.MessageDigest.isEqual(
+				expected.getBytes(StandardCharsets.UTF_8),
+				provided.getBytes(StandardCharsets.UTF_8));
 	}
 
 	private void sendResponse(HttpExchange exchange, int statusCode, String response) throws IOException {
@@ -952,7 +969,7 @@ public class ManagementApiHandler implements HttpHandler {
 	}
 
 	private void addCorsHeaders(HttpExchange exchange) {
-		exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+		exchange.getResponseHeaders().add("Access-Control-Allow-Origin", allowedOrigin);
 		exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
 		exchange.getResponseHeaders().add("Access-Control-Allow-Headers",
 				"Content-Type, Authorization, X-API-Token");
