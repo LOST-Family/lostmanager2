@@ -35,17 +35,16 @@ public class User {
 
 	public boolean isAdmin() {
 		if (isadmin == null) {
-			if (DBUtil.getValueFromSQL("SELECT is_admin FROM users WHERE discord_id = ?", Boolean.class,
-					userid) == null) {
-				DBUtil.executeUpdate("INSERT INTO users (discord_id, is_admin) VALUES (?, ?)", userid,
-						false);
+			Boolean stored = DBUtil.getValueFromSQL("SELECT is_admin FROM users WHERE discord_id = ?", Boolean.class,
+					userid);
+			if (stored == null) {
+				// Row missing, is_admin is NULL, or a transient query error occurred. Ensure a
+				// row exists and default to non-admin. (Never auto-unbox a possibly-null Boolean.)
+				DBUtil.executeUpdate(
+						"INSERT INTO users (discord_id, is_admin) VALUES (?, ?) ON CONFLICT (discord_id) DO NOTHING",
+						userid, false);
 			}
-			if (DBUtil.getValueFromSQL("SELECT is_admin FROM users WHERE discord_id = ?", Boolean.class, userid)) {
-				isadmin = true;
-			}
-		}
-		if (isadmin == null) {
-			isadmin = false;
+			isadmin = Boolean.TRUE.equals(stored);
 		}
 		return isadmin;
 	}
@@ -64,15 +63,14 @@ public class User {
 	public HashMap<String, Player.RoleType> getClanRoles() {
 		if (clanroles == null) {
 			clanroles = new HashMap<>();
-			boolean admin = false;
-			if (DBUtil.getValueFromSQL("SELECT is_admin FROM users WHERE discord_id = ?", Boolean.class,
-					userid) == null) {
-				DBUtil.executeUpdate("INSERT INTO users (discord_id, name, is_admin) VALUES (?, ?, ?)", userid,
-						getNickname(), false);
+			Boolean stored = DBUtil.getValueFromSQL("SELECT is_admin FROM users WHERE discord_id = ?", Boolean.class,
+					userid);
+			if (stored == null) {
+				DBUtil.executeUpdate(
+						"INSERT INTO users (discord_id, name, is_admin) VALUES (?, ?, ?) ON CONFLICT (discord_id) DO NOTHING",
+						userid, getNickname(), false);
 			}
-			if (DBUtil.getValueFromSQL("SELECT is_admin FROM users WHERE discord_id = ?", Boolean.class, userid)) {
-				admin = true;
-			}
+			boolean admin = Boolean.TRUE.equals(stored);
 
 			ArrayList<Player> linkedaccs = getAllLinkedAccounts();
 			ArrayList<String> allclans = DBManager.getAllClans();

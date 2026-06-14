@@ -2006,7 +2006,7 @@ public class ListeningEvent {
 		java.sql.Timestamp expires = java.sql.Timestamp
 				.valueOf(now.toLocalDateTime().plusDays(daysExpire));
 
-		Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(
+		Tuple<Long, Integer> result = DBUtil.executeUpdate(
 				"INSERT INTO kickpoints (player_tag, date, amount, description, created_by_discord_id, created_at, expires_at, clan_tag, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 				player.getTag(), now, amount, reason, Bot.getJda().getSelfUser().getId(), now, expires,
 				clan.getTag(), now);
@@ -2017,20 +2017,7 @@ public class ListeningEvent {
 			return;
 		}
 
-		PreparedStatement stmt = result.getFirst();
-		int rowsAffected = result.getSecond();
-
-		Long kickpointId = null;
-
-		if (rowsAffected > 0) {
-			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-				if (generatedKeys.next()) {
-					kickpointId = generatedKeys.getLong(1);
-				}
-			} catch (SQLException e) {
-				System.err.println("Error retrieving generated kickpoint ID: " + e.getMessage());
-			}
-		}
+		Long kickpointId = result.getFirst();
 
 		String desc = "### Es wurde ein Kickpunkt automatisch hinzugefügt.\n";
 		// Use API name for external clan players since they may not be in DB

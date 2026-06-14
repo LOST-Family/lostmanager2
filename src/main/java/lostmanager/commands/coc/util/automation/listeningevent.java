@@ -1,8 +1,5 @@
 package lostmanager.commands.coc.util.automation;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -413,7 +410,7 @@ public class listeningevent extends ListenerAdapter {
 		}
 
 		// Insert into database and get generated ID
-		Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(
+		Tuple<Long, Integer> result = DBUtil.executeUpdate(
 				"INSERT INTO listening_events (clan_tag, listeningtype, listeningvalue, actiontype, channel_id, actionvalues) VALUES (?, ?, ?, ?, ?, ?::jsonb)",
 				clantag, type, duration, actionTypeStr, channelId, actionValuesJson);
 
@@ -424,19 +421,7 @@ public class listeningevent extends ListenerAdapter {
 			return;
 		}
 
-		PreparedStatement stmt = result.getFirst();
-		int rowsAffected = result.getSecond();
-
-		Long id = null;
-
-		if (rowsAffected > 0) {
-			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-				if (generatedKeys.next()) {
-					id = generatedKeys.getLong(1);
-				}
-			} catch (final SQLException e) {
-			}
-		}
+		Long id = result.getFirst();
 
 		String desc = "### Listening Event wurde hinzugefügt.\n";
 		if (id != null) {
@@ -904,7 +889,7 @@ public class listeningevent extends ListenerAdapter {
 		}
 
 		// Insert into database and get generated ID
-		Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(
+		Tuple<Long, Integer> result = DBUtil.executeUpdate(
 				"INSERT INTO listening_events (clan_tag, listeningtype, listeningvalue, actiontype, channel_id, actionvalues) VALUES (?, ?, ?, ?, ?, ?::jsonb)",
 				clantag, type, duration, actionTypeStr, channelId, actionValuesJson);
 
@@ -915,19 +900,7 @@ public class listeningevent extends ListenerAdapter {
 			return;
 		}
 
-		PreparedStatement stmt = result.getFirst();
-		int rowsAffected = result.getSecond();
-
-		Long id = null;
-
-		if (rowsAffected > 0) {
-			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-				if (generatedKeys.next()) {
-					id = generatedKeys.getLong(1);
-				}
-			} catch (final SQLException e) {
-			}
-		}
+		Long id = result.getFirst();
 
 		String desc = "### Listening Event wurde hinzugefügt.\n";
 		if (id != null) {

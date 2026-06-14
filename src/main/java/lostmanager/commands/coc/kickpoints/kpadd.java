@@ -1,8 +1,5 @@
 package lostmanager.commands.coc.kickpoints;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -59,7 +56,13 @@ public class kpadd extends ListenerAdapter {
 		String playertag = playeroption.getAsString();
 		Player p = new Player(playertag);
 
-		String clantag = p.getClanDB().getTag();
+		Clan playerClan = p.getClanDB();
+		if (playerClan == null) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title, "Dieser Spieler existiert nicht oder ist in keinem Clan.",
+					MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+		String clantag = playerClan.getTag();
 
 		User userexecuted = new User(event.getUser().getId());
 		if (!userexecuted.isColeaderOrHigherInClan(clantag)) {
@@ -69,11 +72,6 @@ public class kpadd extends ListenerAdapter {
 			return;
 		}
 
-		if (p.getClanDB() == null) {
-			event.replyEmbeds(MessageUtil.buildEmbed(title, "Dieser Spieler existiert nicht oder ist in keinem Clan.",
-					MessageUtil.EmbedType.ERROR)).queue();
-			return;
-		}
 		if (p.getClanDB().getDaysKickpointsExpireAfter() == null || p.getClanDB().getMaxKickpoints() == null) {
 			event.replyEmbeds(MessageUtil.buildEmbed(title,
 					"Es müssen zuerst die Clanconfigs eingestellt werden. Nutze /clanconfig.",
@@ -168,7 +166,7 @@ public class kpadd extends ListenerAdapter {
 				Timestamp timestampnow = Timestamp.from(Instant.now());
 				String userid = event.getUser().getId();
 
-				Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(
+				Tuple<Long, Integer> result = DBUtil.executeUpdate(
 						"INSERT INTO kickpoints (player_tag, date, amount, description, created_by_discord_id, created_at, expires_at, clan_tag, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 						playertag, timestampcreated, amount, reason, userid, timestampnow, timestampexpires, c.getTag(),
 						timestampnow);
@@ -182,20 +180,7 @@ public class kpadd extends ListenerAdapter {
 					return;
 				}
 
-				PreparedStatement stmt = result.getFirst();
-				int rowsAffected = result.getSecond();
-
-				Long id = null;
-
-				if (rowsAffected > 0) {
-					try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-						if (generatedKeys.next()) {
-							id = generatedKeys.getLong(1);
-						}
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-				}
+				Long id = result.getFirst();
 
 				String desc = "### Der Kickpunkt wurde hinzugefügt.\n";
 				desc += "Spieler: " + MessageUtil.unformat(p.getInfoStringDB()) + "\n";
