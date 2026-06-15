@@ -395,11 +395,16 @@ public class ManagementApiHandler implements HttpHandler {
 				ArrayList<Player> allaccs = player.getUser().getAllLinkedAccounts();
 				boolean hasOtherAccInClan = false;
 				boolean otherElderOrHigherSameClan = false;
+				// Whether the user still has any linked account in any clan
+				boolean inAnyClan = false;
 				for (Player acc : allaccs) {
-					if (acc.getClanDB() != null && acc.getClanDB().getTag().equals(clanTag)) {
-						hasOtherAccInClan = true;
-						if (Player.isElderOrHigher(acc.getRoleDB()) && !acc.isHiddenColeader()) {
-							otherElderOrHigherSameClan = true;
+					if (acc.getClanDB() != null) {
+						inAnyClan = true;
+						if (acc.getClanDB().getTag().equals(clanTag)) {
+							hasOtherAccInClan = true;
+							if (Player.isElderOrHigher(acc.getRoleDB()) && !acc.isHiddenColeader()) {
+								otherElderOrHigherSameClan = true;
+							}
 						}
 					}
 				}
@@ -423,7 +428,7 @@ public class ManagementApiHandler implements HttpHandler {
 
 				String exmemberroleid = Bot.exmember_roleid;
 				Role exmemberrole = exmemberroleid != null ? guild.getRoleById(exmemberroleid) : null;
-				if (exmemberrole != null && !member.getRoles().contains(exmemberrole)) {
+				if (exmemberrole != null && !inAnyClan && !member.getRoles().contains(exmemberrole)) {
 					guild.addRoleToMember(member, exmemberrole).queue();
 					roleChanges.put(new JSONObject().put("type", "added")
 							.put("roleId", exmemberroleid).put("userId", userid));
