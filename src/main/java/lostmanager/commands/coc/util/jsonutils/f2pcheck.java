@@ -223,7 +223,7 @@ public class f2pcheck extends ListenerAdapter {
                 // Try to get player name for better display
                 Player player = new Player(tag);
                 String clanName = player.getClanDB() != null ? player.getClanDB().getNameDB() : null;
-                String display = new Player(tag).getInfoStringDB();
+                String display = buildDisplayName(player, tag);
                 if (clanName != null && !clanName.isEmpty()) {
                     display += " - " + clanName;
                 }
@@ -247,13 +247,13 @@ public class f2pcheck extends ListenerAdapter {
                 // Check if this player has any JSON uploaded
                 String sql = "SELECT COUNT(*) FROM userjsons WHERE tag = ?";
                 Long count = DBUtil.getValueFromSQL(sql, Long.class, tag);
-                String playerName = player.getNameDB() != null ? player.getNameDB() : player.getNameAPI();
+                String playerName = resolveName(player);
 
                 if (count != null && count > 0) {
                     // Filter by input
-                    if (tag.toLowerCase().contains(inputLower) || playerName.toLowerCase().contains(inputLower)) {
-                        String displayName = player.getInfoStringDB() != null ? player.getInfoStringDB()
-                                : player.getInfoStringAPI();
+                    if (tag.toLowerCase().contains(inputLower)
+                            || (playerName != null && playerName.toLowerCase().contains(inputLower))) {
+                        String displayName = buildDisplayName(player, tag);
                         choices.add(new Command.Choice(displayName, tag));
                         if (choices.size() >= 25)
                             break;
@@ -263,6 +263,40 @@ public class f2pcheck extends ListenerAdapter {
         }
 
         return choices;
+    }
+
+    /**
+     * Resolves a player's name, preferring the DB name but falling back to the API
+     * name. Players who uploaded a JSON may not be registered in the players table,
+     * in which case the DB name is null. Returns null if neither source has a name.
+     */
+    private String resolveName(Player player) {
+        String name = player.getNameDB();
+        if (name != null && !name.isEmpty()) {
+            return name;
+        }
+        try {
+            String apiName = player.getNameAPI();
+            if (apiName != null && !apiName.isEmpty()) {
+                return apiName;
+            }
+        } catch (Exception ignored) {
+            // API lookup failed (e.g. no JSON available) -> fall through
+        }
+        return null;
+    }
+
+    /**
+     * Builds a display string "Name (Tag)" for autocomplete, avoiding the literal
+     * "null (Tag)" that {@link Player#getInfoStringDB()} produces when the DB name
+     * is missing. Falls back to the API name, and finally to just the tag.
+     */
+    private String buildDisplayName(Player player, String tag) {
+        String name = resolveName(player);
+        if (name != null && !name.isEmpty()) {
+            return name + " (" + tag + ")";
+        }
+        return tag;
     }
 
     @SuppressWarnings("null")
