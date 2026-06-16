@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -122,7 +121,7 @@ public class JsonUploadServer {
 		scheduler.scheduleAtFixedRate(() -> {
 			try {
 				String sql = "DELETE FROM upload_sessions WHERE expires_at < CURRENT_TIMESTAMP";
-				lostmanager.util.Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(sql);
+				lostmanager.util.Tuple<Long, Integer> result = DBUtil.executeUpdate(sql);
 				if (result != null && result.getSecond() != null && result.getSecond() > 0) {
 					System.out.println("Cleaned up " + result.getSecond() + " expired upload sessions");
 				}
@@ -136,7 +135,7 @@ public class JsonUploadServer {
 		scheduler.scheduleAtFixedRate(() -> {
 			try {
 				String sql = "DELETE FROM userjsons WHERE timestamp < CURRENT_TIMESTAMP - INTERVAL '60 days'";
-				lostmanager.util.Tuple<PreparedStatement, Integer> result = DBUtil.executeUpdate(sql);
+				lostmanager.util.Tuple<Long, Integer> result = DBUtil.executeUpdate(sql);
 				if (result != null && result.getSecond() != null && result.getSecond() > 0) {
 					System.out.println("Cleaned up " + result.getSecond() + " old JSON entries");
 				}
