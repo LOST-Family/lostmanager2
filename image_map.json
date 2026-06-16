@@ -453,7 +453,8 @@
       "9": "/home-base/buildings/dark-barracks/dark-barracks-9.png",
       "10": "/home-base/buildings/dark-barracks/dark-barracks-10.png",
       "11": "/home-base/buildings/dark-barracks/dark-barracks-11.png",
-      "12": "/home-base/buildings/dark-barracks/dark-barracks-12.png"
+      "12": "/home-base/buildings/dark-barracks/dark-barracks-12.png",
+      "13": "/home-base/buildings/dark-barracks/dark-barracks-13.png"
     }
   },
   "1000027": {
@@ -494,7 +495,8 @@
       "4": "/home-base/buildings/dark-spell-factory/dark-spell-factory-4.png",
       "5": "/home-base/buildings/dark-spell-factory/dark-spell-factory-5.png",
       "6": "/home-base/buildings/dark-spell-factory/dark-spell-factory-6.png",
-      "7": "/home-base/buildings/dark-spell-factory/dark-spell-factory-7.png"
+      "7": "/home-base/buildings/dark-spell-factory/dark-spell-factory-7.png",
+      "8": "/home-base/buildings/dark-spell-factory/dark-spell-factory-8.png"
     }
   },
   "1000031": {
@@ -1881,6 +1883,11 @@
     "icon": "/home-base/troops/meteor-golem/meteor-golem-icon.png",
     "character": "/home-base/troops/meteor-golem/meteor-golem-character.png"
   },
+  "4000109": {
+    "name": "Ruin Witch",
+    "icon": "/home-base/troops/ruin-witch/ruin-witch-icon.png",
+    "character": "/home-base/troops/ruin-witch/ruin-witch-character.png"
+  },
   "4000188": {
     "name": "Sky Wagon",
     "icon": "/home-base/sky-wagon/sky-wagon/sky-wagon-icon.png",
@@ -2910,14 +2917,89 @@
     "index": 142
   },
   "18000219": {
-    "name": "Trophy Ball (Jun. 2026)",
+    "name": "CWL Trophy Ball (Jun. 2026)",
     "icon": "/home-base/decorations/219.png",
     "index": 143
+  },
+  "18000223": {
+    "name": "Clan Chief (Jun. 2026)",
+    "icon": "/home-base/decorations/223.png",
+    "index": 144
+  },
+  "18000224": {
+    "name": "Lone Chief (Jun. 2026)",
+    "icon": "/home-base/decorations/224.png",
+    "index": 145
+  },
+  "18000225": {
+    "name": "Fresh Chief (Jun. 2026)",
+    "icon": "/home-base/decorations/225.png",
+    "index": 146
+  },
+  "18000226": {
+    "name": "Teamwork Chief (Jun. 2026)",
+    "icon": "/home-base/decorations/226.png",
+    "index": 147
+  },
+  "18000227": {
+    "name": "Comeback Chief (Jun. 2026)",
+    "icon": "/home-base/decorations/227.png",
+    "index": 148
+  },
+  "18000228": {
+    "name": "War Chief (Jun. 2026)",
+    "icon": "/home-base/decorations/228.png",
+    "index": 149
+  },
+  "18000231": {
+    "name": "Loyal Chief (Jun. 2026)",
+    "icon": "/home-base/decorations/231.png",
+    "index": 150
   },
   "18000216": {
     "name": "Barbarian Fury (Jun. 2026)",
     "icon": "/home-base/decorations/216.png",
-    "index": 144
+    "index": 151
+  },
+  "18000229": {
+    "name": "CWL Legend Trophy (Jun. 2026)",
+    "icon": "/home-base/decorations/229.png",
+    "index": 152
+  },
+  "18000221": {
+    "name": "Challenge Valkyrie (Jul. 2026)",
+    "icon": "/home-base/decorations/221.png",
+    "index": 153
+  },
+  "18000222": {
+    "name": "Manga Reader (Jul. 2026)",
+    "icon": "/home-base/decorations/222.png",
+    "index": 154
+  },
+  "18000230": {
+    "name": "Odd Helm (Jul. 2026)",
+    "icon": "/home-base/decorations/230.png",
+    "index": 155
+  },
+  "18000232": {
+    "name": "Quest Collector (Jul. 2026)",
+    "icon": "/home-base/decorations/232.png",
+    "index": 156
+  },
+  "18000233": {
+    "name": "Quest Conjuror (Jul. 2026)",
+    "icon": "/home-base/decorations/233.png",
+    "index": 157
+  },
+  "18000234": {
+    "name": "Quest Orb (Jul. 2026)",
+    "icon": "/home-base/decorations/234.png",
+    "index": 158
+  },
+  "18000235": {
+    "name": "Odd Hero Busts (Jul. 2026)",
+    "icon": "/home-base/decorations/235.png",
+    "index": 159
   },
   "8000015": {
     "name": "2012 Stone",
@@ -3183,6 +3265,11 @@
     "name": "2025 Clashmas Tree",
     "icon": "/home-base/obstacles/137.png",
     "index": 51
+  },
+  "8000138": {
+    "name": "2026 Anniversary Cake",
+    "icon": "/home-base/obstacles/138.png",
+    "index": 53
   },
   "60000004": {
     "name": "Clashy Constructs Scenery (Jun. 2020)",
@@ -4710,32 +4797,32 @@
     "index": 228
   },
   "52000287": {
-    "name": "Skeleton King Resurrected (May. 2026, Clash vs Skeletons Event (exclusive!))",
+    "name": "Skeleton King Resurrected (May 2026, Clash vs Skeletons Event (exclusive!))",
     "icon": "/home-base/skins/287.png",
     "index": 229
   },
   "52000227": {
-    "name": "Skeleton Queen (May. 2026)",
+    "name": "Skeleton Queen (May 2026)",
     "icon": "/home-base/skins/227.png",
     "index": 230
   },
   "52000345": {
-    "name": "Skeleton Duke (May. 2026)",
+    "name": "Skeleton Duke (May 2026)",
     "icon": "/home-base/skins/345.png",
     "index": 231
   },
   "52000266": {
-    "name": "Skeleton Prince (May. 2026)",
+    "name": "Skeleton Prince (May 2026)",
     "icon": "/home-base/skins/266.png",
     "index": 232
   },
   "52000299": {
-    "name": "Skeleton Champion (May. 2026)",
+    "name": "Skeleton Champion (May 2026)",
     "icon": "/home-base/skins/299.png",
     "index": 233
   },
   "52000289": {
-    "name": "Shadow Samurai King (May. 2026 (exclusive!))",
+    "name": "Shadow Samurai King (May 2026 (exclusive!))",
     "icon": "/home-base/skins/289.png",
     "index": 234
   },  
@@ -4770,199 +4857,234 @@
     "index": 240
   },
   "52000330": {
-    "name": "CWL Half-Time Warden (Jun. 2026, (exclusive!))",
+    "name": "CWL Violet Half-Time Warden (Jun. 2026, (exclusive!))",
     "icon": "/home-base/skins/330.png",
     "index": 241
   },
   "52000229": {
-    "name": "Half-Time Queen (Jun. 2026)",
+    "name": "Rosy Half-Time Queen (Jun. 2026)",
     "icon": "/home-base/skins/229.png",
     "index": 242
   },
   "52000301": {
-    "name": "Half-Time Champion (Jun. 2026)",
+    "name": "Amber Half-Time Champion (Jun. 2026)",
     "icon": "/home-base/skins/301.png",
     "index": 243
   },
-  "52000329": {
+  "52000292": {
+    "name": "Majestic King (Jun. 2026, Hero Journey (exclusive!))",
+    "icon": "/home-base/skins/292.png",
+    "index": 244
+  },
+  "52000320": {
+    "name": "Majestic Queen (Jun. 2026, Hero Journey (exclusive!))",
+    "icon": "/home-base/skins/320.png",
+    "index": 245
+  },
+  "52000270": {
+    "name": "Majestic Prince (Jun. 2026, Hero Journey (exclusive!))",
+    "icon": "/home-base/skins/270.png",
+    "index": 246
+  },
+  "52000332": {
+    "name": "Majestic Warden (Jun. 2026, Hero Journey (exclusive!))",
+    "icon": "/home-base/skins/332.png",
+    "index": 247
+  },
+  "52000304": {
+    "name": "Majestic Champion (Jun. 2026, Hero Journey (exclusive!))",
+    "icon": "/home-base/skins/304.png",
+    "index": 248
+  },
+  "52000349": {
+    "name": "Majestic Duke (Jun. 2026, Hero Journey (exclusive!))",
+    "icon": "/home-base/skins/349.png",
+    "index": 249
+  },
+  "52000331": {
     "name": "? Warden (Jul. 2026)",
-    "icon": "/home-base/skins/329.png",
-    "index": 228
+    "icon": "/home-base/skins/331.png",
+    "index": 250
   },
   "52000290": {
     "name": "? King (Jul. 2026)",
     "icon": "/home-base/skins/290.png",
-    "index": 229
+    "index": 251
   },
   "52000319": {
     "name": "? Queen (Jul. 2026)",
     "icon": "/home-base/skins/319.png",
-    "index": 230
+    "index": 252
   },
   "52000347": {
     "name": "? Duke (Jul. 2026)",
     "icon": "/home-base/skins/347.png",
-    "index": 231
+    "index": 253
   },
   "52000268": {
     "name": "? Prince (Jul. 2026)",
     "icon": "/home-base/skins/268.png",
-    "index": 232
+    "index": 254
   },
   "52000302": {
     "name": "? Champion (Jul. 2026)",
     "icon": "/home-base/skins/302.png",
-    "index": 233
+    "index": 255
   },
-  "52000331": {
+  "52000333": {
     "name": "? Warden (Aug. 2026)",
-    "icon": "/home-base/skins/331.png",
-    "index": 228
+    "icon": "/home-base/skins/333.png",
+    "index": 256
   },
   "52000291": {
     "name": "? King (Aug. 2026)",
     "icon": "/home-base/skins/291.png",
-    "index": 229
+    "index": 257
   },
-  "52000320": {
+  "52000321": {
     "name": "? Queen (Aug. 2026)",
-    "icon": "/home-base/skins/320.png",
-    "index": 230
+    "icon": "/home-base/skins/321.png",
+    "index": 258
   },
   "52000348": {
     "name": "? Duke (Aug. 2026)",
     "icon": "/home-base/skins/348.png",
-    "index": 231
+    "index": 259
   },
   "52000269": {
     "name": "? Prince (Aug. 2026)",
     "icon": "/home-base/skins/269.png",
-    "index": 232
+    "index": 260
   },
   "52000303": {
     "name": "? Champion (Aug. 2026)",
     "icon": "/home-base/skins/303.png",
-    "index": 233
-  },
-  "52000332": {
-    "name": "? Warden (Sep. 2026)",
-    "icon": "/home-base/skins/332.png",
-    "index": 228
-  },
-  "52000292": {
-    "name": "? King (Sep. 2026)",
-    "icon": "/home-base/skins/292.png",
-    "index": 229
-  },
-  "52000321": {
-    "name": "? Queen (Sep. 2026)",
-    "icon": "/home-base/skins/321.png",
-    "index": 230
-  },
-  "52000349": {
-    "name": "? Duke (Sep. 2026)",
-    "icon": "/home-base/skins/349.png",
-    "index": 231
-  },
-  "52000270": {
-    "name": "? Prince (Sep. 2026)",
-    "icon": "/home-base/skins/270.png",
-    "index": 232
-  },
-  "52000304": {
-    "name": "? Champion (Sep. 2026)",
-    "icon": "/home-base/skins/304.png",
-    "index": 233
-  },
-  "52000333": {
-    "name": "? Warden (Oct. 2026)",
-    "icon": "/home-base/skins/333.png",
-    "index": 228
-  },
-  "52000293": {
-    "name": "? King (Oct. 2026)",
-    "icon": "/home-base/skins/293.png",
-    "index": 229
-  },
-  "52000322": {
-    "name": "? Queen (Oct. 2026)",
-    "icon": "/home-base/skins/322.png",
-    "index": 230
-  },
-  "52000350": {
-    "name": "? Duke (Oct. 2026)",
-    "icon": "/home-base/skins/350.png",
-    "index": 231
+    "index": 261
   },
   "52000353": {
-    "name": "? Prince (Oct. 2026)",
+    "name": "CWL League Prince (Aug. 2026)",
     "icon": "/home-base/skins/353.png",
-    "index": 232
-  },
-  "52000378": {
-    "name": "? Champion (Oct. 2026)",
-    "icon": "/home-base/skins/378.png",
-    "index": 233
+    "index": 262
   },
   "52000334": {
-    "name": "? Warden (Nov. 2026)",
+    "name": "? Warden (Sep. 2026)",
     "icon": "/home-base/skins/334.png",
-    "index": 228
+    "index": 263
   },
-  "52000294": {
-    "name": "? King (Nov. 2026)",
-    "icon": "/home-base/skins/294.png",
-    "index": 229
+  "52000293": {
+    "name": "? King (Sep. 2026)",
+    "icon": "/home-base/skins/293.png",
+    "index": 264
   },
-  "52000323": {
-    "name": "? Queen (Nov. 2026)",
-    "icon": "/home-base/skins/323.png",
-    "index": 230
+  "52000322": {
+    "name": "? Queen (Sep. 2026)",
+    "icon": "/home-base/skins/322.png",
+    "index": 265
   },
-  "52000351": {
-    "name": "? Duke (Nov. 2026)",
-    "icon": "/home-base/skins/351.png",
-    "index": 231
+  "52000350": {
+    "name": "? Duke (Sep. 2026)",
+    "icon": "/home-base/skins/350.png",
+    "index": 266
   },
   "52000354": {
-    "name": "? Prince (Nov. 2026)",
+    "name": "? Prince (Sep. 2026)",
     "icon": "/home-base/skins/354.png",
-    "index": 232
+    "index": 267
   },
-  "52000379": {
-    "name": "? Champion (Nov. 2026)",
-    "icon": "/home-base/skins/379.png",
-    "index": 233
+  "52000378": {
+    "name": "? Champion (Sep. 2026)",
+    "icon": "/home-base/skins/378.png",
+    "index": 268
   },
   "52000335": {
-    "name": "? Warden (Dec. 2026)",
+    "name": "? Warden (Oct. 2026)",
     "icon": "/home-base/skins/335.png",
-    "index": 228
+    "index": 269
   },
-  "52000368": {
-    "name": "? King (Dec. 2026)",
-    "icon": "/home-base/skins/368.png",
-    "index": 229
+  "52000294": {
+    "name": "? King (Oct. 2026)",
+    "icon": "/home-base/skins/294.png",
+    "index": 270
   },
-  "52000324": {
-    "name": "? Queen (Dec. 2026)",
-    "icon": "/home-base/skins/324.png",
-    "index": 230
+  "52000323": {
+    "name": "? Queen (Oct. 2026)",
+    "icon": "/home-base/skins/323.png",
+    "index": 271
   },
-  "52000352": {
-    "name": "? Duke (Dec. 2026)",
-    "icon": "/home-base/skins/352.png",
-    "index": 231
+  "52000351": {
+    "name": "? Duke (Oct. 2026)",
+    "icon": "/home-base/skins/351.png",
+    "index": 272
   },
   "52000355": {
-    "name": "? Prince (Dec. 2026)",
+    "name": "? Prince (Oct. 2026)",
     "icon": "/home-base/skins/355.png",
-    "index": 232
+    "index": 273
+  },
+  "52000379": {
+    "name": "? Champion (Oct. 2026)",
+    "icon": "/home-base/skins/379.png",
+    "index": 274
+  },
+  "52000336": {
+    "name": "? Warden (Nov. 2026)",
+    "icon": "/home-base/skins/336.png",
+    "index": 275
+  },
+  "52000368": {
+    "name": "? King (Nov. 2026)",
+    "icon": "/home-base/skins/368.png",
+    "index": 276
+  },
+  "52000324": {
+    "name": "? Queen (Nov. 2026)",
+    "icon": "/home-base/skins/324.png",
+    "index": 277
+  },
+  "52000352": {
+    "name": "? Duke (Nov. 2026)",
+    "icon": "/home-base/skins/352.png",
+    "index": 278
+  },
+  "52000356": {
+    "name": "? Prince (Nov. 2026)",
+    "icon": "/home-base/skins/356.png",
+    "index": 279
   },
   "52000380": {
-    "name": "? Champion (Dec. 2026)",
+    "name": "? Champion (Nov. 2026)",
     "icon": "/home-base/skins/380.png",
-    "index": 233
+    "index": 280
+  },
+  "52000337": {
+    "name": "? Warden (Dec. 2026)",
+    "icon": "/home-base/skins/337.png",
+    "index": 281
+  },
+  "52000369": {
+    "name": "? King (Dec. 2026)",
+    "icon": "/home-base/skins/369.png",
+    "index": 282
+  },
+  "52000325": {
+    "name": "? Queen (Dec. 2026)",
+    "icon": "/home-base/skins/325.png",
+    "index": 283
+  },
+  "52000388": {
+    "name": "? Duke (Dec. 2026)",
+    "icon": "/home-base/skins/388.png",
+    "index": 284
+  },
+  "52000357": {
+    "name": "? Prince (Dec. 2026)",
+    "icon": "/home-base/skins/357.png",
+    "index": 285
+  },
+  "52000381": {
+    "name": "? Champion (Dec. 2026)",
+    "icon": "/home-base/skins/381.png",
+    "index": 286
   },
   "82000000": {
     "name": "Brown Fence",
@@ -5691,6 +5813,10 @@
   "26000120": {
     "name": "Totem Spell",
     "icon": "/home-base/spells/120.png"
+  },
+  "26000123": {
+    "name": "Angry Spell",
+    "icon": "/home-base/spells/121.png"
   },
   "93000000": {
     "name": "Builder Apprentice",

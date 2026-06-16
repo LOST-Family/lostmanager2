@@ -121,8 +121,11 @@ public class removemember extends ListenerAdapter {
 			boolean b = false;
 			// Note: hiddencoleaders should not count as elder or higher
 			boolean otherElderOrHigherSameClan = false;
+			// Whether the user still has any linked account in any clan
+			boolean inAnyClan = false;
 			for (Player acc : allaccs) {
 				if (acc.getClanDB() != null) {
+					inAnyClan = true;
 					if (acc.getClanDB().getTag().equals(clantag)) {
 						b = true;
 						if (Player.isElderOrHigher(acc.getRoleDB()) && !acc.isHiddenColeader()) {
@@ -181,7 +184,10 @@ public class removemember extends ListenerAdapter {
 			String exmemberroleid = Bot.exmember_roleid;
 			Role exmemberrole = guild.getRoleById(exmemberroleid);
 			if (exmemberrole != null) {
-				if (member.getRoles().contains(exmemberrole)) {
+				if (inAnyClan) {
+					desc += "\n\n**Der User <@" + userid
+							+ "> hat noch mindestens einen Account in einem Clan, daher wurde ihm die Ex-Member-Rolle nicht hinzugefügt.**";
+				} else if (member.getRoles().contains(exmemberrole)) {
 					desc += "\n\n";
 					desc += "**Der User <@" + userid + "> hat die Rolle <@&" + exmemberroleid + "> bereits.**\n";
 				} else {
