@@ -4861,45 +4861,50 @@
     "icon": "/home-base/skins/333.png",
     "index": 241
   },
-  "52000229": {
-    "name": "Rosy Half-Time Queen (Jun. 2026)",
-    "icon": "/home-base/skins/229.png",
-    "index": 242
-  },
-  "52000301": {
-    "name": "Amber Half-Time Champion (Jun. 2026)",
-    "icon": "/home-base/skins/301.png",
-    "index": 243
-  },
   "52000292": {
     "name": "Majestic King (Jun. 2026, Hero Journey (exclusive!))",
     "icon": "/home-base/skins/292.png",
-    "index": 244
+    "index": 242
   },
   "52000320": {
     "name": "Majestic Queen (Jun. 2026, Hero Journey (exclusive!))",
     "icon": "/home-base/skins/320.png",
-    "index": 245
+    "index": 243
   },
   "52000270": {
     "name": "Majestic Prince (Jun. 2026, Hero Journey (exclusive!))",
     "icon": "/home-base/skins/270.png",
-    "index": 246
+    "index": 244
   },
   "52000331": {
     "name": "Majestic Warden (Jun. 2026, Hero Journey (exclusive!))",
     "icon": "/home-base/skins/331.png",
-    "index": 247
+    "index": 245
   },
   "52000304": {
     "name": "Majestic Champion (Jun. 2026, Hero Journey (exclusive!))",
     "icon": "/home-base/skins/304.png",
-    "index": 248
+    "index": 246
   },
   "52000349": {
     "name": "Majestic Duke (Jun. 2026, Hero Journey (exclusive!))",
     "icon": "/home-base/skins/349.png",
+    "index": 247
+  },
+  "52000229": {
+    "name": "Rosy Half-Time Queen (Jun. 2026)",
+    "icon": "/home-base/skins/229.png",
+    "index": 248
+  },
+  "52000301": {
+    "name": "Amber Half-Time Champion (Jun. 2026)",
+    "icon": "/home-base/skins/301.png",
     "index": 249
+  },
+  "52000293": {
+    "name": "Sapphire Half-Time King (Jun. 2026)",
+    "icon": "/home-base/skins/293.png",
+    "index": 250
   },
   "52000329": {
     "name": "? Warden (Jul. 2026)",
@@ -4971,9 +4976,9 @@
     "icon": "/home-base/skins/332.png",
     "index": 263
   },
-  "52000293": {
+  "52000294": {
     "name": "? King (Sep. 2026)",
-    "icon": "/home-base/skins/293.png",
+    "icon": "/home-base/skins/294.png",
     "index": 264
   },
   "52000322": {
@@ -5001,9 +5006,9 @@
     "icon": "/home-base/skins/334.png",
     "index": 269
   },
-  "52000294": {
+  "52000368": {
     "name": "? King (Oct. 2026)",
-    "icon": "/home-base/skins/294.png",
+    "icon": "/home-base/skins/368.png",
     "index": 270
   },
   "52000323": {
@@ -5031,9 +5036,9 @@
     "icon": "/home-base/skins/335.png",
     "index": 275
   },
-  "52000368": {
+  "52000369": {
     "name": "? King (Nov. 2026)",
-    "icon": "/home-base/skins/368.png",
+    "icon": "/home-base/skins/369.png",
     "index": 276
   },
   "52000324": {
@@ -5061,9 +5066,9 @@
     "icon": "/home-base/skins/336.png",
     "index": 281
   },
-  "52000369": {
+  "52000370": {
     "name": "? King (Dec. 2026)",
-    "icon": "/home-base/skins/369.png",
+    "icon": "/home-base/skins/370.png",
     "index": 282
   },
   "52000325": {
