@@ -4891,14 +4891,14 @@
     "icon": "/home-base/skins/349.png",
     "index": 247
   },
-  "52000229": {
+  "52000321": {
     "name": "Rosy Half-Time Queen (Jun. 2026)",
-    "icon": "/home-base/skins/229.png",
+    "icon": "/home-base/skins/321.png",
     "index": 248
   },
-  "52000301": {
+  "52000378": {
     "name": "Amber Half-Time Champion (Jun. 2026)",
-    "icon": "/home-base/skins/301.png",
+    "icon": "/home-base/skins/378.png",
     "index": 249
   },
   "52000293": {
@@ -4931,9 +4931,9 @@
     "icon": "/home-base/skins/268.png",
     "index": 254
   },
-  "52000302": {
+  "52000301": {
     "name": "? Champion (Jul. 2026)",
-    "icon": "/home-base/skins/302.png",
+    "icon": "/home-base/skins/301.png",
     "index": 255
   },
   "52000330": {
@@ -4946,7 +4946,7 @@
     "icon": "/home-base/skins/291.png",
     "index": 257
   },
-  "52000321": {
+  "52000229": {
     "name": "? Queen (Aug. 2026)",
     "icon": "/home-base/skins/321.png",
     "index": 258
@@ -4961,19 +4961,19 @@
     "icon": "/home-base/skins/269.png",
     "index": 260
   },
-  "52000303": {
+  "52000302": {
     "name": "? Champion (Aug. 2026)",
-    "icon": "/home-base/skins/303.png",
+    "icon": "/home-base/skins/302.png",
     "index": 261
   },
-  "52000353": {
+  "52000332": {
     "name": "CWL League Prince (Aug. 2026)",
-    "icon": "/home-base/skins/353.png",
+    "icon": "/home-base/skins/332.png",
     "index": 262
   },
-  "52000332": {
+  "52000353": {
     "name": "? Warden (Sep. 2026)",
-    "icon": "/home-base/skins/332.png",
+    "icon": "/home-base/skins/353.png",
     "index": 263
   },
   "52000294": {
@@ -4996,9 +4996,9 @@
     "icon": "/home-base/skins/354.png",
     "index": 267
   },
-  "52000378": {
+  "52000303": {
     "name": "? Champion (Sep. 2026)",
-    "icon": "/home-base/skins/378.png",
+    "icon": "/home-base/skins/303.png",
     "index": 268
   },
   "52000334": {
