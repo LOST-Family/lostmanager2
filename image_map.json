@@ -2917,7 +2917,7 @@
     "index": 142
   },
   "18000219": {
-    "name": "CWL Trophy Ball (Jun. 2026)",
+    "name": "CWL Trophy Ball (Jun. 2026 (exclusive!))",
     "icon": "/home-base/decorations/219.png",
     "index": 143
   },
@@ -3622,9 +3622,14 @@
     "index": 69
   },
   "60000089": {
-    "name": "Glory Arena Scenery (Jun. 2026, XL)",
+    "name": "Glory Arena Scenery (Jun. 2026, XL (exclusive!))",
     "icon": "/home-base/sceneries/89.png",
     "index": 70
+  },
+  "60000092": {
+    "name": "Barbarian Odyssey Scenery (Jul. 2026, XL)",
+    "icon": "/home-base/sceneries/92.png",
+    "index": 71
   },
   "52000001": {
     "name": "Gladiator King (Apr. 2019 GP)",
@@ -4857,52 +4862,52 @@
     "index": 240
   },
   "52000333": {
-    "name": "CWL Violet Half-Time Warden (Jun. 2026, (exclusive!))",
+    "name": "CWL Violet Half-Time Warden (Jun. 2026 (exclusive!))",
     "icon": "/home-base/skins/333.png",
     "index": 241
   },
   "52000292": {
-    "name": "Majestic King (Jun. 2026, Hero Journey (exclusive!))",
+    "name": "Majestic King (Jun. 2026, Hero Journey)",
     "icon": "/home-base/skins/292.png",
     "index": 242
   },
   "52000320": {
-    "name": "Majestic Queen (Jun. 2026, Hero Journey (exclusive!))",
+    "name": "Majestic Queen (Jun. 2026, Hero Journey)",
     "icon": "/home-base/skins/320.png",
     "index": 243
   },
   "52000270": {
-    "name": "Majestic Prince (Jun. 2026, Hero Journey (exclusive!))",
+    "name": "Majestic Prince (Jun. 2026, Hero Journey)",
     "icon": "/home-base/skins/270.png",
     "index": 244
   },
   "52000331": {
-    "name": "Majestic Warden (Jun. 2026, Hero Journey (exclusive!))",
+    "name": "Majestic Warden (Jun. 2026, Hero Journey)",
     "icon": "/home-base/skins/331.png",
     "index": 245
   },
   "52000304": {
-    "name": "Majestic Champion (Jun. 2026, Hero Journey (exclusive!))",
+    "name": "Majestic Champion (Jun. 2026, Hero Journey)",
     "icon": "/home-base/skins/304.png",
     "index": 246
   },
   "52000349": {
-    "name": "Majestic Duke (Jun. 2026, Hero Journey (exclusive!))",
+    "name": "Majestic Duke (Jun. 2026, Hero Journey)",
     "icon": "/home-base/skins/349.png",
     "index": 247
   },
   "52000321": {
-    "name": "Rosy Half-Time Queen (Jun. 2026)",
+    "name": "Rosy Half-Time Queen (Jun. 2026 (exclusive!))",
     "icon": "/home-base/skins/321.png",
     "index": 248
   },
   "52000378": {
-    "name": "Amber Half-Time Champion (Jun. 2026)",
+    "name": "Amber Half-Time Champion (Jun. 2026 (exclusive!))",
     "icon": "/home-base/skins/378.png",
     "index": 249
   },
   "52000293": {
-    "name": "Sapphire Half-Time King (Jun. 2026)",
+    "name": "Sapphire Half-Time King (Jun. 2026 (F2P exclusive!))",
     "icon": "/home-base/skins/293.png",
     "index": 250
   },
