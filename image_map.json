@@ -1117,6 +1117,32 @@
       "2": "/home-base/buildings/super-wizard-tower/swt-2.png"
     }
   },
+  "103000008": {
+    "name": "Roaster",
+    "icon": "/home-base/seasonal-defenses/roaster/roaster-10.png",
+    "tier_1": "/home-base/seasonal-defenses/roaster/roaster-1.png",
+    "tier_2": "/home-base/seasonal-defenses/roaster/roaster-2.png",
+    "tier_3": "/home-base/seasonal-defenses/roaster/roaster-3.png",
+    "tier_4": "/home-base/seasonal-defenses/roaster/roaster-4.png",
+    "tier_5": "/home-base/seasonal-defenses/roaster/roaster-5.png",
+    "tier_6": "/home-base/seasonal-defenses/roaster/roaster-6.png",
+    "tier_7": "/home-base/seasonal-defenses/roaster/roaster-7.png",
+    "tier_8": "/home-base/seasonal-defenses/roaster/roaster-8.png",
+    "tier_9": "/home-base/seasonal-defenses/roaster/roaster-9.png",
+    "tier_10": "/home-base/seasonal-defenses/roaster/roaster-10.png"
+  },
+  "102000024": {
+    "name": "Hitpoints",
+    "icon": "/home-base/seasonal-defenses/hitpoints.png"
+  },
+  "102000025": {
+    "name": "Damage",
+    "icon": "/home-base/seasonal-defenses/damage.png"
+  },
+  "102000026": {
+    "name": "Burst Fire",
+    "icon": "/home-base/seasonal-defenses/burstfire.png"
+  },
   "103000009": {
     "name": "Air Bombs",
     "icon": "/home-base/seasonal-defenses/air-bombs/air-bombs-10.png",
@@ -1166,31 +1192,65 @@
     "name": "Range",
     "icon": "/home-base/seasonal-defenses/range.png"
   },
-  "103000008": {
-    "name": "Roaster",
-    "icon": "/home-base/seasonal-defenses/roaster/roaster-10.png",
-    "tier_1": "/home-base/seasonal-defenses/roaster/roaster-1.png",
-    "tier_2": "/home-base/seasonal-defenses/roaster/roaster-2.png",
-    "tier_3": "/home-base/seasonal-defenses/roaster/roaster-3.png",
-    "tier_4": "/home-base/seasonal-defenses/roaster/roaster-4.png",
-    "tier_5": "/home-base/seasonal-defenses/roaster/roaster-5.png",
-    "tier_6": "/home-base/seasonal-defenses/roaster/roaster-6.png",
-    "tier_7": "/home-base/seasonal-defenses/roaster/roaster-7.png",
-    "tier_8": "/home-base/seasonal-defenses/roaster/roaster-8.png",
-    "tier_9": "/home-base/seasonal-defenses/roaster/roaster-9.png",
-    "tier_10": "/home-base/seasonal-defenses/roaster/roaster-10.png"
+  "103000011": {
+    "name": "Hot Candle",
+    "icon": "/home-base/seasonal-defenses/hot-candle/hot-candle-4.png",
+    "tier_1": "/home-base/seasonal-defenses/hot-candle/hot-candle-1.png",
+    "tier_2": "/home-base/seasonal-defenses/hot-candle/hot-candle-2.png",
+    "tier_3": "/home-base/seasonal-defenses/hot-candle/hot-candle-3.png",
+    "tier_4": "/home-base/seasonal-defenses/hot-candle/hot-candle-4.png"
   },
-  "102000024": {
+  "102000033": {
     "name": "Hitpoints",
     "icon": "/home-base/seasonal-defenses/hitpoints.png"
   },
-  "102000025": {
-    "name": "Damage",
+  "102000034": {
+    "name": "Damage per Second",
     "icon": "/home-base/seasonal-defenses/damage.png"
   },
-  "102000026": {
-    "name": "Burst Fire",
-    "icon": "/home-base/seasonal-defenses/burstfire.png"
+  "102000035": {
+    "name": "Total Seconds Active",
+    "icon": "/home-base/seasonal-defenses/time.png"
+  },
+  "103000012": {
+    "name": "Hero Hunter",
+    "icon": "/home-base/seasonal-defenses/hero-hunter/hero-hunter-4.png",
+    "tier_1": "/home-base/seasonal-defenses/hero-hunter/hero-hunter-1.png",
+    "tier_2": "/home-base/seasonal-defenses/hero-hunter/hero-hunter-2.png",
+    "tier_3": "/home-base/seasonal-defenses/hero-hunter/hero-hunter-3.png",
+    "tier_4": "/home-base/seasonal-defenses/hero-hunter/hero-hunter-4.png"
+  },
+  "102000036": {
+    "name": "Hitpoints",
+    "icon": "/home-base/seasonal-defenses/hitpoints.png"
+  },
+  "102000037": {
+    "name": "Damage per Second",
+    "icon": "/home-base/seasonal-defenses/damage.png"
+  },
+  "102000038": {
+    "name": "Poison Spell level",
+    "icon": "/home-base/seasonal-defenses/poison.png"
+  },
+  "103000013": {
+    "name": "Cake-A-Pult",
+    "icon": "/home-base/seasonal-defenses/cake-a-pult/cake-a-pult-4.png",
+    "tier_1": "/home-base/seasonal-defenses/cake-a-pult/cake-a-pult-1.png",
+    "tier_2": "/home-base/seasonal-defenses/cake-a-pult/cake-a-pult-2.png",
+    "tier_3": "/home-base/seasonal-defenses/cake-a-pult/cake-a-pult-3.png",
+    "tier_4": "/home-base/seasonal-defenses/cake-a-pult/cake-a-pult-4.png"
+  },
+  "102000039": {
+    "name": "Hitpoints",
+    "icon": "/home-base/seasonal-defenses/hitpoints.png"
+  },
+  "102000040": {
+    "name": "Damage per hit",
+    "icon": "/home-base/seasonal-defenses/damage.png"
+  },
+  "102000041": {
+    "name": "Explosion Damage",
+    "icon": "/home-base/seasonal-defenses/damage.png"
   },
   "12000000": {
     "name": "Bomb",
@@ -4911,9 +4971,9 @@
     "icon": "/home-base/skins/293.png",
     "index": 250
   },
-  "52000290": {
+  "52000291": {
     "name": "Zeus King (Jul. 2026 GP)",
-    "icon": "/home-base/skins/290.png",
+    "icon": "/home-base/skins/291.png",
     "index": 251
   },
   "52000347": {
@@ -4946,9 +5006,9 @@
     "icon": "/home-base/skins/330.png",
     "index": 256
   },
-  "52000291": {
+  "52000290": {
     "name": "? King (Aug. 2026)",
-    "icon": "/home-base/skins/291.png",
+    "icon": "/home-base/skins/290.png",
     "index": 257
   },
   "52000229": {
