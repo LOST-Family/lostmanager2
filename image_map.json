@@ -2981,14 +2981,14 @@
     "icon": "/home-base/decorations/230.png",
     "index": 155
   },
+  "18000235": {
+    "name": "Odd Gods (Jul. 2026)",
+    "icon": "/home-base/decorations/235.png",
+    "index": 156
+  },
   "18000232": {
     "name": "Quest Collector (Jul. 2026)",
     "icon": "/home-base/decorations/232.png",
-    "index": 156
-  },
-  "18000233": {
-    "name": "Quest Conjuror (Jul. 2026)",
-    "icon": "/home-base/decorations/233.png",
     "index": 157
   },
   "18000234": {
@@ -2996,9 +2996,9 @@
     "icon": "/home-base/decorations/234.png",
     "index": 158
   },
-  "18000235": {
-    "name": "Odd Gods (Jul. 2026)",
-    "icon": "/home-base/decorations/235.png",
+  "18000233": {
+    "name": "Quest Conjuror (Jul. 2026)",
+    "icon": "/home-base/decorations/233.png",
     "index": 159
   },
   "8000015": {
@@ -4911,35 +4911,35 @@
     "icon": "/home-base/skins/293.png",
     "index": 250
   },
-  "52000329": {
-    "name": "? Warden (Jul. 2026)",
-    "icon": "/home-base/skins/329.png",
-    "index": 250
-  },
   "52000290": {
-    "name": "? King (Jul. 2026)",
+    "name": "Zeus King (Jul. 2026)",
     "icon": "/home-base/skins/290.png",
     "index": 251
   },
-  "52000319": {
-    "name": "? Queen (Jul. 2026)",
-    "icon": "/home-base/skins/319.png",
+  "52000347": {
+    "name": "Hydra Duke (Jul. 2026)",
+    "icon": "/home-base/skins/347.png",
     "index": 252
   },
-  "52000347": {
-    "name": "? Duke (Jul. 2026)",
-    "icon": "/home-base/skins/347.png",
+  "52000319": {
+    "name": "Medusa Queen (Jul. 2026)",
+    "icon": "/home-base/skins/319.png",
     "index": 253
   },
-  "52000268": {
-    "name": "? Prince (Jul. 2026)",
-    "icon": "/home-base/skins/268.png",
+  "52000329": {
+    "name": "Poseidon Warden (Jul. 2026)",
+    "icon": "/home-base/skins/329.png",
     "index": 254
   },
-  "52000301": {
-    "name": "? Champion (Jul. 2026)",
-    "icon": "/home-base/skins/301.png",
+  "52000268": {
+    "name": "Midas Prince (Jul. 2026)",
+    "icon": "/home-base/skins/268.png",
     "index": 255
+  },
+  "52000301": {
+    "name": "Hades Champion (Jul. 2026)",
+    "icon": "/home-base/skins/301.png",
+    "index": 256
   },
   "52000330": {
     "name": "? Warden (Aug. 2026)",
