@@ -1835,14 +1835,14 @@
                         "allowed": 0,
                         "elements": [{
                                 "type": "element",
-                                "name": "Odd Helm Deco",
+                                "name": "Kingly Helmet Deco",
                                 "id": "18000230"
                             }
                         ]
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Odd Helm Deco' und 2 'Cozy Clam Decos'",
+                            "name": "Hat 'Kingly Helmet Deco' und 2 'Cozy Clam Decos'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 1,
@@ -1850,6 +1850,72 @@
                                     "type": "element",
                                     "name": "Cozy Clam Deco",
                                     "id": "18000114"
+                                }]
+                            }
+                        }]
+                    }
+                }]
+            }
+        },
+        {
+            "Cases": {
+                "name": "Aug. 2026 Event",
+                "CasesStrict": [{
+                    "name": "",
+                    "IfMoreThan":   {
+                        "type": "quantity",
+                        "allowed": 0,
+                        "elements": [{
+                                "type": "element",
+                                "name": "Revenge Deck Equipment",
+                                "id": "90000055"
+                            },{
+                                "type": "element",
+                                "name": "Quest Orb Deco",
+                                "id": "18000234"
+                            }]
+                    },
+                    "ThenForbidden": {
+                        "CasesStrict": [{
+                            "name": "Hat 'Revenge Deck Equipment' und 'Quest Orb Deco'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 1,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Revenge Deck Equipment",
+                                    "id": "90000055"
+                                },{
+                                    "type": "element",
+                                    "name": "Quest Orb Deco",
+                                    "id": "18000234"
+                                }]
+                            }
+                        },{
+                            "name": "Hat 'Revenge Deck Equipment' oder 'Quest Orb Deco' und entweder 'Quest Collector Deco' oder mindestens ein 'Quest Clan House'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 0,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Quest Collector Deco",
+                                    "id": "18000232"
+                                },{
+                                    "type": "element",
+                                    "name": "Quest Deco",
+                                    "id": "82000158"
+                                },{
+                                    "type": "element",
+                                    "name": "Quest Walls",
+                                    "id": "82000159"
+                                },{
+                                    "type": "element",
+                                    "name": "Quest Ground",
+                                    "id": "82000160"
+                                },{
+                                    "type": "element",
+                                    "name": "Quest Roof",
+                                    "id": "82000161"
                                 }]
                             }
                         }]
