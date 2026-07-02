@@ -1892,15 +1892,11 @@
                                 }]
                             }
                         },{
-                            "name": "Hat 'Revenge Deck Equipment' oder 'Quest Orb Deco' und entweder 'Quest Collector Deco' oder mindestens ein 'Quest Clan House'",
+                            "name": "Hat 'Revenge Deck Equipment' oder 'Quest Orb Deco' und oder mindestens ein 'Quest Clan House'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
                                 "elements": [{
-                                    "type": "element",
-                                    "name": "Quest Collector Deco",
-                                    "id": "18000232"
-                                },{
                                     "type": "element",
                                     "name": "Quest Deco",
                                     "id": "82000158"
