@@ -1871,13 +1871,13 @@
                                 "id": "90000055"
                             },{
                                 "type": "element",
-                                "name": "Quest Orb Deco",
+                                "name": "Awesome Orb Deco",
                                 "id": "18000234"
                             }]
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Revenge Deck Equipment' und 'Quest Orb Deco'",
+                            "name": "Hat 'Revenge Deck Equipment' und 'Awesome Orb Deco'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 1,
@@ -1887,30 +1887,30 @@
                                     "id": "90000055"
                                 },{
                                     "type": "element",
-                                    "name": "Quest Orb Deco",
+                                    "name": "Awesome Orb Deco",
                                     "id": "18000234"
                                 }]
                             }
                         },{
-                            "name": "Hat 'Revenge Deck Equipment' oder 'Quest Orb Deco' und oder mindestens ein 'Quest Clan House'",
+                            "name": "Hat 'Revenge Deck Equipment' oder 'Awesome Orb Deco' und oder mindestens ein 'Quest Chase Clan House'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
                                 "elements": [{
                                     "type": "element",
-                                    "name": "Quest Deco",
+                                    "name": "Quest Chase Deco",
                                     "id": "82000158"
                                 },{
                                     "type": "element",
-                                    "name": "Quest Walls",
+                                    "name": "Quest Chase Walls",
                                     "id": "82000159"
                                 },{
                                     "type": "element",
-                                    "name": "Quest Ground",
+                                    "name": "Quest Chase Ground",
                                     "id": "82000160"
                                 },{
                                     "type": "element",
-                                    "name": "Quest Roof",
+                                    "name": "Quest Chase Roof",
                                     "id": "82000161"
                                 }]
                             }

@@ -3035,33 +3035,33 @@
     "icon": "/home-base/decorations/230.png",
     "index": 154
   },
+  "18000221": {
+    "name": "Medusa's Masterpiece (Jul. 2026)",
+    "icon": "/home-base/decorations/221.png",
+    "index": 155
+  },
   "18000235": {
     "name": "Immortal Monument (Jul. 2026)",
     "icon": "/home-base/decorations/235.png",
-    "index": 155
-  },
-  "18000221": {
-    "name": "Challenge Valkyrie (Jul. 2026)",
-    "icon": "/home-base/decorations/221.png",
     "index": 156
   },
   "18000232": {
-    "name": "Quest Collector (Jul. 2026)",
+    "name": "Card Collector (Aug. 2026)",
     "icon": "/home-base/decorations/232.png",
     "index": 157
   },
   "18000234": {
-    "name": "Quest Orb (Jul. 2026)",
+    "name": "Awesome Orb (Aug. 2026)",
     "icon": "/home-base/decorations/234.png",
     "index": 158
   },
   "18000233": {
-    "name": "Quest Conjuror (Jul. 2026)",
+    "name": "Card Flipper (Aug. 2026)",
     "icon": "/home-base/decorations/233.png",
     "index": 160
   },
   "18000222": {
-    "name": "Manga Reader (Jul. 2026)",
+    "name": "Manga Reader (Aug. 2026)",
     "icon": "/home-base/decorations/222.png",
     "index": 159
   },
