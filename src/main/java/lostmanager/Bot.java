@@ -55,6 +55,7 @@ import lostmanager.commands.coc.util.playerutils.wins;
 import lostmanager.commands.discord.admin.deletemessages;
 import lostmanager.commands.discord.admin.reactionsrole;
 import lostmanager.commands.discord.admin.restart;
+import lostmanager.commands.discord.util.checkpoll;
 import lostmanager.commands.discord.util.checkreacts;
 import lostmanager.commands.discord.util.giveaway;
 import lostmanager.commands.discord.util.lmagent;
@@ -341,6 +342,12 @@ public class Bot extends ListenerAdapter {
 											"Optionaler zweiter Emoji. Wer hiermit reagiert hat, wird separat angezeigt und nicht gepingt.",
 											false),
 
+							Commands.slash("checkpoll",
+									"Überprüfe die Abstimmungen einer Umfrage auf Mitglieder einer Rolle.")
+									.addOption(OptionType.ROLE, "role", "Die Rolle, die überprüft werden soll", true)
+									.addOption(OptionType.STRING, "message_link",
+											"Der Nachrichtenlink der Nachricht mit der Umfrage.", true),
+
 							Commands.slash("setnick",
 									"Ändert deinen Nicknamen zu deinem in-Game Namen und optional einem benutzerdefinierten Alias.")
 									.addOptions(new OptionData(OptionType.STRING, "my_player",
@@ -615,6 +622,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new clanconfig());
 		classes.add(new cwdonator());
 		classes.add(new checkreacts());
+		classes.add(new checkpoll());
 		classes.add(new lmagent());
 		classes.add(new setnick());
 		classes.add(new deletemessages());

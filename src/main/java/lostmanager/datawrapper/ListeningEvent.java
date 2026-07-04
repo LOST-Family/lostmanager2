@@ -1,7 +1,6 @@
 package lostmanager.datawrapper;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -1621,6 +1620,7 @@ public class ListeningEvent {
 	 *
 	 * @return the analysis result, or null if no usable raid data is available
 	 */
+	@SuppressWarnings("null")
 	private RaidDistrictAnalysisResult buildRaidDistrictAnalysisResult(Clan clan, int capitalPeakMax,
 			int otherDistrictsMax, int penalizeBoth, boolean shouldAddKickpoints) {
 
