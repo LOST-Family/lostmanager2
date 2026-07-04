@@ -1117,6 +1117,32 @@
       "2": "/home-base/buildings/super-wizard-tower/swt-2.png"
     }
   },
+  "103000008": {
+    "name": "Roaster",
+    "icon": "/home-base/seasonal-defenses/roaster/roaster-10.png",
+    "tier_1": "/home-base/seasonal-defenses/roaster/roaster-1.png",
+    "tier_2": "/home-base/seasonal-defenses/roaster/roaster-2.png",
+    "tier_3": "/home-base/seasonal-defenses/roaster/roaster-3.png",
+    "tier_4": "/home-base/seasonal-defenses/roaster/roaster-4.png",
+    "tier_5": "/home-base/seasonal-defenses/roaster/roaster-5.png",
+    "tier_6": "/home-base/seasonal-defenses/roaster/roaster-6.png",
+    "tier_7": "/home-base/seasonal-defenses/roaster/roaster-7.png",
+    "tier_8": "/home-base/seasonal-defenses/roaster/roaster-8.png",
+    "tier_9": "/home-base/seasonal-defenses/roaster/roaster-9.png",
+    "tier_10": "/home-base/seasonal-defenses/roaster/roaster-10.png"
+  },
+  "102000024": {
+    "name": "Hitpoints",
+    "icon": "/home-base/seasonal-defenses/hitpoints.png"
+  },
+  "102000025": {
+    "name": "Damage",
+    "icon": "/home-base/seasonal-defenses/damage.png"
+  },
+  "102000026": {
+    "name": "Burst Fire",
+    "icon": "/home-base/seasonal-defenses/burstfire.png"
+  },
   "103000009": {
     "name": "Air Bombs",
     "icon": "/home-base/seasonal-defenses/air-bombs/air-bombs-10.png",
@@ -1166,31 +1192,65 @@
     "name": "Range",
     "icon": "/home-base/seasonal-defenses/range.png"
   },
-  "103000008": {
-    "name": "Roaster",
-    "icon": "/home-base/seasonal-defenses/roaster/roaster-10.png",
-    "tier_1": "/home-base/seasonal-defenses/roaster/roaster-1.png",
-    "tier_2": "/home-base/seasonal-defenses/roaster/roaster-2.png",
-    "tier_3": "/home-base/seasonal-defenses/roaster/roaster-3.png",
-    "tier_4": "/home-base/seasonal-defenses/roaster/roaster-4.png",
-    "tier_5": "/home-base/seasonal-defenses/roaster/roaster-5.png",
-    "tier_6": "/home-base/seasonal-defenses/roaster/roaster-6.png",
-    "tier_7": "/home-base/seasonal-defenses/roaster/roaster-7.png",
-    "tier_8": "/home-base/seasonal-defenses/roaster/roaster-8.png",
-    "tier_9": "/home-base/seasonal-defenses/roaster/roaster-9.png",
-    "tier_10": "/home-base/seasonal-defenses/roaster/roaster-10.png"
+  "103000011": {
+    "name": "Hot Candle",
+    "icon": "/home-base/seasonal-defenses/hot-candle/hot-candle-4.png",
+    "tier_1": "/home-base/seasonal-defenses/hot-candle/hot-candle-1.png",
+    "tier_2": "/home-base/seasonal-defenses/hot-candle/hot-candle-2.png",
+    "tier_3": "/home-base/seasonal-defenses/hot-candle/hot-candle-3.png",
+    "tier_4": "/home-base/seasonal-defenses/hot-candle/hot-candle-4.png"
   },
-  "102000024": {
+  "102000033": {
     "name": "Hitpoints",
     "icon": "/home-base/seasonal-defenses/hitpoints.png"
   },
-  "102000025": {
-    "name": "Damage",
+  "102000034": {
+    "name": "Damage per Second",
     "icon": "/home-base/seasonal-defenses/damage.png"
   },
-  "102000026": {
-    "name": "Burst Fire",
-    "icon": "/home-base/seasonal-defenses/burstfire.png"
+  "102000035": {
+    "name": "Total Seconds Active",
+    "icon": "/home-base/seasonal-defenses/time.png"
+  },
+  "103000012": {
+    "name": "Hero Hunter",
+    "icon": "/home-base/seasonal-defenses/hero-hunter/hero-hunter-4.png",
+    "tier_1": "/home-base/seasonal-defenses/hero-hunter/hero-hunter-1.png",
+    "tier_2": "/home-base/seasonal-defenses/hero-hunter/hero-hunter-2.png",
+    "tier_3": "/home-base/seasonal-defenses/hero-hunter/hero-hunter-3.png",
+    "tier_4": "/home-base/seasonal-defenses/hero-hunter/hero-hunter-4.png"
+  },
+  "102000036": {
+    "name": "Hitpoints",
+    "icon": "/home-base/seasonal-defenses/hitpoints.png"
+  },
+  "102000037": {
+    "name": "Damage per Second",
+    "icon": "/home-base/seasonal-defenses/damage.png"
+  },
+  "102000038": {
+    "name": "Poison Spell level",
+    "icon": "/home-base/seasonal-defenses/poison.png"
+  },
+  "103000013": {
+    "name": "Cake-A-Pult",
+    "icon": "/home-base/seasonal-defenses/cake-a-pult/cake-a-pult-4.png",
+    "tier_1": "/home-base/seasonal-defenses/cake-a-pult/cake-a-pult-1.png",
+    "tier_2": "/home-base/seasonal-defenses/cake-a-pult/cake-a-pult-2.png",
+    "tier_3": "/home-base/seasonal-defenses/cake-a-pult/cake-a-pult-3.png",
+    "tier_4": "/home-base/seasonal-defenses/cake-a-pult/cake-a-pult-4.png"
+  },
+  "102000039": {
+    "name": "Hitpoints",
+    "icon": "/home-base/seasonal-defenses/hitpoints.png"
+  },
+  "102000040": {
+    "name": "Damage per hit",
+    "icon": "/home-base/seasonal-defenses/damage.png"
+  },
+  "102000041": {
+    "name": "Explosion Damage",
+    "icon": "/home-base/seasonal-defenses/damage.png"
   },
   "12000000": {
     "name": "Bomb",
@@ -2157,6 +2217,10 @@
     "name": "Electro Fangs",
     "icon": "/home-base/equipments/59.png"
   },
+  "90000060": {
+    "name": "Revenge Deck",
+    "icon": "/home-base/equipments/60.png"
+  },
   "18000000": {
     "name": "Mighty Statue (Aug. 2012)",
     "icon": "/home-base/decorations/0.png",
@@ -2493,37 +2557,37 @@
     "index": 63
   },
   "18000131": {
-    "name": "Golden Boot (May. 2024)",
+    "name": "Golden Boot (May 2024)",
     "icon": "/home-base/decorations/131.png",
     "index": 64
   },
   "18000132": {
-    "name": "Bestest Ball (May. 2024)",
+    "name": "Bestest Ball (May 2024)",
     "icon": "/home-base/decorations/132.png",
     "index": 65
   },
   "18000134": {
-    "name": "Triumphant Trophy (May. 2024)",
+    "name": "Triumphant Trophy (May 2024)",
     "icon": "/home-base/decorations/134.png",
     "index": 66
   },
   "18000136": {
-    "name": "Victory Milk (May. 2024) (EP)",
+    "name": "Victory Milk (May 2024) (EP)",
     "icon": "/home-base/decorations/136.png",
     "index": 67
   },
   "18000140": {
-    "name": "Football Camp (May. 2024)",
+    "name": "Football Camp (May 2024)",
     "icon": "/home-base/decorations/140.png",
     "index": 68
   },
   "18000135": {
-    "name": "Celebration Cup (May. 2024)",
+    "name": "Celebration Cup (May 2024)",
     "icon": "/home-base/decorations/135.png",
     "index": 69
   },
   "18000133": {
-    "name": "Haaland Statue (May. 2024)",
+    "name": "Haaland Statue (May 2024)",
     "icon": "/home-base/decorations/133.png",
     "index": 70
   },
@@ -2871,43 +2935,38 @@
     "index": 136
   },
   "18000206": {
-    "name": "Hog Skull (May. 2026)",
+    "name": "Hog Skull (May 2026)",
     "icon": "/home-base/decorations/206.png",
     "index": 100000
   },
   "18000205": {
-    "name": "Darkness Throne (May. 2026)",
+    "name": "Darkness Throne (May 2026)",
     "icon": "/home-base/decorations/205.png",
     "index": 100001
   },
   "18000214": {
-    "name": "Team Jade vs. Skeletons (May. 2026)",
+    "name": "Team Jade vs. Skeletons (May 2026)",
     "icon": "/home-base/decorations/214.png",
     "index": 137
   },
   "18000215": {
-    "name": "Team Amethyst vs. Skeletons (May. 2026)",
+    "name": "Team Amethyst vs. Skeletons (May 2026)",
     "icon": "/home-base/decorations/215.png",
     "index": 138
   },
   "18000220": {
-    "name": "Dragon Fountain (May. 2026)",
+    "name": "Dragon Fountain (May 2026)",
     "icon": "/home-base/decorations/220.png",
     "index": 139
   },
   "18000211": {
-    "name": "Bone Idol (May. 2026)",
+    "name": "Bone Idol (May 2026)",
     "icon": "/home-base/decorations/211.png",
     "price": "6€",
     "index": 140
   },
-  "18000213": {
-    "name": "Meteor Crown (May. 2026)",
-    "icon": "/home-base/decorations/213.png",
-    "index": 100002
-  },
   "18000217": {
-    "name": "Lucky Cat (June. 2026)",
+    "name": "Lucky Cat (Jun. 2026)",
     "icon": "/home-base/decorations/217.png",
     "index": 141
   },
@@ -2917,7 +2976,7 @@
     "index": 142
   },
   "18000219": {
-    "name": "CWL Trophy Ball (Jun. 2026)",
+    "name": "CWL Trophy Ball (Jun. 2026 (exclusive!))",
     "icon": "/home-base/decorations/219.png",
     "index": 143
   },
@@ -2966,39 +3025,44 @@
     "icon": "/home-base/decorations/229.png",
     "index": 152
   },
-  "18000221": {
-    "name": "Challenge Valkyrie (Jul. 2026)",
-    "icon": "/home-base/decorations/221.png",
+  "18000213": {
+    "name": "Meteor Crown (Jun. 2026)",
+    "icon": "/home-base/decorations/213.png",
     "index": 153
   },
-  "18000222": {
-    "name": "Manga Reader (Jul. 2026)",
-    "icon": "/home-base/decorations/222.png",
+  "18000230": {
+    "name": "Kingly Helmet (Jul. 2026)",
+    "icon": "/home-base/decorations/230.png",
     "index": 154
   },
-  "18000230": {
-    "name": "Odd Helm (Jul. 2026)",
-    "icon": "/home-base/decorations/230.png",
+  "18000221": {
+    "name": "Medusa's Masterpiece (Jul. 2026)",
+    "icon": "/home-base/decorations/221.png",
     "index": 155
   },
-  "18000232": {
-    "name": "Quest Collector (Jul. 2026)",
-    "icon": "/home-base/decorations/232.png",
+  "18000235": {
+    "name": "Immortal Monument (Jul. 2026)",
+    "icon": "/home-base/decorations/235.png",
     "index": 156
   },
-  "18000233": {
-    "name": "Quest Conjuror (Jul. 2026)",
-    "icon": "/home-base/decorations/233.png",
+  "18000232": {
+    "name": "Card Collector (Aug. 2026)",
+    "icon": "/home-base/decorations/232.png",
     "index": 157
   },
   "18000234": {
-    "name": "Quest Orb (Jul. 2026)",
+    "name": "Awesome Orb (Aug. 2026)",
     "icon": "/home-base/decorations/234.png",
     "index": 158
   },
-  "18000235": {
-    "name": "Odd Gods (Jul. 2026)",
-    "icon": "/home-base/decorations/235.png",
+  "18000233": {
+    "name": "Card Flipper (Aug. 2026)",
+    "icon": "/home-base/decorations/233.png",
+    "index": 160
+  },
+  "18000222": {
+    "name": "Manga Reader (Aug. 2026)",
+    "icon": "/home-base/decorations/222.png",
     "index": 159
   },
   "8000015": {
@@ -3622,9 +3686,14 @@
     "index": 69
   },
   "60000089": {
-    "name": "Glory Arena Scenery (Jun. 2026, XL)",
+    "name": "Glory Arena Scenery (Jun. 2026, XL (exclusive!))",
     "icon": "/home-base/sceneries/89.png",
     "index": 70
+  },
+  "60000092": {
+    "name": "Barbarian's Odyssey Scenery (Jul. 2026, XL)",
+    "icon": "/home-base/sceneries/92.png",
+    "index": 71
   },
   "52000001": {
     "name": "Gladiator King (Apr. 2019 GP)",
@@ -4792,7 +4861,7 @@
     "index": 227
   },
   "52000248": {
-    "name": "Skeleton Warden (May. 2026 GP)",
+    "name": "Skeleton Warden (May 2026 GP)",
     "icon": "/home-base/skins/248.png",
     "index": 228
   },
@@ -4842,7 +4911,7 @@
     "index": 237
   },
   "52000288": {
-    "name": "Anime Fur King (Jun. 2026)",
+    "name": "Anime Fury King (Jun. 2026)",
     "icon": "/home-base/skins/288.png",
     "index": 238
   },
@@ -4857,96 +4926,96 @@
     "index": 240
   },
   "52000333": {
-    "name": "CWL Violet Half-Time Warden (Jun. 2026, (exclusive!))",
+    "name": "CWL Violet Half-Time Warden (Jun. 2026 (exclusive!))",
     "icon": "/home-base/skins/333.png",
     "index": 241
   },
   "52000292": {
-    "name": "Majestic King (Jun. 2026, Hero Journey (exclusive!))",
+    "name": "Majestic King (Jun. 2026, Hero Journey)",
     "icon": "/home-base/skins/292.png",
     "index": 242
   },
   "52000320": {
-    "name": "Majestic Queen (Jun. 2026, Hero Journey (exclusive!))",
+    "name": "Majestic Queen (Jun. 2026, Hero Journey)",
     "icon": "/home-base/skins/320.png",
     "index": 243
   },
   "52000270": {
-    "name": "Majestic Prince (Jun. 2026, Hero Journey (exclusive!))",
+    "name": "Majestic Prince (Jun. 2026, Hero Journey)",
     "icon": "/home-base/skins/270.png",
     "index": 244
   },
   "52000331": {
-    "name": "Majestic Warden (Jun. 2026, Hero Journey (exclusive!))",
+    "name": "Majestic Warden (Jun. 2026, Hero Journey)",
     "icon": "/home-base/skins/331.png",
     "index": 245
   },
   "52000304": {
-    "name": "Majestic Champion (Jun. 2026, Hero Journey (exclusive!))",
+    "name": "Majestic Champion (Jun. 2026, Hero Journey)",
     "icon": "/home-base/skins/304.png",
     "index": 246
   },
   "52000349": {
-    "name": "Majestic Duke (Jun. 2026, Hero Journey (exclusive!))",
+    "name": "Majestic Duke (Jun. 2026, Hero Journey)",
     "icon": "/home-base/skins/349.png",
     "index": 247
   },
-  "52000229": {
-    "name": "Rosy Half-Time Queen (Jun. 2026)",
-    "icon": "/home-base/skins/229.png",
+  "52000321": {
+    "name": "Rosy Half-Time Queen (Jun. 2026 (exclusive!))",
+    "icon": "/home-base/skins/321.png",
     "index": 248
   },
-  "52000301": {
-    "name": "Amber Half-Time Champion (Jun. 2026)",
-    "icon": "/home-base/skins/301.png",
+  "52000378": {
+    "name": "Amber Half-Time Champion (Jun. 2026 (exclusive!))",
+    "icon": "/home-base/skins/378.png",
     "index": 249
   },
   "52000293": {
-    "name": "Sapphire Half-Time King (Jun. 2026)",
+    "name": "Sapphire Half-Time King (Jun. 2026 (F2P exclusive!))",
     "icon": "/home-base/skins/293.png",
     "index": 250
   },
-  "52000329": {
-    "name": "? Warden (Jul. 2026)",
-    "icon": "/home-base/skins/329.png",
-    "index": 250
-  },
-  "52000290": {
-    "name": "? King (Jul. 2026)",
-    "icon": "/home-base/skins/290.png",
+  "52000291": {
+    "name": "Zeus King (Jul. 2026 GP)",
+    "icon": "/home-base/skins/291.png",
     "index": 251
   },
-  "52000319": {
-    "name": "? Queen (Jul. 2026)",
-    "icon": "/home-base/skins/319.png",
+  "52000348": {
+    "name": "Hydra Duke (Jul. 2026)",
+    "icon": "/home-base/skins/348.png",
     "index": 252
   },
-  "52000347": {
-    "name": "? Duke (Jul. 2026)",
-    "icon": "/home-base/skins/347.png",
+  "52000319": {
+    "name": "Medusa Queen (Jul. 2026)",
+    "icon": "/home-base/skins/319.png",
     "index": 253
   },
-  "52000268": {
-    "name": "? Prince (Jul. 2026)",
-    "icon": "/home-base/skins/268.png",
+  "52000330": {
+    "name": "Poseidon Warden (Jul. 2026)",
+    "icon": "/home-base/skins/330.png",
     "index": 254
   },
-  "52000302": {
-    "name": "? Champion (Jul. 2026)",
-    "icon": "/home-base/skins/302.png",
+  "52000268": {
+    "name": "Midas Prince (Jul. 2026)",
+    "icon": "/home-base/skins/268.png",
     "index": 255
+  },
+  "52000303": {
+    "name": "Hades Champion (Jul. 2026)",
+    "icon": "/home-base/skins/303.png",
+    "index": 256
   },
   "52000330": {
     "name": "? Warden (Aug. 2026)",
     "icon": "/home-base/skins/330.png",
     "index": 256
   },
-  "52000291": {
+  "52000290": {
     "name": "? King (Aug. 2026)",
-    "icon": "/home-base/skins/291.png",
+    "icon": "/home-base/skins/290.png",
     "index": 257
   },
-  "52000321": {
+  "52000229": {
     "name": "? Queen (Aug. 2026)",
     "icon": "/home-base/skins/321.png",
     "index": 258
@@ -4961,19 +5030,19 @@
     "icon": "/home-base/skins/269.png",
     "index": 260
   },
-  "52000303": {
+  "52000302": {
     "name": "? Champion (Aug. 2026)",
-    "icon": "/home-base/skins/303.png",
+    "icon": "/home-base/skins/302.png",
     "index": 261
   },
-  "52000353": {
+  "52000332": {
     "name": "CWL League Prince (Aug. 2026)",
-    "icon": "/home-base/skins/353.png",
+    "icon": "/home-base/skins/332.png",
     "index": 262
   },
-  "52000332": {
+  "52000353": {
     "name": "? Warden (Sep. 2026)",
-    "icon": "/home-base/skins/332.png",
+    "icon": "/home-base/skins/353.png",
     "index": 263
   },
   "52000294": {
@@ -4996,9 +5065,9 @@
     "icon": "/home-base/skins/354.png",
     "index": 267
   },
-  "52000378": {
+  "52000303": {
     "name": "? Champion (Sep. 2026)",
-    "icon": "/home-base/skins/378.png",
+    "icon": "/home-base/skins/303.png",
     "index": 268
   },
   "52000334": {
@@ -5750,6 +5819,26 @@
     "name": "Anime Fury Roof",
     "icon": "/home-base/clancapital/157.png",
     "index": 131
+  },
+  "82000158": {
+    "name": "Quest Deco",
+    "icon": "/home-base/clancapital/158.png",
+    "index": 132
+  },
+  "82000159": {
+    "name": "Quest Walls",
+    "icon": "/home-base/clancapital/159.png",
+    "index": 133
+  },
+  "82000160": {
+    "name": "Quest Ground",
+    "icon": "/home-base/clancapital/160.png",
+    "index": 134
+  },
+  "82000161": {
+    "name": "Quest Roof",
+    "icon": "/home-base/clancapital/161.png",
+    "index": 135
   },
   "26000000": {
     "name": "Lightning Spell",
