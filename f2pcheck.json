@@ -1827,38 +1827,6 @@
         },
         {
             "Cases": {
-                "name": "Jul. 2026  Mini Spotlight Event",
-                "CasesStrict": [{
-                    "name": "",
-                    "IfMoreThan":   {
-                        "type": "quantity",
-                        "allowed": 0,
-                        "elements": [{
-                                "type": "element",
-                                "name": "Kingly Helmet Deco",
-                                "id": "18000230"
-                            }
-                        ]
-                    },
-                    "ThenForbidden": {
-                        "CasesStrict": [{
-                            "name": "Hat 'Kingly Helmet Deco' und 2 'Cozy Clam Decos'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 1,
-                                "elements": [{
-                                    "type": "element",
-                                    "name": "Cozy Clam Deco",
-                                    "id": "18000114"
-                                }]
-                            }
-                        }]
-                    }
-                }]
-            }
-        },
-        {
-            "Cases": {
                 "name": "Aug. 2026 Event",
                 "CasesStrict": [{
                     "name": "",
