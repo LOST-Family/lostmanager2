@@ -2262,30 +2262,30 @@
     "price": "5€",
     "index": 7
   },
-  "18000047": {
-    "name": "CWL The Champion Statue (Oct. 2018)",
-    "icon": "/home-base/decorations/47.png",
-    "index": 12
-  },
-  "18000048": {
-    "name": "CWL The Master Statue (Oct. 2018)",
-    "icon": "/home-base/decorations/48.png",
-    "index": 11
-  },
-  "18000049": {
-    "name": "CWL The Contender Statue (Oct. 2018)",
-    "icon": "/home-base/decorations/49.png",
-    "index": 10
+  "18000051": {
+    "name": "CWL The Warrior Statue (Oct. 2018)",
+    "icon": "/home-base/decorations/51.png",
+    "index": 8
   },
   "18000050": {
     "name": "CWL The Challenger Statue (Oct. 2018)",
     "icon": "/home-base/decorations/50.png",
     "index": 9
   },
-  "18000051": {
-    "name": "CWL The Warrior Statue (Oct. 2018)",
-    "icon": "/home-base/decorations/51.png",
-    "index": 8
+  "18000049": {
+    "name": "CWL The Contender Statue (Oct. 2018)",
+    "icon": "/home-base/decorations/49.png",
+    "index": 10
+  },
+  "18000048": {
+    "name": "CWL The Master Statue (Oct. 2018)",
+    "icon": "/home-base/decorations/48.png",
+    "index": 11
+  },
+  "18000047": {
+    "name": "CWL The Champion Statue (Oct. 2018)",
+    "icon": "/home-base/decorations/47.png",
+    "index": 12
   },
   "18000054": {
     "name": "Original Snowman (Dec. 2018)",
@@ -2499,7 +2499,7 @@
   "18000115": {
     "name": "Gingerbread Bakery (Dec. 2023)",
     "icon": "/home-base/decorations/115.png",
-    "index": 42
+    "index": 52
   },
   "18000119": {
     "name": "Lucky Anchor (Feb. 2024)",
@@ -2745,15 +2745,15 @@
     "price": "6€",
     "index": 100
   },
-  "18000173": {
-    "name": "Golden Giant (Apr. 2025)",
-    "icon": "/home-base/decorations/173.png",
-    "index": 102
-  },
   "18000172": {
     "name": "Rumbling Goblins (Apr. 2025)",
     "icon": "/home-base/decorations/172.png",
     "index": 101
+  },
+  "18000173": {
+    "name": "Golden Giant (Apr. 2025)",
+    "icon": "/home-base/decorations/173.png",
+    "index": 102
   },
   "18000175": {
     "name": "Surprise Wheel (Apr. 2025)",
@@ -2897,42 +2897,42 @@
   "18000198": {
     "name": "Lucky Shoe (Feb. 2026)",
     "icon": "/home-base/decorations/198.png",
-    "index": 129
+    "index": 130
   },
   "18000202": {
     "name": "Flame Horse (Feb. 2026)",
     "icon": "/home-base/decorations/202.png",
-    "index": 130
+    "index": 131
   },
   "18000201": {
     "name": "Handsome Scroll (Feb. 2026)",
     "icon": "/home-base/decorations/201.png",
-    "index": 131
+    "index": 132
   },
   "18000208": {
     "name": "Electro Dragon Statue (Mar. 2026 Clan Rush)",
     "icon": "/home-base/decorations/208.png",
-    "index": 132
+    "index": 133
   },
   "18000207": {
     "name": "Builder Bust (Apr. 2026)",
     "icon": "/home-base/decorations/207.png",
-    "index": 133
+    "index": 134
   },
   "18000212": {
     "name": "Face Melter (Apr. 2026)",
     "icon": "/home-base/decorations/212.png",
-    "index": 134
+    "index": 135
   },
   "18000209": {
     "name": "Barbble Head (Apr. 2026)",
     "icon": "/home-base/decorations/209.png",
-    "index": 135
+    "index": 136
   },
   "18000210": {
     "name": "Mech Bull (Apr. 2026)",
     "icon": "/home-base/decorations/210.png",
-    "index": 136
+    "index": 137
   },
   "18000206": {
     "name": "Hog Skull (May 2026)",
@@ -2947,113 +2947,113 @@
   "18000214": {
     "name": "Team Jade vs. Skeletons (May 2026)",
     "icon": "/home-base/decorations/214.png",
-    "index": 137
+    "index": 138
   },
   "18000215": {
     "name": "Team Amethyst vs. Skeletons (May 2026)",
     "icon": "/home-base/decorations/215.png",
-    "index": 138
+    "index": 139
   },
   "18000220": {
     "name": "Dragon Fountain (May 2026)",
     "icon": "/home-base/decorations/220.png",
-    "index": 139
+    "index": 140
   },
   "18000211": {
     "name": "Bone Idol (May 2026)",
     "icon": "/home-base/decorations/211.png",
     "price": "6€",
-    "index": 140
+    "index": 141
   },
   "18000217": {
     "name": "Lucky Cat (Jun. 2026)",
     "icon": "/home-base/decorations/217.png",
-    "index": 141
+    "index": 142
   },
   "18000218": {
     "name": "Fury Figurine (Jun. 2026)",
     "icon": "/home-base/decorations/218.png",
-    "index": 142
+    "index": 143
   },
   "18000219": {
     "name": "CWL Trophy Ball (Jun. 2026 (exclusive!))",
     "icon": "/home-base/decorations/219.png",
-    "index": 143
+    "index": 144
   },
   "18000223": {
     "name": "Clan Chief (Jun. 2026)",
     "icon": "/home-base/decorations/223.png",
-    "index": 144
+    "index": 145
   },
   "18000224": {
     "name": "Lone Chief (Jun. 2026)",
     "icon": "/home-base/decorations/224.png",
-    "index": 145
+    "index": 146
   },
   "18000225": {
     "name": "Fresh Chief (Jun. 2026)",
     "icon": "/home-base/decorations/225.png",
-    "index": 146
+    "index": 147
   },
   "18000226": {
     "name": "Teamwork Chief (Jun. 2026)",
     "icon": "/home-base/decorations/226.png",
-    "index": 147
+    "index": 148
   },
   "18000227": {
     "name": "Comeback Chief (Jun. 2026)",
     "icon": "/home-base/decorations/227.png",
-    "index": 148
+    "index": 149
   },
   "18000228": {
     "name": "War Chief (Jun. 2026)",
     "icon": "/home-base/decorations/228.png",
-    "index": 149
+    "index": 150
   },
   "18000231": {
     "name": "Loyal Chief (Jun. 2026)",
     "icon": "/home-base/decorations/231.png",
-    "index": 150
+    "index": 151
   },
   "18000216": {
     "name": "Barbarian Fury (Jun. 2026)",
     "icon": "/home-base/decorations/216.png",
-    "index": 151
+    "index": 152
   },
   "18000229": {
     "name": "CWL Legend Trophy (Jun. 2026)",
     "icon": "/home-base/decorations/229.png",
-    "index": 152
+    "index": 153
   },
   "18000213": {
     "name": "Meteor Crown (Jun. 2026)",
     "icon": "/home-base/decorations/213.png",
-    "index": 153
+    "index": 154
   },
   "18000230": {
     "name": "Kingly Helmet (Jul. 2026)",
     "icon": "/home-base/decorations/230.png",
-    "index": 154
+    "index": 155
   },
   "18000221": {
     "name": "Medusa's Masterpiece (Jul. 2026)",
     "icon": "/home-base/decorations/221.png",
-    "index": 155
+    "index": 156
   },
   "18000235": {
     "name": "Immortal Monument (Jul. 2026)",
     "icon": "/home-base/decorations/235.png",
-    "index": 156
+    "index": 157
   },
   "18000232": {
     "name": "Card Collector (Aug. 2026)",
     "icon": "/home-base/decorations/232.png",
-    "index": 157
+    "index": 158
   },
   "18000234": {
     "name": "Awesome Orb (Aug. 2026)",
     "icon": "/home-base/decorations/234.png",
-    "index": 158
+    "index": 159
   },
   "18000233": {
     "name": "Card Flipper (Aug. 2026)",
@@ -3063,7 +3063,7 @@
   "18000222": {
     "name": "Manga Reader (Aug. 2026)",
     "icon": "/home-base/decorations/222.png",
-    "index": 159
+    "index": 161
   },
   "8000015": {
     "name": "2012 Stone",
