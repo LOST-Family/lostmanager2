@@ -1444,9 +1444,14 @@ public class stats extends ListenerAdapter {
 		return "";
 	}
 
+	/**
+	 * Decos, obstacles and sceneries all live under /home-base/ in the image map, so
+	 * the only reliable BB marker is the explicit "(BB)" suffix in the name. Looser
+	 * substrings like "builder" would misclassify home items such as
+	 * "Builder Statue" or "Builder Bust".
+	 */
 	private boolean isBuilderVariantName(String nameLower) {
-		return nameLower.contains("(bb)") || nameLower.contains("builder") || nameLower.contains("battle machine")
-				|| nameLower.contains("battle copter") || nameLower.contains("warmachine");
+		return nameLower.contains("(bb)");
 	}
 
 	private boolean isSiegeMachine(String nameLower) {
