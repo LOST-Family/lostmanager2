@@ -3695,6 +3695,11 @@
     "icon": "/home-base/sceneries/92.png",
     "index": 71
   },
+  "60000093": {
+    "name": "Awesome Quest Scenery (Aug. 2026, XL)",
+    "icon": "/home-base/sceneries/93.png",
+    "index": 71
+  },
   "52000001": {
     "name": "Gladiator King (Apr. 2019 GP)",
     "icon": "/home-base/skins/1.png",
@@ -5005,160 +5010,165 @@
     "icon": "/home-base/skins/301.png",
     "index": 256
   },
-  "52000329": {
-    "name": "? Warden (Aug. 2026)",
-    "icon": "/home-base/skins/329.png",
-    "index": 256
-  },
-  "52000290": {
-    "name": "? King (Aug. 2026)",
-    "icon": "/home-base/skins/290.png",
+  "52000302": {
+    "name": "Tempest Champion (Aug. 2026 GP)",
+    "icon": "/home-base/skins/302.png",
     "index": 257
   },
-  "52000229": {
-    "name": "? Queen (Aug. 2026)",
-    "icon": "/home-base/skins/321.png",
+  "52000290": {
+    "name": "King Barbarian (Aug. 2026)",
+    "icon": "/home-base/skins/290.png",
     "index": 258
   },
-  "52000347": {
-    "name": "? Duke (Aug. 2026)",
-    "icon": "/home-base/skins/347.png",
+  "52000229": {
+    "name": "Elven Archer (Aug. 2026)",
+    "icon": "/home-base/skins/321.png",
     "index": 259
   },
-  "52000268": {
-    "name": "? Prince (Aug. 2026)",
-    "icon": "/home-base/skins/268.png",
+  "52000347": {
+    "name": "Drakan Duke (Aug. 2026)",
+    "icon": "/home-base/skins/347.png",
     "index": 260
   },
-  "52000302": {
-    "name": "? Champion (Aug. 2026)",
-    "icon": "/home-base/skins/302.png",
+  "52000268": {
+    "name": "Lich Prince (Aug. 2026)",
+    "icon": "/home-base/skins/268.png",
     "index": 261
   },
-  "52000332": {
-    "name": "CWL League Prince (Aug. 2026)",
-    "icon": "/home-base/skins/332.png",
+  "52000329": {
+    "name": "Grand Mage Warden (Aug. 2026)",
+    "icon": "/home-base/skins/329.png",
     "index": 262
   },
   "52000353": {
-    "name": "? Warden (Sep. 2026)",
+    "name": "CWL League Prince (Aug. 2026)",
     "icon": "/home-base/skins/353.png",
     "index": 263
+  },
+  "52000354": {
+    "name": "CWL League Prince (Aug. 2026)",
+    "icon": "/home-base/skins/354.png",
+    "index": 264
+  },
+  "52000332": {
+    "name": "? Warden (Sep. 2026)",
+    "icon": "/home-base/skins/353.png",
+    "index": 265
   },
   "52000294": {
     "name": "? King (Sep. 2026)",
     "icon": "/home-base/skins/294.png",
-    "index": 264
+    "index": 266
   },
   "52000322": {
     "name": "? Queen (Sep. 2026)",
     "icon": "/home-base/skins/322.png",
-    "index": 265
+    "index": 267
   },
   "52000350": {
     "name": "? Duke (Sep. 2026)",
     "icon": "/home-base/skins/350.png",
-    "index": 266
+    "index": 268
   },
-  "52000354": {
+  "52000355": {
     "name": "? Prince (Sep. 2026)",
-    "icon": "/home-base/skins/354.png",
-    "index": 267
+    "icon": "/home-base/skins/355.png",
+    "index": 269
   },
   "52000303": {
     "name": "? Champion (Sep. 2026)",
     "icon": "/home-base/skins/303.png",
-    "index": 268
+    "index": 270
   },
   "52000334": {
     "name": "? Warden (Oct. 2026)",
     "icon": "/home-base/skins/334.png",
-    "index": 269
+    "index": 271
   },
   "52000368": {
     "name": "? King (Oct. 2026)",
     "icon": "/home-base/skins/368.png",
-    "index": 270
+    "index": 272
   },
   "52000323": {
     "name": "? Queen (Oct. 2026)",
     "icon": "/home-base/skins/323.png",
-    "index": 271
+    "index": 273
   },
   "52000351": {
     "name": "? Duke (Oct. 2026)",
     "icon": "/home-base/skins/351.png",
-    "index": 272
+    "index": 274
   },
-  "52000355": {
+  "52000356": {
     "name": "? Prince (Oct. 2026)",
-    "icon": "/home-base/skins/355.png",
-    "index": 273
+    "icon": "/home-base/skins/356.png",
+    "index": 275
   },
   "52000379": {
     "name": "? Champion (Oct. 2026)",
     "icon": "/home-base/skins/379.png",
-    "index": 274
+    "index": 276
   },
   "52000335": {
     "name": "? Warden (Nov. 2026)",
     "icon": "/home-base/skins/335.png",
-    "index": 275
+    "index": 277
   },
   "52000369": {
     "name": "? King (Nov. 2026)",
     "icon": "/home-base/skins/369.png",
-    "index": 276
+    "index": 278
   },
   "52000324": {
     "name": "? Queen (Nov. 2026)",
     "icon": "/home-base/skins/324.png",
-    "index": 277
+    "index": 279
   },
   "52000352": {
     "name": "? Duke (Nov. 2026)",
     "icon": "/home-base/skins/352.png",
-    "index": 278
+    "index": 280
   },
-  "52000356": {
+  "52000357": {
     "name": "? Prince (Nov. 2026)",
-    "icon": "/home-base/skins/356.png",
-    "index": 279
+    "icon": "/home-base/skins/357.png",
+    "index": 281
   },
   "52000380": {
     "name": "? Champion (Nov. 2026)",
     "icon": "/home-base/skins/380.png",
-    "index": 280
+    "index": 282
   },
   "52000336": {
     "name": "? Warden (Dec. 2026)",
     "icon": "/home-base/skins/336.png",
-    "index": 281
+    "index": 283
   },
   "52000370": {
     "name": "? King (Dec. 2026)",
     "icon": "/home-base/skins/370.png",
-    "index": 282
+    "index": 284
   },
   "52000325": {
     "name": "? Queen (Dec. 2026)",
     "icon": "/home-base/skins/325.png",
-    "index": 283
+    "index": 285
   },
   "52000388": {
     "name": "? Duke (Dec. 2026)",
     "icon": "/home-base/skins/388.png",
-    "index": 284
+    "index": 286
   },
-  "52000357": {
+  "52000358": {
     "name": "? Prince (Dec. 2026)",
-    "icon": "/home-base/skins/357.png",
-    "index": 285
+    "icon": "/home-base/skins/358.png",
+    "index": 287
   },
   "52000381": {
     "name": "? Champion (Dec. 2026)",
     "icon": "/home-base/skins/381.png",
-    "index": 286
+    "index": 288
   },
   "82000000": {
     "name": "Brown Fence",
@@ -5821,22 +5831,22 @@
     "index": 131
   },
   "82000158": {
-    "name": "Quest Deco",
+    "name": "Awesome Deco",
     "icon": "/home-base/clancapital/158.png",
     "index": 132
   },
   "82000159": {
-    "name": "Quest Walls",
+    "name": "Awesome Walls",
     "icon": "/home-base/clancapital/159.png",
     "index": 133
   },
   "82000160": {
-    "name": "Quest Ground",
+    "name": "Awesome Ground",
     "icon": "/home-base/clancapital/160.png",
     "index": 134
   },
   "82000161": {
-    "name": "Quest Roof",
+    "name": "Awesome Roof",
     "icon": "/home-base/clancapital/161.png",
     "index": 135
   },
