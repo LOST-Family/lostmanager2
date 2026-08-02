@@ -5005,9 +5005,9 @@
     "icon": "/home-base/skins/269.png",
     "index": 255
   },
-  "52000301": {
+  "52000303": {
     "name": "Hades Champion (Jul. 2026)",
-    "icon": "/home-base/skins/301.png",
+    "icon": "/home-base/skins/303.png",
     "index": 256
   },
   "52000302": {
@@ -5030,54 +5030,59 @@
     "icon": "/home-base/skins/347.png",
     "index": 260
   },
+  "52000301": {
+    "name": "Royal Enchantress (Aug. 2026)",
+    "icon": "/home-base/skins/301.png",
+    "index": 261
+  },
   "52000353": {
     "name": "Lich Prince (Aug. 2026)",
     "icon": "/home-base/skins/353.png",
-    "index": 261
+    "index": 262
   },
   "52000329": {
     "name": "Grand Mage Warden (Aug. 2026)",
     "icon": "/home-base/skins/329.png",
-    "index": 262
+    "index": 263
   },
   "52000268": {
     "name": "Manga Fury Prince (Aug. 2026)",
     "icon": "/home-base/skins/268.png",
-    "index": 263
+    "index": 264
   },
   "52000354": {
     "name": "CWL League Prince (Aug. 2026)",
     "icon": "/home-base/skins/354.png",
-    "index": 264
+    "index": 265
   },
   "52000332": {
     "name": "? Warden (Sep. 2026)",
     "icon": "/home-base/skins/353.png",
-    "index": 265
+    "index": 266
   },
   "52000294": {
     "name": "? King (Sep. 2026)",
     "icon": "/home-base/skins/294.png",
-    "index": 266
+    "index": 267
   },
   "52000322": {
     "name": "? Queen (Sep. 2026)",
     "icon": "/home-base/skins/322.png",
-    "index": 267
+    "index": 268
   },
   "52000350": {
     "name": "? Duke (Sep. 2026)",
     "icon": "/home-base/skins/350.png",
-    "index": 268
+    "index": 269
   },
   "52000355": {
     "name": "? Prince (Sep. 2026)",
     "icon": "/home-base/skins/355.png",
     "index": 269
   },
-  "52000303": {
+  "52000379": {
     "name": "? Champion (Sep. 2026)",
-    "icon": "/home-base/skins/303.png",
+    "icon": "/home-base/skins/379.png",
     "index": 270
   },
   "52000334": {
@@ -5105,9 +5110,9 @@
     "icon": "/home-base/skins/356.png",
     "index": 275
   },
-  "52000379": {
+  "52000380": {
     "name": "? Champion (Oct. 2026)",
-    "icon": "/home-base/skins/379.png",
+    "icon": "/home-base/skins/380.png",
     "index": 276
   },
   "52000335": {
@@ -5135,9 +5140,9 @@
     "icon": "/home-base/skins/357.png",
     "index": 281
   },
-  "52000380": {
+  "52000381": {
     "name": "? Champion (Nov. 2026)",
-    "icon": "/home-base/skins/380.png",
+    "icon": "/home-base/skins/381.png",
     "index": 282
   },
   "52000336": {
@@ -5165,9 +5170,9 @@
     "icon": "/home-base/skins/358.png",
     "index": 287
   },
-  "52000381": {
+  "52000382": {
     "name": "? Champion (Dec. 2026)",
-    "icon": "/home-base/skins/381.png",
+    "icon": "/home-base/skins/382.png",
     "index": 288
   },
   "82000000": {
