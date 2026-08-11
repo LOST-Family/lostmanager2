@@ -1839,13 +1839,13 @@
                                 "id": "90000055"
                             },{
                                 "type": "element",
-                                "name": "Awesome Orb Deco",
-                                "id": "18000234"
+                                "name": "Card Flipper Deco",
+                                "id": "18000233"
                             }]
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Revenge Deck Equipment' und 'Awesome Orb Deco'",
+                            "name": "Hat 'Revenge Deck Equipment' und 'Card Flipper Deco'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 1,
@@ -1855,12 +1855,12 @@
                                     "id": "90000055"
                                 },{
                                     "type": "element",
-                                    "name": "Awesome Orb Deco",
-                                    "id": "18000234"
+                                    "name": "Card Flipper Deco",
+                                    "id": "18000233"
                                 }]
                             }
                         },{
-                            "name": "Hat 'Revenge Deck Equipment' oder 'Awesome Orb Deco' und oder mindestens ein 'Awesome Clan House'",
+                            "name": "Hat 'Revenge Deck Equipment' oder 'Card Flipper Deco' und oder mindestens ein 'Awesome Clan House'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
