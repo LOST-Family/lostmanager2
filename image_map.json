@@ -3130,15 +3130,15 @@
     "icon": "/home-base/obstacles/67.png",
     "index": 12
   },
-  "8000068": {
-    "name": "2018 Fireworks Stash",
-    "icon": "/home-base/obstacles/68.png",
-    "index": 14
-  },
   "8000069": {
     "name": "2017 Clashmas Tree",
     "icon": "/home-base/obstacles/69.png",
     "index": 13
+  },
+  "8000068": {
+    "name": "2018 Fireworks Stash",
+    "icon": "/home-base/obstacles/68.png",
+    "index": 14
   },
   "8000070": {
     "name": "2018 Fortune Tree",
@@ -3150,15 +3150,15 @@
     "icon": "/home-base/obstacles/71.png",
     "index": 17
   },
-  "8000072": {
-    "name": "2018 Clashmas Tree",
-    "icon": "/home-base/obstacles/72.png",
-    "index": 19
-  },
   "8000073": {
     "name": "2018 Witch's Hat",
     "icon": "/home-base/obstacles/73.png",
     "index": 18
+  },
+  "8000072": {
+    "name": "2018 Clashmas Tree",
+    "icon": "/home-base/obstacles/72.png",
+    "index": 19
   },
   "8000074": {
     "name": "2018 Spike-y Cactus",
@@ -3300,6 +3300,11 @@
     "icon": "/home-base/obstacles/131.png",
     "index": 46
   },
+  "8000135": {
+    "name": "2025 Cursed Seedling",
+    "icon": "/home-base/obstacles/135.png",
+    "index": 47
+  },
   "8000132": {
     "name": "2025 Shiny Ore Meteorite",
     "icon": "/home-base/obstacles/132.png",
@@ -3315,20 +3320,15 @@
     "icon": "/home-base/obstacles/134.png",
     "index": 50
   },
-  "8000135": {
-    "name": "2025 Cursed Seedling",
-    "icon": "/home-base/obstacles/135.png",
-    "index": 47
+  "8000137": {
+    "name": "2025 Clashmas Tree",
+    "icon": "/home-base/obstacles/137.png",
+    "index": 51
   },
   "8000136": {
     "name": "2026 LNY Kumquat Tree",
     "icon": "/home-base/obstacles/136.png",
     "index": 52
-  },
-  "8000137": {
-    "name": "2025 Clashmas Tree",
-    "icon": "/home-base/obstacles/137.png",
-    "index": 51
   },
   "8000138": {
     "name": "2026 Anniversary Cake",
