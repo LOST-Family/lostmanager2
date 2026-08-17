@@ -273,9 +273,9 @@ public class listeningevent extends ListenerAdapter {
 
 				TextInput forceKickpointsInput = TextInput
 						.create("raid_force_kickpoints",
-								"Kickpunkte trotz unbestätigter Daten? 1->Ja; 2->Nein", TextInputStyle.SHORT)
-						.setPlaceholder("1 oder 2").setRequired(true).setMinLength(1).setMaxLength(1).setValue("2")
-						.build();
+								"Kickpunkte trotz unbestätigter Daten?", TextInputStyle.SHORT)
+						.setPlaceholder("1 = Ja, 2 = Nein (Standard)").setRequired(true).setMinLength(1)
+						.setMaxLength(1).setValue("2").build();
 
 				modal = Modal.create(modalId, "Raidfails Distrikt Einstellungen")
 						.addComponents(ActionRow.of(capitalPeakInput), ActionRow.of(otherDistrictsInput),
@@ -338,9 +338,9 @@ public class listeningevent extends ListenerAdapter {
 				modal = Modal.create(modalId, "Schlechte Angriffe konfigurieren")
 						.addComponents(ActionRow.of(starsInput)).build();
 			} else {
-				TextInput modeInput = TextInput.create("punishment_mode",
-						"Modus (1=Einmal/Spieler, 2=Pro schlechtem Angriff, 3=Nur wenn alle schlecht)",
+				TextInput modeInput = TextInput.create("punishment_mode", "Modus (1, 2 oder 3)",
 						TextInputStyle.SHORT)
+						.setPlaceholder("1=Einmal pro Spieler, 2=Pro Angriff, 3=Nur wenn alle schlecht")
 						.setRequired(true).setMinLength(1).setMaxLength(1).setValue("1").build();
 
 				modal = Modal.create(modalId, "Schlechte Angriffe konfigurieren")
@@ -365,9 +365,9 @@ public class listeningevent extends ListenerAdapter {
 	 * before this option existed.
 	 */
 	private TextInput buildPerfectWarInput() {
-		return TextInput.create("ignore_perfect_war", "Kickpunkte auch bei perfektem Krieg? 1->Ja; 2->Nein",
-				TextInputStyle.SHORT).setPlaceholder("1 oder 2").setRequired(true).setMinLength(1).setMaxLength(1)
-				.setValue("2").build();
+		return TextInput.create("ignore_perfect_war", "Kickpunkte auch bei perfektem Krieg?",
+				TextInputStyle.SHORT).setPlaceholder("1 = Ja, 2 = Nein (Standard)").setRequired(true).setMinLength(1)
+				.setMaxLength(1).setValue("2").build();
 	}
 
 	/**
