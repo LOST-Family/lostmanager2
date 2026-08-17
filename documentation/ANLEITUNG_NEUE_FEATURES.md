@@ -143,6 +143,10 @@ darunter passiert:
 Die Nachricht ist jetzt zweigeteilt:
 
 ```
+## Clan Games - <Clan>
+**Clan Games beendet.**
+**Ziel:** 4000 Punkte
+
 ### Ziel nicht erreicht
 - Spieler A: 2150/4000 Punkte
 
@@ -151,6 +155,20 @@ Die Nachricht ist jetzt zweigeteilt:
 ```
 
 Nur der obere Teil bekommt Kickpunkte.
+
+**Erinnerung währenddessen:** Event mit `duration: 24h` und
+`actiontype: Info-Nachricht` anlegen. Solange die Games laufen, heißt der
+Abschnitt `### Noch offen` statt `Ziel nicht erreicht` und oben steht die
+Restzeit — es werden nie Kickpunkte vergeben, bevor die Games vorbei sind.
+
+```
+## Clan Games - <Clan>
+**2d** **6h** verbleibend
+**Ziel:** 4000 Punkte
+
+### Noch offen
+- Spieler A: 2150/4000 Punkte (@SpielerA)
+```
 
 ---
 

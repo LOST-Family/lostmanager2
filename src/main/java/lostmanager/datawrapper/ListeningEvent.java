@@ -416,6 +416,36 @@ public class ListeningEvent {
 		return null;
 	}
 
+	/**
+	 * Formats a remaining duration in the style the war and raid messages use,
+	 * e.g. "**2d** **6h** ". Clan games run for days, so days are included.
+	 *
+	 * @return the formatted value including a trailing space, ready to be followed
+	 *         by "verbleibend"
+	 */
+	private static String formatRemaining(long millis) {
+		int totalMinutes = (int) (millis / 60000);
+		int days = totalMinutes / (60 * 24);
+		int hours = (totalMinutes / 60) % 24;
+		int minutes = totalMinutes % 60;
+
+		StringBuilder sb = new StringBuilder();
+		if (days > 0) {
+			sb.append("**").append(days).append("d** ");
+		}
+		if (hours > 0) {
+			sb.append("**").append(hours).append("h** ");
+		}
+		// Minutes only matter when the end is close enough for them to be useful
+		if (minutes > 0 && days == 0) {
+			sb.append("**").append(minutes).append("m** ");
+		}
+		if (sb.length() == 0) {
+			sb.append("**<1m** ");
+		}
+		return sb.toString();
+	}
+
 	/** Result of one clan games evaluation. */
 	private static class ClanGamesResult {
 		final String message;
@@ -503,8 +533,18 @@ public class ListeningEvent {
 		// punishing the whole clan for that would be wrong, so nothing is handed out
 		boolean baselineMissingForEveryone = rated == 0 && unrated > 0;
 
+		// While the games are still running this is a reminder, not a verdict - the
+		// wording has to reflect that nobody has failed anything yet
+		long remainingMillis = window.getEndMillis() - System.currentTimeMillis();
+		boolean isReminder = !isVerificationPhase && remainingMillis > 0;
+
 		StringBuilder message = new StringBuilder();
 		message.append("## Clan Games - ").append(clan.getInfoString()).append("\n");
+		if (isReminder) {
+			message.append(formatRemaining(remainingMillis)).append("verbleibend\n");
+		} else {
+			message.append("**Clan Games beendet.**\n");
+		}
 		message.append("**Ziel:** ").append(threshold).append(" Punkte\n\n");
 
 		boolean hasViolations = violationLines.length() > 0 && !baselineMissingForEveryone;
@@ -514,9 +554,11 @@ public class ListeningEvent {
 					"**Keine Auswertung möglich - für keinen Spieler existiert ein Startwert.**\n")
 					.append("Es werden keine Kickpunkte vergeben.\n");
 		} else if (hasViolations) {
-			message.append("### Ziel nicht erreicht\n").append(violationLines);
+			message.append(isReminder ? "### Noch offen\n" : "### Ziel nicht erreicht\n").append(violationLines);
 		} else {
-			message.append("Alle gewerteten Mitglieder haben das Ziel erreicht.\n");
+			message.append(isReminder
+					? "Alle gewerteten Mitglieder haben das Ziel bereits erreicht.\n"
+					: "Alle gewerteten Mitglieder haben das Ziel erreicht.\n");
 		}
 
 		if (unratedLines.length() > 0) {
