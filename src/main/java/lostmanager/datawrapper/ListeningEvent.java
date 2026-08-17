@@ -51,6 +51,13 @@ public class ListeningEvent {
 	public static final String SETTING_RAID_FORCE_KICKPOINTS = "raid_force_kickpoints";
 	/** Minimum season wins; falls back to the clan setting min_season_wins. */
 	public static final String SETTING_WINS_THRESHOLD = "wins_threshold";
+	/**
+	 * Number of bad attacks a player may make before being punished. 0 punishes
+	 * every bad attack, which is how star fail events behaved before this existed.
+	 * The budget is counted per war for clan wars and across the whole CWL season
+	 * for CWL.
+	 */
+	public static final String SETTING_STARFAILS_FREE_HITS = "starfails_free_hits";
 
 	private final Long id;
 	private String clan_tag;
@@ -2853,6 +2860,8 @@ public class ListeningEvent {
 		int stars;
 		int attackIndex;
 		int destructionPct;
+		/** Covered by the free-hits budget, so reported but not punished. */
+		boolean free;
 
 		PlayerBadAttack(Player player, int stars, int attackIndex, int destructionPct) {
 			this.player = player;
@@ -2860,6 +2869,88 @@ public class ListeningEvent {
 			this.attackIndex = attackIndex;
 			this.destructionPct = destructionPct;
 		}
+	}
+
+	/** Number of free bad attacks configured for this event (0 = punish all). */
+	private int getConfiguredFreeHits() {
+		Long value = getSetting(SETTING_STARFAILS_FREE_HITS, 0L);
+		return value != null && value > 0 ? value.intValue() : 0;
+	}
+
+	/**
+	 * Counts, per player tag, how many bad attacks were already made in the rounds
+	 * of this CWL before {@code beforeRound}.
+	 *
+	 * The count is recomputed from the API rather than stored, so it stays correct
+	 * even if an event was missed or runs twice - there is no counter that could
+	 * drift out of sync with reality.
+	 */
+	private java.util.Map<String, Integer> countPreviousCWLBadAttacks(Clan clan, int beforeRound, int targetStars) {
+		java.util.Map<String, Integer> counts = new java.util.HashMap<>();
+		if (beforeRound <= 0) {
+			return counts;
+		}
+
+		try {
+			org.json.JSONObject cwlJson = clan.getCWLJson();
+			if (!cwlJson.has("rounds") || cwlJson.isNull("rounds")) {
+				return counts;
+			}
+			org.json.JSONArray rounds = cwlJson.getJSONArray("rounds");
+
+			for (int r = 0; r < beforeRound && r < rounds.length(); r++) {
+				org.json.JSONArray warTags = rounds.getJSONObject(r).getJSONArray("warTags");
+
+				for (int w = 0; w < warTags.length(); w++) {
+					String warTag = warTags.getString(w);
+					if (warTag.equals("#0")) {
+						continue;
+					}
+
+					try {
+						org.json.JSONObject warData = Clan.getCWLDayJson(warTag);
+						if (warData == null || !warData.has("clan") || !warData.has("opponent")) {
+							continue;
+						}
+
+						org.json.JSONObject clanData = warData.getJSONObject("clan");
+						org.json.JSONObject opponentData = warData.getJSONObject("opponent");
+						org.json.JSONObject ourData;
+						if (clanData.getString("tag").equals(clan.getTag())) {
+							ourData = clanData;
+						} else if (opponentData.getString("tag").equals(clan.getTag())) {
+							ourData = opponentData;
+						} else {
+							continue; // Not our war
+						}
+
+						org.json.JSONArray members = ourData.getJSONArray("members");
+						for (int i = 0; i < members.length(); i++) {
+							org.json.JSONObject member = members.getJSONObject(i);
+							if (!member.has("attacks")) {
+								continue;
+							}
+							org.json.JSONArray attacks = member.getJSONArray("attacks");
+							for (int a = 0; a < attacks.length(); a++) {
+								if (attacks.getJSONObject(a).optInt("stars", 0) == targetStars) {
+									String tag = member.getString("tag");
+									counts.put(tag, counts.getOrDefault(tag, 0) + 1);
+								}
+							}
+						}
+
+						break; // Our war for this round was found, no need to check the rest
+					} catch (JSONException e) {
+						// Skip war tags whose data cannot be loaded
+					}
+				}
+			}
+		} catch (JSONException e) {
+			System.err.println("Error counting previous CWL bad attacks for clan " + clan.getTag() + ": "
+					+ e.getMessage());
+		}
+
+		return counts;
 	}
 
 	private static class CWBadAttacksResult {
@@ -2880,9 +2971,14 @@ public class ListeningEvent {
 		org.json.JSONObject clanData = cwJson.getJSONObject("clan");
 		org.json.JSONArray members = clanData.getJSONArray("members");
 
+		int freeHits = getConfiguredFreeHits();
+
 		StringBuilder message = new StringBuilder();
 		message.append("## ").append(clan.getNameAPI())
 				.append(" Clankrieg – Schlechte Angriffe (").append(targetStars).append(" ★)\n");
+		if (freeHits > 0) {
+			message.append("-# Freie Fehlversuche pro Spieler in diesem Krieg: ").append(freeHits).append("\n");
+		}
 
 		if (isVerificationPhase || getDurationUntilEnd() <= 0) {
 			message.append("**Krieg beendet.**\n\n");
@@ -2949,20 +3045,36 @@ public class ListeningEvent {
 				if (!allBad) continue;
 			}
 
+			// The free hits are used up by the earliest bad attacks of this war
+			for (int b = 0; b < memberBad.size(); b++) {
+				memberBad.get(b).free = b < freeHits;
+			}
+
 			hasBadAttacks = true;
 			for (PlayerBadAttack pba : memberBad) {
 				message.append("- ").append(name).append(" (").append(tag).append(")")
 						.append(" – Angriff ").append(pba.attackIndex).append(": ")
-						.append(pba.stars).append(" ★ (").append(pba.destructionPct).append("%)\n");
+						.append(pba.stars).append(" ★ (").append(pba.destructionPct).append("%)");
+				if (pba.free) {
+					message.append(" – *frei*");
+				}
+				message.append("\n");
 			}
+
+			// Only attacks beyond the free budget can be punished
+			ArrayList<PlayerBadAttack> punishable = new ArrayList<>();
+			for (PlayerBadAttack pba : memberBad) {
+				if (!pba.free) punishable.add(pba);
+			}
+			if (punishable.isEmpty()) continue;
 
 			// Determine which attacks to punish based on mode
 			if (mode == 1) {
-				// Once per player – only the first bad attack
-				punishableAttacks.add(memberBad.get(0));
+				// Once per player – only the first punishable bad attack
+				punishableAttacks.add(punishable.get(0));
 			} else {
 				// Mode 2 or 3 – each bad attack (mode 3 already filtered above)
-				punishableAttacks.addAll(memberBad);
+				punishableAttacks.addAll(punishable);
 			}
 		}
 
@@ -2980,9 +3092,19 @@ public class ListeningEvent {
 		String belongsTo1 = DBUtil.getValueFromSQL("SELECT belongs_to FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
 		String belongsTo2 = DBUtil.getValueFromSQL("SELECT belongs_to_2 FROM sideclans WHERE clan_tag = ?", String.class, eventClanTag);
 
+		int freeHits = getConfiguredFreeHits();
+		// The budget spans the whole CWL, so the bad attacks of the previous rounds
+		// decide how much of it is left today
+		java.util.Map<String, Integer> previousBadAttacks = freeHits > 0
+				? countPreviousCWLBadAttacks(clan, roundNumber, targetStars)
+				: java.util.Collections.emptyMap();
+
 		StringBuilder message = new StringBuilder();
 		message.append("## CWL Day ").append(roundNumber + 1)
 				.append(" – Schlechte Angriffe (").append(targetStars).append(" ★)\n");
+		if (freeHits > 0) {
+			message.append("-# Freie Fehlversuche pro Spieler in dieser CWL: ").append(freeHits).append("\n");
+		}
 
 		String endTimeStr = warData.getString("endTime");
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'").withZone(ZoneOffset.UTC);
@@ -3041,10 +3163,23 @@ public class ListeningEvent {
 			// instead of being listed without consequence.
 			if (p.isHiddenColeader() || MemberSignoff.isSignedOff(tag)) continue;
 
+			// Today's bad attack is the (previous + 1)-th of this CWL, so it is still
+			// covered as long as the earlier ones have not used up the budget
+			int previousCount = previousBadAttacks.getOrDefault(tag, 0);
+			boolean isFree = previousCount < freeHits;
+
 			hasBadAttacks = true;
 			message.append("- ").append(name).append(" (").append(tag).append(")")
 					.append(" – ").append(stars).append(" ★ (")
-					.append(attack.optInt("destructionPercentage", 0)).append("%)\n");
+					.append(attack.optInt("destructionPercentage", 0)).append("%)");
+			if (isFree) {
+				message.append(" – *frei* (").append(previousCount + 1).append("./").append(freeHits).append(")");
+			}
+			message.append("\n");
+
+			if (isFree) {
+				continue; // Reported, but within the free budget
+			}
 
 			// Footnote: warn if player won't receive a kickpoint
 			if (getActionType() == ACTIONTYPE.STARFAILS_KICKPOINT) {

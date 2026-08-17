@@ -67,6 +67,16 @@ Im Fenster danach:
 |---|---|
 | Sterne-Anzahl | `1` = jeder Angriff mit genau 1 Stern wird bestraft. Auch `0` oder `2` möglich. |
 | Modus | **Nur beim Clan War.** 1 = einmal pro Spieler, 2 = pro schlechtem Angriff, 3 = nur wenn alle Angriffe schlecht waren. In der CWL entfällt das Feld (dort gibt es nur einen Angriff). |
+| Freie Fehlversuche pro Spieler | Wie viele schlechte Angriffe jeder frei hat, bevor bestraft wird. `0` = jeder zählt (Standard). `1` = der erste ist frei. |
+
+**Freie Fehlversuche zählen unterschiedlich weit:**
+
+- **CWL:** über die **gesamte CWL** hinweg. Bei `1` ist der erste 1-Stern-Angriff
+  an Tag 2 frei, der nächste an Tag 5 wird bestraft.
+- **Clan War:** **pro Krieg**. Jeder Krieg fängt wieder bei null an.
+
+Freie Angriffe stehen weiterhin in der Liste, markiert mit `– frei`, damit ihr
+seht wer sein Guthaben verbraucht hat. Nur ein Kickpunkt bleibt aus.
 
 Abgemeldete Mitglieder (`/signoff`) tauchen in der Liste nicht mehr auf.
 

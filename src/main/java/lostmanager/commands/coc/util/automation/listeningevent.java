@@ -331,12 +331,21 @@ public class listeningevent extends ListenerAdapter {
 					.setPlaceholder("Angriffe mit genau X Sternen werden gemeldet/bestraft")
 					.setRequired(true).setMinLength(1).setMaxLength(1).build();
 
+			// Free hits: how many bad attacks a player gets before being punished.
+			// 0 keeps the behaviour of every event created before this option existed.
+			TextInput freeHitsInput = TextInput
+					.create("starfails_free_hits", "Freie Fehlversuche pro Spieler", TextInputStyle.SHORT)
+					.setPlaceholder(type.equals("cwlday")
+							? "0 = keine, 1 = der erste in der CWL ist frei"
+							: "0 = keine, 1 = der erste im Krieg ist frei")
+					.setRequired(true).setMinLength(1).setMaxLength(2).setValue("0").build();
+
 			// CWL has exactly one attack per member, so the punishment mode (which only
 			// distinguishes between multiple attacks of the same player) has no effect
 			// there and is not asked for.
 			if (type.equals("cwlday")) {
 				modal = Modal.create(modalId, "Schlechte Angriffe konfigurieren")
-						.addComponents(ActionRow.of(starsInput)).build();
+						.addComponents(ActionRow.of(starsInput), ActionRow.of(freeHitsInput)).build();
 			} else {
 				TextInput modeInput = TextInput.create("punishment_mode", "Modus (1, 2 oder 3)",
 						TextInputStyle.SHORT)
@@ -344,7 +353,9 @@ public class listeningevent extends ListenerAdapter {
 						.setRequired(true).setMinLength(1).setMaxLength(1).setValue("1").build();
 
 				modal = Modal.create(modalId, "Schlechte Angriffe konfigurieren")
-						.addComponents(ActionRow.of(starsInput), ActionRow.of(modeInput)).build();
+						.addComponents(ActionRow.of(starsInput), ActionRow.of(modeInput),
+								ActionRow.of(freeHitsInput))
+						.build();
 			}
 		}
 
@@ -549,6 +560,11 @@ public class listeningevent extends ListenerAdapter {
 			Long forceKickpoints = namedSettings.get(ListeningEvent.SETTING_RAID_FORCE_KICKPOINTS);
 			if (forceKickpoints != null) {
 				desc += "**Kickpunkte trotz unbestätigter Daten:** " + (forceKickpoints == 1L ? "Ja" : "Nein") + "\n";
+			}
+			Long freeHits = namedSettings.get(ListeningEvent.SETTING_STARFAILS_FREE_HITS);
+			if (freeHits != null) {
+				desc += "**Freie Fehlversuche:** " + (freeHits == 0L ? "keine"
+						: freeHits + (type.equals("cwlday") ? " (pro CWL)" : " (pro Krieg)")) + "\n";
 			}
 		}
 		if (type.equals("seasonend")) {
@@ -1015,21 +1031,30 @@ public class listeningevent extends ListenerAdapter {
 					? event.getValue("punishment_mode").getAsString().trim()
 					: "1";
 
-			int starCount, punishmentMode;
+			String freeHitsStr = event.getValue("starfails_free_hits") != null
+					? event.getValue("starfails_free_hits").getAsString().trim()
+					: "0";
+
+			int starCount, punishmentMode, freeHits;
 			try {
 				starCount = Integer.parseInt(starCountStr);
 				if (starCount < 0 || starCount > 2) throw new NumberFormatException("star_count must be 0-2");
 				punishmentMode = Integer.parseInt(modeStr);
 				if (punishmentMode < 1 || punishmentMode > 3) throw new NumberFormatException("mode must be 1-3");
+				freeHits = freeHitsStr.isEmpty() ? 0 : Integer.parseInt(freeHitsStr);
+				if (freeHits < 0 || freeHits > 20) throw new NumberFormatException("free hits must be 0-20");
 			} catch (NumberFormatException e) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Ungültige Eingabe: Sterne-Anzahl muss 0-2 sein, Modus muss 1-3 sein.",
+						"Ungültige Eingabe: Sterne-Anzahl muss 0-2 sein, Modus 1-3, freie Fehlversuche 0-20.",
 						MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
 
+			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
+			namedSettings.put(ListeningEvent.SETTING_STARFAILS_FREE_HITS, (long) freeHits);
+
 			processEventCreation(event.getHook(), title, clantag, type, duration, actionTypeStr, channelId,
-					kickpointReasonName, null, null, starCount, punishmentMode, null, null);
+					kickpointReasonName, null, null, starCount, punishmentMode, null, namedSettings);
 		}
 	}
 
