@@ -218,8 +218,36 @@ public class listeningevent extends ListenerAdapter {
 			TextInput attacksInput = TextInput.create("required_attacks", "Benötigte Angriffe", TextInputStyle.SHORT)
 					.setPlaceholder("1 oder 2 eingeben").setRequired(true).setMaxLength(1).build();
 
-			modal = Modal.create(modalId, "Benötigte Angriffe eingeben").addComponents(ActionRow.of(attacksInput))
-					.build();
+			// Only kickpoint events can be affected by the perfect-war exemption
+			if (actionTypeStr.equals("kickpoint")) {
+				modal = Modal.create(modalId, "Benötigte Angriffe eingeben")
+						.addComponents(ActionRow.of(attacksInput), ActionRow.of(buildPerfectWarInput())).build();
+			} else {
+				modal = Modal.create(modalId, "Benötigte Angriffe eingeben").addComponents(ActionRow.of(attacksInput))
+						.build();
+			}
+		}
+		// SEASONEND + (infomessage or kickpoint) => ask for the wins threshold
+		else if (type.equals("seasonend")
+				&& (actionTypeStr.equals("infomessage") || actionTypeStr.equals("kickpoint"))) {
+			needsModal = true;
+			modalId = "listeningevent_seasonwins_" + clantag + "|" + duration + "|" + actionTypeStr + "|" + channelId
+					+ "|" + (kickpointReasonName != null ? kickpointReasonName : "");
+
+			TextInput winsInput = TextInput
+					.create("wins_threshold", "Minimum Wins (leer = Clan-Einstellung)", TextInputStyle.SHORT)
+					.setPlaceholder("z.B. 70").setRequired(false).setMaxLength(5).build();
+
+			modal = Modal.create(modalId, "Season Wins Einstellungen").addComponents(ActionRow.of(winsInput)).build();
+		}
+		// CWL day + kickpoint => ask whether a perfect war exempts everyone
+		else if (type.equals("cwlday") && actionTypeStr.equals("kickpoint")) {
+			needsModal = true;
+			modalId = "listeningevent_cwldaykp_" + clantag + "|" + duration + "|" + channelId + "|"
+					+ (kickpointReasonName != null ? kickpointReasonName : "");
+
+			modal = Modal.create(modalId, "CWL Kickpoint Einstellungen")
+					.addComponents(ActionRow.of(buildPerfectWarInput())).build();
 		}
 		// RAID + raidfails or raidfails_kickpoint => ask for district attack thresholds
 		else if (type.equals("raid")
@@ -243,9 +271,15 @@ public class listeningevent extends ListenerAdapter {
 						.setPlaceholder("1 oder 2").setRequired(true).setMinLength(1).setMaxLength(1).setValue("1")
 						.build();
 
+				TextInput forceKickpointsInput = TextInput
+						.create("raid_force_kickpoints",
+								"Kickpunkte trotz unbestätigter Daten? 1->Ja; 2->Nein", TextInputStyle.SHORT)
+						.setPlaceholder("1 oder 2").setRequired(true).setMinLength(1).setMaxLength(1).setValue("2")
+						.build();
+
 				modal = Modal.create(modalId, "Raidfails Distrikt Einstellungen")
 						.addComponents(ActionRow.of(capitalPeakInput), ActionRow.of(otherDistrictsInput),
-								ActionRow.of(penalizeBothInput))
+								ActionRow.of(penalizeBothInput), ActionRow.of(forceKickpointsInput))
 						.build();
 			} else {
 				// Info mode - only ask for thresholds
@@ -297,13 +331,21 @@ public class listeningevent extends ListenerAdapter {
 					.setPlaceholder("Angriffe mit genau X Sternen werden gemeldet/bestraft")
 					.setRequired(true).setMinLength(1).setMaxLength(1).build();
 
-			TextInput modeInput = TextInput.create("punishment_mode",
-					"Modus (1=Einmal/Spieler, 2=Pro schlechtem Angriff, 3=Nur wenn alle schlecht)",
-					TextInputStyle.SHORT)
-					.setRequired(true).setMinLength(1).setMaxLength(1).setValue("1").build();
+			// CWL has exactly one attack per member, so the punishment mode (which only
+			// distinguishes between multiple attacks of the same player) has no effect
+			// there and is not asked for.
+			if (type.equals("cwlday")) {
+				modal = Modal.create(modalId, "Schlechte Angriffe konfigurieren")
+						.addComponents(ActionRow.of(starsInput)).build();
+			} else {
+				TextInput modeInput = TextInput.create("punishment_mode",
+						"Modus (1=Einmal/Spieler, 2=Pro schlechtem Angriff, 3=Nur wenn alle schlecht)",
+						TextInputStyle.SHORT)
+						.setRequired(true).setMinLength(1).setMaxLength(1).setValue("1").build();
 
-			modal = Modal.create(modalId, "Schlechte Angriffe konfigurieren")
-					.addComponents(ActionRow.of(starsInput), ActionRow.of(modeInput)).build();
+				modal = Modal.create(modalId, "Schlechte Angriffe konfigurieren")
+						.addComponents(ActionRow.of(starsInput), ActionRow.of(modeInput)).build();
+			}
 		}
 
 		if (needsModal) {
@@ -317,26 +359,49 @@ public class listeningevent extends ListenerAdapter {
 				kickpointReasonName, null, null);
 	}
 
+	/**
+	 * Shared input for the optional per-event override of the perfect-war
+	 * exemption. Defaults to 2 (no), which is the behaviour of all events created
+	 * before this option existed.
+	 */
+	private TextInput buildPerfectWarInput() {
+		return TextInput.create("ignore_perfect_war", "Kickpunkte auch bei perfektem Krieg? 1->Ja; 2->Nein",
+				TextInputStyle.SHORT).setPlaceholder("1 oder 2").setRequired(true).setMinLength(1).setMaxLength(1)
+				.setValue("2").build();
+	}
+
+	/**
+	 * Reads a "1 = yes / 2 = no" modal field into a named setting value.
+	 *
+	 * @return 1 or 2, or null when the field was not part of the modal
+	 */
+	@SuppressWarnings("null")
+	private Long readYesNoField(ModalInteractionEvent event, String fieldId) {
+		net.dv8tion.jda.api.interactions.modals.ModalMapping mapping = event.getValue(fieldId);
+		if (mapping == null) {
+			return null;
+		}
+		return "1".equals(mapping.getAsString().trim()) ? 1L : 2L;
+	}
+
 	private void processEventCreation(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
 			String clantag, String type, long duration, String actionTypeStr, String channelId,
 			String kickpointReasonName, String customMessage, Integer thresholdOrAttacks) {
 		processEventCreation(hook, title, clantag, type, duration, actionTypeStr, channelId, kickpointReasonName,
-				customMessage, thresholdOrAttacks, null, null, null);
+				customMessage, thresholdOrAttacks, null, null, null, null);
 	}
 
-	private void processEventCreation(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
-			String clantag, String type, long duration, String actionTypeStr, String channelId,
-			String kickpointReasonName, String customMessage, Integer thresholdOrAttacks,
-			java.util.Map<String, Integer> raidDistrictThresholds) {
-		processEventCreation(hook, title, clantag, type, duration, actionTypeStr, channelId, kickpointReasonName,
-				customMessage, thresholdOrAttacks, null, null, raidDistrictThresholds);
-	}
-
+	/**
+	 * @param namedSettings optional settings stored by key instead of by position,
+	 *                      so they can be read back without depending on the order
+	 *                      of the positional value entries
+	 */
 	private void processEventCreation(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
 			String clantag, String type, long duration, String actionTypeStr, String channelId,
 			String kickpointReasonName, String customMessage, Integer thresholdOrAttacks,
 			Integer starCount, Integer punishmentMode,
-			java.util.Map<String, Integer> raidDistrictThresholds) {
+			java.util.Map<String, Integer> raidDistrictThresholds,
+			java.util.Map<String, Long> namedSettings) {
 
 		// Convert raidfails_kickpoint to raidfails (it's a UI-only distinction)
 		if (actionTypeStr.equals("raidfails_kickpoint")) {
@@ -386,6 +451,16 @@ public class listeningevent extends ListenerAdapter {
 
 			ActionValue penalizeBothAV = new ActionValue(raidDistrictThresholds.get("penalize_both").longValue());
 			actionValues.add(penalizeBothAV);
+		}
+
+		// Add named settings last - they are read by key, so their position in the
+		// list does not matter and they never shift the positional values above
+		if (namedSettings != null) {
+			for (java.util.Map.Entry<String, Long> setting : namedSettings.entrySet()) {
+				if (setting.getValue() != null) {
+					actionValues.add(new ActionValue(setting.getKey(), setting.getValue()));
+				}
+			}
 		}
 
 		// Convert action values to JSON
@@ -456,7 +531,8 @@ public class listeningevent extends ListenerAdapter {
 		if (starCount != null) {
 			desc += "**Schlechte Angriffe bei:** " + starCount + " ★\n";
 		}
-		if (punishmentMode != null) {
+		// The mode has no effect in CWL (one attack per member), so it is not shown
+		if (punishmentMode != null && !type.equals("cwlday")) {
 			String modeLabel = switch (punishmentMode) {
 				case 1 -> "Einmal pro Spieler";
 				case 2 -> "Pro schlechtem Angriff";
@@ -464,6 +540,23 @@ public class listeningevent extends ListenerAdapter {
 				default -> String.valueOf(punishmentMode);
 			};
 			desc += "**Modus:** " + modeLabel + "\n";
+		}
+		if (namedSettings != null) {
+			Long ignorePerfectWar = namedSettings.get(ListeningEvent.SETTING_IGNORE_PERFECT_WAR);
+			if (ignorePerfectWar != null) {
+				desc += "**Kickpunkte bei perfektem Krieg:** " + (ignorePerfectWar == 1L ? "Ja" : "Nein") + "\n";
+			}
+			Long forceKickpoints = namedSettings.get(ListeningEvent.SETTING_RAID_FORCE_KICKPOINTS);
+			if (forceKickpoints != null) {
+				desc += "**Kickpunkte trotz unbestätigter Daten:** " + (forceKickpoints == 1L ? "Ja" : "Nein") + "\n";
+			}
+		}
+		if (type.equals("seasonend")) {
+			Long winsThreshold = namedSettings != null
+					? namedSettings.get(ListeningEvent.SETTING_WINS_THRESHOLD)
+					: null;
+			desc += "**Minimum Wins:** "
+					+ (winsThreshold != null ? winsThreshold : "Clan-Einstellung (/clanconfig)") + "\n";
 		}
 
 		hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
@@ -710,8 +803,81 @@ public class listeningevent extends ListenerAdapter {
 				return;
 			}
 
+			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
+			Long ignorePerfectWar = readYesNoField(event, "ignore_perfect_war");
+			if (ignorePerfectWar != null) {
+				namedSettings.put(ListeningEvent.SETTING_IGNORE_PERFECT_WAR, ignorePerfectWar);
+			}
+
 			processEventCreation(event.getHook(), title, clantag, "cw", duration, actionTypeStr, channelId,
-					kickpointReasonName, null, requiredAttacks);
+					kickpointReasonName, null, requiredAttacks, null, null, null, namedSettings);
+		} else if (modalId.startsWith("listeningevent_seasonwins_")) {
+			event.deferReply().queue();
+			String title = "Listening Event";
+
+			// Parse:
+			// listeningevent_seasonwins_{clantag}|{duration}|{actiontype}|{channelid}|{kpreason}
+			String payload = modalId.substring("listeningevent_seasonwins_".length());
+			String[] parts = payload.split("\\|");
+			if (parts.length < 4) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+
+			String clantag = parts[0];
+			long duration = Long.parseLong(parts[1]);
+			String actionTypeStr = parts[2];
+			String channelId = parts[3];
+			String kickpointReasonName = parts.length > 4 && !parts[4].isEmpty() ? parts[4] : null;
+
+			// Empty means "use the clan-wide min_season_wins setting"
+			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
+			String winsStr = event.getValue("wins_threshold") != null
+					? event.getValue("wins_threshold").getAsString().trim()
+					: "";
+			if (!winsStr.isEmpty()) {
+				try {
+					long wins = Long.parseLong(winsStr);
+					if (wins < 1) {
+						throw new NumberFormatException("threshold must be at least 1");
+					}
+					namedSettings.put(ListeningEvent.SETTING_WINS_THRESHOLD, wins);
+				} catch (final NumberFormatException e) {
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Ungültiger Wert für Minimum Wins: " + winsStr, MessageUtil.EmbedType.ERROR)).queue();
+					return;
+				}
+			}
+
+			processEventCreation(event.getHook(), title, clantag, "seasonend", duration, actionTypeStr, channelId,
+					kickpointReasonName, null, null, null, null, null, namedSettings);
+		} else if (modalId.startsWith("listeningevent_cwldaykp_")) {
+			event.deferReply().queue();
+			String title = "Listening Event";
+
+			// Parse: listeningevent_cwldaykp_{clantag}|{duration}|{channelid}|{kpreason}
+			String payload = modalId.substring("listeningevent_cwldaykp_".length());
+			String[] parts = payload.split("\\|");
+			if (parts.length < 3) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+
+			String clantag = parts[0];
+			long duration = Long.parseLong(parts[1]);
+			String channelId = parts[2];
+			String kickpointReasonName = parts.length > 3 && !parts[3].isEmpty() ? parts[3] : null;
+
+			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
+			Long ignorePerfectWar = readYesNoField(event, "ignore_perfect_war");
+			if (ignorePerfectWar != null) {
+				namedSettings.put(ListeningEvent.SETTING_IGNORE_PERFECT_WAR, ignorePerfectWar);
+			}
+
+			processEventCreation(event.getHook(), title, clantag, "cwlday", duration, "kickpoint", channelId,
+					kickpointReasonName, null, null, null, null, null, namedSettings);
 		} else if (modalId.startsWith("listeningevent_raidfails_")) {
 			event.deferReply().queue();
 			String title = "Listening Event";
@@ -769,8 +935,14 @@ public class listeningevent extends ListenerAdapter {
 			raidDistrictThresholds.put("other_districts_max", otherDistrictsMax);
 			raidDistrictThresholds.put("penalize_both", penalizeBoth);
 
+			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
+			Long forceKickpoints = readYesNoField(event, "raid_force_kickpoints");
+			if (forceKickpoints != null) {
+				namedSettings.put(ListeningEvent.SETTING_RAID_FORCE_KICKPOINTS, forceKickpoints);
+			}
+
 			processEventCreation(event.getHook(), title, clantag, "raid", duration, "raidfails", channelId,
-					kickpointReasonName, null, null, raidDistrictThresholds);
+					kickpointReasonName, null, null, null, null, raidDistrictThresholds, namedSettings);
 		} else if (modalId.startsWith("listeningevent_cwdonator_params_")) {
 			event.deferReply().queue();
 			String title = "Listening Event";
@@ -838,7 +1010,10 @@ public class listeningevent extends ListenerAdapter {
 			String kickpointReasonName = parts.length > 5 && !parts[5].isEmpty() ? parts[5] : null;
 
 			String starCountStr = event.getValue("star_count").getAsString().trim();
-			String modeStr = event.getValue("punishment_mode").getAsString().trim();
+			// Not present for CWL - the mode has no effect with a single attack per member
+			String modeStr = event.getValue("punishment_mode") != null
+					? event.getValue("punishment_mode").getAsString().trim()
+					: "1";
 
 			int starCount, punishmentMode;
 			try {
@@ -854,7 +1029,7 @@ public class listeningevent extends ListenerAdapter {
 			}
 
 			processEventCreation(event.getHook(), title, clantag, type, duration, actionTypeStr, channelId,
-					kickpointReasonName, null, null, starCount, punishmentMode, null);
+					kickpointReasonName, null, null, starCount, punishmentMode, null, null);
 		}
 	}
 
@@ -956,6 +1131,10 @@ public class listeningevent extends ListenerAdapter {
                                 // Raid-specific action types
                                 String[] raidActionTypes = { "raidfails", "raidfails_kickpoint" };
                                 String[] raidDisplayNames = { "Districts (Info)", "Districts (Kickpoints)" };
+                                // War-specific action types (CW and CWL day both have attacks with stars)
+                                String[] warActionTypes = { "starfails", "starfails_kickpoint" };
+                                String[] warDisplayNames = { "Schlechte Angriffe (Info)",
+                                    "Schlechte Angriffe (Kickpoints)" };
                                 // Add common action types (use raid-specific names for raid type)
                                 String[] displayNames = "raid".equals(eventType) ? raidCommonDisplayNames : commonDisplayNames;
                                 for (int i = 0; i < commonActionTypes.length; i++) {
@@ -979,6 +1158,15 @@ public class listeningevent extends ListenerAdapter {
                                         if (raidActionTypes[i].toLowerCase().contains(input.toLowerCase())
                                                 || raidDisplayNames[i].toLowerCase().contains(input.toLowerCase())) {
                                             choices.add(new Command.Choice(raidDisplayNames[i], raidActionTypes[i]));
+                                        }
+                                    }
+                                }
+                                // Add war-specific action types for "cw" and "cwlday"
+                                if ("cw".equals(eventType) || "cwlday".equals(eventType)) {
+                                    for (int i = 0; i < warActionTypes.length; i++) {
+                                        if (warActionTypes[i].toLowerCase().contains(input.toLowerCase())
+                                                || warDisplayNames[i].toLowerCase().contains(input.toLowerCase())) {
+                                            choices.add(new Command.Choice(warDisplayNames[i], warActionTypes[i]));
                                         }
                                     }
                                 }
@@ -1143,6 +1331,7 @@ public class listeningevent extends ListenerAdapter {
                 case CS -> "Wartet auf aktive Clan Games";
                 case FIXTIMEINTERVAL -> "Zeitbasiertes Event";
                 case CWLEND -> "Wartet auf CWL Ende";
+                case SEASONEND -> "Wartet auf Season-Ende";
                 default -> "Wartet auf Event";
             };
 	}

@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.google.genai.Client;
 
 import lostmanager.apiutil.ApiRegistry;
+import lostmanager.util.ClanGamesWindow;
 import lostmanager.commands.api.ApiCommand;
 import lostmanager.commands.coc.kickpoints.clanconfig;
 import lostmanager.commands.coc.kickpoints.kpadd;
@@ -410,11 +411,12 @@ public class Bot extends ListenerAdapter {
 													.addOptions(new OptionData(OptionType.STRING, "clan",
 															"Der Clan für das Event", true).setAutoComplete(true))
 													.addOptions(new OptionData(OptionType.STRING, "type",
-															"Event-Typ (cs, cw, cwlday, raid)", true)
+															"Event-Typ (cs, cw, cwlday, raid, seasonend)", true)
 															.addChoices(new Command.Choice("Clan Games", "cs"),
 																	new Command.Choice("Clan War", "cw"),
 																	new Command.Choice("CWL Day", "cwlday"),
-																	new Command.Choice("Raid", "raid")))
+																	new Command.Choice("Raid", "raid"),
+																	new Command.Choice("Season Wins", "seasonend")))
 													.addOptions(new OptionData(OptionType.STRING, "duration",
 															"Dauer/Zeitpunkt (z.B. 1h, 24h, start, 0)", true)
 															.setAutoComplete(true))
@@ -778,6 +780,10 @@ public class Bot extends ListenerAdapter {
 					// Clan Games events should fire regardless (they check historical data)
 					return true;
 				}
+				case SEASONEND -> {
+					// Season wins events work on stored achievement data, no live state needed
+					return true;
+				}
 				case CW -> {
 					// Check if clan war is actually active
 					Boolean cwActive = clan.isCWActive();
@@ -1113,6 +1119,53 @@ public class Bot extends ListenerAdapter {
 		}, enddelay, TimeUnit.MILLISECONDS);
 	}
 
+	/**
+	 * Takes a clan games baseline for every player that does not have one yet for
+	 * the running window.
+	 *
+	 * {@link #startClanGamesSavings()} only snapshots at the exact moment the games
+	 * begin, so a bot that was restarted over that minute would leave the whole
+	 * database without a baseline - and every member would then look like they
+	 * scored zero points. This runs periodically while the games are on and closes
+	 * that gap. It also gives members who joined mid-games a baseline, so they are
+	 * measured on what they could actually still earn.
+	 */
+	public static void backfillClanGamesBaselines() {
+		try {
+			ClanGamesWindow window = ClanGamesWindow.current(System.currentTimeMillis());
+			if (window == null) {
+				return; // Games are not running
+			}
+
+			String existsSql = "SELECT 1 FROM achievement_data WHERE player_tag = ? AND type = 'CLANGAMES_POINTS' "
+					+ "AND time >= ? AND time < ? LIMIT 1";
+			int backfilled = 0;
+
+			for (String tag : DBUtil.getArrayListFromSQL("SELECT coc_tag FROM players", String.class)) {
+				try {
+					Integer exists = DBUtil.getValueFromSQL(existsSql, Integer.class, tag,
+							window.getBaselineLookupStart(), window.getEndTimestamp());
+					if (exists != null) {
+						continue;
+					}
+					new Player(tag).addAchievementDataToDB(Type.CLANGAMES_POINTS,
+							new Timestamp(System.currentTimeMillis()));
+					backfilled++;
+				} catch (final Exception e) {
+					System.err.println(
+							"Error backfilling clan games baseline for player " + tag + ": " + e.getMessage());
+				}
+			}
+
+			if (backfilled > 0) {
+				System.out.println("Clan games baselines backfilled for " + backfilled + " players (window "
+						+ window.getKey() + ")");
+			}
+		} catch (final Exception e) {
+			System.err.println("Error during clan games baseline backfill: " + e.getMessage());
+		}
+	}
+
 	public static void startClanGamesSavings() {
 		long nowMillis = System.currentTimeMillis();
 		ZonedDateTime zdt = getNext22thAt7am();
@@ -1317,6 +1370,8 @@ public class Bot extends ListenerAdapter {
 			} catch (Exception e) {
 				System.err.println("Fehler beim Löschen alter Rosters: " + e.getMessage());
 			}
+
+			backfillClanGamesBaselines();
 
 			// Update clan badges and descriptions
 			String clanSql = "SELECT tag FROM clans";

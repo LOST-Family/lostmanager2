@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lostmanager.Bot;
 import lostmanager.dbutil.DBManager;
 import lostmanager.dbutil.DBUtil;
+import lostmanager.util.ClanGamesWindow;
 import lostmanager.util.MessageUtil;
 import lostmanager.util.Tuple;
 import net.dv8tion.jda.api.entities.Message;
@@ -33,12 +34,23 @@ import org.json.JSONException;
 public class ListeningEvent {
 
 	public enum LISTENINGTYPE {
-		CW, RAID, CWLDAY, CS, FIXTIMEINTERVAL, CWLEND
+		CW, RAID, CWLDAY, CS, FIXTIMEINTERVAL, CWLEND, SEASONEND
 	}
 
 	public enum ACTIONTYPE {
 		INFOMESSAGE, CUSTOMMESSAGE, KICKPOINT, CWDONATOR, FILLER, RAIDFAILS, STARFAILS, STARFAILS_KICKPOINT
 	}
+
+	// Keys of the named settings stored in actionvalues (ActionValue.kind.setting).
+	// Unlike the positional value entries these can be added without changing how
+	// existing events are read.
+
+	/** Hand out kickpoints for missed attacks even when the war was perfect. */
+	public static final String SETTING_IGNORE_PERFECT_WAR = "ignore_perfect_war";
+	/** Hand out raid district kickpoints even if the data could not be verified. */
+	public static final String SETTING_RAID_FORCE_KICKPOINTS = "raid_force_kickpoints";
+	/** Minimum season wins; falls back to the clan setting min_season_wins. */
+	public static final String SETTING_WINS_THRESHOLD = "wins_threshold";
 
 	private final Long id;
 	private String clan_tag;
@@ -125,6 +137,7 @@ public class ListeningEvent {
                                 case "cs" -> listeningtype = LISTENINGTYPE.CS;
                                 case "fixtimeinterval" -> listeningtype = LISTENINGTYPE.FIXTIMEINTERVAL;
                                 case "cwlend" -> listeningtype = LISTENINGTYPE.CWLEND;
+                                case "seasonend" -> listeningtype = LISTENINGTYPE.SEASONEND;
                                 default -> {
                                     System.err.println("Warning: Unknown listeningtype '" + type + "' for event " + id);
                                     listeningtype = null;
@@ -182,6 +195,40 @@ public class ListeningEvent {
 		return actionvalues;
 	}
 
+	/**
+	 * Reads a named setting ({@link ActionValue.kind#setting}) from the action
+	 * values. Named settings are looked up by key instead of by position, so a new
+	 * option can be added without shifting the meaning of the positional
+	 * {@link ActionValue.kind#value} entries that older events rely on.
+	 *
+	 * @return the configured value, or {@code defaultValue} if the event has no
+	 *         such setting
+	 */
+	public Long getSetting(String key, Long defaultValue) {
+		ArrayList<ActionValue> avs = getActionValues();
+		if (avs == null || key == null) {
+			return defaultValue;
+		}
+		for (ActionValue av : avs) {
+			if (av.getSaved() == ActionValue.kind.setting && key.equals(av.getKey()) && av.getValue() != null) {
+				return av.getValue();
+			}
+		}
+		return defaultValue;
+	}
+
+	/**
+	 * Reads a named setting as a flag. The config modals use 1 -> yes and 2 -> no,
+	 * so anything other than 1 counts as "off".
+	 */
+	public boolean getFlag(String key, boolean defaultValue) {
+		Long raw = getSetting(key, null);
+		if (raw == null) {
+			return defaultValue;
+		}
+		return raw == 1L;
+	}
+
 	public Long getTimestamp() {
 		if (timestamptofire == null) {
 			// Special case for "start" triggers (duration = -1)
@@ -224,6 +271,11 @@ public class ListeningEvent {
                                         timestamptofire = endTimeMillis - getDurationUntilEnd();
                                     }
                         }
+				case SEASONEND -> {
+                                    // Season = calendar month, same definition the /wins command uses
+                                    endTimeMillis = lostmanager.util.SeasonUtil.fetchSeasonEndTime().getTime();
+                                    timestamptofire = endTimeMillis - getDurationUntilEnd();
+                        }
 				case FIXTIMEINTERVAL -> timestamptofire = getDurationUntilEnd();
 				case CWLEND -> {
                         }
@@ -262,6 +314,8 @@ public class ListeningEvent {
 
 				case RAID -> handleRaidEvent(clan);
 
+				case SEASONEND -> handleSeasonWinsEvent(clan);
+
 				case FIXTIMEINTERVAL -> {
                         }
 
@@ -277,6 +331,195 @@ public class ListeningEvent {
 		}
 	}
 
+	/**
+	 * The baseline a player's clan games points are measured against: the earliest
+	 * "Games Champion" snapshot belonging to a window.
+	 */
+	private static class ClanGamesBaseline {
+		final int points;
+		/** True when the snapshot was taken after the window had already started. */
+		final boolean late;
+
+		ClanGamesBaseline(int points, boolean late) {
+			this.points = points;
+			this.late = late;
+		}
+	}
+
+	/**
+	 * Looks up the baseline of a player for the given clan games window.
+	 *
+	 * The snapshot is matched against the whole window instead of one exact
+	 * instant, so a baseline that was taken a bit late (bot restart, member joined
+	 * mid-games) is still found. The earliest snapshot wins, because that is the
+	 * one closest to the real starting value.
+	 *
+	 * @return the baseline, or null if the player has no snapshot for this window
+	 */
+	private static ClanGamesBaseline getClanGamesBaseline(String playerTag, ClanGamesWindow window) {
+		String timeSql = "SELECT time FROM achievement_data "
+				+ "WHERE player_tag = ? AND type = 'CLANGAMES_POINTS' AND time >= ? AND time < ? "
+				+ "ORDER BY time ASC LIMIT 1";
+		java.sql.Timestamp takenAt = DBUtil.getValueFromSQL(timeSql, java.sql.Timestamp.class, playerTag,
+				window.getBaselineLookupStart(), window.getEndTimestamp());
+
+		if (takenAt == null) {
+			return null;
+		}
+
+		String pointsSql = "SELECT data::text::integer FROM achievement_data "
+				+ "WHERE player_tag = ? AND type = 'CLANGAMES_POINTS' AND time = ? LIMIT 1";
+		Integer points = DBUtil.getValueFromSQL(pointsSql, Integer.class, playerTag, takenAt);
+
+		if (points == null) {
+			return null;
+		}
+
+		return new ClanGamesBaseline(points, takenAt.after(window.getBaselineLateAfter()));
+	}
+
+	/**
+	 * Current "Games Champion" value of a player, or null if it cannot be read.
+	 *
+	 * The player's API name is filled in from the same response, because
+	 * {@link Player#getNameAPI()} would otherwise trigger a second request for
+	 * every single member.
+	 */
+	private static Integer getCurrentClanGamesPoints(Player player) {
+		try {
+			String json = player.getJson();
+			if (json == null) {
+				return null;
+			}
+			JSONObject playerJson = new JSONObject(json);
+			if (playerJson.has("name")) {
+				player.setNameAPI(playerJson.getString("name"));
+			}
+
+			org.json.JSONArray achievements = playerJson.getJSONArray("achievements");
+			for (int i = 0; i < achievements.length(); i++) {
+				org.json.JSONObject achievement = achievements.getJSONObject(i);
+				if (achievement.getString("name").equals("Games Champion")) {
+					return achievement.getInt("value");
+				}
+			}
+		} catch (JSONException e) {
+			System.err.println("Error reading clan games points for player " + player.getTag() + ": " + e.getMessage());
+		}
+		return null;
+	}
+
+	/** Result of one clan games evaluation. */
+	private static class ClanGamesResult {
+		final String message;
+		final boolean hasViolations;
+		final ArrayList<Tuple<Player, Integer>> playersToPenalize;
+		/** No member could be rated at all - the baseline snapshot is missing. */
+		final boolean baselineMissingForEveryone;
+
+		ClanGamesResult(String message, boolean hasViolations, ArrayList<Tuple<Player, Integer>> playersToPenalize,
+				boolean baselineMissingForEveryone) {
+			this.message = message;
+			this.hasViolations = hasViolations;
+			this.playersToPenalize = playersToPenalize;
+			this.baselineMissingForEveryone = baselineMissingForEveryone;
+		}
+	}
+
+	/**
+	 * Evaluates the clan games for the given window.
+	 *
+	 * Points earned are the difference between the current "Games Champion" value
+	 * and the baseline taken at the start of the window. Members without a usable
+	 * baseline are reported separately and never punished - their measured value
+	 * would be too low through no fault of their own, either because the bot did
+	 * not snapshot in time or because they joined the clan mid-games.
+	 */
+	private ClanGamesResult buildClanGamesResult(Clan clan, int threshold, ClanGamesWindow window,
+			boolean isVerificationPhase) {
+
+		StringBuilder violationLines = new StringBuilder();
+		StringBuilder unratedLines = new StringBuilder();
+		ArrayList<Tuple<Player, Integer>> playersToPenalize = new ArrayList<>();
+		int rated = 0;
+		int unrated = 0;
+
+		for (Player p : clan.getPlayersDB()) {
+			// Hidden co-leaders do not have to participate in clan games
+			if (p.isHiddenColeader()) {
+				continue;
+			}
+
+			// Skip signed-off members
+			MemberSignoff signoff = new MemberSignoff(p.getTag());
+			if (signoff.isActive() && !signoff.isReceivePings()) {
+				continue;
+			}
+
+			ClanGamesBaseline baseline = getClanGamesBaseline(p.getTag(), window);
+			Integer currentPoints = baseline != null ? getCurrentClanGamesPoints(p) : null;
+
+			if (baseline == null || baseline.late || currentPoints == null) {
+				unrated++;
+				unratedLines.append("- ").append(p.getNameAPI());
+				if (baseline == null) {
+					unratedLines.append(" (kein Startwert)");
+				} else if (baseline.late) {
+					unratedLines.append(" (Startwert zu spät erfasst");
+					if (currentPoints != null) {
+						unratedLines.append(", seitdem ").append(Math.max(currentPoints - baseline.points, 0))
+								.append(" Punkte");
+					}
+					unratedLines.append(")");
+				} else {
+					unratedLines.append(" (aktuelle Punkte nicht abrufbar)");
+				}
+				unratedLines.append("\n");
+				continue;
+			}
+
+			rated++;
+			int difference = Math.max(currentPoints - baseline.points, 0);
+
+			if (difference < threshold) {
+				violationLines.append("- ").append(p.getNameAPI()).append(": ").append(difference).append("/")
+						.append(threshold).append(" Punkte");
+				if (p.getUser() != null && !isVerificationPhase) {
+					violationLines.append(" (<@").append(p.getUser().getUserID()).append(">)");
+				}
+				violationLines.append("\n");
+				playersToPenalize.add(new Tuple<>(p, difference));
+			}
+		}
+
+		// A window where nobody could be rated means the baseline job did not run -
+		// punishing the whole clan for that would be wrong, so nothing is handed out
+		boolean baselineMissingForEveryone = rated == 0 && unrated > 0;
+
+		StringBuilder message = new StringBuilder();
+		message.append("## Clan Games - ").append(clan.getInfoString()).append("\n");
+		message.append("**Ziel:** ").append(threshold).append(" Punkte\n\n");
+
+		boolean hasViolations = violationLines.length() > 0 && !baselineMissingForEveryone;
+
+		if (baselineMissingForEveryone) {
+			message.append(
+					"**Keine Auswertung möglich - für keinen Spieler existiert ein Startwert.**\n")
+					.append("Es werden keine Kickpunkte vergeben.\n");
+		} else if (hasViolations) {
+			message.append("### Ziel nicht erreicht\n").append(violationLines);
+		} else {
+			message.append("Alle gewerteten Mitglieder haben das Ziel erreicht.\n");
+		}
+
+		if (unratedLines.length() > 0) {
+			message.append("\n### Keine Wertung (kein Startwert / zu spät dazugekommen)\n").append(unratedLines);
+		}
+
+		return new ClanGamesResult(message.toString(), hasViolations,
+				baselineMissingForEveryone ? new ArrayList<>() : playersToPenalize, baselineMissingForEveryone);
+	}
+
 	private void handleClanGamesEvent(Clan clan) {
 		// Get threshold from action values (default 4000)
 		int threshold = 4000;
@@ -287,98 +530,186 @@ public class ListeningEvent {
 			}
 		}
 
-		// Get before/after values from achievements database
-		java.sql.Timestamp startTime = java.sql.Timestamp.from(lostmanager.Bot.getPrevious22thAt7am().toInstant());
-		java.sql.Timestamp endTime = java.sql.Timestamp.from(lostmanager.Bot.getPrevious28thAt12pm().toInstant() // Actual
-																													// end
-																													// time
-																													// (12:00)
-		);
+		ClanGamesWindow window = ClanGamesWindow.currentOrPrevious(System.currentTimeMillis());
+		ClanGamesResult result = buildClanGamesResult(clan, threshold, window, false);
 
-		// Check if we're firing before the actual end time (12:00)
-		// If so, fetch fresh data from API instead of using stored data
-		boolean beforeActualEnd = System.currentTimeMillis() < endTime.getTime();
+		// A missing baseline is always worth reporting - otherwise a kickpoint event
+		// would silently do nothing and nobody would notice the data gap
+		if (!result.hasViolations && !result.baselineMissingForEveryone
+				&& getActionType() != ACTIONTYPE.INFOMESSAGE) {
+			return;
+		}
 
-		// Get all players in clan
-		ArrayList<Player> players = clan.getPlayersDB();
-		StringBuilder message = new StringBuilder();
-		message.append("## Clan Games Results (Threshold: ").append(threshold).append(")\n\n");
+		// Reminders during the games are posted as-is; only the final evaluation gets
+		// a verification pass before kickpoints are handed out
+		boolean isEndOfGamesEvent = System.currentTimeMillis() >= window.getEndMillis();
+		if (!isEndOfGamesEvent) {
+			sendMessageInChunks(result.message);
+			return;
+		}
 
-		boolean hasViolations = false;
-		for (Player p : players) {
-			// Skip hidden co-leaders as they don't need to participate in clan games
+		Message sentMessage = sendMessageToChannelAndReturn(truncateForDiscord(result.message));
+		if (sentMessage == null) {
+			return;
+		}
+
+		final Long messageId = sentMessage.getIdLong();
+		final String channelId = getChannelID();
+		final String clanTag = clan.getTag();
+		final String originalMessage = result.message;
+		final ListeningEvent thisEvent = this;
+		final int finalThreshold = threshold;
+		final ClanGamesWindow finalWindow = window;
+
+		// Verify after 5 minutes before handing out kickpoints, so a hiccup of the
+		// CoC API at fire time cannot produce wrong kickpoints
+		lostmanager.Bot.activeVerificationTasks.incrementAndGet();
+		ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+		scheduler.schedule(() -> {
+			try {
+				handleClanGamesDelayedVerification(clanTag, messageId, channelId, thisEvent, originalMessage,
+						finalThreshold, finalWindow);
+			} catch (Exception e) {
+				System.err.println("Error in delayed clan games verification: " + e.getMessage());
+			} finally {
+				lostmanager.Bot.activeVerificationTasks.decrementAndGet();
+				scheduler.shutdown();
+			}
+		}, 5, TimeUnit.MINUTES);
+
+		System.out.println("Scheduled 5-minute clan games verification for clan " + clanTag + " (window "
+				+ window.getKey() + ")");
+	}
+
+	/**
+	 * Re-evaluates the clan games with fresh data and hands out the kickpoints.
+	 */
+	private void handleClanGamesDelayedVerification(String clanTag, Long messageId, String channelId,
+			ListeningEvent event, String originalMessage, int threshold, ClanGamesWindow window) {
+
+		System.out.println("Starting 5-minute clan games verification for clan " + clanTag);
+
+		try {
+			Clan clan = new Clan(clanTag);
+			ClanGamesResult result = buildClanGamesResult(clan, threshold, window, true);
+
+			editMessageInChannel(channelId, messageId,
+					truncateForDiscord(result.message, "\n*Daten nach 5min überprüft*"));
+
+			boolean shouldProcessKickpoints = result.hasViolations && event.getActionType() == ACTIONTYPE.KICKPOINT;
+			if (shouldProcessKickpoints) {
+				for (Tuple<Player, Integer> entry : result.playersToPenalize) {
+					addKickpointForPlayer(entry.getFirst(),
+							"Clan Games nicht erreicht (" + entry.getSecond() + "/" + threshold + ")");
+				}
+			}
+
+			System.out.println("Completed 5-minute clan games verification for clan " + clanTag + " (kickpoints="
+					+ shouldProcessKickpoints + ")");
+
+		} catch (Exception e) {
+			System.err.println("Error in clan games delayed verification for clan " + clanTag + ": " + e.getMessage());
+			try {
+				editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage,
+						"\n*Fehler bei der 5-Minuten-Überprüfung. Keine Kickpunkte vergeben.*"));
+			} catch (Exception e2) {
+				System.err.println("Failed to update message with error: " + e2.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Reports every member below the required amount of season wins and - for
+	 * kickpoint events - hands out kickpoints for it.
+	 *
+	 * The wins of a season are the difference of the "Conqueror" achievement
+	 * between the start of the month and now, exactly like the /wins command
+	 * computes it. Members without a usable baseline (no data, or linked after the
+	 * season had already started) are listed separately and never punished, because
+	 * their number would be too low through no fault of their own.
+	 */
+	private void handleSeasonWinsEvent(Clan clan) {
+		// Threshold from the event itself, otherwise the clan-wide setting
+		Long threshold = getSetting(SETTING_WINS_THRESHOLD, null);
+		if (threshold == null) {
+			threshold = clan.getMinSeasonWins();
+		}
+		if (threshold == null || threshold <= 0) {
+			System.out.println("Skipping season wins event " + getId() + " for clan " + clan.getTag()
+					+ " - no threshold configured (neither on the event nor as min_season_wins)");
+			return;
+		}
+
+		StringBuilder violationLines = new StringBuilder();
+		StringBuilder unratedLines = new StringBuilder();
+		ArrayList<Player> playersToPenalize = new ArrayList<>();
+
+		for (Player p : clan.getPlayersDB()) {
+			// Hidden co-leaders are exempt from all requirements
 			if (p.isHiddenColeader()) {
 				continue;
 			}
 
-			int difference = 0;
-
-			if (beforeActualEnd) {
-				// Fetch fresh data from API
-				try {
-					org.json.JSONObject playerJson = new JSONObject(p.getJson());
-					org.json.JSONArray achievements = playerJson.getJSONArray("achievements");
-
-					// Find clan games achievement
-					for (int i = 0; i < achievements.length(); i++) {
-						org.json.JSONObject achievement = achievements.getJSONObject(i);
-						if (achievement.getString("name").equals("Games Champion")) {
-							int currentPoints = achievement.getInt("value");
-
-							// Get start value from database
-							// Cast JSONB data to integer using ::text::integer
-							String sql = "SELECT data::text::integer FROM achievement_data WHERE player_tag = ? AND type = 'CLANGAMES_POINTS' AND time = ? ORDER BY time LIMIT 1";
-							Integer pointsStart = DBUtil.getValueFromSQL(sql, Integer.class, p.getTag(), startTime);
-
-							if (pointsStart != null) {
-								difference = currentPoints - pointsStart;
-							}
-							break;
-						}
-					}
-				} catch (JSONException e) {
-					System.err
-							.println("Error fetching fresh API data for player " + p.getTag() + ": " + e.getMessage());
-					continue;
-				}
-			} else {
-				// Use stored data from database
-				// Cast JSONB data to integer using ::text::integer
-				String sql = "SELECT data::text::integer FROM achievement_data WHERE player_tag = ? AND type = 'CLANGAMES_POINTS' AND time = ? ORDER BY time LIMIT 1";
-				Integer pointsStart = DBUtil.getValueFromSQL(sql, Integer.class, p.getTag(), startTime);
-				Integer pointsEnd = DBUtil.getValueFromSQL(sql, Integer.class, p.getTag(), endTime);
-
-				if (pointsStart != null && pointsEnd != null) {
-					difference = pointsEnd - pointsStart;
-				} else {
-					continue; // Skip if no data
-				}
+			// Skip signed-off members
+			MemberSignoff signoff = new MemberSignoff(p.getTag());
+			if (signoff.isActive() && !signoff.isReceivePings()) {
+				continue;
 			}
 
-			// Check against threshold
-			if (difference < threshold) {
-				// Skip signed-off members
-				MemberSignoff signoff = new MemberSignoff(p.getTag());
-				if (signoff.isActive() && !signoff.isReceivePings()) {
-					continue;
-				}
+			Player.WinsData winsData;
+			try {
+				winsData = p.getCurrentMonthWins();
+			} catch (Exception e) {
+				System.err.println("Error reading season wins for player " + p.getTag() + ": " + e.getMessage());
+				winsData = null;
+			}
 
-				hasViolations = true;
-				message.append(p.getNameAPI()).append(": ").append(difference).append(" points");
+			// No baseline or linked mid-season - report only, never punish
+			if (winsData == null || winsData.wins == null || winsData.hasWarning) {
+				unratedLines.append("- ").append(p.getNameAPI());
+				if (winsData != null && winsData.wins != null) {
+					unratedLines.append(" (").append(winsData.wins).append(" seit Verlinkung)");
+				}
+				unratedLines.append("\n");
+				continue;
+			}
+
+			if (winsData.wins < threshold) {
+				violationLines.append("- ").append(p.getNameAPI()).append(": ").append(winsData.wins).append("/")
+						.append(threshold);
 				if (p.getUser() != null) {
-					message.append(" (<@").append(p.getUser().getUserID()).append(">)");
+					violationLines.append(" (<@").append(p.getUser().getUserID()).append(">)");
 				}
-				message.append("\n");
-
-				// Handle action type
-				if (getActionType() == ACTIONTYPE.KICKPOINT) {
-					addKickpointForPlayer(p, "Clan Games nicht erreicht (" + difference + " points)");
-				}
+				violationLines.append("\n");
+				playersToPenalize.add(p);
 			}
 		}
 
-		if (hasViolations || getActionType() == ACTIONTYPE.INFOMESSAGE) {
-			sendMessageToChannel(message.toString());
+		boolean hasViolations = violationLines.length() > 0;
+		if (!hasViolations && getActionType() != ACTIONTYPE.INFOMESSAGE) {
+			return;
+		}
+
+		StringBuilder message = new StringBuilder();
+		message.append("## Season Wins - ").append(clan.getInfoString()).append("\n");
+		message.append("**Minimum:** ").append(threshold).append(" Wins\n\n");
+
+		if (hasViolations) {
+			message.append("### Nicht erreicht\n").append(violationLines);
+		} else {
+			message.append("Alle Mitglieder haben das Minimum erreicht.\n");
+		}
+
+		if (unratedLines.length() > 0) {
+			message.append("\n### Keine Wertung (zu spät verlinkt / keine Daten)\n").append(unratedLines);
+		}
+
+		sendMessageInChunks(message.toString());
+
+		if (getActionType() == ACTIONTYPE.KICKPOINT) {
+			for (Player p : playersToPenalize) {
+				addKickpointForPlayer(p, "Season Wins nicht erreicht");
+			}
 		}
 	}
 
@@ -756,14 +1087,20 @@ public class ListeningEvent {
 				result = buildCWMissedAttacksMessage(clan, cwJson, actualRequiredAttacks, fillerTags, true);
 				
 				org.json.JSONObject clanData = cwJson.getJSONObject("clan");
-				boolean isPerfectWar = clanData.has("stars") && cwJson.has("teamSize") && 
+				boolean isPerfectWar = clanData.has("stars") && cwJson.has("teamSize") &&
 									   clanData.getInt("stars") == cwJson.getInt("teamSize") * 3;
-				
-				if (isPerfectWar) {
+				// Optional per-event override: normally a perfect war exempts everyone,
+				// but a clan can choose to hand out kickpoints for missed attacks anyway.
+				boolean ignorePerfectWar = event.getFlag(SETTING_IGNORE_PERFECT_WAR, false);
+
+				if (isPerfectWar && !ignorePerfectWar) {
 					updatedMessage = result.message + "\n\n*Daten nach 5min überprüft*\n**Perfekter Krieg erreicht! Keine Kickpunkte verteilt.**";
 					shouldProcessKickpoints = false;
 				} else {
 					updatedMessage = result.message + "\n\n*Daten nach 5min überprüft*";
+					if (isPerfectWar) {
+						updatedMessage += "\n**Perfekter Krieg – Kickpunkte werden dennoch vergeben (Einstellung).**";
+					}
 					shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
 				}
 			} else {
@@ -1272,14 +1609,19 @@ public class ListeningEvent {
 
 				result = buildCWLDayMissedAttacksMessage(clan, ourClanData, warData, roundNumber, true);
 				
-				boolean isPerfectWar = ourClanData.has("stars") && warData.has("teamSize") && 
+				boolean isPerfectWar = ourClanData.has("stars") && warData.has("teamSize") &&
 									   ourClanData.getInt("stars") == warData.getInt("teamSize") * 3;
-				
-				if (isPerfectWar) {
+				// Optional per-event override, same as for regular clan wars
+				boolean ignorePerfectWar = event.getFlag(SETTING_IGNORE_PERFECT_WAR, false);
+
+				if (isPerfectWar && !ignorePerfectWar) {
 					updatedMessage = result.message + "\n*Daten nach 5min überprüft*\n**Perfekter Krieg erreicht! Keine Kickpunkte verteilt.**";
 					shouldProcessKickpoints = false;
 				} else {
 					updatedMessage = result.message + "\n*Daten nach 5min überprüft*";
+					if (isPerfectWar) {
+						updatedMessage += "\n**Perfekter Krieg – Kickpunkte werden dennoch vergeben (Einstellung).**";
+					}
 					shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
 				}
 			} else {
@@ -1826,25 +2168,81 @@ public class ListeningEvent {
 			final ListeningEvent thisEvent = this;
 			final boolean finalShouldAddKickpoints = shouldAddKickpoints;
 
-			// Schedule 5-minute delayed verification (kickpoints only after verification)
-			lostmanager.Bot.activeVerificationTasks.incrementAndGet();
-			ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-			scheduler.schedule(() -> {
-				try {
-					handleRaidDistrictAnalysisDelayedVerification(clanTag, messageId, channelId, thisEvent,
-							originalMessage, raidEndTimeStr, capitalPeakMax, otherDistrictsMax, penalizeBoth,
-							finalShouldAddKickpoints);
-				} catch (Exception e) {
-					System.err.println("Error in delayed raid district verification: " + e.getMessage());
-				} finally {
-					lostmanager.Bot.activeVerificationTasks.decrementAndGet();
-					scheduler.shutdown();
-				}
-			}, 5, TimeUnit.MINUTES);
-
-			System.out.println("Scheduled 5-minute raid district verification for clan " + clanTag);
+			// Schedule the delayed verification (kickpoints only after verification).
+			// The first check runs after 5 minutes because attacks can still resolve for
+			// up to ~3 minutes past the raid end.
+			scheduleRaidDistrictVerification(clanTag, messageId, channelId, thisEvent, originalMessage,
+					raidEndTimeStr, capitalPeakMax, otherDistrictsMax, penalizeBoth, finalShouldAddKickpoints, 0);
 		} catch (JSONException e) {
 			System.err.println("Error analyzing raid districts: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Delays in minutes between the raid end and each verification attempt. The
+	 * first attempt is never earlier than 5 minutes, because attacks that were
+	 * started before the raid ended can still resolve for a few minutes afterwards.
+	 * Later attempts exist because the API sometimes keeps reporting the raid as
+	 * "ongoing" well past its own end time.
+	 */
+	private static final int[] RAID_VERIFICATION_DELAYS_MINUTES = { 5, 5, 10, 10 };
+
+	/**
+	 * Time after the raid's own end time from which no further attacks can land, so
+	 * the attack log can be treated as final.
+	 */
+	private static final long RAID_END_GRACE_MS = 5 * 60 * 1000L;
+
+	/**
+	 * Schedules attempt number {@code attempt} of the raid district verification.
+	 * Each attempt either finishes the verification or schedules the next one.
+	 */
+	private void scheduleRaidDistrictVerification(String clanTag, Long messageId, String channelId,
+			ListeningEvent event, String originalMessage, String raidEndTimeStr, int capitalPeakMax,
+			int otherDistrictsMax, int penalizeBoth, boolean shouldAddKickpoints, int attempt) {
+
+		if (attempt >= RAID_VERIFICATION_DELAYS_MINUTES.length) {
+			return;
+		}
+
+		int delayMinutes = RAID_VERIFICATION_DELAYS_MINUTES[attempt];
+
+		lostmanager.Bot.activeVerificationTasks.incrementAndGet();
+		ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+		scheduler.schedule(() -> {
+			try {
+				handleRaidDistrictAnalysisDelayedVerification(clanTag, messageId, channelId, event,
+						originalMessage, raidEndTimeStr, capitalPeakMax, otherDistrictsMax, penalizeBoth,
+						shouldAddKickpoints, attempt);
+			} catch (Exception e) {
+				System.err.println("Error in delayed raid district verification: " + e.getMessage());
+			} finally {
+				lostmanager.Bot.activeVerificationTasks.decrementAndGet();
+				scheduler.shutdown();
+			}
+		}, delayMinutes, TimeUnit.MINUTES);
+
+		System.out.println("Scheduled raid district verification attempt " + (attempt + 1) + "/"
+				+ RAID_VERIFICATION_DELAYS_MINUTES.length + " for clan " + clanTag + " in " + delayMinutes
+				+ " minutes");
+	}
+
+	/**
+	 * Parses a raid end time as reported by the API.
+	 *
+	 * @return the end time in epoch millis, or null if it cannot be parsed
+	 */
+	private static Long parseRaidEndTime(String endTimeStr) {
+		if (endTimeStr == null || endTimeStr.isEmpty()) {
+			return null;
+		}
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
+					.withZone(ZoneOffset.UTC);
+			return Instant.from(formatter.parse(endTimeStr)).toEpochMilli();
+		} catch (Exception e) {
+			System.err.println("Could not parse raid end time '" + endTimeStr + "': " + e.getMessage());
+			return null;
 		}
 	}
 
@@ -1855,9 +2253,12 @@ public class ListeningEvent {
 	 */
 	private void handleRaidDistrictAnalysisDelayedVerification(String clanTag, Long messageId, String channelId,
 			ListeningEvent event, String originalMessage, String raidEndTimeStr, int capitalPeakMax,
-			int otherDistrictsMax, int penalizeBoth, boolean shouldAddKickpoints) {
+			int otherDistrictsMax, int penalizeBoth, boolean shouldAddKickpoints, int attempt) {
 
-		System.out.println("Starting 5-minute raid district verification for clan " + clanTag);
+		int attemptNumber = attempt + 1;
+		int totalAttempts = RAID_VERIFICATION_DELAYS_MINUTES.length;
+		System.out.println("Starting raid district verification attempt " + attemptNumber + "/" + totalAttempts
+				+ " for clan " + clanTag);
 
 		try {
 			// Fetch fresh raid data
@@ -1872,18 +2273,42 @@ public class ListeningEvent {
 			String state = currentRaid.optString("state", "");
 			String endTimeStr = currentRaid.optString("endTime", "");
 
-			// Data is reliable once the raid is reported as ended and it is still the
-			// same raid we analyzed at fire time
-			boolean dataIsReliable = state.equals("ended")
+			// Still the raid that was analysed at fire time. An empty endTime means the
+			// API answered with the "no data" fallback and cannot be trusted.
+			boolean sameRaid = !endTimeStr.isEmpty()
 					&& (raidEndTimeStr.isEmpty() || endTimeStr.equals(raidEndTimeStr));
 
+			// The attack log is final once the raid is over. The API flips "state" to
+			// "ended" only after its own refresh, which can lag well past the raid end,
+			// so wall-clock time past the raid's own end time counts as well - no further
+			// attacks can land at that point.
+			Long raidEndMillis = parseRaidEndTime(endTimeStr);
+			boolean raidIsOverByClock = raidEndMillis != null
+					&& System.currentTimeMillis() >= raidEndMillis + RAID_END_GRACE_MS;
+			boolean dataIsReliable = sameRaid && (state.equals("ended") || raidIsOverByClock);
+
+			System.out.println("Raid district verification for clan " + clanTag + " (attempt " + attemptNumber + "/"
+					+ totalAttempts + "): state='" + state + "', endTime='" + endTimeStr + "', expectedEndTime='"
+					+ raidEndTimeStr + "', sameRaid=" + sameRaid + ", overByClock=" + raidIsOverByClock
+					+ ", reliable=" + dataIsReliable);
+
 			if (!dataIsReliable) {
-				if (messageId != null) {
-					editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage,
-							"\n*Daten sind nicht zuverlässig - keine Kickpunkte vergeben*"));
+				// Try again later - the API often catches up within the next few minutes
+				if (attemptNumber < totalAttempts) {
+					if (messageId != null) {
+						editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage,
+								"\n*Daten noch nicht bestätigt - weitere Überprüfung läuft*"));
+					}
+					scheduleRaidDistrictVerification(clanTag, messageId, channelId, event, originalMessage,
+							raidEndTimeStr, capitalPeakMax, otherDistrictsMax, penalizeBoth, shouldAddKickpoints,
+							attemptNumber);
+					return;
 				}
-				System.out.println("Completed 5-minute raid district verification for clan " + clanTag
-						+ " (dataReliable=false, kickpoints=false)");
+
+				// All attempts used up - fall back to the data from the raid end if the
+				// event is configured to do so
+				handleRaidDistrictVerificationGiveUp(clanTag, messageId, channelId, event, originalMessage,
+						capitalPeakMax, otherDistrictsMax, penalizeBoth, shouldAddKickpoints);
 				return;
 			}
 
@@ -1893,15 +2318,16 @@ public class ListeningEvent {
 				return;
 			}
 
+			String footer = "\n*Daten überprüft (" + attemptNumber + ". Versuch)*";
 			if (messageId != null) {
 				// Update the original message with verified data
 				String updatedMessage = result.hasFails
-						? truncateForDiscord(result.message, "\n*Daten nach 5min überprüft*")
-						: "## Raidfails - District-Analyse\n\nKeine Verstöße nach Überprüfung gefunden.\n\n*Daten nach 5min überprüft*";
+						? truncateForDiscord(result.message, footer)
+						: "## Raidfails - District-Analyse\n\nKeine Verstöße nach Überprüfung gefunden.\n" + footer;
 				editMessageInChannel(channelId, messageId, updatedMessage);
 			} else if (result.hasFails) {
 				// Nothing was posted at fire time, but the fresh data shows violations
-				sendMessageToChannel(truncateForDiscord(result.message, "\n*Daten nach 5min überprüft*"));
+				sendMessageToChannel(truncateForDiscord(result.message, footer));
 			}
 
 			boolean shouldProcessKickpoints = shouldAddKickpoints && result.hasFails
@@ -1913,8 +2339,8 @@ public class ListeningEvent {
 				}
 			}
 
-			System.out.println("Completed 5-minute raid district verification for clan " + clanTag
-					+ " (dataReliable=true, kickpoints=" + shouldProcessKickpoints + ")");
+			System.out.println("Completed raid district verification for clan " + clanTag + " on attempt "
+					+ attemptNumber + " (dataReliable=true, kickpoints=" + shouldProcessKickpoints + ")");
 
 		} catch (JSONException e) {
 			System.err.println("Error in raid district delayed verification for clan " + clanTag + ": "
@@ -1922,12 +2348,67 @@ public class ListeningEvent {
 			if (messageId != null) {
 				try {
 					editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage,
-							"\n*Fehler bei der 5-Minuten-Überprüfung. Daten möglicherweise nicht aktuell.*"));
+							"\n*Fehler bei der Überprüfung. Daten möglicherweise nicht aktuell.*"));
 				} catch (Exception e2) {
 					System.err.println("Failed to update message with error: " + e2.getMessage());
 				}
 			}
 		}
+	}
+
+	/**
+	 * Called when every verification attempt failed to confirm the raid data.
+	 * Without the fallback setting nothing happens beyond a note on the message;
+	 * with it enabled the kickpoints are handed out based on the analysis made at
+	 * raid end.
+	 */
+	private void handleRaidDistrictVerificationGiveUp(String clanTag, Long messageId, String channelId,
+			ListeningEvent event, String originalMessage, int capitalPeakMax, int otherDistrictsMax,
+			int penalizeBoth, boolean shouldAddKickpoints) {
+
+		boolean forceKickpoints = event.getFlag(SETTING_RAID_FORCE_KICKPOINTS, false);
+		boolean shouldProcessKickpoints = forceKickpoints && shouldAddKickpoints
+				&& event.getActionType() == ACTIONTYPE.RAIDFAILS;
+
+		if (!shouldProcessKickpoints) {
+			if (messageId != null) {
+				editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage,
+						"\n*Daten sind nicht zuverlässig - keine Kickpunkte vergeben*"));
+			}
+			System.out.println("Completed raid district verification for clan " + clanTag
+					+ " (dataReliable=false, kickpoints=false)");
+			return;
+		}
+
+		// Re-run the analysis on the data as it was at raid end. A fresh Clan instance
+		// would fetch the same unverifiable data, so the fire-time result is rebuilt
+		// from the already posted message instead.
+		Clan clan = new Clan(clanTag);
+		RaidDistrictAnalysisResult result = buildRaidDistrictAnalysisResult(clan, capitalPeakMax, otherDistrictsMax,
+				penalizeBoth, shouldAddKickpoints);
+
+		if (result == null || !result.hasFails) {
+			if (messageId != null) {
+				editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage,
+						"\n*Daten sind nicht zuverlässig - keine Kickpunkte vergeben*"));
+			}
+			System.out.println("Completed raid district verification for clan " + clanTag
+					+ " (dataReliable=false, fallback active but no fails found)");
+			return;
+		}
+
+		if (messageId != null) {
+			editMessageInChannel(channelId, messageId, truncateForDiscord(result.message,
+					"\n*Daten konnten nicht bestätigt werden - Kickpunkte auf Basis der Daten bei Raid-Ende vergeben (Fallback aktiv)*"));
+		}
+
+		for (RaidDistrictFail fail : result.penalizedPlayers) {
+			addKickpointForPlayer(fail.player,
+					"Zu viele Angriffe auf " + fail.districtName + " (" + fail.attacks + "/" + fail.threshold + ")");
+		}
+
+		System.out.println("Completed raid district verification for clan " + clanTag
+				+ " (dataReliable=false, kickpoints=true via fallback)");
 	}
 
 	private void addKickpointForPlayer(Player player, String reason) {
@@ -2440,7 +2921,10 @@ public class ListeningEvent {
 				if (stars == targetStars) {
 					if (p == null) {
 						p = new Player(tag);
-						if (p.isHiddenColeader()) {
+						// Signed-off members cannot receive kickpoints anyway
+						// (see addKickpointForPlayer), so they are left out of the
+						// report entirely instead of being listed without consequence.
+						if (p.isHiddenColeader() || MemberSignoff.isSignedOff(tag)) {
 							skipMember = true;
 							break;
 						}
@@ -2552,7 +3036,10 @@ public class ListeningEvent {
 			if (stars != targetStars) continue;
 
 			Player p = new Player(tag);
-			if (p.isHiddenColeader()) continue;
+			// Signed-off members cannot receive kickpoints anyway
+			// (see addKickpointForPlayer), so they are left out of the report entirely
+			// instead of being listed without consequence.
+			if (p.isHiddenColeader() || MemberSignoff.isSignedOff(tag)) continue;
 
 			hasBadAttacks = true;
 			message.append("- ").append(name).append(" (").append(tag).append(")")
