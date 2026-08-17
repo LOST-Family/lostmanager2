@@ -30,6 +30,66 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 
 public class listeningevent extends ListenerAdapter {
 
+	/**
+	 * Parameters of an event creation that is waiting for its modal to come back.
+	 *
+	 * Discord limits a modal id to 100 characters, so these values cannot be packed
+	 * into the id itself - a kickpoint reason is named freely and uses up that
+	 * budget on its own. The id carries nothing but a short token, and the values
+	 * stay here until the modal is submitted. That also removes the need to parse
+	 * the id back apart, which broke on any clan tag or reason containing the
+	 * separator character.
+	 */
+	private static class PendingEventCreation {
+		final String clantag;
+		final String type;
+		final long duration;
+		final String actionType;
+		final String channelId;
+		final String kickpointReasonName;
+		final long createdAt = System.currentTimeMillis();
+
+		PendingEventCreation(String clantag, String type, long duration, String actionType, String channelId,
+				String kickpointReasonName) {
+			this.clantag = clantag;
+			this.type = type;
+			this.duration = duration;
+			this.actionType = actionType;
+			this.channelId = channelId;
+			this.kickpointReasonName = kickpointReasonName;
+		}
+	}
+
+	private static final java.util.Map<String, PendingEventCreation> PENDING_CREATIONS =
+			new java.util.concurrent.ConcurrentHashMap<>();
+
+	/** Discord closes an unsubmitted modal long before this. */
+	private static final long PENDING_TTL_MS = 30 * 60 * 1000L;
+
+	/** Token for a modal id: short, opaque and always the same length. */
+	private static String newPendingToken() {
+		return java.util.UUID.randomUUID().toString().replace("-", "");
+	}
+
+	/**
+	 * Parks the creation parameters under the token carried by the modal id.
+	 * Entries of modals that were opened but never submitted are pruned here.
+	 */
+	private static void storePending(String token, PendingEventCreation pending) {
+		long now = System.currentTimeMillis();
+		PENDING_CREATIONS.values().removeIf(p -> now - p.createdAt > PENDING_TTL_MS);
+		PENDING_CREATIONS.put(token, pending);
+	}
+
+	/**
+	 * Retrieves and consumes the parameters belonging to a submitted modal.
+	 *
+	 * @return the parameters, or null if the modal is older than the retention time
+	 */
+	private static PendingEventCreation takePending(String modalId, String prefix) {
+		return PENDING_CREATIONS.remove(modalId.substring(prefix.length()));
+	}
+
 	@SuppressWarnings("null")
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -191,16 +251,19 @@ public class listeningevent extends ListenerAdapter {
 			return;
 		}
 
-		// Determine if we need a modal based on event type and action type
+		// Determine if we need a modal based on event type and action type.
+		// The modal id only carries a token - see PendingEventCreation for why.
 		boolean needsModal = false;
 		String modalId;
 		Modal modal = null;
+		String pendingToken = newPendingToken();
+		PendingEventCreation pendingCreation = new PendingEventCreation(clantag, type, duration, actionTypeStr,
+				channelId, kickpointReasonName);
 
 		// CS + (infomessage or kickpoint) => ask for threshold
 		if (type.equals("cs") && (actionTypeStr.equals("infomessage") || actionTypeStr.equals("kickpoint"))) {
 			needsModal = true;
-			modalId = "listeningevent_cs_threshold_" + clantag + "_" + duration + "_" + actionTypeStr + "_" + channelId
-					+ "_" + (kickpointReasonName != null ? kickpointReasonName : "");
+			modalId = "listeningevent_cs_threshold_" + pendingToken;
 
 			TextInput thresholdInput = TextInput.create("threshold", "Threshold (Punkte)", TextInputStyle.SHORT)
 					.setPlaceholder("z.B. 4000").setRequired(true).setMinLength(1).setMaxLength(10).setValue("4000")
@@ -212,8 +275,7 @@ public class listeningevent extends ListenerAdapter {
 		// CW + (infomessage or kickpoint) => ask for required attacks
 		else if (type.equals("cw") && (actionTypeStr.equals("infomessage") || actionTypeStr.equals("kickpoint"))) {
 			needsModal = true;
-			modalId = "listeningevent_cw_attacks_" + clantag + "_" + duration + "_" + actionTypeStr + "_" + channelId
-					+ "_" + (kickpointReasonName != null ? kickpointReasonName : "");
+			modalId = "listeningevent_cw_attacks_" + pendingToken;
 
 			TextInput attacksInput = TextInput.create("required_attacks", "Benötigte Angriffe", TextInputStyle.SHORT)
 					.setPlaceholder("1 oder 2 eingeben").setRequired(true).setMaxLength(1).build();
@@ -231,8 +293,7 @@ public class listeningevent extends ListenerAdapter {
 		else if (type.equals("seasonend")
 				&& (actionTypeStr.equals("infomessage") || actionTypeStr.equals("kickpoint"))) {
 			needsModal = true;
-			modalId = "listeningevent_seasonwins_" + clantag + "|" + duration + "|" + actionTypeStr + "|" + channelId
-					+ "|" + (kickpointReasonName != null ? kickpointReasonName : "");
+			modalId = "listeningevent_seasonwins_" + pendingToken;
 
 			TextInput winsInput = TextInput
 					.create("wins_threshold", "Minimum Wins (leer = Clan-Einstellung)", TextInputStyle.SHORT)
@@ -243,8 +304,7 @@ public class listeningevent extends ListenerAdapter {
 		// CWL day + kickpoint => ask whether a perfect war exempts everyone
 		else if (type.equals("cwlday") && actionTypeStr.equals("kickpoint")) {
 			needsModal = true;
-			modalId = "listeningevent_cwldaykp_" + clantag + "|" + duration + "|" + channelId + "|"
-					+ (kickpointReasonName != null ? kickpointReasonName : "");
+			modalId = "listeningevent_cwldaykp_" + pendingToken;
 
 			modal = Modal.create(modalId, "CWL Kickpoint Einstellungen")
 					.addComponents(ActionRow.of(buildPerfectWarInput())).build();
@@ -253,8 +313,7 @@ public class listeningevent extends ListenerAdapter {
 		else if (type.equals("raid")
 				&& (actionTypeStr.equals("raidfails") || actionTypeStr.equals("raidfails_kickpoint"))) {
 			needsModal = true;
-			modalId = "listeningevent_raidfails_" + clantag + "|" + duration + "|" + channelId + "|"
-					+ (kickpointReasonName != null ? kickpointReasonName : "");
+			modalId = "listeningevent_raidfails_" + pendingToken;
 
 			TextInput capitalPeakInput = TextInput
 					.create("capital_peak_max", "Maximale Angriffe auf Capital Peak", TextInputStyle.SHORT)
@@ -290,7 +349,7 @@ public class listeningevent extends ListenerAdapter {
 		// custommessage => ask for custom message
 		else if (actionTypeStr.equals("custommessage")) {
 			needsModal = true;
-			modalId = "listeningevent_custommessage_" + clantag + "_" + type + "_" + duration + "_" + channelId;
+			modalId = "listeningevent_custommessage_" + pendingToken;
 
 			TextInput messageInput = TextInput
 					.create("custommessage", "Benutzerdefinierte Nachricht", TextInputStyle.PARAGRAPH)
@@ -303,8 +362,7 @@ public class listeningevent extends ListenerAdapter {
 		// cwdonator => asks for use_lists and exclude_leaders
 		else if (actionTypeStr.equals("cwdonator")) {
 			needsModal = true;
-			modalId = "listeningevent_cwdonator_params_" + clantag + "_" + type + "_" + duration + "_" + actionTypeStr
-					+ "_" + channelId;
+			modalId = "listeningevent_cwdonator_params_" + pendingToken;
 
 			TextInput useListsInput = TextInput
 					.create("use_lists", "Listen-basierte Verteilung (1 oder 0)", TextInputStyle.SHORT)
@@ -322,9 +380,7 @@ public class listeningevent extends ListenerAdapter {
 		// starfails / starfails_kickpoint => ask for target star count and punishment mode
 		else if (actionTypeStr.equals("starfails") || actionTypeStr.equals("starfails_kickpoint")) {
 			needsModal = true;
-			modalId = "listeningevent_starfails_" + clantag + "|" + duration + "|"
-					+ type + "|" + actionTypeStr + "|" + channelId
-					+ "|" + (kickpointReasonName != null ? kickpointReasonName : "");
+			modalId = "listeningevent_starfails_" + pendingToken;
 
 			TextInput starsInput = TextInput.create("star_count",
 					"Sterne-Anzahl (0, 1 oder 2)", TextInputStyle.SHORT)
@@ -360,6 +416,8 @@ public class listeningevent extends ListenerAdapter {
 		}
 
 		if (needsModal) {
+			// Only park the parameters once a modal is actually shown
+			storePending(pendingToken, pendingCreation);
 			event.replyModal(modal).queue();
 			return;
 		}
@@ -727,17 +785,18 @@ public class listeningevent extends ListenerAdapter {
 			event.deferReply().queue();
 			String title = "Listening Event";
 
-			String[] parts = modalId.split("_");
-			if (parts.length < 6) {
+			PendingEventCreation pending = takePending(modalId, "listeningevent_custommessage_");
+			if (pending == null) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
+						MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
 
-			String clantag = parts[2];
-			String type = parts[3];
-			long duration = Long.parseLong(parts[4]);
-			String channelId = parts[5];
+			String clantag = pending.clantag;
+			String type = pending.type;
+			long duration = pending.duration;
+			String channelId = pending.channelId;
 			String customMessage = event.getValue("custommessage").getAsString();
 
 			processEventCreation(event.getHook(), title, clantag, type, duration, "custommessage", channelId, null,
@@ -746,20 +805,19 @@ public class listeningevent extends ListenerAdapter {
 			event.deferReply().queue();
 			String title = "Listening Event";
 
-			// Parse:
-			// listeningevent_cs_threshold_{clantag}_{duration}_{actiontype}_{channelid}_{kpreason}
-			String[] parts = modalId.split("_");
-			if (parts.length < 7) {
+			PendingEventCreation pending = takePending(modalId, "listeningevent_cs_threshold_");
+			if (pending == null) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
+						MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
 
-			String clantag = parts[3];
-			long duration = Long.parseLong(parts[4]);
-			String actionTypeStr = parts[5];
-			String channelId = parts[6];
-			String kickpointReasonName = parts.length > 7 && !parts[7].isEmpty() ? parts[7] : null;
+			String clantag = pending.clantag;
+			long duration = pending.duration;
+			String actionTypeStr = pending.actionType;
+			String channelId = pending.channelId;
+			String kickpointReasonName = pending.kickpointReasonName;
 
 			String thresholdStr = event.getValue("threshold").getAsString();
 			int threshold;
@@ -777,20 +835,19 @@ public class listeningevent extends ListenerAdapter {
 			event.deferReply().queue();
 			String title = "Listening Event";
 
-			// Parse:
-			// listeningevent_cw_attacks_{clantag}_{duration}_{actiontype}_{channelid}_{kpreason}
-			String[] parts = modalId.split("_");
-			if (parts.length < 7) {
+			PendingEventCreation pending = takePending(modalId, "listeningevent_cw_attacks_");
+			if (pending == null) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
+						MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
 
-			String clantag = parts[3];
-			long duration = Long.parseLong(parts[4]);
-			String actionTypeStr = parts[5];
-			String channelId = parts[6];
-			String kickpointReasonName = parts.length > 7 && !parts[7].isEmpty() ? parts[7] : null;
+			String clantag = pending.clantag;
+			long duration = pending.duration;
+			String actionTypeStr = pending.actionType;
+			String channelId = pending.channelId;
+			String kickpointReasonName = pending.kickpointReasonName;
 
 			String requiredAttacksStr = event.getValue("required_attacks").getAsString().trim();
 
@@ -831,21 +888,19 @@ public class listeningevent extends ListenerAdapter {
 			event.deferReply().queue();
 			String title = "Listening Event";
 
-			// Parse:
-			// listeningevent_seasonwins_{clantag}|{duration}|{actiontype}|{channelid}|{kpreason}
-			String payload = modalId.substring("listeningevent_seasonwins_".length());
-			String[] parts = payload.split("\\|");
-			if (parts.length < 4) {
+			PendingEventCreation pending = takePending(modalId, "listeningevent_seasonwins_");
+			if (pending == null) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
+						MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
 
-			String clantag = parts[0];
-			long duration = Long.parseLong(parts[1]);
-			String actionTypeStr = parts[2];
-			String channelId = parts[3];
-			String kickpointReasonName = parts.length > 4 && !parts[4].isEmpty() ? parts[4] : null;
+			String clantag = pending.clantag;
+			long duration = pending.duration;
+			String actionTypeStr = pending.actionType;
+			String channelId = pending.channelId;
+			String kickpointReasonName = pending.kickpointReasonName;
 
 			// Empty means "use the clan-wide min_season_wins setting"
 			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
@@ -872,19 +927,18 @@ public class listeningevent extends ListenerAdapter {
 			event.deferReply().queue();
 			String title = "Listening Event";
 
-			// Parse: listeningevent_cwldaykp_{clantag}|{duration}|{channelid}|{kpreason}
-			String payload = modalId.substring("listeningevent_cwldaykp_".length());
-			String[] parts = payload.split("\\|");
-			if (parts.length < 3) {
+			PendingEventCreation pending = takePending(modalId, "listeningevent_cwldaykp_");
+			if (pending == null) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
+						MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
 
-			String clantag = parts[0];
-			long duration = Long.parseLong(parts[1]);
-			String channelId = parts[2];
-			String kickpointReasonName = parts.length > 3 && !parts[3].isEmpty() ? parts[3] : null;
+			String clantag = pending.clantag;
+			long duration = pending.duration;
+			String channelId = pending.channelId;
+			String kickpointReasonName = pending.kickpointReasonName;
 
 			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
 			Long ignorePerfectWar = readYesNoField(event, "ignore_perfect_war");
@@ -898,20 +952,18 @@ public class listeningevent extends ListenerAdapter {
 			event.deferReply().queue();
 			String title = "Listening Event";
 
-			// Parse: listeningevent_raidfails_{clantag}|{duration}|{channelid}|{kpreason}
-			// Remove the prefix, then split by pipe to safely handle underscores in reason names
-			String payload = modalId.substring("listeningevent_raidfails_".length());
-			String[] parts = payload.split("\\|");
-			if (parts.length < 3) {
+			PendingEventCreation pending = takePending(modalId, "listeningevent_raidfails_");
+			if (pending == null) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
+						MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
 
-			String clantag = parts[0];
-			long duration = Long.parseLong(parts[1]);
-			String channelId = parts[2];
-			String kickpointReasonName = parts.length > 3 && !parts[3].isEmpty() ? parts[3] : null;
+			String clantag = pending.clantag;
+			long duration = pending.duration;
+			String channelId = pending.channelId;
+			String kickpointReasonName = pending.kickpointReasonName;
 
 			// Parse the threshold values (penalize_both is only present in kickpoint mode)
 			String capitalPeakMaxStr = event.getValue("capital_peak_max").getAsString();
@@ -963,20 +1015,19 @@ public class listeningevent extends ListenerAdapter {
 			event.deferReply().queue();
 			String title = "Listening Event";
 
-			// Parse:
-			// listeningevent_cwdonator_params_{clantag}_{type}_{duration}_{actiontype}_{channelid}
-			String[] parts = modalId.split("_");
-			if (parts.length < 8) {
+			PendingEventCreation pending = takePending(modalId, "listeningevent_cwdonator_params_");
+			if (pending == null) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
+						MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
 
-			String clantag = parts[3];
-			String type = parts[4];
-			long duration = Long.parseLong(parts[5]);
-			String actionTypeStr = parts[6];
-			String channelId = parts[7];
+			String clantag = pending.clantag;
+			String type = pending.type;
+			long duration = pending.duration;
+			String actionTypeStr = pending.actionType;
+			String channelId = pending.channelId;
 
 			String useListsStr = event.getValue("use_lists").getAsString();
 			String excludeLeadersStr = event.getValue("exclude_leaders").getAsString();
@@ -1009,21 +1060,20 @@ public class listeningevent extends ListenerAdapter {
 			event.deferReply().queue();
 			String title = "Listening Event";
 
-			// Parse: listeningevent_starfails_{clantag}|{duration}|{type}|{actionTypeStr}|{channelId}|{kpreason}
-			String payload = modalId.substring("listeningevent_starfails_".length());
-			String[] parts = payload.split("\\|");
-			if (parts.length < 5) {
+			PendingEventCreation pending = takePending(modalId, "listeningevent_starfails_");
+			if (pending == null) {
 				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Fehler beim Verarbeiten der Modal-Daten.", MessageUtil.EmbedType.ERROR)).queue();
+						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
+						MessageUtil.EmbedType.ERROR)).queue();
 				return;
 			}
 
-			String clantag = parts[0];
-			long duration = Long.parseLong(parts[1]);
-			String type = parts[2];
-			String actionTypeStr = parts[3];
-			String channelId = parts[4];
-			String kickpointReasonName = parts.length > 5 && !parts[5].isEmpty() ? parts[5] : null;
+			String clantag = pending.clantag;
+			long duration = pending.duration;
+			String type = pending.type;
+			String actionTypeStr = pending.actionType;
+			String channelId = pending.channelId;
+			String kickpointReasonName = pending.kickpointReasonName;
 
 			String starCountStr = event.getValue("star_count").getAsString().trim();
 			// Not present for CWL - the mode has no effect with a single attack per member
