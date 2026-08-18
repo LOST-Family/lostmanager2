@@ -856,8 +856,7 @@ public class ListeningEvent {
 				unratedLines.append("- ").append(p.getNameAPI()).append(": ").append(wars).append(" CWs")
 						.append(" (erst seit dem ")
 						.append(new java.text.SimpleDateFormat("dd.MM.").format(joinedAt))
-						.append(" im Clan)
-");
+						.append(" im Clan)\n");
 				continue;
 			}
 
@@ -867,8 +866,7 @@ public class ListeningEvent {
 				if (p.getUser() != null) {
 					violationLines.append(" (<@").append(p.getUser().getUserID()).append(">)");
 				}
-				violationLines.append("
-");
+				violationLines.append("\n");
 				playersToPenalize.add(new Tuple<>(p, wars));
 			}
 		}
@@ -880,36 +878,25 @@ public class ListeningEvent {
 		}
 
 		StringBuilder message = new StringBuilder();
-		message.append("## CW-Teilnahme - ").append(clan.getInfoString()).append("
-");
-		message.append("**Minimum:** ").append(required).append(" CWs in dieser Season
-
-");
+		message.append("## CW-Teilnahme - ").append(clan.getInfoString()).append("\n");
+		message.append("**Minimum:** ").append(required).append(" CWs in dieser Season\n\n");
 
 		if (historyIncomplete) {
 			message.append("**Keine Auswertung möglich - die Aufzeichnung der CW-Teilnahme läuft erst seit ")
 					.append(firstRecorded == null ? "kurzem"
 							: new java.text.SimpleDateFormat("dd.MM.yyyy").format(firstRecorded))
-					.append(".**
-Diese Season wird noch nicht gewertet, es werden keine Kickpunkte vergeben.
-");
+					.append(".**\nDiese Season wird noch nicht gewertet, es werden keine Kickpunkte vergeben.\n");
 			if (violationLines.length() > 0) {
-				message.append("
-### Unter dem Minimum (nur zur Info)
-").append(violationLines);
+				message.append("\n### Unter dem Minimum (nur zur Info)\n").append(violationLines);
 			}
 		} else if (hasViolations) {
-			message.append("### Minimum nicht erreicht
-").append(violationLines);
+			message.append("### Minimum nicht erreicht\n").append(violationLines);
 		} else {
-			message.append("Alle gewerteten Mitglieder haben das Minimum erreicht.
-");
+			message.append("Alle gewerteten Mitglieder haben das Minimum erreicht.\n");
 		}
 
 		if (unratedLines.length() > 0) {
-			message.append("
-### Keine Wertung (mitten in der Season dazugekommen)
-").append(unratedLines);
+			message.append("\n### Keine Wertung (mitten in der Season dazugekommen)\n").append(unratedLines);
 		}
 
 		sendMessageInChunks(message.toString());

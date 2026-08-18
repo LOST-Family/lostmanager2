@@ -659,8 +659,7 @@ public class listeningevent extends ListenerAdapter {
 			}
 		}
 		if (namedSettings != null && namedSettings.get(ListeningEvent.SETTING_CW_MIN_COUNT) != null) {
-			desc += "**Minimum CWs:** " + namedSettings.get(ListeningEvent.SETTING_CW_MIN_COUNT) + "
-";
+			desc += "**Minimum CWs:** " + namedSettings.get(ListeningEvent.SETTING_CW_MIN_COUNT) + "\n";
 		}
 		if (type.equals("seasonend") && !actionTypeStr.startsWith("cwcount")) {
 			Long winsThreshold = namedSettings != null
