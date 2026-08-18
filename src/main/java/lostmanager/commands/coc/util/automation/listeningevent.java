@@ -187,9 +187,10 @@ public class listeningevent extends ListenerAdapter {
 				&& !actionTypeStr.equals("cwdonator") && !actionTypeStr.equals("custommessage")
 				&& !actionTypeStr.equals("filler") && !actionTypeStr.equals("raidfails")
 				&& !actionTypeStr.equals("raidfails_kickpoint")
-				&& !actionTypeStr.equals("starfails") && !actionTypeStr.equals("starfails_kickpoint")) {
+				&& !actionTypeStr.equals("starfails") && !actionTypeStr.equals("starfails_kickpoint")
+				&& !actionTypeStr.equals("cwcount") && !actionTypeStr.equals("cwcount_kickpoint")) {
 			event.replyEmbeds(MessageUtil.buildEmbed(title,
-					"Ungültiger Aktionstyp. Erlaubt: infomessage, kickpoint, cwdonator, custommessage, filler, raidfails, raidfails_kickpoint, starfails, starfails_kickpoint",
+					"Ungültiger Aktionstyp. Erlaubt: infomessage, kickpoint, cwdonator, custommessage, filler, raidfails, raidfails_kickpoint, starfails, starfails_kickpoint, cwcount, cwcount_kickpoint",
 					MessageUtil.EmbedType.ERROR)).queue();
 			return;
 		}
@@ -239,6 +240,22 @@ public class listeningevent extends ListenerAdapter {
 				&& !type.equals("cw") && !type.equals("cwlday")) {
 			event.replyEmbeds(MessageUtil.buildEmbed(title,
 					"starfails und starfails_kickpoint können nur bei CW oder CWL-Day Events verwendet werden!",
+					MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+
+		// CW count is a season end check
+		if ((actionTypeStr.equals("cwcount") || actionTypeStr.equals("cwcount_kickpoint"))
+				&& !type.equals("seasonend")) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title,
+					"CW-Anzahl kann nur bei Season Ende Events verwendet werden!", MessageUtil.EmbedType.ERROR))
+					.queue();
+			return;
+		}
+
+		if (actionTypeStr.equals("cwcount_kickpoint") && kickpointReasonName == null) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title,
+					"Kickpoint-Grund ist erforderlich, wenn actiontype=cwcount_kickpoint!",
 					MessageUtil.EmbedType.ERROR)).queue();
 			return;
 		}
@@ -300,6 +317,19 @@ public class listeningevent extends ListenerAdapter {
 					.setPlaceholder("z.B. 70").setRequired(false).setMaxLength(5).build();
 
 			modal = Modal.create(modalId, "Season Wins Einstellungen").addComponents(ActionRow.of(winsInput)).build();
+		}
+		// SEASONEND + cwcount => ask for the minimum number of clan wars
+		else if (actionTypeStr.equals("cwcount") || actionTypeStr.equals("cwcount_kickpoint")) {
+			needsModal = true;
+			modalId = "listeningevent_cwcount_" + pendingToken;
+
+			TextInput minCwInput = TextInput
+					.create("cw_min_count", "Minimum CWs pro Season", TextInputStyle.SHORT)
+					.setPlaceholder("z.B. 8 - gezählt wird die Teilnahme an der Aufstellung")
+					.setRequired(true).setMinLength(1).setMaxLength(3).build();
+
+			modal = Modal.create(modalId, "CW-Teilnahme konfigurieren").addComponents(ActionRow.of(minCwInput))
+					.build();
 		}
 		// CWL day + kickpoint => ask whether a perfect war exempts everyone
 		else if (type.equals("cwlday") && actionTypeStr.equals("kickpoint")) {
@@ -492,6 +522,9 @@ public class listeningevent extends ListenerAdapter {
 		} else if (actionTypeStr.equals("starfails_kickpoint") && kickpointReasonName != null) {
 			KickpointReason kpReason = new KickpointReason(kickpointReasonName, clantag);
 			actionValues.add(new ActionValue(kpReason));
+		} else if (actionTypeStr.equals("cwcount_kickpoint") && kickpointReasonName != null) {
+			KickpointReason kpReason = new KickpointReason(kickpointReasonName, clantag);
+			actionValues.add(new ActionValue(kpReason));
 		}
 
 		// Add threshold or required attacks if provided
@@ -625,7 +658,11 @@ public class listeningevent extends ListenerAdapter {
 						: freeHits + (type.equals("cwlday") ? " (pro CWL)" : " (pro Krieg)")) + "\n";
 			}
 		}
-		if (type.equals("seasonend")) {
+		if (namedSettings != null && namedSettings.get(ListeningEvent.SETTING_CW_MIN_COUNT) != null) {
+			desc += "**Minimum CWs:** " + namedSettings.get(ListeningEvent.SETTING_CW_MIN_COUNT) + "
+";
+		}
+		if (type.equals("seasonend") && !actionTypeStr.startsWith("cwcount")) {
 			Long winsThreshold = namedSettings != null
 					? namedSettings.get(ListeningEvent.SETTING_WINS_THRESHOLD)
 					: null;
@@ -919,6 +956,39 @@ public class listeningevent extends ListenerAdapter {
 							"Ungültiger Wert für Minimum Wins: " + winsStr, MessageUtil.EmbedType.ERROR)).queue();
 					return;
 				}
+			}
+
+			processEventCreation(event.getHook(), title, clantag, "seasonend", duration, actionTypeStr, channelId,
+					kickpointReasonName, null, null, null, null, null, namedSettings);
+		} else if (modalId.startsWith("listeningevent_cwcount_")) {
+			event.deferReply().queue();
+			String title = "Listening Event";
+
+			PendingEventCreation pending = takePending(modalId, "listeningevent_cwcount_");
+			if (pending == null) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
+						MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+
+			String clantag = pending.clantag;
+			long duration = pending.duration;
+			String actionTypeStr = pending.actionType;
+			String channelId = pending.channelId;
+			String kickpointReasonName = pending.kickpointReasonName;
+
+			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
+			try {
+				long minCount = Long.parseLong(event.getValue("cw_min_count").getAsString().trim());
+				if (minCount < 1) {
+					throw new NumberFormatException("minimum must be at least 1");
+				}
+				namedSettings.put(ListeningEvent.SETTING_CW_MIN_COUNT, minCount);
+			} catch (final NumberFormatException e) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Ungültiger Wert für Minimum CWs.", MessageUtil.EmbedType.ERROR)).queue();
+				return;
 			}
 
 			processEventCreation(event.getHook(), title, clantag, "seasonend", duration, actionTypeStr, channelId,
@@ -1235,6 +1305,25 @@ public class listeningevent extends ListenerAdapter {
                                             choices.add(new Command.Choice(raidDisplayNames[i], raidActionTypes[i]));
                                         }
                                     }
+                                }
+                                // Season end: the action type picks which check runs
+                                if ("seasonend".equals(eventType)) {
+                                    String[] seasonActionTypes = { "infomessage", "kickpoint", "cwcount",
+                                        "cwcount_kickpoint" };
+                                    String[] seasonDisplayNames = { "Season Wins (Info)", "Season Wins (Kickpoints)",
+                                        "CW-Anzahl (Info)", "CW-Anzahl (Kickpoints)" };
+                                    List<Command.Choice> seasonChoices = new ArrayList<>();
+                                    for (int i = 0; i < seasonActionTypes.length; i++) {
+                                        if (seasonActionTypes[i].toLowerCase().contains(input.toLowerCase())
+                                                || seasonDisplayNames[i].toLowerCase().contains(input.toLowerCase())) {
+                                            seasonChoices.add(new Command.Choice(seasonDisplayNames[i],
+                                                    seasonActionTypes[i]));
+                                        }
+                                    }
+                                    event.replyChoices(seasonChoices).queue(_ -> {
+                                    }, _ -> {
+                                    });
+                                    return;
                                 }
                                 // Add war-specific action types for "cw" and "cwlday"
                                 if ("cw".equals(eventType) || "cwlday".equals(eventType)) {

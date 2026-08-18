@@ -341,8 +341,9 @@ public class transfermember extends ListenerAdapter {
 
 		Player.RoleType role = player.getRoleDB();
 
-		DBUtil.executeUpdate("UPDATE clan_members SET clan_tag = ?, clan_role = ? WHERE player_tag = ?", newclantag,
-				"member", playertag);
+		DBUtil.executeUpdate(
+				"UPDATE clan_members SET clan_tag = ?, clan_role = ?, joined_at = NOW() WHERE player_tag = ?",
+				newclantag, "member", playertag);
 
 		String desc = "";
 		if (approverId != null) {

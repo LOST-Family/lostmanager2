@@ -114,8 +114,9 @@ public class addmember extends ListenerAdapter {
 				return;
 			}
 
-			DBUtil.executeUpdate("INSERT INTO clan_members (player_tag, clan_tag, clan_role) VALUES (?, ?, ?)", playertag,
-					clantag, role);
+			DBUtil.executeUpdate(
+					"INSERT INTO clan_members (player_tag, clan_tag, clan_role, joined_at) VALUES (?, ?, ?, NOW())",
+					playertag, clantag, role);
 			String rolestring = role.equals("leader") ? "Anführer"
 					: role.equals("coLeader") ? "Vize-Anführer"
 							: role.equals("hiddencoleader") ? "Vize-Anführer (versteckt)"
