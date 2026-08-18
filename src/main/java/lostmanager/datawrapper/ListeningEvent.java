@@ -702,6 +702,16 @@ public class ListeningEvent {
 			return;
 		}
 
+		// The season being judged - at the boundary the calendar month has already
+		// rolled over, so "current month" would be the new, still empty season
+		java.time.YearMonth season = lostmanager.util.SeasonUtil.evaluatedSeason(System.currentTimeMillis());
+		long seasonEndMillis = lostmanager.util.SeasonUtil.seasonEnd(season).getTime();
+		boolean seasonOver = System.currentTimeMillis() >= seasonEndMillis;
+
+		java.time.ZoneId zone = java.time.ZoneId.systemDefault();
+		java.time.ZonedDateTime startOfSeason = season.atDay(1).atStartOfDay(zone);
+		java.time.ZonedDateTime startOfNextSeason = startOfSeason.plusMonths(1);
+
 		StringBuilder violationLines = new StringBuilder();
 		StringBuilder unratedLines = new StringBuilder();
 		ArrayList<Player> playersToPenalize = new ArrayList<>();
@@ -720,7 +730,10 @@ public class ListeningEvent {
 
 			Player.WinsData winsData;
 			try {
-				winsData = p.getCurrentMonthWins();
+				// Measured against the baseline of the judged season, not of whatever
+				// month the clock happens to be in
+				winsData = p.getMonthlyWins(season.getYear(), season.getMonthValue(), true, startOfSeason,
+						startOfNextSeason, zone);
 			} catch (Exception e) {
 				System.err.println("Error reading season wins for player " + p.getTag() + ": " + e.getMessage());
 				winsData = null;
@@ -754,10 +767,17 @@ public class ListeningEvent {
 
 		StringBuilder message = new StringBuilder();
 		message.append("## Season Wins - ").append(clan.getInfoString()).append("\n");
+		if (seasonOver) {
+			message.append("**Season beendet.**\n");
+		} else {
+			message.append(formatRemaining(seasonEndMillis - System.currentTimeMillis()))
+					.append("verbleibend\n");
+		}
 		message.append("**Minimum:** ").append(threshold).append(" Wins\n\n");
 
 		if (hasViolations) {
-			message.append("### Nicht erreicht\n").append(violationLines);
+			message.append(seasonOver ? "### Nicht erreicht\n" : "### Noch offen\n")
+					.append(violationLines);
 		} else {
 			message.append("Alle Mitglieder haben das Minimum erreicht.\n");
 		}
@@ -768,7 +788,8 @@ public class ListeningEvent {
 
 		sendMessageInChunks(message.toString());
 
-		if (getActionType() == ACTIONTYPE.KICKPOINT) {
+		// Reminders during the season must never punish - the season is not over yet
+		if (seasonOver && getActionType() == ACTIONTYPE.KICKPOINT) {
 			for (Player p : playersToPenalize) {
 				addKickpointForPlayer(p, "Season Wins nicht erreicht");
 			}
@@ -795,8 +816,12 @@ public class ListeningEvent {
 			return;
 		}
 
-		java.sql.Timestamp seasonStart = lostmanager.util.SeasonUtil.fetchSeasonStartTime();
-		java.sql.Timestamp seasonEnd = lostmanager.util.SeasonUtil.fetchSeasonEndTime();
+		// The season being judged - see handleSeasonWinsEvent for why this is not
+		// simply the current calendar month
+		java.time.YearMonth season = lostmanager.util.SeasonUtil.evaluatedSeason(System.currentTimeMillis());
+		java.sql.Timestamp seasonStart = lostmanager.util.SeasonUtil.seasonStart(season);
+		java.sql.Timestamp seasonEnd = lostmanager.util.SeasonUtil.seasonEnd(season);
+		boolean seasonOver = System.currentTimeMillis() >= seasonEnd.getTime();
 
 		// Clans the player may have warred in - the event clan plus the clans it
 		// belongs to, mirroring how kickpoints resolve sideclans
@@ -879,6 +904,12 @@ public class ListeningEvent {
 
 		StringBuilder message = new StringBuilder();
 		message.append("## CW-Teilnahme - ").append(clan.getInfoString()).append("\n");
+		if (seasonOver) {
+			message.append("**Season beendet.**\n");
+		} else {
+			message.append(formatRemaining(seasonEnd.getTime() - System.currentTimeMillis()))
+					.append("verbleibend\n");
+		}
 		message.append("**Minimum:** ").append(required).append(" CWs in dieser Season\n\n");
 
 		if (historyIncomplete) {
@@ -890,7 +921,8 @@ public class ListeningEvent {
 				message.append("\n### Unter dem Minimum (nur zur Info)\n").append(violationLines);
 			}
 		} else if (hasViolations) {
-			message.append("### Minimum nicht erreicht\n").append(violationLines);
+			message.append(seasonOver ? "### Minimum nicht erreicht\n" : "### Noch offen\n")
+					.append(violationLines);
 		} else {
 			message.append("Alle gewerteten Mitglieder haben das Minimum erreicht.\n");
 		}
@@ -901,7 +933,8 @@ public class ListeningEvent {
 
 		sendMessageInChunks(message.toString());
 
-		if (hasViolations && getActionType() == ACTIONTYPE.CWCOUNT_KICKPOINT) {
+		// Reminders during the season must never punish
+		if (seasonOver && hasViolations && getActionType() == ACTIONTYPE.CWCOUNT_KICKPOINT) {
 			for (Tuple<Player, Integer> entry : playersToPenalize) {
 				addKickpointForPlayer(entry.getFirst(),
 						"Zu wenige CWs (" + entry.getSecond() + "/" + required + ")");
