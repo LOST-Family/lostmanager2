@@ -46,6 +46,7 @@ import lostmanager.commands.coc.memberlist.removemember;
 import lostmanager.commands.coc.memberlist.signoff;
 import lostmanager.commands.coc.memberlist.transfermember;
 import lostmanager.commands.coc.util.automation.listeningevent;
+import lostmanager.commands.coc.util.automation.playerevent;
 import lostmanager.commands.coc.util.clanutils.cwdonator;
 import lostmanager.commands.coc.util.clanutils.raidping;
 import lostmanager.commands.coc.util.jsonutils.f2pcheck;
@@ -440,6 +441,27 @@ public class Bot extends ListenerAdapter {
 													.addOptions(new OptionData(OptionType.INTEGER, "id",
 															"Die ID des zu löschenden Events", true))),
 
+							Commands.slash("playerevent",
+									"Verwalte deine Spieler-Benachrichtigungen (per DM).")
+									.addSubcommands(
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("add",
+													"Erstelle ein neues Player Event")
+													.addOptions(new OptionData(OptionType.STRING, "player",
+															"Der Spieler, der überwacht werden soll", true)
+															.setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.STRING, "type",
+															"Welcher Wert überwacht wird", true)
+															.addChoices(new Command.Choice("Trophäen", "trophies"))),
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("list",
+													"Liste alle Player Events auf")
+													.addOptions(new OptionData(OptionType.STRING, "player",
+															"Filtere nach Spieler (optional)", false)
+															.setAutoComplete(true)),
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("remove",
+													"Lösche ein Player Event")
+													.addOptions(new OptionData(OptionType.INTEGER, "id",
+															"Die ID des zu löschenden Events", true))),
+
 							Commands.slash("teamcheck", "Überprüfe die Teamverteilung der Mitglieder.")
 									.addOption(OptionType.ROLE, "memberrole",
 											"Die Rolle der Mitglieder, die überprüft werden sollen", true)
@@ -634,6 +656,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new transfermember());
 		classes.add(new signoff());
 		classes.add(new listeningevent());
+		classes.add(new playerevent());
 		classes.add(new teamcheck());
 		classes.add(new checkroles());
 		classes.add(new wins());
@@ -710,6 +733,10 @@ public class Bot extends ListenerAdapter {
 
 		// Start unified event polling system that checks all events periodically
 		startEventPolling();
+
+		// Player events watch a value instead of a point in time, so they get their
+		// own poll loop on the same (freshly created) scheduler.
+		lostmanager.util.PlayerEventPoller.start();
 	}
 
 	/**

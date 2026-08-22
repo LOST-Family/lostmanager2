@@ -55,6 +55,7 @@ public class Connection {
 		tableNames.add("member_signoffs");
 		tableNames.add("rosters");
 		tableNames.add("roster_participants");
+		tableNames.add("player_listening_events");
 		try (java.sql.Connection conn = DriverManager.getConnection(url, user, password)) {
 			DatabaseMetaData dbm = conn.getMetaData();
 
@@ -155,6 +156,16 @@ public class Connection {
 									+ "status VARCHAR(50),"
 									+ "th_level INT,"
 									+ "PRIMARY KEY (roster_name, account_tag))";
+						case "player_listening_events" ->
+							createTableSQL = "CREATE TABLE " + tableName + " (id BIGSERIAL PRIMARY KEY,"
+									+ "player_tag TEXT NOT NULL,"
+									+ "listeningtype TEXT NOT NULL,"
+									+ "actiontype TEXT NOT NULL,"
+									+ "user_id TEXT NOT NULL,"
+									+ "actionvalues JSONB,"
+									+ "last_value BIGINT,"
+									+ "last_checked TIMESTAMP,"
+									+ "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
 						}
 
 						try (Statement stmt = conn.createStatement()) {
@@ -187,6 +198,13 @@ public class Connection {
 								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_member_signoffs_player ON member_signoffs(player_tag)");
 								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_member_signoffs_end_date ON member_signoffs(end_date)");
 								System.out.println("Indexes für 'member_signoffs' wurden erstellt.");
+							}
+
+							// Create indexes for player_listening_events table
+							if (tableName.equals("player_listening_events")) {
+								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_player_listening_events_player ON player_listening_events(player_tag)");
+								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_player_listening_events_user ON player_listening_events(user_id)");
+								System.out.println("Indexes für 'player_listening_events' wurden erstellt.");
 							}
 						}
 					}
