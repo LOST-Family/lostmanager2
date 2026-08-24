@@ -3,6 +3,10 @@
 ## Overview
 The Listening Events feature automates tracking and notification for various Clash of Clans clan events, including Clan Games, Clan Wars, Clan War Leagues, and Raids.
 
+These events are **clan-scoped and time-scheduled**. For watchers on a single
+player's values (e.g. a DM on every trophy change), see
+[PLAYER_EVENTS.md](PLAYER_EVENTS.md) and the `/playerevent` command.
+
 ## Command Usage
 
 ### `/listeningevent add`

@@ -10,19 +10,20 @@ Die neuen Optionen sind alle standardmäßig aus.
 
 ## 1. Season Wins – Kickpunkte für zu wenig Angriffe
 
-Neuer Event-Typ `Season Wins`. Prüft am Monatsende, wer unter der geforderten
-Anzahl Wins liegt (gleiche Zählweise wie `/wins`).
+Neuer Event-Typ `Season Ende`. Der `actiontype` bestimmt, **was** geprüft wird –
+hier `Season Wins`: wer am Monatsende unter der geforderten Anzahl Wins liegt
+(gleiche Zählweise wie `/wins`).
 
 **Anlegen:**
 
 ```
 /listeningevent add
   clan:       <Clan>
-  type:       Season Wins
+  type:       Season Ende
   duration:   0
-  actiontype: Kickpoint          (oder Info-Nachricht)
+  actiontype: Season Wins (Kickpoints)   (oder Season Wins (Info))
   channel:    <Channel>
-  kickpoint_reason: <Grund>      (nur bei Kickpoint nötig)
+  kickpoint_reason: <Grund>              (nur bei Kickpoints nötig)
 ```
 
 Danach öffnet sich ein Fenster:
@@ -32,12 +33,55 @@ Danach öffnet sich ein Fenster:
 | Minimum Wins | Geforderte Wins. **Leer lassen** → es gilt der Wert aus `/clanconfig` (Minimum Season Wins). |
 
 **Erinnerung statt Bestrafung:** gleiches Event mit `duration: 24h` und
-`actiontype: Info-Nachricht` anlegen – dann kommt 24 h vor Monatsende eine Liste,
+`actiontype: Season Wins (Info)` anlegen – dann kommt 24 h vor Monatsende eine Liste,
 wer noch nicht durch ist.
 
 **Wichtig:** Wer erst mitten in der Season verlinkt wurde oder keine Daten hat,
 landet unter *„Keine Wertung"* und bekommt **nie** einen Kickpunkt – seine Zahl
 wäre unverschuldet zu niedrig.
+
+---
+
+## 1b. CW-Teilnahme – Mindestanzahl CWs pro Season
+
+Zweite Prüfung am Season-Ende: wer in zu wenigen Clan Wars in der **Aufstellung**
+stand, wird gemeldet bzw. bestraft.
+
+Gleicher Event-Typ wie oben (`Season Ende`), aber ein anderer `actiontype`:
+
+```
+/listeningevent add
+  clan:       <Clan>
+  type:       Season Ende
+  duration:   0
+  actiontype: CW-Anzahl (Kickpoints)     (oder CW-Anzahl (Info))
+  channel:    <Channel>
+  kickpoint_reason: <Grund>
+```
+
+| Feld | Bedeutung |
+|---|---|
+| Minimum CWs pro Season | Wie oft man mindestens in der CW-Aufstellung stehen muss. |
+
+**Was zählt:**
+
+- Gezählt wird, ob jemand **in der Aufstellung stand** – nicht ob die Angriffe
+  gemacht wurden. Verpasste Angriffe bestrafen schon die CW-Events; niemand soll
+  für denselben Krieg doppelt bestraft werden.
+- **CWL-Tage zählen nicht mit.** Eine CWL-Woche würde sonst allein sieben Kriege
+  liefern und jede Vorgabe wertlos machen.
+- Kriege in zugeordneten Side-Clans zählen mit.
+
+**Wichtig – die ersten Wochen:** Die Clash-API kennt keine CW-Historie pro
+Spieler. Der Bot muss die Teilnahme deshalb selbst mitschreiben, während ein
+Krieg läuft. Er kann also nichts nachtragen, was vor dem Update lag. Solange die
+Aufzeichnung nicht die ganze Season abdeckt, kommt eine Warnung in den Channel
+und es werden **keine Kickpunkte** vergeben. Ab der ersten vollen Season danach
+wertet er normal.
+
+Wer **mitten in der Season** in den Clan gekommen ist, steht unter „Keine
+Wertung" und bekommt keinen Kickpunkt – er hätte die Kriege gar nicht spielen
+können.
 
 ---
 
@@ -176,7 +220,8 @@ Restzeit — es werden nie Kickpunkte vergeben, bevor die Games vorbei sind.
 
 | Feature | Wo einstellen | Standard |
 |---|---|---|
-| Season Wins | neuer Event-Typ `Season Wins` | – |
+| Season Wins | neuer Event-Typ `Season Ende` + actiontype `Season Wins` | – |
+| CW-Teilnahme | `Season Ende` + actiontype `CW-Anzahl` | – |
 | Schlechte Angriffe | `actiontype` bei CW / CWL Day | – |
 | Kickpunkte bei perfektem Krieg | Fenster beim Kickpoint-Event (CW/CWL) | Nein |
 | Raid-Districts Mehrfachprüfung | automatisch | an |

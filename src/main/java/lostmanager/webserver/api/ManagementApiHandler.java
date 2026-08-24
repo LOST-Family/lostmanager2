@@ -183,7 +183,8 @@ public class ManagementApiHandler implements HttpHandler {
 			return error("Player is already in a clan", 400);
 		}
 
-		DBUtil.executeUpdate("INSERT INTO clan_members (player_tag, clan_tag, clan_role) VALUES (?, ?, ?)",
+		DBUtil.executeUpdate(
+				"INSERT INTO clan_members (player_tag, clan_tag, clan_role, joined_at) VALUES (?, ?, ?, NOW())",
 				playerTag, clanTag, role);
 
 		JSONObject response = new JSONObject();

@@ -46,6 +46,7 @@ public class Connection {
 		tableNames.add("kickpoint_reasons");
 		tableNames.add("kickpoints");
 		tableNames.add("cw_fillers");
+		tableNames.add("cw_participation");
 		tableNames.add("achievements");
 		tableNames.add("achievement_data");
 		tableNames.add("upload_sessions");
@@ -54,6 +55,7 @@ public class Connection {
 		tableNames.add("member_signoffs");
 		tableNames.add("rosters");
 		tableNames.add("roster_participants");
+		tableNames.add("player_listening_events");
 		try (java.sql.Connection conn = DriverManager.getConnection(url, user, password)) {
 			DatabaseMetaData dbm = conn.getMetaData();
 
@@ -79,7 +81,15 @@ public class Connection {
 						case "clan_members" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (player_tag TEXT PRIMARY KEY,"
 									+ "clan_tag TEXT," + "clan_role TEXT)";
-						case "clan_settings" ->
+						case "cw_participation" ->
+						createTableSQL = "CREATE TABLE " + tableName + " (id BIGSERIAL PRIMARY KEY,"
+								+ "clan_tag TEXT NOT NULL," + "player_tag TEXT NOT NULL,"
+								+ "war_end_time TIMESTAMP NOT NULL," + "war_type TEXT NOT NULL,"
+								+ "attacks_used SMALLINT NOT NULL DEFAULT 0,"
+								+ "attacks_available SMALLINT NOT NULL DEFAULT 0,"
+								+ "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+								+ "UNIQUE(clan_tag, player_tag, war_end_time))";
+					case "clan_settings" ->
 							createTableSQL = "CREATE TABLE " + tableName + " (clan_tag TEXT PRIMARY KEY,"
 									+ "max_kickpoints BIGINT," + "kickpoints_expire_after_days SMALLINT)";
 						case "kickpoint_reasons" ->
@@ -146,6 +156,16 @@ public class Connection {
 									+ "status VARCHAR(50),"
 									+ "th_level INT,"
 									+ "PRIMARY KEY (roster_name, account_tag))";
+						case "player_listening_events" ->
+							createTableSQL = "CREATE TABLE " + tableName + " (id BIGSERIAL PRIMARY KEY,"
+									+ "player_tag TEXT NOT NULL,"
+									+ "listeningtype TEXT NOT NULL,"
+									+ "actiontype TEXT NOT NULL,"
+									+ "user_id TEXT NOT NULL,"
+									+ "actionvalues JSONB,"
+									+ "last_value BIGINT,"
+									+ "last_checked TIMESTAMP,"
+									+ "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
 						}
 
 						try (Statement stmt = conn.createStatement()) {
@@ -166,11 +186,25 @@ public class Connection {
 								System.out.println("Indexes für 'achievement_data' wurden erstellt.");
 							}
 							
-							// Create indexes for member_signoffs table
+							// Create indexes for cw_participation table
+						if (tableName.equals("cw_participation")) {
+							stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_cw_participation_lookup ON cw_participation(clan_tag, war_end_time)");
+							stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_cw_participation_player ON cw_participation(player_tag, war_end_time)");
+							System.out.println("Indexes für 'cw_participation' wurden erstellt.");
+						}
+
+						// Create indexes for member_signoffs table
 							if (tableName.equals("member_signoffs")) {
 								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_member_signoffs_player ON member_signoffs(player_tag)");
 								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_member_signoffs_end_date ON member_signoffs(end_date)");
 								System.out.println("Indexes für 'member_signoffs' wurden erstellt.");
+							}
+
+							// Create indexes for player_listening_events table
+							if (tableName.equals("player_listening_events")) {
+								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_player_listening_events_player ON player_listening_events(player_tag)");
+								stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_player_listening_events_user ON player_listening_events(user_id)");
+								System.out.println("Indexes für 'player_listening_events' wurden erstellt.");
 							}
 						}
 					}
@@ -181,6 +215,33 @@ public class Connection {
 			System.out.println(e.getMessage());
 		}
 
+		addMissingColumns();
+	}
+
+	/**
+	 * Adds columns that were introduced after their table already existed.
+	 * tablesExists() only ever runs CREATE TABLE for tables that are missing
+	 * entirely, so an existing database would never pick these up otherwise.
+	 */
+	private static void addMissingColumns() {
+		String[] migrations = {
+			// Join date, so a member who came in mid-season is not measured
+			// against a full season of clan wars
+			"ALTER TABLE clan_members ADD COLUMN IF NOT EXISTS joined_at TIMESTAMP",
+		};
+
+		try (java.sql.Connection conn = DriverManager.getConnection(url, user, password);
+				Statement stmt = conn.createStatement()) {
+			for (final String migration : migrations) {
+				try {
+					stmt.executeUpdate(migration);
+				} catch (final SQLException e) {
+					System.err.println("Migration fehlgeschlagen (" + migration + "): " + e.getMessage());
+				}
+			}
+		} catch (final SQLException e) {
+			System.err.println("Migrationen konnten nicht ausgeführt werden: " + e.getMessage());
+		}
 	}
 
 	public static java.sql.Connection getConnection() throws SQLException {

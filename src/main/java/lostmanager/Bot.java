@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -45,6 +46,7 @@ import lostmanager.commands.coc.memberlist.removemember;
 import lostmanager.commands.coc.memberlist.signoff;
 import lostmanager.commands.coc.memberlist.transfermember;
 import lostmanager.commands.coc.util.automation.listeningevent;
+import lostmanager.commands.coc.util.automation.playerevent;
 import lostmanager.commands.coc.util.clanutils.cwdonator;
 import lostmanager.commands.coc.util.clanutils.raidping;
 import lostmanager.commands.coc.util.jsonutils.f2pcheck;
@@ -416,7 +418,7 @@ public class Bot extends ListenerAdapter {
 																	new Command.Choice("Clan War", "cw"),
 																	new Command.Choice("CWL Day", "cwlday"),
 																	new Command.Choice("Raid", "raid"),
-																	new Command.Choice("Season Wins", "seasonend")))
+																	new Command.Choice("Season Ende", "seasonend")))
 													.addOptions(new OptionData(OptionType.STRING, "duration",
 															"Dauer/Zeitpunkt (z.B. 1h, 24h, start, 0)", true)
 															.setAutoComplete(true))
@@ -436,6 +438,27 @@ public class Bot extends ListenerAdapter {
 															.setAutoComplete(true)),
 											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("remove",
 													"Lösche ein Listening Event")
+													.addOptions(new OptionData(OptionType.INTEGER, "id",
+															"Die ID des zu löschenden Events", true))),
+
+							Commands.slash("playerevent",
+									"Verwalte deine Spieler-Benachrichtigungen (per DM).")
+									.addSubcommands(
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("add",
+													"Erstelle ein neues Player Event")
+													.addOptions(new OptionData(OptionType.STRING, "player",
+															"Der Spieler, der überwacht werden soll", true)
+															.setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.STRING, "type",
+															"Welcher Wert überwacht wird", true)
+															.addChoices(new Command.Choice("Trophäen", "trophies"))),
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("list",
+													"Liste alle Player Events auf")
+													.addOptions(new OptionData(OptionType.STRING, "player",
+															"Filtere nach Spieler (optional)", false)
+															.setAutoComplete(true)),
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("remove",
+													"Lösche ein Player Event")
 													.addOptions(new OptionData(OptionType.INTEGER, "id",
 															"Die ID des zu löschenden Events", true))),
 
@@ -633,6 +656,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new transfermember());
 		classes.add(new signoff());
 		classes.add(new listeningevent());
+		classes.add(new playerevent());
 		classes.add(new teamcheck());
 		classes.add(new checkroles());
 		classes.add(new wins());
@@ -709,6 +733,10 @@ public class Bot extends ListenerAdapter {
 
 		// Start unified event polling system that checks all events periodically
 		startEventPolling();
+
+		// Player events watch a value instead of a point in time, so they get their
+		// own poll loop on the same (freshly created) scheduler.
+		lostmanager.util.PlayerEventPoller.start();
 	}
 
 	/**
@@ -1166,6 +1194,65 @@ public class Bot extends ListenerAdapter {
 		}
 	}
 
+	/**
+	 * Writes down who is in the current clan war lineup of every clan.
+	 *
+	 * The CoC API has no war history per player - warlog only reports clan level
+	 * results - so participation cannot be looked up after the fact and has to be
+	 * recorded while a war is running. Battle day alone lasts 24 hours and this
+	 * runs every 2 hours, so no war can slip through between two passes.
+	 *
+	 * Only regular clan wars are recorded. CWL rounds are deliberately left out:
+	 * one CWL week would otherwise add seven wars and drown out any threshold.
+	 */
+	public static void recordClanWarParticipation() {
+		try {
+			String sql = "INSERT INTO cw_participation "
+					+ "(clan_tag, player_tag, war_end_time, war_type, attacks_used, attacks_available) "
+					+ "VALUES (?, ?, ?, 'cw', ?, ?) "
+					+ "ON CONFLICT (clan_tag, player_tag, war_end_time) DO UPDATE SET "
+					+ "attacks_used = EXCLUDED.attacks_used, attacks_available = EXCLUDED.attacks_available";
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
+					.withZone(java.time.ZoneOffset.UTC);
+
+			for (String clanTag : DBUtil.getArrayListFromSQL("SELECT tag FROM clans", String.class)) {
+				try {
+					Clan clan = new Clan(clanTag);
+					if (!clan.isCWActive()) {
+						continue;
+					}
+
+					org.json.JSONObject cwJson = clan.getCWJson();
+					String state = cwJson.optString("state", "");
+					// Before battle day the lineup can still change
+					if (!state.equals("inWar") && !state.equals("warEnded")) {
+						continue;
+					}
+					if (!cwJson.has("endTime") || !cwJson.has("clan")) {
+						continue;
+					}
+
+					java.sql.Timestamp warEnd = java.sql.Timestamp.from(
+							java.time.Instant.from(formatter.parse(cwJson.getString("endTime"))));
+					int attacksPerMember = cwJson.optInt("attacksPerMember", 2);
+
+					org.json.JSONArray members = cwJson.getJSONObject("clan").getJSONArray("members");
+					for (int i = 0; i < members.length(); i++) {
+						org.json.JSONObject member = members.getJSONObject(i);
+						int used = member.has("attacks") ? member.getJSONArray("attacks").length() : 0;
+						DBUtil.executeUpdate(sql, clanTag, member.getString("tag"), warEnd, used, attacksPerMember);
+					}
+				} catch (final Exception e) {
+					System.err.println("Error recording war participation for clan " + clanTag + ": "
+							+ e.getMessage());
+				}
+			}
+		} catch (final Exception e) {
+			System.err.println("Error during war participation recording: " + e.getMessage());
+		}
+	}
+
 	public static void startClanGamesSavings() {
 		long nowMillis = System.currentTimeMillis();
 		ZonedDateTime zdt = getNext22thAt7am();
@@ -1372,6 +1459,7 @@ public class Bot extends ListenerAdapter {
 			}
 
 			backfillClanGamesBaselines();
+			recordClanWarParticipation();
 
 			// Update clan badges and descriptions
 			String clanSql = "SELECT tag FROM clans";
