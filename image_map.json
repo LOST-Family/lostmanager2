@@ -2187,7 +2187,7 @@
         "upgrade-price2": 3000000
       },
       "2": {
-        "level-icon": "/home-base/buildings/pet-house/pet-house-2.png", 
+        "level-icon": "/home-base/buildings/pet-house/pet-house-2.png",
         "upgrade-price2": 4000000
       },
       "3": {
@@ -2496,7 +2496,7 @@
       "1": {
         "level-icon": "/home-base/buildings/firespitter/firespitter-1.png",
         "upgrade-price1": 17000000
-      },  
+      },
       "2": {
         "level-icon": "/home-base/buildings/firespitter/firespitter-2.png",
         "upgrade-price1": 18000000
@@ -3351,98 +3351,838 @@
   "4000000": {
     "name": "Barbarian",
     "icon": "/home-base/troops/barbarian/barbarian-icon.png",
-    "character": "/home-base/troops/barbarian/barbarian-character.png"
+    "character": "/home-base/troops/barbarian/barbarian-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 10000
+      },
+      "3": {
+        "upgrade-price2": 50000
+      },
+      "4": {
+        "upgrade-price2": 130000
+      },
+      "5": {
+        "upgrade-price2": 300000
+      },
+      "6": {
+        "upgrade-price2": 800000
+      },
+      "7": {
+        "upgrade-price2": 1000000
+      },
+      "8": {
+        "upgrade-price2": 1500000
+      },
+      "9": {
+        "upgrade-price2": 2500000
+      },
+      "10": {
+        "upgrade-price2": 4300000
+      },
+      "11": {
+        "upgrade-price2": 6000000
+      },
+      "12": {
+        "upgrade-price2": 8000000
+      },
+      "13": {
+        "upgrade-price2": 24000000
+      }
+    }
   },
   "4000001": {
     "name": "Archer",
     "icon": "/home-base/troops/archer/archer-icon.png",
-    "character": "/home-base/troops/archer/archer-character.png"
+    "character": "/home-base/troops/archer/archer-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 20000
+      },
+      "3": {
+        "upgrade-price2": 80000
+      },
+      "4": {
+        "upgrade-price2": 200000
+      },
+      "5": {
+        "upgrade-price2": 500000
+      },
+      "6": {
+        "upgrade-price2": 1000000
+      },
+      "7": {
+        "upgrade-price2": 1500000
+      },
+      "8": {
+        "upgrade-price2": 2300000
+      },
+      "9": {
+        "upgrade-price2": 3000000
+      },
+      "10": {
+        "upgrade-price2": 4500000
+      },
+      "11": {
+        "upgrade-price2": 6500000
+      },
+      "12": {
+        "upgrade-price2": 9000000
+      },
+      "13": {
+        "upgrade-price2": 14000000
+      },
+      "14": {
+        "upgrade-price2": 25000000
+      }
+    }
   },
   "4000002": {
     "name": "Goblin",
     "icon": "/home-base/troops/goblin/goblin-icon.png",
-    "character": "/home-base/troops/goblin/goblin-character.png"
+    "character": "/home-base/troops/goblin/goblin-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 45000
+      },
+      "3": {
+        "upgrade-price2": 100000
+      },
+      "4": {
+        "upgrade-price2": 500000
+      },
+      "5": {
+        "upgrade-price2": 700000
+      },
+      "6": {
+        "upgrade-price2": 1600000
+      },
+      "7": {
+        "upgrade-price2": 2200000
+      },
+      "8": {
+        "upgrade-price2": 3700000
+      },
+      "9": {
+        "upgrade-price2": 8000000
+      },
+      "10": {
+        "upgrade-price2": 26000000
+      }
+    }
   },
   "4000003": {
     "name": "Giant",
     "icon": "/home-base/troops/giant/giant-icon.png",
-    "character": "/home-base/troops/giant/giant-character.png"
+    "character": "/home-base/troops/giant/giant-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 40000
+      },
+      "3": {
+        "upgrade-price2": 150000
+      },
+      "4": {
+        "upgrade-price2": 400000
+      },
+      "5": {
+        "upgrade-price2": 800000
+      },
+      "6": {
+        "upgrade-price2": 1500000
+      },
+      "7": {
+        "upgrade-price2": 2300000
+      },
+      "8": {
+        "upgrade-price2": 2600000
+      },
+      "9": {
+        "upgrade-price2": 3400000
+      },
+      "10": {
+        "upgrade-price2": 5000000
+      },
+      "11": {
+        "upgrade-price2": 7500000
+      },
+      "12": {
+        "upgrade-price2": 10000000
+      },
+      "13": {
+        "upgrade-price2": 15000000
+      },
+      "14": {
+        "upgrade-price2": 25000000
+      }
+    }
   },
   "4000004": {
     "name": "Wall Breaker",
     "icon": "/home-base/troops/wall-breaker/wall-breaker-icon.png",
-    "character": "/home-base/troops/wall-breaker/wall-breaker-character.png"
+    "character": "/home-base/troops/wall-breaker/wall-breaker-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 80000
+      },
+      "3": {
+        "upgrade-price2": 200000
+      },
+      "4": {
+        "upgrade-price2": 450000
+      },
+      "5": {
+        "upgrade-price2": 1000000
+      },
+      "6": {
+        "upgrade-price2": 2400000
+      },
+      "7": {
+        "upgrade-price2": 2800000
+      },
+      "8": {
+        "upgrade-price2": 3800000
+      },
+      "9": {
+        "upgrade-price2": 5200000
+      },
+      "10": {
+        "upgrade-price2": 6500000
+      },
+      "11": {
+        "upgrade-price2": 9500000
+      },
+      "12": {
+        "upgrade-price2": 11000000
+      },
+      "13": {
+        "upgrade-price2": 15500000
+      },
+      "14": {
+        "upgrade-price2": 26000000
+      }
+    }
   },
   "4000005": {
     "name": "Balloon",
     "icon": "/home-base/troops/balloon/balloon-icon.png",
-    "character": "/home-base/troops/balloon/balloon-character.png"
+    "character": "/home-base/troops/balloon/balloon-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 100000
+      },
+      "3": {
+        "upgrade-price2": 720000
+      },
+      "4": {
+        "upgrade-price2": 1300000
+      },
+      "5": {
+        "upgrade-price2": 2750000
+      },
+      "6": {
+        "upgrade-price2": 4400000
+      },
+      "7": {
+        "upgrade-price2": 5000000
+      },
+      "8": {
+        "upgrade-price2": 7000000
+      },
+      "9": {
+        "upgrade-price2": 10000000
+      },
+      "10": {
+        "upgrade-price2": 14000000
+      },
+      "11": {
+        "upgrade-price2": 17500000
+      },
+      "12": {
+        "upgrade-price2": 28000000
+      }
+    }
   },
   "4000006": {
     "name": "Wizard",
     "icon": "/home-base/troops/wizard/wizard-icon.png",
-    "character": "/home-base/troops/wizard/wizard-character.png"
+    "character": "/home-base/troops/wizard/wizard-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 120000
+      },
+      "3": {
+        "upgrade-price2": 300000
+      },
+      "4": {
+        "upgrade-price2": 600000
+      },
+      "5": {
+        "upgrade-price2": 1200000
+      },
+      "6": {
+        "upgrade-price2": 2000000
+      },
+      "7": {
+        "upgrade-price2": 2500000
+      },
+      "8": {
+        "upgrade-price2": 3100000
+      },
+      "9": {
+        "upgrade-price2": 4000000
+      },
+      "10": {
+        "upgrade-price2": 5500000
+      },
+      "11": {
+        "upgrade-price2": 10000000
+      },
+      "12": {
+        "upgrade-price2": 11500000
+      },
+      "13": {
+        "upgrade-price2": 16000000
+      },
+      "14": {
+        "upgrade-price2": 27000000
+      }
+    }
   },
   "4000007": {
     "name": "Healer",
     "icon": "/home-base/troops/healer/healer-icon.png",
-    "character": "/home-base/troops/healer/healer-character.png"
+    "character": "/home-base/troops/healer/healer-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 450000
+      },
+      "3": {
+        "upgrade-price2": 900000
+      },
+      "4": {
+        "upgrade-price2": 2500000
+      },
+      "5": {
+        "upgrade-price2": 4000000
+      },
+      "6": {
+        "upgrade-price2": 6000000
+      },
+      "7": {
+        "upgrade-price2": 9500000
+      },
+      "8": {
+        "upgrade-price2": 11000000
+      },
+      "9": {
+        "upgrade-price2": 13000000
+      },
+      "10": {
+        "upgrade-price2": 17000000
+      },
+      "11": {
+        "upgrade-price2": 28500000
+      }
+    }
   },
   "4000008": {
     "name": "Dragon",
     "icon": "/home-base/troops/dragon/dragon-icon.png",
-    "character": "/home-base/troops/dragon/dragon-character.png"
+    "character": "/home-base/troops/dragon/dragon-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 1000000
+      },
+      "3": {
+        "upgrade-price2": 2000000
+      },
+      "4": {
+        "upgrade-price2": 3000000
+      },
+      "5": {
+        "upgrade-price2": 3800000
+      },
+      "6": {
+        "upgrade-price2": 4900000
+      },
+      "7": {
+        "upgrade-price2": 5000000
+      },
+      "8": {
+        "upgrade-price2": 7500000
+      },
+      "9": {
+        "upgrade-price2": 10500000
+      },
+      "10": {
+        "upgrade-price2": 12000000
+      },
+      "11": {
+        "upgrade-price2": 14000000
+      },
+      "12": {
+        "upgrade-price2": 18500000
+      },
+      "13": {
+        "upgrade-price2": 28500000
+      }
+    }
   },
   "4000009": {
     "name": "P.E.K.K.A",
     "icon": "/home-base/troops/pekka/pekka-icon.png",
-    "character": "/home-base/troops/pekka/pekka-character.png"
+    "character": "/home-base/troops/pekka/pekka-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 600000
+      },
+      "3": {
+        "upgrade-price2": 1300000
+      },
+      "4": {
+        "upgrade-price2": 2000000
+      },
+      "5": {
+        "upgrade-price2": 2100000
+      },
+      "6": {
+        "upgrade-price2": 2500000
+      },
+      "7": {
+        "upgrade-price2": 4500000
+      },
+      "8": {
+        "upgrade-price2": 5000000
+      },
+      "9": {
+        "upgrade-price2": 5800000
+      },
+      "10": {
+        "upgrade-price2": 10500000
+      },
+      "11": {
+        "upgrade-price2": 12000000
+      },
+      "12": {
+        "upgrade-price2": 16000000
+      },
+      "13": {
+        "upgrade-price2": 28000000
+      }
+    }
   },
   "4000010": {
     "name": "Minion",
     "icon": "/home-base/troops/minion/minion-icon.png",
-    "character": "/home-base/troops/minion/minion-character.png"
+    "character": "/home-base/troops/minion/minion-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 1000
+      },
+      "3": {
+        "upgrade-price3": 2500
+      },
+      "4": {
+        "upgrade-price3": 5000
+      },
+      "5": {
+        "upgrade-price3": 10000
+      },
+      "6": {
+        "upgrade-price3": 15000
+      },
+      "7": {
+        "upgrade-price3": 31500
+      },
+      "8": {
+        "upgrade-price3": 47500
+      },
+      "9": {
+        "upgrade-price3": 75000
+      },
+      "10": {
+        "upgrade-price3": 100000
+      },
+      "11": {
+        "upgrade-price3": 115000
+      },
+      "12": {
+        "upgrade-price3": 160000
+      },
+      "13": {
+        "upgrade-price3": 220000
+      },
+      "14": {
+        "upgrade-price3": 335000
+      }
+    }
   },
   "4000011": {
     "name": "Hog Rider",
     "icon": "/home-base/troops/hog-rider/hog-rider-icon.png",
-    "character": "/home-base/troops/hog-rider/hog-rider-character.png"
+    "character": "/home-base/troops/hog-rider/hog-rider-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 2000
+      },
+      "3": {
+        "upgrade-price3": 3500
+      },
+      "4": {
+        "upgrade-price3": 5000
+      },
+      "5": {
+        "upgrade-price3": 10000
+      },
+      "6": {
+        "upgrade-price3": 18500
+      },
+      "7": {
+        "upgrade-price3": 35000
+      },
+      "8": {
+        "upgrade-price3": 47500
+      },
+      "9": {
+        "upgrade-price3": 50000
+      },
+      "10": {
+        "upgrade-price3": 85000
+      },
+      "11": {
+        "upgrade-price3": 107500
+      },
+      "12": {
+        "upgrade-price3": 125000
+      },
+      "13": {
+        "upgrade-price3": 175000
+      },
+      "14": {
+        "upgrade-price3": 240000
+      },
+      "15": {
+        "upgrade-price3": 340000
+      }
+    }
   },
   "4000012": {
     "name": "Valkyrie",
     "icon": "/home-base/troops/valkyrie/valkyrie-icon.png",
-    "character": "/home-base/troops/valkyrie/valkyrie-character.png"
+    "character": "/home-base/troops/valkyrie/valkyrie-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 3000
+      },
+      "3": {
+        "upgrade-price3": 5000
+      },
+      "4": {
+        "upgrade-price3": 10000
+      },
+      "5": {
+        "upgrade-price3": 16000
+      },
+      "6": {
+        "upgrade-price3": 31500
+      },
+      "7": {
+        "upgrade-price3": 55000
+      },
+      "8": {
+        "upgrade-price3": 77500
+      },
+      "9": {
+        "upgrade-price3": 105000
+      },
+      "10": {
+        "upgrade-price3": 120000
+      },
+      "11": {
+        "upgrade-price3": 170000
+      },
+      "12": {
+        "upgrade-price3": 340000
+      }
+    }
   },
   "4000013": {
     "name": "Golem",
     "icon": "/home-base/troops/golem/golem-icon.png",
-    "character": "/home-base/troops/golem/golem-character.png"
+    "character": "/home-base/troops/golem/golem-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 4000
+      },
+      "3": {
+        "upgrade-price3": 6000
+      },
+      "4": {
+        "upgrade-price3": 10000
+      },
+      "5": {
+        "upgrade-price3": 18500
+      },
+      "6": {
+        "upgrade-price3": 26500
+      },
+      "7": {
+        "upgrade-price3": 28500
+      },
+      "8": {
+        "upgrade-price3": 50000
+      },
+      "9": {
+        "upgrade-price3": 62500
+      },
+      "10": {
+        "upgrade-price3": 80000
+      },
+      "11": {
+        "upgrade-price3": 105000
+      },
+      "12": {
+        "upgrade-price3": 122500
+      },
+      "13": {
+        "upgrade-price3": 175000
+      },
+      "14": {
+        "upgrade-price3": 230000
+      },
+      "15": {
+        "upgrade-price3": 350000
+      }
+    }
   },
   "4000015": {
     "name": "Witch",
     "icon": "/home-base/troops/witch/witch-icon.png",
-    "character": "/home-base/troops/witch/witch-character.png"
+    "character": "/home-base/troops/witch/witch-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 20000
+      },
+      "3": {
+        "upgrade-price3": 29000
+      },
+      "4": {
+        "upgrade-price3": 45000
+      },
+      "5": {
+        "upgrade-price3": 62500
+      },
+      "6": {
+        "upgrade-price3": 150000
+      },
+      "7": {
+        "upgrade-price3": 180000
+      },
+      "8": {
+        "upgrade-price3": 355000
+      }
+    }
   },
   "4000017": {
     "name": "Lava Hound",
     "icon": "/home-base/troops/lava-hound/lava-hound-icon.png",
     "character": "/home-base/troops/lava-hound/lava-hound-character.png",
-    "character_2": "/home-base/troops/lava-hound/lava-hound-character-2.png"
+    "character_2": "/home-base/troops/lava-hound/lava-hound-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 14000
+      },
+      "3": {
+        "upgrade-price3": 21500
+      },
+      "4": {
+        "upgrade-price3": 42500
+      },
+      "5": {
+        "upgrade-price3": 60000
+      },
+      "6": {
+        "upgrade-price3": 80000
+      },
+      "7": {
+        "upgrade-price3": 200000
+      },
+      "8": {
+        "upgrade-price3": 345000
+      }
+    }
   },
   "4000022": {
     "name": "Bowler",
     "icon": "/home-base/troops/bowler/bowler-icon.png",
-    "character": "/home-base/troops/bowler/bowler-character.png"
+    "character": "/home-base/troops/bowler/bowler-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 32500
+      },
+      "3": {
+        "upgrade-price3": 44000
+      },
+      "4": {
+        "upgrade-price3": 62500
+      },
+      "5": {
+        "upgrade-price3": 85000
+      },
+      "6": {
+        "upgrade-price3": 110000
+      },
+      "7": {
+        "upgrade-price3": 145000
+      },
+      "8": {
+        "upgrade-price3": 175000
+      },
+      "9": {
+        "upgrade-price3": 260000
+      },
+      "10": {
+        "upgrade-price3": 360000
+      }
+    }
   },
   "4000023": {
     "name": "Baby Dragon",
     "icon": "/home-base/troops/baby-dragon/baby-dragon-icon.png",
-    "character": "/home-base/troops/baby-dragon/baby-dragon-character.png"
+    "character": "/home-base/troops/baby-dragon/baby-dragon-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 1500000
+      },
+      "3": {
+        "upgrade-price2": 2000000
+      },
+      "4": {
+        "upgrade-price2": 2800000
+      },
+      "5": {
+        "upgrade-price2": 3700000
+      },
+      "6": {
+        "upgrade-price2": 4800000
+      },
+      "7": {
+        "upgrade-price2": 6200000
+      },
+      "8": {
+        "upgrade-price2": 9500000
+      },
+      "9": {
+        "upgrade-price2": 11000000
+      },
+      "10": {
+        "upgrade-price2": 13500000
+      },
+      "11": {
+        "upgrade-price2": 16500000
+      },
+      "12": {
+        "upgrade-price2": 29000000
+      }
+    }
   },
   "4000024": {
     "name": "Miner",
     "icon": "/home-base/troops/miner/miner-icon.png",
-    "character": "/home-base/troops/miner/miner-character.png"
+    "character": "/home-base/troops/miner/miner-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 1500000
+      },
+      "3": {
+        "upgrade-price2": 2600000
+      },
+      "4": {
+        "upgrade-price2": 3000000
+      },
+      "5": {
+        "upgrade-price2": 4000000
+      },
+      "6": {
+        "upgrade-price2": 4800000
+      },
+      "7": {
+        "upgrade-price2": 6000000
+      },
+      "8": {
+        "upgrade-price2": 8600000
+      },
+      "9": {
+        "upgrade-price2": 10500000
+      },
+      "10": {
+        "upgrade-price2": 12500000
+      },
+      "11": {
+        "upgrade-price2": 16500000
+      },
+      "12": {
+        "upgrade-price2": 28000000
+      }
+    }
   },
   "4000026": {
     "name": "Super Barbarian",
@@ -3552,18 +4292,84 @@
     "name": "Wall Wrecker",
     "icon": "/home-base/troops/wall-wrecker/wall-wrecker-icon.png",
     "character": "/home-base/troops/wall-wrecker/wall-wrecker-character.png",
-    "character_2": "/home-base/troops/wall-wrecker/wall-wrecker-character-2.png"
+    "character_2": "/home-base/troops/wall-wrecker/wall-wrecker-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 2500000
+      },
+      "3": {
+        "upgrade-price2": 3500000
+      },
+      "4": {
+        "upgrade-price2": 6500000
+      },
+      "5": {
+        "upgrade-price2": 10000000
+      },
+      "6": {
+        "upgrade-price2": 26000000
+      }
+    }
   },
   "4000052": {
     "name": "Battle Blimp",
     "icon": "/home-base/troops/battle-blimp/battle-blimp-icon.png",
-    "character": "/home-base/troops/battle-blimp/battle-blimp-character.png"
+    "character": "/home-base/troops/battle-blimp/battle-blimp-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 2500000
+      },
+      "3": {
+        "upgrade-price2": 3500000
+      },
+      "4": {
+        "upgrade-price2": 6500000
+      },
+      "5": {
+        "upgrade-price2": 10000000
+      },
+      "6": {
+        "upgrade-price2": 26000000
+      }
+    }
   },
   "4000053": {
     "name": "Yeti",
     "icon": "/home-base/troops/yeti/yeti-icon.png",
     "character": "/home-base/troops/yeti/yeti-character.png",
-    "character_2": "/home-base/troops/yeti/yeti-character-2.png"
+    "character_2": "/home-base/troops/yeti/yeti-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 5000000
+      },
+      "3": {
+        "upgrade-price2": 6500000
+      },
+      "4": {
+        "upgrade-price2": 10000000
+      },
+      "5": {
+        "upgrade-price2": 12000000
+      },
+      "6": {
+        "upgrade-price2": 14500000
+      },
+      "7": {
+        "upgrade-price2": 17000000
+      },
+      "8": {
+        "upgrade-price2": 27500000
+      }
+    }
   },
   "4000055": {
     "name": "Sneaky Goblin",
@@ -3586,13 +4392,71 @@
     "name": "Ice Golem",
     "icon": "/home-base/troops/ice-golem/ice-golem-icon.png",
     "character": "/home-base/troops/ice-golem/ice-golem-character.png",
-    "character_2": "/home-base/troops/ice-golem/ice-golem-character-2.png"
+    "character_2": "/home-base/troops/ice-golem/ice-golem-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 27500
+      },
+      "3": {
+        "upgrade-price3": 42500
+      },
+      "4": {
+        "upgrade-price3": 50000
+      },
+      "5": {
+        "upgrade-price3": 62500
+      },
+      "6": {
+        "upgrade-price3": 110000
+      },
+      "7": {
+        "upgrade-price3": 140000
+      },
+      "8": {
+        "upgrade-price3": 180000
+      },
+      "9": {
+        "upgrade-price3": 280000
+      }
+    }
   },
   "4000059": {
     "name": "Electro Dragon",
     "icon": "/home-base/troops/electro-dragon/electro-dragon-icon.png",
     "character": "/home-base/troops/electro-dragon/electro-dragon-character.png",
-    "character-2": "/home-base/troops/electro-dragon/electro-dragon-character-2.png"
+    "character-2": "/home-base/troops/electro-dragon/electro-dragon-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 6000000
+      },
+      "3": {
+        "upgrade-price2": 7000000
+      },
+      "4": {
+        "upgrade-price2": 9000000
+      },
+      "5": {
+        "upgrade-price2": 11000000
+      },
+      "6": {
+        "upgrade-price2": 14000000
+      },
+      "7": {
+        "upgrade-price2": 16000000
+      },
+      "8": {
+        "upgrade-price2": 20000000
+      },
+      "9": {
+        "upgrade-price2": 30000000
+      }
+    }
   },
   "4000061": {
     "name": "Skeleton Barrel",
@@ -3602,7 +4466,27 @@
   "4000062": {
     "name": "Stone Slammer",
     "icon": "/home-base/troops/stone-slammer/stone-slammer-icon.png",
-    "character": "/home-base/troops/stone-slammer/stone-slammer-character.png"
+    "character": "/home-base/troops/stone-slammer/stone-slammer-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 2500000
+      },
+      "3": {
+        "upgrade-price2": 3500000
+      },
+      "4": {
+        "upgrade-price2": 6500000
+      },
+      "5": {
+        "upgrade-price2": 10000000
+      },
+      "6": {
+        "upgrade-price2": 26000000
+      }
+    }
   },
   "4000063": {
     "name": "Inferno Dragon",
@@ -3619,7 +4503,27 @@
   "4000065": {
     "name": "Dragon Rider",
     "icon": "/home-base/troops/dragon-rider/dragon-rider-icon.png",
-    "character": "/home-base/troops/dragon-rider/dragon-rider-character.png"
+    "character": "/home-base/troops/dragon-rider/dragon-rider-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 7500000
+      },
+      "3": {
+        "upgrade-price2": 12000000
+      },
+      "4": {
+        "upgrade-price2": 14500000
+      },
+      "5": {
+        "upgrade-price2": 19000000
+      },
+      "6": {
+        "upgrade-price2": 29500000
+      }
+    }
   },
   "4000066": {
     "name": "Super Witch",
@@ -3647,7 +4551,27 @@
     "name": "Siege Barracks",
     "icon": "/home-base/troops/siege-barracks/siege-barracks-icon.png",
     "character": "/home-base/troops/siege-barracks/siege-barracks-character.png",
-    "character_2": "/home-base/troops/siege-barracks/siege-barracks-character-2.png"
+    "character_2": "/home-base/troops/siege-barracks/siege-barracks-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 3500000
+      },
+      "3": {
+        "upgrade-price2": 5000000
+      },
+      "4": {
+        "upgrade-price2": 8000000
+      },
+      "5": {
+        "upgrade-price2": 18000000
+      },
+      "6": {
+        "upgrade-price2": 27000000
+      }
+    }
   },
   "4000076": {
     "name": "Ice Hound",
@@ -3667,7 +4591,21 @@
   "4000082": {
     "name": "Headhunter",
     "icon": "/home-base/troops/headhunter/headhunter-icon.png",
-    "character": "/home-base/troops/headhunter/headhunter-character.png"
+    "character": "/home-base/troops/headhunter/headhunter-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 57500
+      },
+      "3": {
+        "upgrade-price3": 90000
+      },
+      "4": {
+        "upgrade-price3": 370000
+      }
+    }
   },
   "4000083": {
     "name": "Super Wizard",
@@ -3685,19 +4623,76 @@
     "name": "Log Launcher",
     "icon": "/home-base/troops/log-launcher/log-launcher-icon.png",
     "character": "/home-base/troops/log-launcher/log-launcher-character.png",
-    "character_2": "/home-base/troops/log-launcher/log-launcher-character-2.png"
+    "character_2": "/home-base/troops/log-launcher/log-launcher-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 3200000
+      },
+      "3": {
+        "upgrade-price2": 4500000
+      },
+      "4": {
+        "upgrade-price2": 7500000
+      },
+      "5": {
+        "upgrade-price2": 18000000
+      },
+      "6": {
+        "upgrade-price2": 27000000
+      }
+    }
   },
   "4000091": {
     "name": "Flame Flinger",
     "icon": "/home-base/troops/flame-flinger/flame-flinger-icon.png",
     "character": "/home-base/troops/flame-flinger/flame-flinger-character.png",
-    "character_2": "/home-base/troops/flame-flinger/flame-flinger-character-2.png"
+    "character_2": "/home-base/troops/flame-flinger/flame-flinger-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 5500000
+      },
+      "3": {
+        "upgrade-price2": 8000000
+      },
+      "4": {
+        "upgrade-price2": 1000000
+      },
+      "5": {
+        "upgrade-price2": 18000000
+      }
+    }
   },
   "4000092": {
     "name": "Battle Drill",
     "icon": "/home-base/troops/battle-drill/battle-drill-icon.png",
     "character": "/home-base/troops/battle-drill/battle-drill-character.png",
-    "character_2": "/home-base/troops/battle-drill/battle-drill-character-2.png"
+    "character_2": "/home-base/troops/battle-drill/battle-drill-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 6000000
+      },
+      "3": {
+        "upgrade-price2": 8500000
+      },
+      "4": {
+        "upgrade-price2": 10000000
+      },
+      "5": {
+        "upgrade-price2": 17000000
+      },
+      "6": {
+        "upgrade-price2": 28000000
+      }
+    }
   },
   "4000094": {
     "name": "Ram Rider",
@@ -3709,13 +4704,44 @@
     "name": "Electro Titan",
     "icon": "/home-base/troops/electro-titan/electro-titan-icon.png",
     "character": "/home-base/troops/electro-titan/electro-titan-character.png",
-    "character_2": "/home-base/troops/electro-titan/electro-titan-character-2.png"
+    "character_2": "/home-base/troops/electro-titan/electro-titan-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 14000000
+      },
+      "3": {
+        "upgrade-price2": 16000000
+      },
+      "4": {
+        "upgrade-price2": 18500000
+      },
+      "5": {
+        "upgrade-price2": 30000000
+      }
+    }
   },
   "4000097": {
     "name": "Apprentice Warden",
     "icon": "/home-base/troops/apprentice-warden/apprentice-warden-icon.png",
     "character": "/home-base/troops/apprentice-warden/apprentice-warden-character.png",
-    "character-2": "/home-base/troops/apprentice-warden/apprentice-warden-character-2.png"
+    "character-2": "/home-base/troops/apprentice-warden/apprentice-warden-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 90000
+      },
+      "3": {
+        "upgrade-price3": 135000
+      },
+      "4": {
+        "upgrade-price3": 160000
+      }
+    }
   },
   "4000098": {
     "name": "Super Hog Rider",
@@ -3755,7 +4781,21 @@
   "4000110": {
     "name": "Root Rider",
     "icon": "/home-base/troops/root-rider/root-rider-icon.png",
-    "character": "/home-base/troops/root-rider/root-rider-character.png"
+    "character": "/home-base/troops/root-rider/root-rider-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 15000000
+      },
+      "3": {
+        "upgrade-price2": 17600000
+      },
+      "4": {
+        "upgrade-price2": 30000000
+      }
+    }
   },
   "4000118": {
     "name": "C.O.O.K.I.E",
@@ -3789,7 +4829,27 @@
     "name": "Druid",
     "icon": "/home-base/troops/druid/druid-icon.png",
     "character": "/home-base/troops/druid/druid-character.png",
-    "character_2": "/home-base/troops/druid/druid-character-2.png"
+    "character_2": "/home-base/troops/druid/druid-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 150000
+      },
+      "3": {
+        "upgrade-price3": 175000
+      },
+      "4": {
+        "upgrade-price3": 187500
+      },
+      "5": {
+        "upgrade-price3": 300000
+      },
+      "6": {
+        "upgrade-price3": 360000
+      }
+    }
   },
   "4000125": {
     "name": "Broom Witch",
@@ -3805,13 +4865,41 @@
     "name": "Thrower",
     "icon": "/home-base/troops/thrower/thrower-icon.png",
     "character": "/home-base/troops/thrower/thrower-character.png",
-    "character_2": "/home-base/troops/thrower/thrower-character-2.png"
+    "character_2": "/home-base/troops/thrower/thrower-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 16000000
+      },
+      "3": {
+        "upgrade-price2": 18000000
+      },
+      "4": {
+        "upgrade-price2": 27000000
+      }
+    }
   },
   "4000135": {
     "name": "Troop Launcher",
     "icon": "/home-base/troops/troop-launcher/troop-launcher-icon.png",
     "character": "/home-base/troops/troop-launcher/troop-launcher-character.png",
-    "character_2": "/home-base/troops/troop-launcher/troop-launcher-character-2.png"
+    "character_2": "/home-base/troops/troop-launcher/troop-launcher-character-2.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 8500000
+      },
+      "3": {
+        "upgrade-price2": 10000000
+      },
+      "4": {
+        "upgrade-price2": 17000000
+      }
+    }
   },
   "4000136": {
     "name": "Debt Collector",
@@ -3831,7 +4919,21 @@
   "4000150": {
     "name": "Furnace",
     "icon": "/home-base/troops/furnace/furnace-icon.png",
-    "character": "/home-base/troops/furnace/furnace-character.png"
+    "character": "/home-base/troops/furnace/furnace-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 200000
+      },
+      "3": {
+        "upgrade-price3": 260000
+      },
+      "4": {
+        "upgrade-price3": 320000
+      }
+    }
   },
   "4000156": {
     "name": "Giant Giant",
@@ -3867,117 +4969,2248 @@
   "4000177": {
     "name": "Meteor Golem",
     "icon": "/home-base/troops/meteor-golem/meteor-golem-icon.png",
-    "character": "/home-base/troops/meteor-golem/meteor-golem-character.png"
+    "character": "/home-base/troops/meteor-golem/meteor-golem-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 28000000
+      },
+      "3": {
+        "upgrade-price2": 30000000
+      }
+    }
   },
   "4000109": {
     "name": "Ruin Witch",
     "icon": "/home-base/troops/ruin-witch/ruin-witch-icon.png",
-    "character": "/home-base/troops/ruin-witch/ruin-witch-character.png"
+    "character": "/home-base/troops/ruin-witch/ruin-witch-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 220000
+      },
+      "3": {
+        "upgrade-price3": 300000
+      },
+      "4": {
+        "upgrade-price3": 380000
+      }
+    }
   },
   "4000188": {
     "name": "Sky Wagon",
     "icon": "/home-base/sky-wagon/sky-wagon/sky-wagon-icon.png",
-    "character": "/home-base/sky-wagon/sky-wagon/sky-wagon-character.png"
+    "character": "/home-base/sky-wagon/sky-wagon/sky-wagon-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {},
+      "3": {},
+      "4": {}
+    }
   },
   "28000000": {
     "name": "Barbarian King",
     "icon": "/home-base/heroes/barbarian-king-icon.png",
-    "character": "/home-base/heroes/barbarian-king-character.png"
+    "character": "/home-base/heroes/barbarian-king-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 5000
+      },
+      "3": {
+        "upgrade-price3": 5500
+      },
+      "4": {
+        "upgrade-price3": 6000
+      },
+      "5": {
+        "upgrade-price3": 6500
+      },
+      "6": {
+        "upgrade-price3": 7000
+      },
+      "7": {
+        "upgrade-price3": 7500
+      },
+      "8": {
+        "upgrade-price3": 8000
+      },
+      "9": {
+        "upgrade-price3": 8500
+      },
+      "10": {
+        "upgrade-price3": 10000
+      },
+      "11": {
+        "upgrade-price3": 10500
+      },
+      "12": {
+        "upgrade-price3": 11000
+      },
+      "13": {
+        "upgrade-price3": 11500
+      },
+      "14": {
+        "upgrade-price3": 12000
+      },
+      "15": {
+        "upgrade-price3": 12500
+      },
+      "16": {
+        "upgrade-price3": 13000
+      },
+      "17": {
+        "upgrade-price3": 13500
+      },
+      "18": {
+        "upgrade-price3": 14000
+      },
+      "19": {
+        "upgrade-price3": 14500
+      },
+      "20": {
+        "upgrade-price3": 15000
+      },
+      "21": {
+        "upgrade-price3": 17000
+      },
+      "22": {
+        "upgrade-price3": 19000
+      },
+      "23": {
+        "upgrade-price3": 21000
+      },
+      "24": {
+        "upgrade-price3": 23000
+      },
+      "25": {
+        "upgrade-price3": 25000
+      },
+      "26": {
+        "upgrade-price3": 27000
+      },
+      "27": {
+        "upgrade-price3": 29000
+      },
+      "28": {
+        "upgrade-price3": 31000
+      },
+      "29": {
+        "upgrade-price3": 33000
+      },
+      "30": {
+        "upgrade-price3": 35000
+      },
+      "31": {
+        "upgrade-price3": 37000
+      },
+      "32": {
+        "upgrade-price3": 39000
+      },
+      "33": {
+        "upgrade-price3": 41000
+      },
+      "34": {
+        "upgrade-price3": 43000
+      },
+      "35": {
+        "upgrade-price3": 45000
+      },
+      "36": {
+        "upgrade-price3": 47000
+      },
+      "37": {
+        "upgrade-price3": 49000
+      },
+      "38": {
+        "upgrade-price3": 51000
+      },
+      "39": {
+        "upgrade-price3": 53000
+      },
+      "40": {
+        "upgrade-price3": 55000
+      },
+      "41": {
+        "upgrade-price3": 58000
+      },
+      "42": {
+        "upgrade-price3": 61000
+      },
+      "43": {
+        "upgrade-price3": 64000
+      },
+      "44": {
+        "upgrade-price3": 67000
+      },
+      "45": {
+        "upgrade-price3": 70000
+      },
+      "46": {
+        "upgrade-price3": 73000
+      },
+      "47": {
+        "upgrade-price3": 76000
+      },
+      "48": {
+        "upgrade-price3": 79000
+      },
+      "49": {
+        "upgrade-price3": 82000
+      },
+      "50": {
+        "upgrade-price3": 85000
+      },
+      "51": {
+        "upgrade-price3": 86000
+      },
+      "52": {
+        "upgrade-price3": 87000
+      },
+      "53": {
+        "upgrade-price3": 88000
+      },
+      "54": {
+        "upgrade-price3": 89000
+      },
+      "55": {
+        "upgrade-price3": 90000
+      },
+      "56": {
+        "upgrade-price3": 93000
+      },
+      "57": {
+        "upgrade-price3": 96000
+      },
+      "58": {
+        "upgrade-price3": 99000
+      },
+      "59": {
+        "upgrade-price3": 102000
+      },
+      "60": {
+        "upgrade-price3": 105000
+      },
+      "61": {
+        "upgrade-price3": 107000
+      },
+      "62": {
+        "upgrade-price3": 109000
+      },
+      "63": {
+        "upgrade-price3": 111000
+      },
+      "64": {
+        "upgrade-price3": 113000
+      },
+      "65": {
+        "upgrade-price3": 115000
+      },
+      "66": {
+        "upgrade-price3": 117000
+      },
+      "67": {
+        "upgrade-price3": 119000
+      },
+      "68": {
+        "upgrade-price3": 121000
+      },
+      "69": {
+        "upgrade-price3": 123000
+      },
+      "70": {
+        "upgrade-price3": 125000
+      },
+      "71": {
+        "upgrade-price3": 130000
+      },
+      "72": {
+        "upgrade-price3": 135000
+      },
+      "73": {
+        "upgrade-price3": 140000
+      },
+      "74": {
+        "upgrade-price3": 145000
+      },
+      "75": {
+        "upgrade-price3": 150000
+      },
+      "76": {
+        "upgrade-price3": 155000
+      },
+      "77": {
+        "upgrade-price3": 160000
+      },
+      "78": {
+        "upgrade-price3": 165000
+      },
+      "79": {
+        "upgrade-price3": 170000
+      },
+      "80": {
+        "upgrade-price3": 175000
+      },
+      "81": {
+        "upgrade-price3": 180000
+      },
+      "82": {
+        "upgrade-price3": 185000
+      },
+      "83": {
+        "upgrade-price3": 190000
+      },
+      "84": {
+        "upgrade-price3": 195000
+      },
+      "85": {
+        "upgrade-price3": 200000
+      },
+      "86": {
+        "upgrade-price3": 215000
+      },
+      "87": {
+        "upgrade-price3": 225000
+      },
+      "88": {
+        "upgrade-price3": 235000
+      },
+      "89": {
+        "upgrade-price3": 245000
+      },
+      "90": {
+        "upgrade-price3": 255000
+      },
+      "91": {
+        "upgrade-price3": 280000
+      },
+      "92": {
+        "upgrade-price3": 290000
+      },
+      "93": {
+        "upgrade-price3": 300000
+      },
+      "94": {
+        "upgrade-price3": 310000
+      },
+      "95": {
+        "upgrade-price3": 320000
+      },
+      "96": {
+        "upgrade-price3": 340000
+      },
+      "97": {
+        "upgrade-price3": 350000
+      },
+      "98": {
+        "upgrade-price3": 360000
+      },
+      "99": {
+        "upgrade-price3": 370000
+      },
+      "100": {
+        "upgrade-price3": 380000
+      },
+      "101": {
+        "upgrade-price3": 400000
+      },
+      "102": {
+        "upgrade-price3": 410000
+      },
+      "103": {
+        "upgrade-price3": 420000
+      },
+      "104": {
+        "upgrade-price3": 430000
+      },
+      "105": {
+        "upgrade-price3": 450000
+      },
+      "106": {
+        "upgrade-price3": 460000
+      },
+      "107": {
+        "upgrade-price3": 470000
+      },
+      "108": {
+        "upgrade-price3": 475000
+      },
+      "109": {
+        "upgrade-price3": 485000
+      },
+      "110": {
+        "upgrade-price3": 490000
+      }
+    }
   },
   "28000001": {
     "name": "Archer Queen",
     "icon": "/home-base/heroes/archer-queen-icon.png",
-    "character": "/home-base/heroes/archer-queen-character.png"
+    "character": "/home-base/heroes/archer-queen-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 5000
+      },
+      "3": {
+        "upgrade-price3": 5500
+      },
+      "4": {
+        "upgrade-price3": 6000
+      },
+      "5": {
+        "upgrade-price3": 6500
+      },
+      "6": {
+        "upgrade-price3": 7000
+      },
+      "7": {
+        "upgrade-price3": 7500
+      },
+      "8": {
+        "upgrade-price3": 8000
+      },
+      "9": {
+        "upgrade-price3": 8500
+      },
+      "10": {
+        "upgrade-price3": 10000
+      },
+      "11": {
+        "upgrade-price3": 10500
+      },
+      "12": {
+        "upgrade-price3": 11000
+      },
+      "13": {
+        "upgrade-price3": 11500
+      },
+      "14": {
+        "upgrade-price3": 12000
+      },
+      "15": {
+        "upgrade-price3": 12500
+      },
+      "16": {
+        "upgrade-price3": 13000
+      },
+      "17": {
+        "upgrade-price3": 13500
+      },
+      "18": {
+        "upgrade-price3": 14000
+      },
+      "19": {
+        "upgrade-price3": 14500
+      },
+      "20": {
+        "upgrade-price3": 15000
+      },
+      "21": {
+        "upgrade-price3": 17000
+      },
+      "22": {
+        "upgrade-price3": 19000
+      },
+      "23": {
+        "upgrade-price3": 21000
+      },
+      "24": {
+        "upgrade-price3": 23000
+      },
+      "25": {
+        "upgrade-price3": 25000
+      },
+      "26": {
+        "upgrade-price3": 27000
+      },
+      "27": {
+        "upgrade-price3": 29000
+      },
+      "28": {
+        "upgrade-price3": 31000
+      },
+      "29": {
+        "upgrade-price3": 33000
+      },
+      "30": {
+        "upgrade-price3": 35000
+      },
+      "31": {
+        "upgrade-price3": 37000
+      },
+      "32": {
+        "upgrade-price3": 39000
+      },
+      "33": {
+        "upgrade-price3": 41000
+      },
+      "34": {
+        "upgrade-price3": 43000
+      },
+      "35": {
+        "upgrade-price3": 45000
+      },
+      "36": {
+        "upgrade-price3": 47000
+      },
+      "37": {
+        "upgrade-price3": 49000
+      },
+      "38": {
+        "upgrade-price3": 51000
+      },
+      "39": {
+        "upgrade-price3": 53000
+      },
+      "40": {
+        "upgrade-price3": 55000
+      },
+      "41": {
+        "upgrade-price3": 58000
+      },
+      "42": {
+        "upgrade-price3": 61000
+      },
+      "43": {
+        "upgrade-price3": 64000
+      },
+      "44": {
+        "upgrade-price3": 67000
+      },
+      "45": {
+        "upgrade-price3": 70000
+      },
+      "46": {
+        "upgrade-price3": 73000
+      },
+      "47": {
+        "upgrade-price3": 76000
+      },
+      "48": {
+        "upgrade-price3": 79000
+      },
+      "49": {
+        "upgrade-price3": 82000
+      },
+      "50": {
+        "upgrade-price3": 85000
+      },
+      "51": {
+        "upgrade-price3": 86000
+      },
+      "52": {
+        "upgrade-price3": 87000
+      },
+      "53": {
+        "upgrade-price3": 88000
+      },
+      "54": {
+        "upgrade-price3": 89000
+      },
+      "55": {
+        "upgrade-price3": 90000
+      },
+      "56": {
+        "upgrade-price3": 93000
+      },
+      "57": {
+        "upgrade-price3": 96000
+      },
+      "58": {
+        "upgrade-price3": 99000
+      },
+      "59": {
+        "upgrade-price3": 102000
+      },
+      "60": {
+        "upgrade-price3": 105000
+      },
+      "61": {
+        "upgrade-price3": 107000
+      },
+      "62": {
+        "upgrade-price3": 109000
+      },
+      "63": {
+        "upgrade-price3": 111000
+      },
+      "64": {
+        "upgrade-price3": 113000
+      },
+      "65": {
+        "upgrade-price3": 115000
+      },
+      "66": {
+        "upgrade-price3": 117000
+      },
+      "67": {
+        "upgrade-price3": 119000
+      },
+      "68": {
+        "upgrade-price3": 121000
+      },
+      "69": {
+        "upgrade-price3": 123000
+      },
+      "70": {
+        "upgrade-price3": 125000
+      },
+      "71": {
+        "upgrade-price3": 130000
+      },
+      "72": {
+        "upgrade-price3": 135000
+      },
+      "73": {
+        "upgrade-price3": 140000
+      },
+      "74": {
+        "upgrade-price3": 145000
+      },
+      "75": {
+        "upgrade-price3": 150000
+      },
+      "76": {
+        "upgrade-price3": 155000
+      },
+      "77": {
+        "upgrade-price3": 160000
+      },
+      "78": {
+        "upgrade-price3": 165000
+      },
+      "79": {
+        "upgrade-price3": 170000
+      },
+      "80": {
+        "upgrade-price3": 175000
+      },
+      "81": {
+        "upgrade-price3": 180000
+      },
+      "82": {
+        "upgrade-price3": 185000
+      },
+      "83": {
+        "upgrade-price3": 190000
+      },
+      "84": {
+        "upgrade-price3": 195000
+      },
+      "85": {
+        "upgrade-price3": 200000
+      },
+      "86": {
+        "upgrade-price3": 215000
+      },
+      "87": {
+        "upgrade-price3": 225000
+      },
+      "88": {
+        "upgrade-price3": 235000
+      },
+      "89": {
+        "upgrade-price3": 245000
+      },
+      "90": {
+        "upgrade-price3": 255000
+      },
+      "91": {
+        "upgrade-price3": 280000
+      },
+      "92": {
+        "upgrade-price3": 290000
+      },
+      "93": {
+        "upgrade-price3": 300000
+      },
+      "94": {
+        "upgrade-price3": 310000
+      },
+      "95": {
+        "upgrade-price3": 320000
+      },
+      "96": {
+        "upgrade-price3": 340000
+      },
+      "97": {
+        "upgrade-price3": 350000
+      },
+      "98": {
+        "upgrade-price3": 360000
+      },
+      "99": {
+        "upgrade-price3": 370000
+      },
+      "100": {
+        "upgrade-price3": 380000
+      },
+      "101": {
+        "upgrade-price3": 400000
+      },
+      "102": {
+        "upgrade-price3": 410000
+      },
+      "103": {
+        "upgrade-price3": 420000
+      },
+      "104": {
+        "upgrade-price3": 430000
+      },
+      "105": {
+        "upgrade-price3": 450000
+      },
+      "106": {
+        "upgrade-price3": 460000
+      },
+      "107": {
+        "upgrade-price3": 470000
+      },
+      "108": {
+        "upgrade-price3": 475000
+      },
+      "109": {
+        "upgrade-price3": 485000
+      },
+      "110": {
+        "upgrade-price3": 490000
+      }
+    }
   },
   "28000002": {
     "name": "Grand Warden",
     "icon": "/home-base/heroes/grand-warden-icon.png",
-    "character": "/home-base/heroes/grand-warden-character.png"
+    "character": "/home-base/heroes/grand-warden-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 1000000
+      },
+      "3": {
+        "upgrade-price2": 1100000
+      },
+      "4": {
+        "upgrade-price2": 1200000
+      },
+      "5": {
+        "upgrade-price2": 1400000
+      },
+      "6": {
+        "upgrade-price2": 1500000
+      },
+      "7": {
+        "upgrade-price2": 1700000
+      },
+      "8": {
+        "upgrade-price2": 1800000
+      },
+      "9": {
+        "upgrade-price2": 2000000
+      },
+      "10": {
+        "upgrade-price2": 2300000
+      },
+      "11": {
+        "upgrade-price2": 2700000
+      },
+      "12": {
+        "upgrade-price2": 3000000
+      },
+      "13": {
+        "upgrade-price2": 3400000
+      },
+      "14": {
+        "upgrade-price2": 3700000
+      },
+      "15": {
+        "upgrade-price2": 4100000
+      },
+      "16": {
+        "upgrade-price2": 4400000
+      },
+      "17": {
+        "upgrade-price2": 4800000
+      },
+      "18": {
+        "upgrade-price2": 5100000
+      },
+      "19": {
+        "upgrade-price2": 5500000
+      },
+      "20": {
+        "upgrade-price2": 6000000
+      },
+      "21": {
+        "upgrade-price2": 6500000
+      },
+      "22": {
+        "upgrade-price2": 6600000
+      },
+      "23": {
+        "upgrade-price2": 6700000
+      },
+      "24": {
+        "upgrade-price2": 6800000
+      },
+      "25": {
+        "upgrade-price2": 6900000
+      },
+      "26": {
+        "upgrade-price2": 7000000
+      },
+      "27": {
+        "upgrade-price2": 7100000
+      },
+      "28": {
+        "upgrade-price2": 7200000
+      },
+      "29": {
+        "upgrade-price2": 7300000
+      },
+      "30": {
+        "upgrade-price2": 7400000
+      },
+      "31": {
+        "upgrade-price2": 7500000
+      },
+      "32": {
+        "upgrade-price2": 7600000
+      },
+      "33": {
+        "upgrade-price2": 7700000
+      },
+      "34": {
+        "upgrade-price2": 7800000
+      },
+      "35": {
+        "upgrade-price2": 7900000
+      },
+      "36": {
+        "upgrade-price2": 8000000
+      },
+      "37": {
+        "upgrade-price2": 8100000
+      },
+      "38": {
+        "upgrade-price2": 8200000
+      },
+      "39": {
+        "upgrade-price2": 8300000
+      },
+      "40": {
+        "upgrade-price2": 8400000
+      },
+      "41": {
+        "upgrade-price2": 8500000
+      },
+      "42": {
+        "upgrade-price2": 8800000
+      },
+      "43": {
+        "upgrade-price2": 9100000
+      },
+      "44": {
+        "upgrade-price2": 9400000
+      },
+      "45": {
+        "upgrade-price2": 9700000
+      },
+      "46": {
+        "upgrade-price2": 10000000
+      },
+      "47": {
+        "upgrade-price2": 10300000
+      },
+      "48": {
+        "upgrade-price2": 10600000
+      },
+      "49": {
+        "upgrade-price2": 11000000
+      },
+      "50": {
+        "upgrade-price2": 11500000
+      },
+      "51": {
+        "upgrade-price2": 12000000
+      },
+      "52": {
+        "upgrade-price2": 12500000
+      },
+      "53": {
+        "upgrade-price2": 13000000
+      },
+      "54": {
+        "upgrade-price2": 13500000
+      },
+      "55": {
+        "upgrade-price2": 14000000
+      },
+      "56": {
+        "upgrade-price2": 14500000
+      },
+      "57": {
+        "upgrade-price2": 15000000
+      },
+      "58": {
+        "upgrade-price2": 15500000
+      },
+      "59": {
+        "upgrade-price2": 16000000
+      },
+      "60": {
+        "upgrade-price2": 16200000
+      },
+      "61": {
+        "upgrade-price2": 16700000
+      },
+      "62": {
+        "upgrade-price2": 16900000
+      },
+      "63": {
+        "upgrade-price2": 17100000
+      },
+      "64": {
+        "upgrade-price2": 17300000
+      },
+      "65": {
+        "upgrade-price2": 17500000
+      },
+      "66": {
+        "upgrade-price2": 18000000
+      },
+      "67": {
+        "upgrade-price2": 18500000
+      },
+      "68": {
+        "upgrade-price2": 19000000
+      },
+      "69": {
+        "upgrade-price2": 19500000
+      },
+      "70": {
+        "upgrade-price2": 20000000
+      },
+      "71": {
+        "upgrade-price2": 20500000
+      },
+      "72": {
+        "upgrade-price2": 21000000
+      },
+      "73": {
+        "upgrade-price2": 21500000
+      },
+      "74": {
+        "upgrade-price2": 22000000
+      },
+      "75": {
+        "upgrade-price2": 22500000
+      },
+      "76": {
+        "upgrade-price2": 23500000
+      },
+      "77": {
+        "upgrade-price2": 24500000
+      },
+      "78": {
+        "upgrade-price2": 25500000
+      },
+      "79": {
+        "upgrade-price2": 26500000
+      },
+      "80": {
+        "upgrade-price2": 27500000
+      },
+      "81": {
+        "upgrade-price2": 28500000
+      },
+      "82": {
+        "upgrade-price2": 29000000
+      },
+      "83": {
+        "upgrade-price2": 29500000
+      },
+      "84": {
+        "upgrade-price2": 30000000
+      },
+      "85": {
+        "upgrade-price2": 30500000
+      }
+    }
   },
   "28000003": {
     "name": "Battle Machine",
     "icon": "/builder-base/heroes/battle-machine-icon.png",
-    "character": "/builder-base/heroes/battle-machine-character.png"
+    "character": "/builder-base/heroes/battle-machine-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price4": 900000
+      },
+      "2": {
+        "upgrade-price4": 1000000
+      },
+      "3": {
+        "upgrade-price4": 1100000
+      },
+      "4": {
+        "upgrade-price4": 1200000
+      },
+      "5": {
+        "upgrade-price4": 1300000
+      },
+      "6": {
+        "upgrade-price4": 1500000
+      },
+      "7": {
+        "upgrade-price4": 1600000
+      },
+      "8": {
+        "upgrade-price4": 1700000
+      },
+      "9": {
+        "upgrade-price4": 1800000
+      },
+      "10": {
+        "upgrade-price4": 1900000
+      },
+      "11": {
+        "upgrade-price4": 2100000
+      },
+      "12": {
+        "upgrade-price4": 2200000
+      },
+      "13": {
+        "upgrade-price4": 2300000
+      },
+      "14": {
+        "upgrade-price4": 2400000
+      },
+      "15": {
+        "upgrade-price4": 2500000
+      },
+      "16": {
+        "upgrade-price4": 2600000
+      },
+      "17": {
+        "upgrade-price4": 2700000
+      },
+      "18": {
+        "upgrade-price4": 2800000
+      },
+      "19": {
+        "upgrade-price4": 2900000
+      },
+      "20": {
+        "upgrade-price4": 3000000
+      },
+      "21": {
+        "upgrade-price4": 3100000
+      },
+      "22": {
+        "upgrade-price4": 3200000
+      },
+      "23": {
+        "upgrade-price4": 3300000
+      },
+      "24": {
+        "upgrade-price4": 3400000
+      },
+      "25": {
+        "upgrade-price4": 3500000
+      },
+      "26": {
+        "upgrade-price4": 3600000
+      },
+      "27": {
+        "upgrade-price4": 3700000
+      },
+      "28": {
+        "upgrade-price4": 3800000
+      },
+      "29": {
+        "upgrade-price4": 3900000
+      },
+      "30": {
+        "upgrade-price4": 4000000
+      },
+      "31": {
+        "upgrade-price4": 4100000
+      },
+      "32": {
+        "upgrade-price4": 4200000
+      },
+      "33": {
+        "upgrade-price4": 4300000
+      },
+      "34": {
+        "upgrade-price4": 4400000
+      },
+      "35": {
+        "upgrade-price4": 4500000
+      }
+    }
   },
   "28000004": {
     "name": "Royal Champion",
     "icon": "/home-base/heroes/royal-champion-icon.png",
-    "character": "/home-base/heroes/royal-champion-character.png"
+    "character": "/home-base/heroes/royal-champion-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 10000
+      },
+      "3": {
+        "upgrade-price3": 15000
+      },
+      "4": {
+        "upgrade-price3": 20000
+      },
+      "5": {
+        "upgrade-price3": 25000
+      },
+      "6": {
+        "upgrade-price3": 30000
+      },
+      "7": {
+        "upgrade-price3": 35000
+      },
+      "8": {
+        "upgrade-price3": 40000
+      },
+      "9": {
+        "upgrade-price3": 45000
+      },
+      "10": {
+        "upgrade-price3": 50000
+      },
+      "11": {
+        "upgrade-price3": 53000
+      },
+      "12": {
+        "upgrade-price3": 56000
+      },
+      "13": {
+        "upgrade-price3": 59000
+      },
+      "14": {
+        "upgrade-price3": 62000
+      },
+      "15": {
+        "upgrade-price3": 65000
+      },
+      "16": {
+        "upgrade-price3": 70000
+      },
+      "17": {
+        "upgrade-price3": 75000
+      },
+      "18": {
+        "upgrade-price3": 80000
+      },
+      "19": {
+        "upgrade-price3": 85000
+      },
+      "20": {
+        "upgrade-price3": 90000
+      },
+      "21": {
+        "upgrade-price3": 95000
+      },
+      "22": {
+        "upgrade-price3": 100000
+      },
+      "23": {
+        "upgrade-price3": 105000
+      },
+      "24": {
+        "upgrade-price3": 110000
+      },
+      "25": {
+        "upgrade-price3": 115000
+      },
+      "26": {
+        "upgrade-price3": 120000
+      },
+      "27": {
+        "upgrade-price3": 125000
+      },
+      "28": {
+        "upgrade-price3": 130000
+      },
+      "29": {
+        "upgrade-price3": 135000
+      },
+      "30": {
+        "upgrade-price3": 140000
+      },
+      "31": {
+        "upgrade-price3": 145000
+      },
+      "32": {
+        "upgrade-price3": 150000
+      },
+      "33": {
+        "upgrade-price3": 155000
+      },
+      "34": {
+        "upgrade-price3": 160000
+      },
+      "35": {
+        "upgrade-price3": 165000
+      },
+      "36": {
+        "upgrade-price3": 170000
+      },
+      "37": {
+        "upgrade-price3": 175000
+      },
+      "38": {
+        "upgrade-price3": 180000
+      },
+      "39": {
+        "upgrade-price3": 200000
+      },
+      "40": {
+        "upgrade-price3": 220000
+      },
+      "41": {
+        "upgrade-price3": 240000
+      },
+      "42": {
+        "upgrade-price3": 260000
+      },
+      "43": {
+        "upgrade-price3": 280000
+      },
+      "44": {
+        "upgrade-price3": 300000
+      },
+      "45": {
+        "upgrade-price3": 320000
+      },
+      "46": {
+        "upgrade-price3": 340000
+      },
+      "47": {
+        "upgrade-price3": 350000
+      },
+      "48": {
+        "upgrade-price3": 360000
+      },
+      "49": {
+        "upgrade-price3": 370000
+      },
+      "50": {
+        "upgrade-price3": 380000
+      },
+      "51": {
+        "upgrade-price3": 400000
+      },
+      "52": {
+        "upgrade-price3": 410000
+      },
+      "53": {
+        "upgrade-price3": 420000
+      },
+      "54": {
+        "upgrade-price3": 430000
+      },
+      "55": {
+        "upgrade-price3": 450000
+      }
+    }
   },
   "28000005": {
     "name": "Battle Copter",
     "icon": "/builder-base/heroes/battle-copter-icon.png",
-    "character": "/builder-base/heroes/battle-copter-character.png"
+    "character": "/builder-base/heroes/battle-copter-character.png",
+    "levels": {
+      "15": {
+        "upgrade-price4": 2500000
+      },
+      "16": {
+        "upgrade-price4": 2600000
+      },
+      "17": {
+        "upgrade-price4": 2700000
+      },
+      "18": {
+        "upgrade-price4": 2800000
+      },
+      "19": {
+        "upgrade-price4": 2900000
+      },
+      "20": {
+        "upgrade-price4": 3000000
+      },
+      "21": {
+        "upgrade-price4": 3100000
+      },
+      "22": {
+        "upgrade-price4": 3200000
+      },
+      "23": {
+        "upgrade-price4": 3300000
+      },
+      "24": {
+        "upgrade-price4": 3400000
+      },
+      "25": {
+        "upgrade-price4": 3500000
+      },
+      "26": {
+        "upgrade-price4": 3600000
+      },
+      "27": {
+        "upgrade-price4": 3700000
+      },
+      "28": {
+        "upgrade-price4": 3800000
+      },
+      "29": {
+        "upgrade-price4": 3900000
+      },
+      "30": {
+        "upgrade-price4": 4000000
+      },
+      "31": {
+        "upgrade-price4": 4100000
+      },
+      "32": {
+        "upgrade-price4": 4200000
+      },
+      "33": {
+        "upgrade-price4": 4300000
+      },
+      "34": {
+        "upgrade-price4": 4400000
+      },
+      "35": {
+        "upgrade-price4": 4500000
+      }
+    }
   },
   "28000006": {
     "name": "Minion Prince",
     "icon": "/home-base/heroes/minion-prince-icon.png",
-    "character": "/home-base/heroes/minion-prince-character.png"
+    "character": "/home-base/heroes/minion-prince-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 5000
+      },
+      "3": {
+        "upgrade-price3": 5500
+      },
+      "4": {
+        "upgrade-price3": 6000
+      },
+      "5": {
+        "upgrade-price3": 6500
+      },
+      "6": {
+        "upgrade-price3": 7000
+      },
+      "7": {
+        "upgrade-price3": 7500
+      },
+      "8": {
+        "upgrade-price3": 8000
+      },
+      "9": {
+        "upgrade-price3": 8500
+      },
+      "10": {
+        "upgrade-price3": 10000
+      },
+      "11": {
+        "upgrade-price3": 10500
+      },
+      "12": {
+        "upgrade-price3": 11000
+      },
+      "13": {
+        "upgrade-price3": 11500
+      },
+      "14": {
+        "upgrade-price3": 12000
+      },
+      "15": {
+        "upgrade-price3": 12500
+      },
+      "16": {
+        "upgrade-price3": 13000
+      },
+      "17": {
+        "upgrade-price3": 13500
+      },
+      "18": {
+        "upgrade-price3": 14000
+      },
+      "19": {
+        "upgrade-price3": 14500
+      },
+      "20": {
+        "upgrade-price3": 15000
+      },
+      "21": {
+        "upgrade-price3": 17000
+      },
+      "22": {
+        "upgrade-price3": 19000
+      },
+      "23": {
+        "upgrade-price3": 21000
+      },
+      "24": {
+        "upgrade-price3": 23000
+      },
+      "25": {
+        "upgrade-price3": 25000
+      },
+      "26": {
+        "upgrade-price3": 27000
+      },
+      "27": {
+        "upgrade-price3": 29000
+      },
+      "28": {
+        "upgrade-price3": 31000
+      },
+      "29": {
+        "upgrade-price3": 33000
+      },
+      "30": {
+        "upgrade-price3": 35000
+      },
+      "31": {
+        "upgrade-price3": 36000
+      },
+      "32": {
+        "upgrade-price3": 37000
+      },
+      "33": {
+        "upgrade-price3": 38000
+      },
+      "34": {
+        "upgrade-price3": 39000
+      },
+      "35": {
+        "upgrade-price3": 40000
+      },
+      "36": {
+        "upgrade-price3": 41000
+      },
+      "37": {
+        "upgrade-price3": 42000
+      },
+      "38": {
+        "upgrade-price3": 43000
+      },
+      "39": {
+        "upgrade-price3": 44000
+      },
+      "40": {
+        "upgrade-price3": 45000
+      },
+      "41": {
+        "upgrade-price3": 50000
+      },
+      "42": {
+        "upgrade-price3": 55000
+      },
+      "43": {
+        "upgrade-price3": 60000
+      },
+      "44": {
+        "upgrade-price3": 65000
+      },
+      "45": {
+        "upgrade-price3": 70000
+      },
+      "46": {
+        "upgrade-price3": 75000
+      },
+      "47": {
+        "upgrade-price3": 80000
+      },
+      "48": {
+        "upgrade-price3": 85000
+      },
+      "49": {
+        "upgrade-price3": 90000
+      },
+      "50": {
+        "upgrade-price3": 95000
+      },
+      "51": {
+        "upgrade-price3": 100000
+      },
+      "52": {
+        "upgrade-price3": 105000
+      },
+      "53": {
+        "upgrade-price3": 110000
+      },
+      "54": {
+        "upgrade-price3": 115000
+      },
+      "55": {
+        "upgrade-price3": 120000
+      },
+      "56": {
+        "upgrade-price3": 125000
+      },
+      "57": {
+        "upgrade-price3": 130000
+      },
+      "58": {
+        "upgrade-price3": 135000
+      },
+      "59": {
+        "upgrade-price3": 140000
+      },
+      "60": {
+        "upgrade-price3": 145000
+      },
+      "61": {
+        "upgrade-price3": 150000
+      },
+      "62": {
+        "upgrade-price3": 155000
+      },
+      "63": {
+        "upgrade-price3": 160000
+      },
+      "64": {
+        "upgrade-price3": 165000
+      },
+      "65": {
+        "upgrade-price3": 170000
+      },
+      "66": {
+        "upgrade-price3": 175000
+      },
+      "67": {
+        "upgrade-price3": 180000
+      },
+      "68": {
+        "upgrade-price3": 185000
+      },
+      "69": {
+        "upgrade-price3": 190000
+      },
+      "70": {
+        "upgrade-price3": 195000
+      },
+      "71": {
+        "upgrade-price3": 200000
+      },
+      "72": {
+        "upgrade-price3": 205000
+      },
+      "73": {
+        "upgrade-price3": 210000
+      },
+      "74": {
+        "upgrade-price3": 220000
+      },
+      "75": {
+        "upgrade-price3": 230000
+      },
+      "76": {
+        "upgrade-price3": 240000
+      },
+      "77": {
+        "upgrade-price3": 250000
+      },
+      "78": {
+        "upgrade-price3": 260000
+      },
+      "79": {
+        "upgrade-price3": 270000
+      },
+      "80": {
+        "upgrade-price3": 280000
+      },
+      "81": {
+        "upgrade-price3": 290000
+      },
+      "82": {
+        "upgrade-price3": 300000
+      },
+      "83": {
+        "upgrade-price3": 310000
+      },
+      "84": {
+        "upgrade-price3": 320000
+      },
+      "85": {
+        "upgrade-price3": 330000
+      },
+      "86": {
+        "upgrade-price3": 340000
+      },
+      "87": {
+        "upgrade-price3": 350000
+      },
+      "88": {
+        "upgrade-price3": 360000
+      },
+      "89": {
+        "upgrade-price3": 370000
+      },
+      "90": {
+        "upgrade-price3": 380000
+      },
+      "91": {
+        "upgrade-price3": 400000
+      },
+      "92": {
+        "upgrade-price3": 410000
+      },
+      "93": {
+        "upgrade-price3": 420000
+      },
+      "94": {
+        "upgrade-price3": 430000
+      },
+      "95": {
+        "upgrade-price3": 450000
+      }
+    }
   },
   "28000007": {
     "name": "Dragon Duke",
     "icon": "/home-base/heroes/dragon-duke-icon.png",
-    "character": "/home-base/heroes/dragon-duke-character.png"
+    "character": "/home-base/heroes/dragon-duke-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 50000
+      },
+      "3": {
+        "upgrade-price3": 60000
+      },
+      "4": {
+        "upgrade-price3": 70000
+      },
+      "5": {
+        "upgrade-price3": 80000
+      },
+      "6": {
+        "upgrade-price3": 90000
+      },
+      "7": {
+        "upgrade-price3": 100000
+      },
+      "8": {
+        "upgrade-price3": 110000
+      },
+      "9": {
+        "upgrade-price3": 120000
+      },
+      "10": {
+        "upgrade-price3": 130000
+      },
+      "11": {
+        "upgrade-price3": 150000
+      },
+      "12": {
+        "upgrade-price3": 175000
+      },
+      "13": {
+        "upgrade-price3": 200000
+      },
+      "14": {
+        "upgrade-price3": 225000
+      },
+      "15": {
+        "upgrade-price3": 250000
+      },
+      "16": {
+        "upgrade-price3": 275000
+      },
+      "17": {
+        "upgrade-price3": 300000
+      },
+      "18": {
+        "upgrade-price3": 325000
+      },
+      "19": {
+        "upgrade-price3": 350000
+      },
+      "20": {
+        "upgrade-price3": 375000
+      },
+      "21": {
+        "upgrade-price3": 400000
+      },
+      "22": {
+        "upgrade-price3": 420000
+      },
+      "23": {
+        "upgrade-price3": 440000
+      },
+      "24": {
+        "upgrade-price3": 460000
+      },
+      "25": {
+        "upgrade-price3": 480000
+      }
+    }
   },
   "73000000": {
     "name": "L.A.S.S.I",
     "icon": "/home-base/pets/lassi-icon.png",
-    "character": "/home-base/pets/lassi-character.png"
+    "character": "/home-base/pets/lassi-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 20000
+      },
+      "3": {
+        "upgrade-price3": 30000
+      },
+      "4": {
+        "upgrade-price3": 40000
+      },
+      "5": {
+        "upgrade-price3": 50000
+      },
+      "6": {
+        "upgrade-price3": 60000
+      },
+      "7": {
+        "upgrade-price3": 70000
+      },
+      "8": {
+        "upgrade-price3": 80000
+      },
+      "9": {
+        "upgrade-price3": 90000
+      },
+      "10": {
+        "upgrade-price3": 100000
+      },
+      "11": {
+        "upgrade-price3": 110000
+      },
+      "12": {
+        "upgrade-price3": 120000
+      },
+      "13": {
+        "upgrade-price3": 130000
+      },
+      "14": {
+        "upgrade-price3": 140000
+      },
+      "15": {
+        "upgrade-price3": 150000
+      }
+    }
   },
   "73000001": {
     "name": "Mighty Yak",
     "icon": "/home-base/pets/yak-icon.png",
-    "character": "/home-base/pets/yak-character.png"
+    "character": "/home-base/pets/yak-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 40000
+      },
+      "3": {
+        "upgrade-price3": 50000
+      },
+      "4": {
+        "upgrade-price3": 60000
+      },
+      "5": {
+        "upgrade-price3": 70000
+      },
+      "6": {
+        "upgrade-price3": 80000
+      },
+      "7": {
+        "upgrade-price3": 90000
+      },
+      "8": {
+        "upgrade-price3": 100000
+      },
+      "9": {
+        "upgrade-price3": 110000
+      },
+      "10": {
+        "upgrade-price3": 120000
+      },
+      "11": {
+        "upgrade-price3": 130000
+      },
+      "12": {
+        "upgrade-price3": 140000
+      },
+      "13": {
+        "upgrade-price3": 150000
+      },
+      "14": {
+        "upgrade-price3": 160000
+      },
+      "15": {
+        "upgrade-price3": 170000
+      }
+    }
   },
   "73000002": {
     "name": "Electro Owl",
     "icon": "/home-base/pets/owl-icon.png",
-    "character": "/home-base/pets/owl-character.png"
+    "character": "/home-base/pets/owl-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 30000
+      },
+      "3": {
+        "upgrade-price3": 45000
+      },
+      "4": {
+        "upgrade-price3": 60000
+      },
+      "5": {
+        "upgrade-price3": 75000
+      },
+      "6": {
+        "upgrade-price3": 90000
+      },
+      "7": {
+        "upgrade-price3": 105000
+      },
+      "8": {
+        "upgrade-price3": 120000
+      },
+      "9": {
+        "upgrade-price3": 135000
+      },
+      "10": {
+        "upgrade-price3": 150000
+      },
+      "11": {
+        "upgrade-price3": 165000
+      },
+      "12": {
+        "upgrade-price3": 180000
+      },
+      "13": {
+        "upgrade-price3": 195000
+      },
+      "14": {
+        "upgrade-price3": 210000
+      },
+      "15": {
+        "upgrade-price3": 225000
+      }
+    }
   },
   "73000003": {
     "name": "Unicorn",
     "icon": "/home-base/pets/unicorn-icon.png",
-    "character": "/home-base/pets/unicorn-character.png"
+    "character": "/home-base/pets/unicorn-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 50000
+      },
+      "3": {
+        "upgrade-price3": 65000
+      },
+      "4": {
+        "upgrade-price3": 80000
+      },
+      "5": {
+        "upgrade-price3": 95000
+      },
+      "6": {
+        "upgrade-price3": 110000
+      },
+      "7": {
+        "upgrade-price3": 125000
+      },
+      "8": {
+        "upgrade-price3": 140000
+      },
+      "9": {
+        "upgrade-price3": 155000
+      },
+      "10": {
+        "upgrade-price3": 170000
+      },
+      "11": {
+        "upgrade-price3": 200000
+      },
+      "12": {
+        "upgrade-price3": 230000
+      },
+      "13": {
+        "upgrade-price3": 260000
+      },
+      "14": {
+        "upgrade-price3": 290000
+      },
+      "15": {
+        "upgrade-price3": 320000
+      }
+    }
   },
   "73000004": {
     "name": "Phoenix",
     "icon": "/home-base/pets/phoenix-icon.png",
-    "character": "/home-base/pets/phoenix-character.png"
+    "character": "/home-base/pets/phoenix-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 80000
+      },
+      "3": {
+        "upgrade-price3": 95000
+      },
+      "4": {
+        "upgrade-price3": 110000
+      },
+      "5": {
+        "upgrade-price3": 125000
+      },
+      "6": {
+        "upgrade-price3": 140000
+      },
+      "7": {
+        "upgrade-price3": 155000
+      },
+      "8": {
+        "upgrade-price3": 170000
+      },
+      "9": {
+        "upgrade-price3": 180000
+      },
+      "10": {
+        "upgrade-price3": 190000
+      }
+    }
   },
   "73000007": {
     "name": "Poison Lizard",
     "icon": "/home-base/pets/lizard-icon.png",
-    "character": "/home-base/pets/lizard-character.png"
+    "character": "/home-base/pets/lizard-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 60000
+      },
+      "3": {
+        "upgrade-price3": 75000
+      },
+      "4": {
+        "upgrade-price3": 900000
+      },
+      "5": {
+        "upgrade-price3": 100000
+      },
+      "6": {
+        "upgrade-price3": 110000
+      },
+      "7": {
+        "upgrade-price3": 120000
+      },
+      "8": {
+        "upgrade-price3": 130000
+      },
+      "9": {
+        "upgrade-price3": 140000
+      },
+      "10": {
+        "upgrade-price3": 150000
+      },
+      "11": {
+        "upgrade-price3": 180000
+      },
+      "12": {
+        "upgrade-price3": 200000
+      },
+      "13": {
+        "upgrade-price3": 220000
+      },
+      "14": {
+        "upgrade-price3": 240000
+      },
+      "15": {
+        "upgrade-price3": 260000
+      }
+    }
   },
   "73000008": {
     "name": "Diggy",
     "icon": "/home-base/pets/diggy-icon.png",
-    "character": "/home-base/pets/diggy-character.png"
+    "character": "/home-base/pets/diggy-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 90000
+      },
+      "3": {
+        "upgrade-price3": 105000
+      },
+      "4": {
+        "upgrade-price3": 120000
+      },
+      "5": {
+        "upgrade-price3": 130000
+      },
+      "6": {
+        "upgrade-price3": 140000
+      },
+      "7": {
+        "upgrade-price3": 150000
+      },
+      "8": {
+        "upgrade-price3": 160000
+      },
+      "9": {
+        "upgrade-price3": 170000
+      },
+      "10": {
+        "upgrade-price3": 180000
+      }
+    }
   },
   "73000009": {
     "name": "Frosty",
     "icon": "/home-base/pets/frosty-icon.png",
-    "character": "/home-base/pets/frosty-character.png"
+    "character": "/home-base/pets/frosty-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 70000
+      },
+      "3": {
+        "upgrade-price3": 85000
+      },
+      "4": {
+        "upgrade-price3": 100000
+      },
+      "5": {
+        "upgrade-price3": 115000
+      },
+      "6": {
+        "upgrade-price3": 130000
+      },
+      "7": {
+        "upgrade-price3": 145000
+      },
+      "8": {
+        "upgrade-price3": 160000
+      },
+      "9": {
+        "upgrade-price3": 170000
+      },
+      "10": {
+        "upgrade-price3": 180000
+      },
+      "11": {
+        "upgrade-price3": 200000
+      },
+      "12": {
+        "upgrade-price3": 230000
+      },
+      "13": {
+        "upgrade-price3": 260000
+      },
+      "14": {
+        "upgrade-price3": 290000
+      },
+      "15": {
+        "upgrade-price3": 320000
+      }
+    }
   },
   "73000010": {
     "name": "Spirit Fox",
     "icon": "/home-base/pets/fox-icon.png",
-    "character": "/home-base/pets/fox-character.png"
+    "character": "/home-base/pets/fox-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 150000
+      },
+      "3": {
+        "upgrade-price3": 160000
+      },
+      "4": {
+        "upgrade-price3": 170000
+      },
+      "5": {
+        "upgrade-price3": 180000
+      },
+      "6": {
+        "upgrade-price3": 190000
+      },
+      "7": {
+        "upgrade-price3": 200000
+      },
+      "8": {
+        "upgrade-price3": 210000
+      },
+      "9": {
+        "upgrade-price3": 220000
+      },
+      "10": {
+        "upgrade-price3": 230000
+      }
+    }
   },
   "73000011": {
     "name": "Angry Jelly",
     "icon": "/home-base/pets/jelly-icon.png",
-    "character": "/home-base/pets/jelly-character.png"
+    "character": "/home-base/pets/jelly-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 150000
+      },
+      "3": {
+        "upgrade-price3": 160000
+      },
+      "4": {
+        "upgrade-price3": 170000
+      },
+      "5": {
+        "upgrade-price3": 180000
+      },
+      "6": {
+        "upgrade-price3": 190000
+      },
+      "7": {
+        "upgrade-price3": 200000
+      },
+      "8": {
+        "upgrade-price3": 210000
+      },
+      "9": {
+        "upgrade-price3": 220000
+      },
+      "10": {
+        "upgrade-price3": 230000
+      }
+    }
   },
   "73000016": {
     "name": "Sneezy",
     "icon": "/home-base/pets/sneezy-icon.png",
-    "character": "/home-base/pets/sneezy-character.png"
+    "character": "/home-base/pets/sneezy-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 200000
+      },
+      "3": {
+        "upgrade-price3": 220000
+      },
+      "4": {
+        "upgrade-price3": 240000
+      },
+      "5": {
+        "upgrade-price3": 260000
+      },
+      "6": {
+        "upgrade-price3": 280000
+      },
+      "7": {
+        "upgrade-price3": 300000
+      },
+      "8": {
+        "upgrade-price3": 320000
+      },
+      "9": {
+        "upgrade-price3": 340000
+      },
+      "10": {
+        "upgrade-price3": 360000
+      }
+    }
   },
   "73000017": {
     "name": "Greedy Raven",
     "icon": "/home-base/pets/greedy-raven-icon.png",
-    "character": "/home-base/pets/sneezy-character.png"
+    "character": "/home-base/pets/sneezy-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 260000
+      },
+      "3": {
+        "upgrade-price3": 280000
+      },
+      "4": {
+        "upgrade-price3": 300000
+      },
+      "5": {
+        "upgrade-price3": 320000
+      },
+      "6": {
+        "upgrade-price3": 340000
+      },
+      "7": {
+        "upgrade-price3": 360000
+      },
+      "8": {
+        "upgrade-price3": 380000
+      },
+      "9": {
+        "upgrade-price3": 400000
+      },
+      "10": {
+        "upgrade-price3": 420000
+      }
+    }
   },
   "90000000": {
     "name": "Barbarian Puppet",
@@ -4333,7 +7566,7 @@
     "name": "Decorated Dragon Statue (Mar. 2023)",
     "icon": "/home-base/decorations/74.png",
     "index": 34
-  },  
+  },
   "18000075": {
     "name": "Dragon Trophy (Apr. 2024)",
     "icon": "/home-base/decorations/75.png",
@@ -6825,7 +10058,7 @@
     "name": "Shadow Samurai King (May 2026 (exclusive!))",
     "icon": "/home-base/skins/289.png",
     "index": 234
-  },  
+  },
   "52000346": {
     "name": "Anime Fury Duke (Jun. 2026 GP)",
     "icon": "/home-base/skins/346.png",
@@ -6835,7 +10068,7 @@
     "name": "Anime Fury Queen (Jun. 2026)",
     "icon": "/home-base/skins/228.png",
     "index": 236
-  },  
+  },
   "52000249": {
     "name": "Anime Fury Warden (Jun. 2026)",
     "icon": "/home-base/skins/249.png",
@@ -6850,7 +10083,7 @@
     "name": "Anime Fury Champion (Jun. 2026)",
     "icon": "/home-base/skins/300.png",
     "index": 239
-  },  
+  },
   "52000267": {
     "name": "Anime Fury Prince (Jun. 2026)",
     "icon": "/home-base/skins/267.png",
@@ -7783,75 +11016,507 @@
   },
   "26000000": {
     "name": "Lightning Spell",
-    "icon": "/home-base/spells/0.png"
+    "icon": "/home-base/spells/0.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 50000
+      },
+      "3": {
+        "upgrade-price2": 100000
+      },
+      "4": {
+        "upgrade-price2": 200000
+      },
+      "5": {
+        "upgrade-price2": 600000
+      },
+      "6": {
+        "upgrade-price2": 1500000
+      },
+      "7": {
+        "upgrade-price2": 2500000
+      },
+      "8": {
+        "upgrade-price2": 4200000
+      },
+      "9": {
+        "upgrade-price2": 6300000
+      },
+      "10": {
+        "upgrade-price2": 10000000
+      },
+      "11": {
+        "upgrade-price2": 13500000
+      },
+      "12": {
+        "upgrade-price2": 18500000
+      },
+      "13": {
+        "upgrade-price2": 27000000
+      }
+    }
   },
   "26000001": {
-    "name": "Heal Spell",
-    "icon": "/home-base/spells/1.png"
+    "name": "Healing Spell",
+    "icon": "/home-base/spells/1.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 75000
+      },
+      "3": {
+        "upgrade-price2": 150000
+      },
+      "4": {
+        "upgrade-price2": 300000
+      },
+      "5": {
+        "upgrade-price2": 900000
+      },
+      "6": {
+        "upgrade-price2": 1800000
+      },
+      "7": {
+        "upgrade-price2": 3000000
+      },
+      "8": {
+        "upgrade-price2": 6000000
+      },
+      "9": {
+        "upgrade-price2": 11000000
+      },
+      "10": {
+        "upgrade-price2": 14000000
+      },
+      "11": {
+        "upgrade-price2": 19000000
+      },
+      "12": {
+        "upgrade-price2": 29000000
+      }
+    }
   },
   "26000002": {
     "name": "Rage Spell",
-    "icon": "/home-base/spells/2.png"
+    "icon": "/home-base/spells/2.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 400000
+      },
+      "3": {
+        "upgrade-price2": 800000
+      },
+      "4": {
+        "upgrade-price2": 1000000
+      },
+      "5": {
+        "upgrade-price2": 2000000
+      },
+      "6": {
+        "upgrade-price2": 5000000
+      },
+      "7": {
+        "upgrade-price2": 26000000
+      }
+    }
   },
   "26000003": {
     "name": "Jump Spell",
-    "icon": "/home-base/spells/3.png"
+    "icon": "/home-base/spells/3.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 1000000
+      },
+      "3": {
+        "upgrade-price2": 3000000
+      },
+      "4": {
+        "upgrade-price2": 5000000
+      },
+      "5": {
+        "upgrade-price2": 8000000
+      }
+    }
   },
   "26000005": {
     "name": "Freeze Spell",
-    "icon": "/home-base/spells/5.png"
+    "icon": "/home-base/spells/5.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 1200000
+      },
+      "3": {
+        "upgrade-price2": 1700000
+      },
+      "4": {
+        "upgrade-price2": 3000000
+      },
+      "5": {
+        "upgrade-price2": 4200000
+      },
+      "6": {
+        "upgrade-price2": 6000000
+      },
+      "7": {
+        "upgrade-price2": 7000000
+      },
+      "8": {
+        "upgrade-price2": 28000000
+      }
+    }
   },
   "26000009": {
     "name": "Poison Spell",
-    "icon": "/home-base/spells/9.png"
+    "icon": "/home-base/spells/9.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 5000
+      },
+      "3": {
+        "upgrade-price3": 10000
+      },
+      "4": {
+        "upgrade-price3": 21500
+      },
+      "5": {
+        "upgrade-price3": 35000
+      },
+      "6": {
+        "upgrade-price3": 55000
+      },
+      "7": {
+        "upgrade-price3": 77500
+      },
+      "8": {
+        "upgrade-price3": 100000
+      },
+      "9": {
+        "upgrade-price3": 135000
+      },
+      "10": {
+        "upgrade-price3": 175000
+      },
+      "11": {
+        "upgrade-price3": 230000
+      },
+      "12": {
+        "upgrade-price3": 350000
+      }
+    }
   },
   "26000010": {
     "name": "Earthquake Spell",
-    "icon": "/home-base/spells/10.png"
+    "icon": "/home-base/spells/10.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 6000
+      },
+      "3": {
+        "upgrade-price3": 12000
+      },
+      "4": {
+        "upgrade-price3": 25500
+      },
+      "5": {
+        "upgrade-price3": 42000
+      },
+      "6": {
+        "upgrade-price3": 120000
+      },
+      "7": {
+        "upgrade-price3": 200000
+      },
+      "8": {
+        "upgrade-price3": 330000
+      }
+    }
   },
   "26000011": {
     "name": "Haste Spell",
-    "icon": "/home-base/spells/11.png"
+    "icon": "/home-base/spells/11.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 8000
+      },
+      "3": {
+        "upgrade-price3": 17000
+      },
+      "4": {
+        "upgrade-price3": 30000
+      },
+      "5": {
+        "upgrade-price3": 38500
+      },
+      "6": {
+        "upgrade-price3": 200000
+      },
+      "7": {
+        "upgrade-price3": 320000
+      }
+    }
   },
   "26000016": {
     "name": "Clone Spell",
-    "icon": "/home-base/spells/16.png"
+    "icon": "/home-base/spells/16.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 1500000
+      },
+      "3": {
+        "upgrade-price2": 2500000
+      },
+      "4": {
+        "upgrade-price2": 3000000
+      },
+      "5": {
+        "upgrade-price2": 4000000
+      },
+      "6": {
+        "upgrade-price2": 5000000
+      },
+      "7": {
+        "upgrade-price2": 8000000
+      },
+      "8": {
+        "upgrade-price2": 9000000
+      },
+      "9": {
+        "upgrade-price2": 26000000
+      }
+    }
   },
   "26000017": {
     "name": "Skeleton Spell",
-    "icon": "/home-base/spells/17.png"
+    "icon": "/home-base/spells/17.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 11000
+      },
+      "3": {
+        "upgrade-price3": 17000
+      },
+      "4": {
+        "upgrade-price3": 25000
+      },
+      "5": {
+        "upgrade-price3": 40000
+      },
+      "6": {
+        "upgrade-price3": 50000
+      },
+      "7": {
+        "upgrade-price3": 75000
+      },
+      "8": {
+        "upgrade-price3": 135000
+      }
+    }
   },
   "26000028": {
     "name": "Bat Spell",
-    "icon": "/home-base/spells/28.png"
+    "icon": "/home-base/spells/28.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 13000
+      },
+      "3": {
+        "upgrade-price3": 25500
+      },
+      "4": {
+        "upgrade-price3": 35000
+      },
+      "5": {
+        "upgrade-price3": 47500
+      },
+      "6": {
+        "upgrade-price3": 140000
+      },
+      "7": {
+        "upgrade-price3": 220000
+      },
+      "8": {
+        "upgrade-price3": 300000
+      }
+    }
   },
   "26000035": {
     "name": "Invisibility Spell",
-    "icon": "/home-base/spells/35.png"
+    "icon": "/home-base/spells/35.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 5000000
+      },
+      "3": {
+        "upgrade-price2": 6000000
+      },
+      "4": {
+        "upgrade-price2": 7000000
+      }
+    }
   },
   "26000053": {
     "name": "Recall Spell",
-    "icon": "/home-base/spells/53.png"
+    "icon": "/home-base/spells/53.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 7500000
+      },
+      "3": {
+        "upgrade-price2": 8000000
+      },
+      "4": {
+        "upgrade-price2": 9000000
+      },
+      "5": {
+        "upgrade-price2": 13000000
+      },
+      "6": {
+        "upgrade-price2": 19000000
+      },
+      "7": {
+        "upgrade-price2": 29000000
+      }
+    }
   },
   "26000070": {
     "name": "Overgrowth Spell",
-    "icon": "/home-base/spells/70.png"
+    "icon": "/home-base/spells/70.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 62500
+      },
+      "3": {
+        "upgrade-price2": 125000
+      },
+      "4": {
+        "upgrade-price2": 175000
+      },
+      "5": {
+        "upgrade-price2": 360000
+      }
+    }
   },
   "26000098": {
     "name": "Revive Spell",
-    "icon": "/home-base/spells/98.png"
+    "icon": "/home-base/spells/98.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 18000000
+      },
+      "3": {
+        "upgrade-price3": 19000000
+      },
+      "4": {
+        "upgrade-price3": 20000000
+      },
+      "5": {
+        "upgrade-price3": 29500000
+      }
+    }
   },
   "26000109": {
     "name": "Ice Block Spell",
-    "icon": "/home-base/spells/109.png"
+    "icon": "/home-base/spells/109.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 140000
+      },
+      "3": {
+        "upgrade-price3": 200000
+      },
+      "4": {
+        "upgrade-price3": 280000
+      },
+      "5": {
+        "upgrade-price3": 320000
+      },
+      "6": {
+        "upgrade-price3": 380000
+      }
+    }
   },
   "26000120": {
     "name": "Totem Spell",
-    "icon": "/home-base/spells/120.png"
+    "icon": "/home-base/spells/120.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 21000000
+      },
+      "3": {
+        "upgrade-price2": 22000000
+      },
+      "4": {
+        "upgrade-price2": 23000000
+      }
+    }
   },
   "26000123": {
     "name": "Angry Spell",
-    "icon": "/home-base/spells/121.png"
+    "icon": "/home-base/spells/121.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 150000
+      },
+      "3": {
+        "upgrade-price3": 250000
+      },
+      "4": {
+        "upgrade-price3": 400000
+      }
+    }
   },
   "93000000": {
     "name": "Builder Apprentice",
@@ -7871,14 +11536,65 @@
   },
   "107000000": {
     "name": "Longshot",
-    "icon": "/home-base/guardians/longshot.png"
+    "icon": "/home-base/guardians/longshot.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 18000000
+      },
+      "3": {
+        "upgrade-price2": 22000000
+      },
+      "4": {
+        "upgrade-price2": 26000000
+      },
+      "5": {
+        "upgrade-price2": 28000000
+      }
+    }
   },
   "107000001": {
     "name": "Smasher",
-    "icon": "/home-base/guardians/smasher.png"
+    "icon": "/home-base/guardians/smasher.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 18000000
+      },
+      "3": {
+        "upgrade-price2": 22000000
+      },
+      "4": {
+        "upgrade-price2": 26000000
+      },
+      "5": {
+        "upgrade-price2": 28000000
+      }
+    }
   },
   "107000008": {
     "name": "Logger",
-    "icon": "/home-base/guardians/logger.png"
+    "icon": "/home-base/guardians/logger.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 18000000
+      },
+      "3": {
+        "upgrade-price2": 22000000
+      },
+      "4": {
+        "upgrade-price2": 26000000
+      },
+      "5": {
+        "upgrade-price2": 28000000
+      }
+    }
   }
 }

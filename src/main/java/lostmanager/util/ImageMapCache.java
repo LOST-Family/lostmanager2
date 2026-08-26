@@ -128,7 +128,13 @@ public class ImageMapCache {
       JSONObject levels = itemData.getJSONObject("levels");
       String levelKey = String.valueOf(level);
       if (levels.has(levelKey)) {
-        String path = levels.getString(levelKey);
+        Object levelData = levels.get(levelKey);
+        String path;
+        if (levelData instanceof JSONObject levelObject) {
+          path = levelObject.optString("level-icon", itemData.optString("character", ""));
+        } else {
+          path = String.valueOf(levelData);
+        }
         if (path != null && !path.isEmpty()) {
           return path;
         }
