@@ -4,7 +4,7 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-1.png",
-        "upgrade-price2": 1000
+        "upgrade-price2": 200
       },
       "2": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-2.png",
@@ -12,51 +12,51 @@
       },
       "3": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-3.png",
-        "upgrade-price2": 3000
+        "upgrade-price2": 10000
       },
       "4": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-4.png",
-        "upgrade-price2": 4000
+        "upgrade-price2": 100000
       },
       "5": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-5.png",
-        "upgrade-price2": 5000
+        "upgrade-price2": 250000
       },
       "6": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-6.png",
-        "upgrade-price2": 6000
+        "upgrade-price2": 500000
       },
       "7": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-7.png",
-        "upgrade-price2": 7000
+        "upgrade-price2": 1500000
       },
       "8": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-8.png",
-        "upgrade-price2": 8000
+        "upgrade-price2": 2500000
       },
       "9": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-9.png",
-        "upgrade-price2 ": 9000
+        "upgrade-price2": 4200000
       },
       "10": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-10.png",
-        "upgrade-price2": 10000
+        "upgrade-price2": 4500000
       },
       "11": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-11.png",
-        "upgrade-price2": 11000
+        "upgrade-price2": 7500000
       },
       "12": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-12.png",
-        "upgrade-price2": 12000
+        "upgrade-price2": 10000000
       },
       "13": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-13.png",
-        "upgrade-price2": 13000
+        "upgrade-price2": 17000000
       },
       "14": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-14.png",
-        "upgrade-price2": 14000
+        "upgrade-price2": 26000000
       }
     }
   },
@@ -65,75 +65,75 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 0
       },
       "2": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 1000
       },
       "3": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 4000
       },
       "4": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 25000
       },
       "5": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 150000
       },
       "6": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 500000
       },
       "7": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 1000000
       },
       "8": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 2000000
       },
       "9": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 2500000
       },
       "10": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 3500000
       },
       "11": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 4000000
       },
       "12": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 6000000
       },
       "13": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-13.png",
-        "upgrade-price1": 13000
+        "upgrade-price1": 9000000
       },
       "14": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-14.png",
-        "upgrade-price1": 14000
+        "upgrade-price1": 12000000
       },
       "15": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-15.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 13000000
       },
       "16": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-16.png",
-        "upgrade-price1": 16000
+        "upgrade-price1": 15000000
       },
       "17": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-17.png",
-        "upgrade-price1": 17000
+        "upgrade-price1": 16000000
       },
       "18": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-18.png",
-        "upgrade-price1": 18000
+        "upgrade-price1": 25000000
       }
     }
   },
@@ -142,71 +142,71 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 150
       },
       "2": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 300
       },
       "3": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 700
       },
       "4": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 1400
       },
       "5": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 3000
       },
       "6": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 7000
       },
       "7": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 14000
       },
       "8": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 28000
       },
       "9": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 56000
       },
       "10": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 75000
       },
       "11": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 85000
       },
       "12": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 170000
       },
       "13": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-13.png",
-        "upgrade-price1": 13000
+        "upgrade-price1": 400000
       },
       "14": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-14.png",
-        "upgrade-price1": 14000
+        "upgrade-price1": 800000
       },
       "15": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-15.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 1200000
       },
       "16": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-16.png",
-        "upgrade-price1": 16000
+        "upgrade-price1": 2000000
       },
       "17": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-17.png",
-        "upgrade-price1": 17000
+        "upgrade-price1": 8000000
       }
     }
   },
@@ -215,79 +215,79 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 300
       },
       "2": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 750
       },
       "3": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 1500
       },
       "4": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 3000
       },
       "5": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 6000
       },
       "6": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 12000
       },
       "7": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 25000
       },
       "8": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 50000
       },
       "9": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 100000
       },
       "10": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 250000
       },
       "11": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 500000
       },
       "12": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 1000000
       },
       "13": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-13.png",
-        "upgrade-price1": 13000
+        "upgrade-price1": 1800000
       },
       "14": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-14.png",
-        "upgrade-price1": 14000
+        "upgrade-price1": 2800000
       },
       "15": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-15.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 3000000
       },
       "16": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-16.png",
-        "upgrade-price1": 16000
+        "upgrade-price1": 4000000
       },
       "17": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-17.png",
-        "upgrade-price1": 17000
+        "upgrade-price1": 5500000
       },
       "18": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-18.png",
-        "upgrade-price1": 18000
+        "upgrade-price1": 10000000
       },
       "19": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-19.png",
-        "upgrade-price1": 19000
+        "upgrade-price1": 18000000
       }
     }
   },
@@ -296,71 +296,71 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-1.png",
-        "upgrade-price2": 1000
+        "upgrade-price2": 150
       },
       "2": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-2.png",
-        "upgrade-price2": 2000
+        "upgrade-price2": 300
       },
       "3": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-3.png",
-        "upgrade-price2": 3000
+        "upgrade-price2": 700
       },
       "4": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-4.png",
-        "upgrade-price2": 4000
+        "upgrade-price2": 1400
       },
       "5": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-5.png",
-        "upgrade-price2": 5000
+        "upgrade-price2": 3000
       },
       "6": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-6.png",
-        "upgrade-price2": 6000
+        "upgrade-price2": 7000
       },
       "7": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-7.png",
-        "upgrade-price2": 7000
+        "upgrade-price2": 14000
       },
       "8": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-8.png",
-        "upgrade-price2": 8000
+        "upgrade-price2": 28000
       },
       "9": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-9.png",
-        "upgrade-price2": 9000
+        "upgrade-price2": 56000
       },
       "10": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-10.png",
-        "upgrade-price2": 10000
+        "upgrade-price2": 75000
       },
       "11": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-11.png",
-        "upgrade-price2": 11000
+        "upgrade-price2": 85000
       },
       "12": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-12.png",
-        "upgrade-price2": 12000
+        "upgrade-price2": 170000
       },
       "13": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-13.png",
-        "upgrade-price2": 13000
+        "upgrade-price2": 400000
       },
       "14": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-14.png",
-        "upgrade-price2": 14000
+        "upgrade-price2": 800000
       },
       "15": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-15.png",
-        "upgrade-price2": 15000
+        "upgrade-price2": 1200000
       },
       "16": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-16.png",
-        "upgrade-price2": 16000
+        "upgrade-price2": 2000000
       },
       "17": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-17.png",
-        "upgrade-price2": 17000
+        "upgrade-price2": 8000000
       }
     }
   },
@@ -369,79 +369,79 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-1.png",
-        "upgrade-price2": 1000
+        "upgrade-price2": 300
       },
       "2": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-2.png",
-        "upgrade-price2": 2000
+        "upgrade-price2": 750
       },
       "3": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-3.png",
-        "upgrade-price2": 3000
+        "upgrade-price2": 1500
       },
       "4": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-4.png",
-        "upgrade-price2": 4000
+        "upgrade-price2": 3000
       },
       "5": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-5.png",
-        "upgrade-price2": 5000
+        "upgrade-price2": 6000
       },
       "6": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-6.png",
-        "upgrade-price2": 6000
+        "upgrade-price2": 12000
       },
       "7": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-7.png",
-        "upgrade-price2": 7000
+        "upgrade-price2": 25000
       },
       "8": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-8.png",
-        "upgrade-price2": 8000
+        "upgrade-price2": 50000
       },
       "9": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-9.png",
-        "upgrade-price2": 9000
+        "upgrade-price2": 100000
       },
       "10": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-10.png",
-        "upgrade-price2": 10000
+        "upgrade-price2": 250000
       },
       "11": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-11.png",
-        "upgrade-price2": 11000
+        "upgrade-price2": 500000
       },
       "12": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-12.png",
-        "upgrade-price2": 12000
+        "upgrade-price2": 1000000
       },
       "13": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-13.png",
-        "upgrade-price2": 13000
+        "upgrade-price2": 1800000
       },
       "14": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-14.png",
-        "upgrade-price2": 14000
+        "upgrade-price2": 2800000
       },
       "15": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-15.png",
-        "upgrade-price2": 15000
+        "upgrade-price2": 3000000
       },
       "16": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-16.png",
-        "upgrade-price2": 16000
+        "upgrade-price2": 4000000
       },
       "17": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-17.png",
-        "upgrade-price2": 17000
+        "upgrade-price2": 5500000
       },
       "18": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-18.png",
-        "upgrade-price2": 18000
+        "upgrade-price2": 10000000
       },
       "19": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-19.png",
-        "upgrade-price2": 19000
+        "upgrade-price2": 18000000
       }
     }
   },
@@ -450,79 +450,79 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/barracks/barracks-1.png",
-        "upgrade-price2": 1000
+        "upgrade-price2": 100
       },
       "2": {
         "level-icon": "/home-base/buildings/barracks/barracks-2.png",
-        "upgrade-price2": 2000
+        "upgrade-price2": 500
       },
       "3": {
         "level-icon": "/home-base/buildings/barracks/barracks-3.png",
-        "upgrade-price2": 3000
+        "upgrade-price2": 2500
       },
       "4": {
         "level-icon": "/home-base/buildings/barracks/barracks-4.png",
-        "upgrade-price2": 4000
+        "upgrade-price2": 5000
       },
       "5": {
         "level-icon": "/home-base/buildings/barracks/barracks-5.png",
-        "upgrade-price2": 5000
+        "upgrade-price2": 20000
       },
       "6": {
         "level-icon": "/home-base/buildings/barracks/barracks-6.png",
-        "upgrade-price2": 6000
+        "upgrade-price2": 120000
       },
       "7": {
         "level-icon": "/home-base/buildings/barracks/barracks-7.png",
-        "upgrade-price2": 7000
+        "upgrade-price2": 270000
       },
       "8": {
         "level-icon": "/home-base/buildings/barracks/barracks-8.png",
-        "upgrade-price2": 8000
+        "upgrade-price2": 600000
       },
       "9": {
         "level-icon": "/home-base/buildings/barracks/barracks-9.png",
-        "upgrade-price2": 9000
+        "upgrade-price2": 1000000
       },
       "10": {
         "level-icon": "/home-base/buildings/barracks/barracks-10.png",
-        "upgrade-price2": 10000
+        "upgrade-price2": 1400000
       },
       "11": {
         "level-icon": "/home-base/buildings/barracks/barracks-11.png",
-        "upgrade-price2": 11000
+        "upgrade-price2": 2600000
       },
       "12": {
         "level-icon": "/home-base/buildings/barracks/barracks-12.png",
-        "upgrade-price2": 12000
+        "upgrade-price2": 3700000
       },
       "13": {
         "level-icon": "/home-base/buildings/barracks/barracks-13.png",
-        "upgrade-price2": 13000
+        "upgrade-price2": 6000000
       },
       "14": {
         "level-icon": "/home-base/buildings/barracks/barracks-14.png",
-        "upgrade-price2": 14000
+        "upgrade-price2": 7000000
       },
       "15": {
         "level-icon": "/home-base/buildings/barracks/barracks-15.png",
-        "upgrade-price2": 15000
+        "upgrade-price2": 9000000
       },
       "16": {
         "level-icon": "/home-base/buildings/barracks/barracks-16.png",
-        "upgrade-price2": 16000
+        "upgrade-price2": 1100000
       },
       "17": {
         "level-icon": "/home-base/buildings/barracks/barracks-17.png",
-        "upgrade-price2": 17000
+        "upgrade-price2": 1260000
       },
       "18": {
         "level-icon": "/home-base/buildings/barracks/barracks-18.png",
-        "upgrade-price2": 18000
+        "upgrade-price2": 1500000
       },
       "19": {
         "level-icon": "/home-base/buildings/barracks/barracks-19.png",
-        "upgrade-price2": 19000
+        "upgrade-price2": 2600000
       }
     }
   },
@@ -531,67 +531,67 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-1.png",
-        "upgrade-price2": 1000
+        "upgrade-price2": 5000
       },
       "2": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-2.png",
-        "upgrade-price2": 2000
+        "upgrade-price2": 25000
       },
       "3": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-3.png",
-        "upgrade-price2": 3000
+        "upgrade-price2": 50000
       },
       "4": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-4.png",
-        "upgrade-price2": 4000
+        "upgrade-price2": 100000
       },
       "5": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-5.png",
-        "upgrade-price2": 5000
+        "upgrade-price2": 200000
       },
       "6": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-6.png",
-        "upgrade-price2": 6000
+        "upgrade-price2": 400000
       },
       "7": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-7.png",
-        "upgrade-price2": 7000
+        "upgrade-price2": 800000
       },
       "8": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-8.png",
-        "upgrade-price2": 8000
+        "upgrade-price2": 1300000
       },
       "9": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-9.png",
-        "upgrade-price2": 9000
+        "upgrade-price2": 2100000
       },
       "10": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-10.png",
-        "upgrade-price2": 10000
+        "upgrade-price2": 3800000
       },
       "11": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-11.png",
-        "upgrade-price2": 11000
+        "upgrade-price2": 5500000
       },
       "12": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-12.png",
-        "upgrade-price2": 12000
+        "upgrade-price2": 8100000
       },
       "13": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-13.png",
-        "upgrade-price2": 13000
+        "upgrade-price2": 10800000
       },
       "14": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-14.png",
-        "upgrade-price2": 14000
+        "upgrade-price2": 13000000
       },
       "15": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-15.png",
-        "upgrade-price2": 15000
+        "upgrade-price2": 1800000
       },
       "16": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-16.png",
-        "upgrade-price2": 16000
+        "upgrade-price2": 2700000
       }
     }
   },
@@ -600,87 +600,87 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/cannon/cannon-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 250
       },
       "2": {
         "level-icon": "/home-base/buildings/cannon/cannon-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 1000
       },
       "3": {
         "level-icon": "/home-base/buildings/cannon/cannon-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 4000
       },
       "4": {
         "level-icon": "/home-base/buildings/cannon/cannon-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 16000
       },
       "5": {
         "level-icon": "/home-base/buildings/cannon/cannon-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 50000
       },
       "6": {
         "level-icon": "/home-base/buildings/cannon/cannon-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 60000
       },
       "7": {
         "level-icon": "/home-base/buildings/cannon/cannon-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 100000
       },
       "8": {
         "level-icon": "/home-base/buildings/cannon/cannon-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 160000
       },
       "9": {
         "level-icon": "/home-base/buildings/cannon/cannon-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 250000
       },
       "10": {
         "level-icon": "/home-base/buildings/cannon/cannon-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 330000
       },
       "11": {
         "level-icon": "/home-base/buildings/cannon/cannon-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 500000
       },
       "12": {
         "level-icon": "/home-base/buildings/cannon/cannon-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 600000
       },
       "13": {
         "level-icon": "/home-base/buildings/cannon/cannon-13.png",
-        "upgrade-price1": 13000
+        "upgrade-price1": 660000
       },
       "14": {
         "level-icon": "/home-base/buildings/cannon/cannon-14.png",
-        "upgrade-price1": 14000
+        "upgrade-price1": 1000000
       },
       "15": {
         "level-icon": "/home-base/buildings/cannon/cannon-15.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 1200000
       },
       "16": {
         "level-icon": "/home-base/buildings/cannon/cannon-16.png",
-        "upgrade-price1": 16000
+        "upgrade-price1": 1300000
       },
       "17": {
         "level-icon": "/home-base/buildings/cannon/cannon-17.png",
-        "upgrade-price1": 17000
+        "upgrade-price1": 1500000
       },
       "18": {
         "level-icon": "/home-base/buildings/cannon/cannon-18.png",
-        "upgrade-price1": 18000
+        "upgrade-price1": 1800000
       },
       "19": {
         "level-icon": "/home-base/buildings/cannon/cannon-19.png",
-        "upgrade-price1": 19000
+        "upgrade-price1": 2000000
       },
       "20": {
         "level-icon": "/home-base/buildings/cannon/cannon-20.png",
-        "upgrade-price1": 20000
+        "upgrade-price1": 2600000
       },
       "21": {
         "level-icon": "/home-base/buildings/cannon/cannon-21.png",
-        "upgrade-price1": 21000
+        "upgrade-price1": 3000000
       }
     }
   },
@@ -697,79 +697,79 @@
       },
       "3": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 5000
       },
       "4": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 20000
       },
       "5": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 70000
       },
       "6": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 80000
       },
       "7": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 150000
       },
       "8": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 200000
       },
       "9": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 400000
       },
       "10": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 460000
       },
       "11": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 600000
       },
       "12": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 700000
       },
       "13": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-13.png",
-        "upgrade-price1": 13000
+        "upgrade-price1": 1000000
       },
       "14": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-14.png",
-        "upgrade-price1": 14000
+        "upgrade-price1": 1100000
       },
       "15": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-15.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 1300000
       },
       "16": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-16.png",
-        "upgrade-price1": 16000
+        "upgrade-price1": 1600000
       },
       "17": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-17.png",
-        "upgrade-price1": 17000
+        "upgrade-price1": 1800000
       },
       "18": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-18.png",
-        "upgrade-price1": 18000
+        "upgrade-price1": 2000000
       },
       "19": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-19.png",
-        "upgrade-price1": 19000
+        "upgrade-price1": 2200000
       },
       "20": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-20.png",
-        "upgrade-price1": 20000
+        "upgrade-price1": 3000000
       },
       "21": {
         "level-icon": "/home-base/buildings/archer-tower/archer-tower-21.png",
-        "upgrade-price1": 21000
+        "upgrade-price1": 4000000
       }
     }
   },
@@ -778,79 +778,79 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/wall/wall-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 0
       },
       "2": {
         "level-icon": "/home-base/buildings/wall/wall-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 1000
       },
       "3": {
         "level-icon": "/home-base/buildings/wall/wall-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 5000
       },
       "4": {
         "level-icon": "/home-base/buildings/wall/wall-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 10000
       },
       "5": {
         "level-icon": "/home-base/buildings/wall/wall-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 20000
       },
       "6": {
         "level-icon": "/home-base/buildings/wall/wall-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 30000
       },
       "7": {
         "level-icon": "/home-base/buildings/wall/wall-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 50000
       },
       "8": {
         "level-icon": "/home-base/buildings/wall/wall-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 75000
       },
       "9": {
         "level-icon": "/home-base/buildings/wall/wall-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 100000
       },
       "10": {
         "level-icon": "/home-base/buildings/wall/wall-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 200000
       },
       "11": {
         "level-icon": "/home-base/buildings/wall/wall-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 500000
       },
       "12": {
         "level-icon": "/home-base/buildings/wall/wall-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 1000000
       },
       "13": {
         "level-icon": "/home-base/buildings/wall/wall-13.png",
-        "upgrade-price1": 13000
+        "upgrade-price1": 1500000
       },
       "14": {
         "level-icon": "/home-base/buildings/wall/wall-14.png",
-        "upgrade-price1": 14000
+        "upgrade-price1": 2000000
       },
       "15": {
         "level-icon": "/home-base/buildings/wall/wall-15.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 3000000
       },
       "16": {
         "level-icon": "/home-base/buildings/wall/wall-16.png",
-        "upgrade-price1": 16000
+        "upgrade-price1": 4000000
       },
       "17": {
         "level-icon": "/home-base/buildings/wall/wall-17.png",
-        "upgrade-price1": 17000
+        "upgrade-price1": 5000000
       },
       "18": {
         "level-icon": "/home-base/buildings/wall/wall-18.png",
-        "upgrade-price1": 18000
+        "upgrade-price1": 7000000
       },
       "19": {
         "level-icon": "/home-base/buildings/wall/wall-19.png",
-        "upgrade-price1": 19000
+        "upgrade-price1": 10000000
       }
     }
   },
@@ -859,71 +859,71 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 100000
       },
       "2": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 150000
       },
       "3": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 250000
       },
       "4": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 400000
       },
       "5": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 550000
       },
       "6": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 660000
       },
       "7": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 1000000
       },
       "8": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 1100000
       },
       "9": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 1300000
       },
       "10": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 2000000
       },
       "11": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 2500000
       },
       "12": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 2600000
       },
       "13": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-13.png",
-        "upgrade-price1": 13000
+        "upgrade-price1": 3000000
       },
       "14": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-14.png",
-        "upgrade-price1": 14000
+        "upgrade-price1": 4500000
       },
       "15": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-15.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 5500000
       },
       "16": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-16.png",
-        "upgrade-price1": 16000
+        "upgrade-price1": 8000000
       },
       "17": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-17.png",
-        "upgrade-price1": 17000
+        "upgrade-price1": 14000000
       }
     }
   },
@@ -932,67 +932,67 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 22000
       },
       "2": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 90000
       },
       "3": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 210000
       },
       "4": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 500000
       },
       "5": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 800000
       },
       "6": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 1000000
       },
       "7": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 1750000
       },
       "8": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 2300000
       },
       "9": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 3400000
       },
       "10": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 5000000
       },
       "11": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 5600000
       },
       "12": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 6500000
       },
       "13": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-13.png",
-        "upgrade-price1": 13000
+        "upgrade-price1": 8000000
       },
       "14": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-14.png",
-        "upgrade-price1": 14000
+        "upgrade-price1": 9000000
       },
       "15": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-15.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 1500000
       },
       "16": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-16.png",
-        "upgrade-price1": 16000
+        "upgrade-price1": 2600000
       }
     }
   },
@@ -1001,75 +1001,75 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/mortar/mortar-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 5000
       },
       "2": {
         "level-icon": "/home-base/buildings/mortar/mortar-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 25000
       },
       "3": {
         "level-icon": "/home-base/buildings/mortar/mortar-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 90000
       },
       "4": {
         "level-icon": "/home-base/buildings/mortar/mortar-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 180000
       },
       "5": {
         "level-icon": "/home-base/buildings/mortar/mortar-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 300000
       },
       "6": {
         "level-icon": "/home-base/buildings/mortar/mortar-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 500000
       },
       "7": {
         "level-icon": "/home-base/buildings/mortar/mortar-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 900000
       },
       "8": {
         "level-icon": "/home-base/buildings/mortar/mortar-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 1200000
       },
       "9": {
         "level-icon": "/home-base/buildings/mortar/mortar-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 1600000
       },
       "10": {
         "level-icon": "/home-base/buildings/mortar/mortar-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 1800000
       },
       "11": {
         "level-icon": "/home-base/buildings/mortar/mortar-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 2300000
       },
       "12": {
         "level-icon": "/home-base/buildings/mortar/mortar-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 2400000
       },
       "13": {
         "level-icon": "/home-base/buildings/mortar/mortar-13.png",
-        "upgrade-price1": 13000
+        "upgrade-price1": 2800000
       },
       "14": {
         "level-icon": "/home-base/buildings/mortar/mortar-14.png",
-        "upgrade-price1": 14000
+        "upgrade-price1": 4300000
       },
       "15": {
         "level-icon": "/home-base/buildings/mortar/mortar-15.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 5000000
       },
       "16": {
         "level-icon": "/home-base/buildings/mortar/mortar-16.png",
-        "upgrade-price1": 16000
+        "upgrade-price1": 7000000
       },
       "17": {
         "level-icon": "/home-base/buildings/mortar/mortar-17.png",
-        "upgrade-price1": 17000
+        "upgrade-price1": 13000000
       },
       "18": {
         "level-icon": "/home-base/buildings/mortar/mortar-18.png",
-        "upgrade-price1": 18000
+        "upgrade-price1": 21000000
       }
     }
   },
@@ -1078,59 +1078,59 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-1.png",
-        "upgrade-price2": 1000
+        "upgrade-price2": 10000
       },
       "2": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-2.png",
-        "upgrade-price2": 2000
+        "upgrade-price2": 50000
       },
       "3": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-3.png",
-        "upgrade-price2": 3000
+        "upgrade-price2": 600000
       },
       "4": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-4.png",
-        "upgrade-price2": 4000
+        "upgrade-price2": 1200000
       },
       "5": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-5.png",
-        "upgrade-price2": 5000
+        "upgrade-price2": 2000000
       },
       "6": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-6.png",
-        "upgrade-price2": 6000
+        "upgrade-price2": 3000000
       },
       "7": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-7.png",
-        "upgrade-price2": 7000
+        "upgrade-price2": 5000000
       },
       "8": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-8.png",
-        "upgrade-price2": 8000
+        "upgrade-price2": 5000000
       },
       "9": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-9.png",
-        "upgrade-price2": 9000
+        "upgrade-price2": 8000000
       },
       "10": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-10.png",
-        "upgrade-price2": 10000
+        "upgrade-price2": 10000000
       },
       "11": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-11.png",
-        "upgrade-price2": 11000
+        "upgrade-price2": 12000000
       },
       "12": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-12.png",
-        "upgrade-price2": 12000
+        "upgrade-price2": 14500000
       },
       "13": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-13.png",
-        "upgrade-price2": 13000
+        "upgrade-price2": 19000000
       },
       "14": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-14.png",
-        "upgrade-price2": 14000
+        "upgrade-price2": 28000000
       }
     }
   },
@@ -1139,35 +1139,35 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 0
       },
       "2": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 3000000
       },
       "3": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 4000000
       },
       "4": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 6000000
       },
       "5": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 7000000
       },
       "6": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 8000000
       },
       "7": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 15500000
       },
       "8": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 24000000
       }
     }
   },
@@ -1176,71 +1176,71 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 250000
       },
       "2": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 350000
       },
       "3": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 500000
       },
       "4": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 600000
       },
       "5": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 800000
       },
       "6": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 1200000
       },
       "7": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 1400000
       },
       "8": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 1600000
       },
       "9": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 2100000
       },
       "10": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 3000000
       },
       "11": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 3100000
       },
       "12": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 3700000
       },
       "13": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-13.png",
-        "upgrade-price1": 13000
+        "upgrade-price1": 5100000
       },
       "14": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-14.png",
-        "upgrade-price1": 14000
+        "upgrade-price1": 6500000
       },
       "15": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-15.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 8200000
       },
       "16": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-16.png",
-        "upgrade-price1": 16000
+        "upgrade-price1": 15000000
       },
       "17": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-17.png",
-        "upgrade-price1": 17000
+        "upgrade-price1": 25000000
       }
     }
   },
@@ -1249,39 +1249,39 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/spell-factory/spell-factory-1.png",
-        "upgrade-price2": 1000
+        "upgrade-price2": 150000
       },
       "2": {
         "level-icon": "/home-base/buildings/spell-factory/spell-factory-2.png",
-        "upgrade-price2": 2000
+        "upgrade-price2": 300000
       },
       "3": {
         "level-icon": "/home-base/buildings/spell-factory/spell-factory-3.png",
-        "upgrade-price2": 3000
+        "upgrade-price2": 600000
       },
       "4": {
         "level-icon": "/home-base/buildings/spell-factory/spell-factory-4.png",
-        "upgrade-price2": 4000
+        "upgrade-price2": 1200000
       },
       "5": {
         "level-icon": "/home-base/buildings/spell-factory/spell-factory-5.png",
-        "upgrade-price2": 5000
+        "upgrade-price2": 2000000
       },
       "6": {
         "level-icon": "/home-base/buildings/spell-factory/spell-factory-6.png",
-        "upgrade-price2": 6000
+        "upgrade-price2": 3500000
       },
       "7": {
         "level-icon": "/home-base/buildings/spell-factory/spell-factory-7.png",
-        "upgrade-price2": 7000
+        "upgrade-price2": 9000000
       },
       "8": {
         "level-icon": "/home-base/buildings/spell-factory/spell-factory-8.png",
-        "upgrade-price2": 8000
+        "upgrade-price2": 14000000
       },
       "9": {
         "level-icon": "/home-base/buildings/spell-factory/spell-factory-9.png",
-        "upgrade-price2": 9000
+        "upgrade-price2": 24000000
       }
     }
   },
@@ -1290,55 +1290,55 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 1000000
       },
       "2": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 1200000
       },
       "3": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 2400000
       },
       "4": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 2500000
       },
       "5": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 3900000
       },
       "6": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 5000000
       },
       "7": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 6000000
       },
       "8": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 7000000
       },
       "9": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 9000000
       },
       "10": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 9500000
       },
       "11": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 10000000
       },
       "12": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 16000000
       },
       "13": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-13.png",
-        "upgrade-price1": 13000
+        "upgrade-price1": 26000000
       }
     }
   },
@@ -1347,47 +1347,47 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-1.png",
-        "upgrade-price2": 1000
+        "upgrade-price2": 180000
       },
       "2": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-2.png",
-        "upgrade-price2": 2000
+        "upgrade-price2": 270000
       },
       "3": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-3.png",
-        "upgrade-price2": 3000
+        "upgrade-price2": 540000
       },
       "4": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-4.png",
-        "upgrade-price2": 4000
+        "upgrade-price2": 900000
       },
       "5": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-5.png",
-        "upgrade-price2": 5000
+        "upgrade-price2": 1200000
       },
       "6": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-6.png",
-        "upgrade-price2": 6000
+        "upgrade-price2": 1800000
       },
       "7": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-7.png",
-        "upgrade-price2": 7000
+        "upgrade-price2": 2100000
       },
       "8": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-8.png",
-        "upgrade-price2": 8000
+        "upgrade-price2": 2400000
       },
       "9": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-9.png",
-        "upgrade-price2": 9000
+        "upgrade-price2": 3700000
       },
       "10": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-10.png",
-        "upgrade-price2": 10000
+        "upgrade-price2": 5300000
       },
       "11": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-11.png",
-        "upgrade-price2": 11000
+        "upgrade-price2": 12000000
       }
     }
   },
@@ -1396,55 +1396,55 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-1.png",
-        "upgrade-price2": 1000
+        "upgrade-price2": 250000
       },
       "2": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-2.png",
-        "upgrade-price2": 2000
+        "upgrade-price2": 500000
       },
       "3": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-3.png",
-        "upgrade-price2": 3000
+        "upgrade-price2": 1000000
       },
       "4": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-4.png",
-        "upgrade-price2": 4000
+        "upgrade-price2": 1500000
       },
       "5": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-5.png",
-        "upgrade-price2": 5000
+        "upgrade-price2": 2000000
       },
       "6": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-6.png",
-        "upgrade-price2": 6000
+        "upgrade-price2": 2400000
       },
       "7": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-7.png",
-        "upgrade-price2": 7000
+        "upgrade-price2": 3800000
       },
       "8": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-8.png",
-        "upgrade-price2": 8000
+        "upgrade-price2": 5400000
       },
       "9": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-9.png",
-        "upgrade-price2": 9000
+        "upgrade-price2": 6600000
       },
       "10": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-10.png",
-        "upgrade-price2": 10000
+        "upgrade-price2": 8000000
       },
       "11": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-11.png",
-        "upgrade-price2": 11000
+        "upgrade-price2": 10000000
       },
       "12": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-12.png",
-        "upgrade-price2": 12000
+        "upgrade-price2": 16000000
       },
       "13": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-13.png",
-        "upgrade-price2": 13000
+        "upgrade-price2": 25000000
       }
     }
   },
@@ -1453,55 +1453,55 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-1.png",
-        "upgrade-price2": 1000
+        "upgrade-price2": 200000
       },
       "2": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-2.png",
-        "upgrade-price2": 2000
+        "upgrade-price2": 6000000
       },
       "3": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-3.png",
-        "upgrade-price2": 3000 
+        "upgrade-price2": 1000000
       },
       "4": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-4.png",
-        "upgrade-price2": 4000
+        "upgrade-price2": 1600000
       },
       "5": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-5.png",
-        "upgrade-price2": 5000
+        "upgrade-price2": 2200000
       },
       "6": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-6.png",
-        "upgrade-price2": 6000
+        "upgrade-price2": 2900000
       },
       "7": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-7.png",
-        "upgrade-price2": 7000
+        "upgrade-price2": 4000000
       },
       "8": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-8.png",
-        "upgrade-price2": 8000
+        "upgrade-price2": 7000000
       },
       "9": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-9.png",
-        "upgrade-price2": 9000
+        "upgrade-price2": 7200000
       },
       "10": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-10.png",
-        "upgrade-price2": 10000
+        "upgrade-price2": 10000000
       },
       "11": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-11.png",
-        "upgrade-price2": 11000
+        "upgrade-price2": 12000000
       },
       "12": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-12.png",
-        "upgrade-price2": 12000
+        "upgrade-price2": 20000000
       },
       "13": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-13.png",
-        "upgrade-price2": 13000
+        "upgrade-price2": 23000000
       }
     }
   },
@@ -1510,51 +1510,51 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 1000000
       },
       "2": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 1200000
       },
       "3": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 2400000
       },
       "4": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 3400000
       },
       "5": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 4200000
       },
       "6": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 6000000
       },
       "7": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 8000000
       },
       "8": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 9500000
       },
       "9": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 10000000
       },
       "10": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 11000000
       },
       "11": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 16000000
       },
       "12": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 26500000
       }
     }
   },
@@ -1563,31 +1563,31 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/air-sweeper/air-sweeper-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 200000
       },
       "2": {
         "level-icon": "/home-base/buildings/air-sweeper/air-sweeper-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 300000
       },
       "3": {
         "level-icon": "/home-base/buildings/air-sweeper/air-sweeper-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 450000
       },
       "4": {
         "level-icon": "/home-base/buildings/air-sweeper/air-sweeper-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 800000
       },
       "5": {
         "level-icon": "/home-base/buildings/air-sweeper/air-sweeper-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 1200000
       },
       "6": {
         "level-icon": "/home-base/buildings/air-sweeper/air-sweeper-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 1900000
       },
       "7": {
         "level-icon": "/home-base/buildings/air-sweeper/air-sweeper-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 3400000
       }
     }
   },
@@ -1596,35 +1596,35 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/dark-spell-factory/dark-spell-factory-1.png",
-        "upgrade-price2": 1000
+        "upgrade-price2": 130000
       },
       "2": {
         "level-icon": "/home-base/buildings/dark-spell-factory/dark-spell-factory-2.png",
-        "upgrade-price2": 2000
+        "upgrade-price2": 260000
       },
       "3": {
         "level-icon": "/home-base/buildings/dark-spell-factory/dark-spell-factory-3.png",
-        "upgrade-price2": 3000
+        "upgrade-price2": 600000
       },
       "4": {
         "level-icon": "/home-base/buildings/dark-spell-factory/dark-spell-factory-4.png",
-        "upgrade-price2": 4000
+        "upgrade-price2": 1200000
       },
       "5": {
         "level-icon": "/home-base/buildings/dark-spell-factory/dark-spell-factory-5.png",
-        "upgrade-price2": 5000
+        "upgrade-price2": 2500000
       },
       "6": {
         "level-icon": "/home-base/buildings/dark-spell-factory/dark-spell-factory-6.png",
-        "upgrade-price2": 6000
+        "upgrade-price2": 4000000
       },
       "7": {
         "level-icon": "/home-base/buildings/dark-spell-factory/dark-spell-factory-7.png",
-        "upgrade-price2": 7000
+        "upgrade-price2": 11000000
       },
       "8": {
         "level-icon": "/home-base/buildings/dark-spell-factory/dark-spell-factory-8.png",
-        "upgrade-price2": 8000
+        "upgrade-price2": 18000000
       }
     }
   },
@@ -1633,31 +1633,31 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/eagle-artillery/eagle-artillery-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 5000000
       },
       "2": {
         "level-icon": "/home-base/buildings/eagle-artillery/eagle-artillery-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 6000000
       },
       "3": {
         "level-icon": "/home-base/buildings/eagle-artillery/eagle-artillery-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 9000000
       },
       "4": {
         "level-icon": "/home-base/buildings/eagle-artillery/eagle-artillery-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 10000000
       },
       "5": {
         "level-icon": "/home-base/buildings/eagle-artillery/eagle-artillery-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 12000000
       },
       "6": {
         "level-icon": "/home-base/buildings/eagle-artillery/eagle-artillery-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 13000000
       },
       "7": {
         "level-icon": "/home-base/buildings/eagle-artillery/eagle-artillery-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 14000000
       }
     }
   },
@@ -1666,55 +1666,55 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-1.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 700000
       },
       "2": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-2.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 1000000
       },
       "3": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-3.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 1300000
       },
       "4": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-4.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 1800000
       },
       "5": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-5.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 1900000
       },
       "6": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-6.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 2000000
       },
       "7": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-7.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 4000000
       },
       "8": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-8.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 5000000
       },
       "9": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-9.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 6000000
       },
       "10": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-10.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 7000000
       },
       "11": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-11.png",
-        "upgrade-price1": 11000
+        "upgrade-price1": 8500000
       },
       "12": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-12.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 14500000
       },
       "13": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-13.png",
-        "upgrade-price1": 13000
+        "upgrade-price1": 25000000
       }
     }
   },
@@ -2079,39 +2079,39 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/workshop/workshop-1.png",
-        "upgrade-price2": 1000
+        "upgrade-price2": 2400000
       },
       "2": {
         "level-icon": "/home-base/buildings/workshop/workshop-2.png",
-        "upgrade-price2": 2000
+        "upgrade-price2": 3700000
       },
       "3": {
         "level-icon": "/home-base/buildings/workshop/workshop-3.png",
-        "upgrade-price2": 3000
+        "upgrade-price2": 5000000
       },
       "4": {
         "level-icon": "/home-base/buildings/workshop/workshop-4.png",
-        "upgrade-price2": 4000
+        "upgrade-price2": 8700000
       },
       "5": {
         "level-icon": "/home-base/buildings/workshop/workshop-5.png",
-        "upgrade-price2": 5000
+        "upgrade-price2": 9000000
       },
       "6": {
         "level-icon": "/home-base/buildings/workshop/workshop-6.png",
-        "upgrade-price2": 6000
+        "upgrade-price2": 10000000
       },
       "7": {
         "level-icon": "/home-base/buildings/workshop/workshop-7.png",
-        "upgrade-price2": 7000
+        "upgrade-price2": 11000000
       },
       "8": {
         "level-icon": "/home-base/buildings/workshop/workshop-8.png",
-        "upgrade-price2": 8000
+        "upgrade-price2": 13000000
       },
       "9": {
         "level-icon": "/home-base/buildings/workshop/workshop-9.png",
-        "upgrade-price2": 9000
+        "upgrade-price2": 26000000
       }
     }
   },
@@ -2151,31 +2151,31 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/scattershot/scattershot-1.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 8000000
       },
       "2": {
         "level-icon": "/home-base/buildings/scattershot/scattershot-2.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 9000000
       },
       "3": {
         "level-icon": "/home-base/buildings/scattershot/scattershot-3.png",
-        "upgrade-price1": 20000
+        "upgrade-price1": 11000000
       },
       "4": {
         "level-icon": "/home-base/buildings/scattershot/scattershot-4.png",
-        "upgrade-price1": 25000
+        "upgrade-price1": 11500000
       },
       "5": {
         "level-icon": "/home-base/buildings/scattershot/scattershot-5.png",
-        "upgrade-price1": 30000
+        "upgrade-price1": 12000000
       },
       "6": {
         "level-icon": "/home-base/buildings/scattershot/scattershot-6.png",
-        "upgrade-price1": 35000
+        "upgrade-price1": 16500000
       },
       "7": {
         "level-icon": "/home-base/buildings/scattershot/scattershot-7.png",
-        "upgrade-price1": 40000
+        "upgrade-price1": 26500000
       }
     }
   },
@@ -2184,51 +2184,51 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-1.png",
-        "upgrade-price2": 10000
+        "upgrade-price2": 3000000
       },
       "2": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-2.png", 
-        "upgrade-price2": 15000
+        "upgrade-price2": 4000000
       },
       "3": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-3.png",
-        "upgrade-price2": 20000
+        "upgrade-price2": 5000000
       },
       "4": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-4.png",
-        "upgrade-price2": 25000
+        "upgrade-price2": 6000000
       },
       "5": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-5.png",
-        "upgrade-price2": 30000
+        "upgrade-price2": 7000000
       },
       "6": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-6.png",
-        "upgrade-price2": 35000
+        "upgrade-price2": 8000000
       },
       "7": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-7.png",
-        "upgrade-price2": 40000
+        "upgrade-price2": 9000000
       },
       "8": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-8.png",
-        "upgrade-price2": 45000
+        "upgrade-price2": 10000000
       },
       "9": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-9.png",
-        "upgrade-price2": 50000
+        "upgrade-price2": 11000000
       },
       "10": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-10.png",
-        "upgrade-price2": 55000
+        "upgrade-price2": 12000000
       },
       "11": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-11.png",
-        "upgrade-price2": 60000
+        "upgrade-price2": 16500000
       },
       "12": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-12.png",
-        "upgrade-price2": 65000
+        "upgrade-price2": 25500000
       }
     }
   },
@@ -2237,43 +2237,43 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/blacksmith/blacksmith-1.png",
-        "upgrade-price2": 10000
+        "upgrade-price2": 600000
       },
       "2": {
         "level-icon": "/home-base/buildings/blacksmith/blacksmith-2.png",
-        "upgrade-price2": 15000
+        "upgrade-price2": 1200000
       },
       "3": {
         "level-icon": "/home-base/buildings/blacksmith/blacksmith-3.png",
-        "upgrade-price2": 20000
+        "upgrade-price2": 2300000
       },
       "4": {
         "level-icon": "/home-base/buildings/blacksmith/blacksmith-4.png",
-        "upgrade-price2": 25000
+        "upgrade-price2": 3000000
       },
       "5": {
         "level-icon": "/home-base/buildings/blacksmith/blacksmith-5.png",
-        "upgrade-price2": 30000
+        "upgrade-price2": 5000000
       },
       "6": {
         "level-icon": "/home-base/buildings/blacksmith/blacksmith-6.png",
-        "upgrade-price2": 35000
+        "upgrade-price2": 6200000
       },
       "7": {
         "level-icon": "/home-base/buildings/blacksmith/blacksmith-7.png",
-        "upgrade-price2": 40000
+        "upgrade-price2": 9200000
       },
       "8": {
         "level-icon": "/home-base/buildings/blacksmith/blacksmith-8.png",
-        "upgrade-price2": 45000
+        "upgrade-price2": 10000000
       },
       "9": {
         "level-icon": "/home-base/buildings/blacksmith/blacksmith-9.png",
-        "upgrade-price2": 50000
+        "upgrade-price2": 11000000
       },
       "10": {
         "level-icon": "/home-base/buildings/blacksmith/blacksmith-10.png",
-        "upgrade-price2": 55000
+        "upgrade-price2": 18000000
       }
     }
   },
@@ -2282,51 +2282,51 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-1.png",
-        "upgrade-price2": 10000
+        "upgrade-price2": 30000
       },
       "2": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-2.png",
-        "upgrade-price2": 15000
+        "upgrade-price2": 1600000
       },
       "3": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-3.png",
-        "upgrade-price2": 20000
+        "upgrade-price2": 2300000
       },
       "4": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-4.png",
-        "upgrade-price2": 25000
+        "upgrade-price2": 2500000
       },
       "5": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-5.png",
-        "upgrade-price2": 30000
+        "upgrade-price2": 45000000
       },
       "6": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-6.png",
-        "upgrade-price2": 35000
+        "upgrade-price2": 5500000
       },
       "7": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-7.png",
-        "upgrade-price2": 40000
+        "upgrade-price2": 8500000
       },
       "8": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-8.png",
-        "upgrade-price2": 45000
+        "upgrade-price2": 9500000
       },
       "9": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-9.png",
-        "upgrade-price2": 50000
+        "upgrade-price2": 11000000
       },
       "10": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-10.png",
-        "upgrade-price2": 55000
+        "upgrade-price2": 13000000
       },
       "11": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-11.png",
-        "upgrade-price2": 60000
+        "upgrade-price2": 17000000
       },
       "12": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-12.png",
-        "upgrade-price2": 65000
+        "upgrade-price2": 26000000
       }
     }
   },
@@ -2335,19 +2335,19 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/spell-tower/spell-tower-1.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 9000000
       },
       "2": {
         "level-icon": "/home-base/buildings/spell-tower/spell-tower-2.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 11000000
       },
       "3": {
         "level-icon": "/home-base/buildings/spell-tower/spell-tower-3.png",
-        "upgrade-price1": 20000
+        "upgrade-price1": 12000000
       },
       "4": {
         "level-icon": "/home-base/buildings/spell-tower/spell-tower-4.png",
-        "upgrade-price1": 25000
+        "upgrade-price1": 27000000
       }
     }
   },
@@ -2356,23 +2356,23 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/monolith/monolith-1.png",
-        "upgrade-price3": 10000
+        "upgrade-price3": 200000
       },
       "2": {
         "level-icon": "/home-base/buildings/monolith/monolith-2.png",
-        "upgrade-price3": 15000
+        "upgrade-price3": 250000
       },
       "3": {
         "level-icon": "/home-base/buildings/monolith/monolith-3.png",
-        "upgrade-price3": 20000
+        "upgrade-price3": 260000
       },
       "4": {
         "level-icon": "/home-base/buildings/monolith/monolith-4.png",
-        "upgrade-price3": 25000
+        "upgrade-price3": 300000
       },
       "5": {
         "level-icon": "/home-base/buildings/monolith/monolith-5.png",
-        "upgrade-price3": 30000
+        "upgrade-price3": 470000
       }
     }
   },
@@ -2396,27 +2396,15 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/multi-gear-tower/multi-gear-tower-1.png",
-        "upgrade-price1": 10000
-      },
-      "1b": {
-        "level-icon": "/home-base/buildings/multi-gear-tower/multi-gear-tower-1b.png",
-        "upgrade-price1": 12000
+        "upgrade-price1": 17000000
       },
       "2": {
         "level-icon": "/home-base/buildings/multi-gear-tower/multi-gear-tower-2.png",
-        "upgrade-price1": 15000
-      },
-      "2b": {
-        "level-icon": "/home-base/buildings/multi-gear-tower/multi-gear-tower-2b.png",
-        "upgrade-price1": 18000
+        "upgrade-price1": 18000000
       },
       "3": {
         "level-icon": "/home-base/buildings/multi-gear-tower/multi-gear-tower-3.png",
-        "upgrade-price1": 20000
-      },
-      "3b": {
-        "level-icon": "/home-base/buildings/multi-gear-tower/multi-gear-tower-3b.png",
-        "upgrade-price1": 24000
+        "upgrade-price1": 28000000
       }
     }
   },
@@ -2452,19 +2440,19 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/multi-archer-tower/multi-archer-tower-1.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 12000000
       },
       "2": {
         "level-icon": "/home-base/buildings/multi-archer-tower/multi-archer-tower-2.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 13000000
       },
       "3": {
         "level-icon": "/home-base/buildings/multi-archer-tower/multi-archer-tower-3.png",
-        "upgrade-price1": 20000
+        "upgrade-price1": 17500000
       },
       "4": {
         "level-icon": "/home-base/buildings/multi-archer-tower/multi-archer-tower-4.png",
-        "upgrade-price1": 25000
+        "upgrade-price1": 27000000
       }
     }
   },
@@ -2473,19 +2461,19 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/ricochet-cannon/ricochet-cannon-1.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 12000000
       },
       "2": {
         "level-icon": "/home-base/buildings/ricochet-cannon/ricochet-cannon-2.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 13000000
       },
       "3": {
         "level-icon": "/home-base/buildings/ricochet-cannon/ricochet-cannon-3.png",
-        "upgrade-price1": 20000
+        "upgrade-price1": 17500000
       },
       "4": {
         "level-icon": "/home-base/buildings/ricochet-cannon/ricochet-cannon-4.png",
-        "upgrade-price1": 25000
+        "upgrade-price1": 26500000
       }
     }
   },
@@ -2494,11 +2482,11 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/revenge-tower/revenge-tower-1.png",
-        "upgrade-price3": 10000
+        "upgrade-price3": 430000
       },
       "2": {
         "level-icon": "/home-base/buildings/revenge-tower/revenge-tower-2.png",
-        "upgrade-price3": 15000
+        "upgrade-price3": 460000
       }
     }
   },
@@ -2507,15 +2495,15 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/firespitter/firespitter-1.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 17000000
       },  
       "2": {
         "level-icon": "/home-base/buildings/firespitter/firespitter-2.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 18000000
       },
       "3": {
         "level-icon": "/home-base/buildings/firespitter/firespitter-3.png",
-        "upgrade-price1": 20000
+        "upgrade-price1": 29000000
       }
     }
   },
@@ -2548,81 +2536,6 @@
       }
     }
   },
-  "103000008": {
-    "name": "Roaster",
-    "icon": "/home-base/seasonal-defenses/roaster/roaster-10.png",
-    "tier_1": "/home-base/seasonal-defenses/roaster/roaster-1.png",
-    "tier_2": "/home-base/seasonal-defenses/roaster/roaster-2.png",
-    "tier_3": "/home-base/seasonal-defenses/roaster/roaster-3.png",
-    "tier_4": "/home-base/seasonal-defenses/roaster/roaster-4.png",
-    "tier_5": "/home-base/seasonal-defenses/roaster/roaster-5.png",
-    "tier_6": "/home-base/seasonal-defenses/roaster/roaster-6.png",
-    "tier_7": "/home-base/seasonal-defenses/roaster/roaster-7.png",
-    "tier_8": "/home-base/seasonal-defenses/roaster/roaster-8.png",
-    "tier_9": "/home-base/seasonal-defenses/roaster/roaster-9.png",
-    "tier_10": "/home-base/seasonal-defenses/roaster/roaster-10.png"
-  },
-  "102000024": {
-    "name": "Hitpoints",
-    "icon": "/home-base/seasonal-defenses/hitpoints.png"
-  },
-  "102000025": {
-    "name": "Damage",
-    "icon": "/home-base/seasonal-defenses/damage.png"
-  },
-  "102000026": {
-    "name": "Burst Fire",
-    "icon": "/home-base/seasonal-defenses/burstfire.png"
-  },
-  "103000009": {
-    "name": "Air Bombs",
-    "icon": "/home-base/seasonal-defenses/air-bombs/air-bombs-10.png",
-    "tier_1": "/home-base/seasonal-defenses/air-bombs/air-bombs-1.png",
-    "tier_2": "/home-base/seasonal-defenses/air-bombs/air-bombs-2.png",
-    "tier_3": "/home-base/seasonal-defenses/air-bombs/air-bombs-3.png",
-    "tier_4": "/home-base/seasonal-defenses/air-bombs/air-bombs-4.png",
-    "tier_5": "/home-base/seasonal-defenses/air-bombs/air-bombs-5.png",
-    "tier_6": "/home-base/seasonal-defenses/air-bombs/air-bombs-6.png",
-    "tier_7": "/home-base/seasonal-defenses/air-bombs/air-bombs-7.png",
-    "tier_8": "/home-base/seasonal-defenses/air-bombs/air-bombs-8.png",
-    "tier_9": "/home-base/seasonal-defenses/air-bombs/air-bombs-9.png",
-    "tier_10": "/home-base/seasonal-defenses/air-bombs/air-bombs-10.png"
-  },
-  "102000027": {
-    "name": "Hitpoints",
-    "icon": "/home-base/seasonal-defenses/hitpoints.png"
-  },
-  "102000028": {
-    "name": "Damage",
-    "icon": "/home-base/seasonal-defenses/damage.png"
-  },
-  "102000029": {
-    "name": "Hero Atttack Cooldown",
-    "icon": "/home-base/seasonal-defenses/attackspeed.png"
-  },
-  "103000010": {
-    "name": "Lava Launcher",
-    "icon": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-7.png",
-    "tier_1": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-1.png",
-    "tier_2": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-2.png",
-    "tier_3": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-3.png",
-    "tier_4": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-4.png",
-    "tier_5": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-5.png",
-    "tier_6": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-6.png",
-    "tier_7": "/home-base/seasonal-defenses/lava-launcher/lava-launcher-7.png"
-  },
-  "102000030": {
-    "name": "Hitpoints",
-    "icon": "/home-base/seasonal-defenses/hitpoints.png"
-  },
-  "102000031": {
-    "name": "Damage",
-    "icon": "/home-base/seasonal-defenses/damage.png"
-  },
-  "102000032": {
-    "name": "Range",
-    "icon": "/home-base/seasonal-defenses/range.png"
-  },
   "103000011": {
     "name": "Hot Candle",
     "icon": "/home-base/seasonal-defenses/hot-candle/hot-candle-4.png",
@@ -2633,139 +2546,136 @@
   },
   "102000033": {
     "name": "Hitpoints",
-    "icon": "/home-base/seasonal-defenses/hitpoints.png",
     "levels": {
       "1": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 1000
+        "upgrade-price2": 0
       },
       "2": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 2000
+        "upgrade-price2": 3500000
       },
       "3": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 3000
+        "upgrade-price2": 4500000
       },
       "4": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 4000
+        "upgrade-price2": 5500000
       },
       "5": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 5000
+        "upgrade-price2": 6500000
       },
       "6": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 6000
+        "upgrade-price2": 7500000
       },
       "7": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 7000
+        "upgrade-price2": 8500000
       },
       "8": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 8000
+        "upgrade-price2": 10000000
       },
       "9": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 9000
+        "upgrade-price2": 11500000
       },
       "10": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 10000
+        "upgrade-price2": 13000000
       }
     }
   },
   "102000034": {
     "name": "Damage per Second",
-    "icon": "/home-base/seasonal-defenses/damage.png",
     "levels": {
       "1": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 0
       },
       "2": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 4000000
       },
       "3": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 5000000
       },
       "4": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 6000000
       },
       "5": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 7500000
       },
       "6": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 9000000
       },
       "7": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 10500000
       },
       "8": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 12000000
       },
       "9": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 13500000
       },
       "10": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 15000000
       }
     }
   },
   "102000035": {
     "name": "Total Seconds Active",
-    "icon": "/home-base/seasonal-defenses/time.png",
     "levels": {
       "1": {
         "level-icon": "/home-base/seasonal-defenses/time.png",
-        "upgrade-price1": 1000
+        "upgrade-price3": 0
       },
       "2": {
         "level-icon": "/home-base/seasonal-defenses/time.png",
-        "upgrade-price1": 2000
+        "upgrade-price3": 30000
       },
       "3": {
         "level-icon": "/home-base/seasonal-defenses/time.png",
-        "upgrade-price1": 3000
+        "upgrade-price3": 40000
       },
       "4": {
         "level-icon": "/home-base/seasonal-defenses/time.png",
-        "upgrade-price1": 4000
+        "upgrade-price3": 50000
       },
       "5": {
         "level-icon": "/home-base/seasonal-defenses/time.png",
-        "upgrade-price1": 5000
+        "upgrade-price3": 60000
       },
       "6": {
         "level-icon": "/home-base/seasonal-defenses/time.png",
-        "upgrade-price1": 6000
+        "upgrade-price3": 70000
       },
       "7": {
         "level-icon": "/home-base/seasonal-defenses/time.png",
-        "upgrade-price1": 7000
+        "upgrade-price3": 80000
       },
       "8": {
         "level-icon": "/home-base/seasonal-defenses/time.png",
-        "upgrade-price1": 8000
+        "upgrade-price3": 90000
       },
       "9": {
         "level-icon": "/home-base/seasonal-defenses/time.png",
-        "upgrade-price1": 9000
+        "upgrade-price3": 100000
       },
       "10": {
         "level-icon": "/home-base/seasonal-defenses/time.png",
-        "upgrade-price1": 10000
+        "upgrade-price3": 110000
       }
     }
   },
@@ -2779,139 +2689,136 @@
   },
   "102000036": {
     "name": "Hitpoints",
-    "icon": "/home-base/seasonal-defenses/hitpoints.png",
     "levels": {
       "1": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 1000
+        "upgrade-price3": 0
       },
       "2": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 2000
+        "upgrade-price3": 40000
       },
       "3": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 3000
+        "upgrade-price3": 50000
       },
       "4": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 4000
+        "upgrade-price3": 60000
       },
       "5": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 5000
+        "upgrade-price3": 70000
       },
       "6": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 6000
+        "upgrade-price3": 80000
       },
       "7": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 7000
+        "upgrade-price3": 90000
       },
       "8": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 8000
+        "upgrade-price3": 100000
       },
       "9": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 9000
+        "upgrade-price3": 110000
       },
       "10": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 10000
+        "upgrade-price3": 120000
       }
     }
   },
   "102000037": {
     "name": "Damage per Second",
-    "icon": "/home-base/seasonal-defenses/damage.png",
     "levels": {
       "1": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 1000
+        "upgrade-price2": 0
       },
       "2": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 2000
+        "upgrade-price2": 3000000
       },
       "3": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 3000
+        "upgrade-price2": 4000000
       },
       "4": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 4000
+        "upgrade-price2": 5000000
       },
       "5": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 5000
+        "upgrade-price2": 6000000
       },
       "6": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 6000
+        "upgrade-price2": 7000000
       },
       "7": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 7000
+        "upgrade-price2": 8000000
       },
       "8": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 8000
+        "upgrade-price2": 9000000
       },
       "9": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 9000
+        "upgrade-price2": 10000000
       },
       "10": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 10000
+        "upgrade-price2": 11000000
       }
     }
   },
   "102000038": {
     "name": "Poison Spell level",
-    "icon": "/home-base/seasonal-defenses/poison.png",
     "levels": {
       "1": {
         "level-icon": "/home-base/seasonal-defenses/poison.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 0
       },
       "2": {
         "level-icon": "/home-base/seasonal-defenses/poison.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 3500000
       },
       "3": {
         "level-icon": "/home-base/seasonal-defenses/poison.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 4500000
       },
       "4": {
         "level-icon": "/home-base/seasonal-defenses/poison.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 5500000
       },
       "5": {
         "level-icon": "/home-base/seasonal-defenses/poison.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 6500000
       },
       "6": {
         "level-icon": "/home-base/seasonal-defenses/poison.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 7500000
       },
       "7": {
         "level-icon": "/home-base/seasonal-defenses/poison.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 8500000
       },
       "8": {
         "level-icon": "/home-base/seasonal-defenses/poison.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 10000000
       },
       "9": {
         "level-icon": "/home-base/seasonal-defenses/poison.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 11500000
       },
       "10": {
         "level-icon": "/home-base/seasonal-defenses/poison.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 13000000
       }
     }
   },
@@ -2925,238 +2832,427 @@
   },
   "102000039": {
     "name": "Hitpoints",
-    "icon": "/home-base/seasonal-defenses/hitpoints.png",
     "levels": {
       "1": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 1000
+        "upgrade-price1": 0
       },
       "2": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 2000
+        "upgrade-price1": 3000000
       },
       "3": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 3000
+        "upgrade-price1": 4000000
       },
       "4": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 4000
+        "upgrade-price1": 5000000
       },
       "5": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 5000
+        "upgrade-price1": 6000000
       },
       "6": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 6000
+        "upgrade-price1": 7000000
       },
       "7": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 7000
+        "upgrade-price1": 8000000
       },
       "8": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 8000
+        "upgrade-price1": 9000000
       },
       "9": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 9000
+        "upgrade-price1": 10000000
       },
       "10": {
         "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 11000000
       }
     }
   },
   "102000040": {
     "name": "Damage per hit",
-    "icon": "/home-base/seasonal-defenses/damage.png",
     "levels": {
       "1": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 1000
+        "upgrade-price2": 0
       },
       "2": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 2000
+        "upgrade-price2": 35000
       },
       "3": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 3000
+        "upgrade-price2": 45000
       },
       "4": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 4000
+        "upgrade-price2": 55000
       },
       "5": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 5000
+        "upgrade-price2": 65000
       },
       "6": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 6000
+        "upgrade-price2": 75000
       },
       "7": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 7000
+        "upgrade-price2": 85000
       },
       "8": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 8000
+        "upgrade-price2": 95000
       },
       "9": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 9000
+        "upgrade-price2": 105000
       },
       "10": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 10000
+        "upgrade-price2": 115000
       }
     }
   },
   "102000041": {
     "name": "Explosion Damage",
-    "icon": "/home-base/seasonal-defenses/damage.png",
     "levels": {
       "1": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 1000
+        "upgrade-price3": 0
       },
       "2": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 2000
+        "upgrade-price3": 4000000
       },
       "3": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 3000
+        "upgrade-price3": 5000000
       },
       "4": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 4000
+        "upgrade-price3": 6000000
       },
       "5": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 5000
+        "upgrade-price3": 7500000
       },
       "6": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 6000
+        "upgrade-price3": 9000000
       },
       "7": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 7000
+        "upgrade-price3": 10500000
       },
       "8": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 8000
+        "upgrade-price3": 12000000
       },
       "9": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 9000
+        "upgrade-price3": 13500000
       },
       "10": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price1": 10000
+        "upgrade-price3": 15000000
       }
     }
   },
   "12000000": {
     "name": "Bomb",
     "levels": {
-      "1": "/home-base/traps/bomb/bomb-1.png",
-      "2": "/home-base/traps/bomb/bomb-1.png",
-      "3": "/home-base/traps/bomb/bomb-3.png",
-      "4": "/home-base/traps/bomb/bomb-3.png",
-      "5": "/home-base/traps/bomb/bomb-5.png",
-      "6": "/home-base/traps/bomb/bomb-5.png",
-      "7": "/home-base/traps/bomb/bomb-7.png",
-      "8": "/home-base/traps/bomb/bomb-7.png",
-      "9": "/home-base/traps/bomb/bomb-9.png",
-      "10": "/home-base/traps/bomb/bomb-9.png",
-      "11": "/home-base/traps/bomb/bomb-11.png",
-      "12": "/home-base/traps/bomb/bomb-11.png",
-      "13": "/home-base/traps/bomb/bomb-13.png",
-      "14": "/home-base/traps/bomb/bomb-13.png"
+      "1": {
+        "level-icon": "/home-base/buildings/bomb/bomb-1.png",
+        "upgrade-price1": 400
+      },
+      "2": {
+        "level-icon": "/home-base/buildings/bomb/bomb-1.png",
+        "upgrade-price1": 1000
+      },
+      "3": {
+        "level-icon": "/home-base/buildings/bomb/bomb-3.png",
+        "upgrade-price1": 10000
+      },
+      "4": {
+        "level-icon": "/home-base/buildings/bomb/bomb-3.png",
+        "upgrade-price1": 40000
+      },
+      "5": {
+        "level-icon": "/home-base/buildings/bomb/bomb-4.png",
+        "upgrade-price1": 100000
+      },
+      "6": {
+        "level-icon": "/home-base/buildings/bomb/bomb-5.png",
+        "upgrade-price1": 230000
+      },
+      "7": {
+        "level-icon": "/home-base/buildings/bomb/bomb-7.png",
+        "upgrade-price1": 330000
+      },
+      "8": {
+        "level-icon": "/home-base/buildings/bomb/bomb-7.png",
+        "upgrade-price1": 500000
+      },
+      "9": {
+        "level-icon": "/home-base/buildings/bomb/bomb-9.png",
+        "upgrade-price1": 750000
+      },
+      "10": {
+        "level-icon": "/home-base/buildings/bomb/bomb-9.png",
+        "upgrade-price1": 1300000
+      },
+      "11": {
+        "level-icon": "/home-base/buildings/bomb/bomb-11.png",
+        "upgrade-price1": 2500000
+      },
+      "12": {
+        "level-icon": "/home-base/buildings/bomb/bomb-11.png",
+        "upgrade-price1": 4000000
+      },
+      "13": {
+        "level-icon": "/home-base/buildings/bomb/bomb-13.png",
+        "upgrade-price1": 8500000
+      },
+      "14": {
+        "level-icon": "/home-base/buildings/bomb/bomb-13.png",
+        "upgrade-price1": 14000000
+      }
     }
   },
   "12000001": {
     "name": "Spring Trap",
     "levels": {
-      "1": "/home-base/traps/spring-trap/spring-trap-1.png",
-      "2": "/home-base/traps/spring-trap/spring-trap-1.png",
-      "3": "/home-base/traps/spring-trap/spring-trap-3.png",
-      "4": "/home-base/traps/spring-trap/spring-trap-3.png",
-      "5": "/home-base/traps/spring-trap/spring-trap-5.png",
-      "6": "/home-base/traps/spring-trap/spring-trap-5.png",
-      "7": "/home-base/traps/spring-trap/spring-trap-7.png",
-      "8": "/home-base/traps/spring-trap/spring-trap-7.png",
-      "9": "/home-base/traps/spring-trap/spring-trap-9.png",
-      "10": "/home-base/traps/spring-trap/spring-trap-9.png",
-      "11": "/home-base/traps/spring-trap/spring-trap-11.png",
-      "12": "/home-base/traps/spring-trap/spring-trap-11.png",
-      "13": "/home-base/traps/spring-trap/spring-trap-13.png",
-      "14": "/home-base/traps/spring-trap/spring-trap-13.png"
+      "1": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-1.png",
+        "upgrade-price1": 2000
+      },
+      "2": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-1.png",
+        "upgrade-price1": 130000
+      },
+      "3": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-3.png",
+        "upgrade-price1": 240000
+      },
+      "4": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-3.png",
+        "upgrade-price1": 350000
+      },
+      "5": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-5.png",
+        "upgrade-price1": 800000
+      },
+      "6": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-5.png",
+        "upgrade-price1": 1000000
+      },
+      "7": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-7.png",
+        "upgrade-price1": 1700000
+      },
+      "8": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-7.png",
+        "upgrade-price1": 2000000
+      },
+      "9": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-9.png",
+        "upgrade-price1": 3000000
+      },
+      "10": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-9.png",
+        "upgrade-price1": 4000000
+      },
+      "11": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-11.png",
+        "upgrade-price1": 6000000
+      },
+      "12": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-11.png",
+        "upgrade-price1": 13000000
+      },
+      "13": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-3.png",
+        "upgrade-price1": 16000000
+      }
     }
   },
   "12000002": {
     "name": "Giant Bomb",
     "levels": {
-      "1": "/home-base/traps/giant-bomb/giant-bomb-1.png",
-      "2": "/home-base/traps/giant-bomb/giant-bomb-1.png",
-      "3": "/home-base/traps/giant-bomb/giant-bomb-3.png",
-      "4": "/home-base/traps/giant-bomb/giant-bomb-3.png",
-      "5": "/home-base/traps/giant-bomb/giant-bomb-5.png",
-      "6": "/home-base/traps/giant-bomb/giant-bomb-5.png",
-      "7": "/home-base/traps/giant-bomb/giant-bomb-7.png",
-      "8": "/home-base/traps/giant-bomb/giant-bomb-7.png",
-      "9": "/home-base/traps/giant-bomb/giant-bomb-9.png",
-      "10": "/home-base/traps/giant-bomb/giant-bomb-9.png",
-      "11": "/home-base/traps/giant-bomb/giant-bomb-11.png",
-      "12": "/home-base/traps/giant-bomb/giant-bomb-11.png"
+      "1": {
+        "level-icon": "/home-base/traps/giant-bomb/giant-bomb-1.png",
+        "upgrade-price1": 12500
+      },
+      "2": {
+        "level-icon": "/home-base/traps/giant-bomb/giant-bomb-1.png",
+        "upgrade-price1": 75000
+      },
+      "3": {
+        "level-icon": "/home-base/traps/giant-bomb/giant-bomb-3.png",
+        "upgrade-price1": 220000
+      },
+      "4": {
+        "level-icon": "/home-base/traps/giant-bomb/giant-bomb-3.png",
+        "upgrade-price1": 750000
+      },
+      "5": {
+        "level-icon": "/home-base/traps/giant-bomb/giant-bomb-5.png",
+        "upgrade-price1": 900000
+      },
+      "6": {
+        "level-icon": "/home-base/traps/giant-bomb/giant-bomb-5.png",
+        "upgrade-price1": 1300000
+      },
+      "7": {
+        "level-icon": "/home-base/traps/giant-bomb/giant-bomb-7.png",
+        "upgrade-price1": 1500000
+      },
+      "8": {
+        "level-icon": "/home-base/traps/giant-bomb/giant-bomb-7.png",
+        "upgrade-price1": 2000000
+      },
+      "9": {
+        "level-icon": "/home-base/traps/giant-bomb/giant-bomb-9.png",
+        "upgrade-price1": 3200000
+      },
+      "10": {
+        "level-icon": "/home-base/traps/giant-bomb/giant-bomb-9.png",
+        "upgrade-price1": 5500000
+      },
+      "11": {
+        "level-icon": "/home-base/traps/giant-bomb/giant-bomb-11.png",
+        "upgrade-price1": 10000000
+      },
+      "12": {
+        "level-icon": "/home-base/traps/giant-bomb/giant-bomb-11.png",
+        "upgrade-price1": 17000000
+      }
     }
   },
   "12000005": {
     "name": "Air Bomb",
     "levels": {
-      "1": "/home-base/traps/air-bomb/air-bomb-1.png",
-      "2": "/home-base/traps/air-bomb/air-bomb-1.png",
-      "3": "/home-base/traps/air-bomb/air-bomb-3.png",
-      "4": "/home-base/traps/air-bomb/air-bomb-3.png",
-      "5": "/home-base/traps/air-bomb/air-bomb-5.png",
-      "6": "/home-base/traps/air-bomb/air-bomb-5.png",
-      "7": "/home-base/traps/air-bomb/air-bomb-7.png",
-      "8": "/home-base/traps/air-bomb/air-bomb-7.png",
-      "9": "/home-base/traps/air-bomb/air-bomb-9.png",
-      "10": "/home-base/traps/air-bomb/air-bomb-9.png",
-      "11": "/home-base/traps/air-bomb/air-bomb-11.png",
-      "12": "/home-base/traps/air-bomb/air-bomb-11.png",
-      "13": "/home-base/traps/air-bomb/air-bomb-13.png",
-      "14": "/home-base/traps/air-bomb/air-bomb-13.png"
+      "1": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-1.png",
+        "upgrade-price1": 4000
+      },
+      "2": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-1.png",
+        "upgrade-price1": 20000
+      },
+      "3": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-3.png",
+        "upgrade-price1": 75000
+      },
+      "4": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-3.png",
+        "upgrade-price1": 300000
+      },
+      "5": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-5.png",
+        "upgrade-price1": 550000
+      },
+      "6": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-5.png",
+        "upgrade-price1": 800000
+      },
+      "7": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-7.png",
+        "upgrade-price1": 1000000
+      },
+      "8": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-7.png",
+        "upgrade-price1": 1200000
+      },
+      "9": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-9.png",
+        "upgrade-price1": 2000000
+      },
+      "10": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-9.png",
+        "upgrade-price1": 3000000
+      },
+      "11": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-11.png",
+        "upgrade-price1": 5000000
+      },
+      "12": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-11.png",
+        "upgrade-price1": 9500000
+      },
+      "13": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-13.png",
+        "upgrade-price1": 15000000
+      }
     }
   },
   "12000006": {
     "name": "Seeking Air Mine",
     "levels": {
-      "1": "/home-base/traps/seeking-air-mine/seeking-air-mine-1.png",
-      "2": "/home-base/traps/seeking-air-mine/seeking-air-mine-1.png",
-      "3": "/home-base/traps/seeking-air-mine/seeking-air-mine-3.png",
-      "4": "/home-base/traps/seeking-air-mine/seeking-air-mine-3.png",
-      "5": "/home-base/traps/seeking-air-mine/seeking-air-mine-5.png",
-      "6": "/home-base/traps/seeking-air-mine/seeking-air-mine-5.png",
-      "7": "/home-base/traps/seeking-air-mine/seeking-air-mine-7.png",
-      "8": "/home-base/traps/seeking-air-mine/seeking-air-mine-7.png"
+      "1": {
+        "level-icon": "/home-base/traps/seeking-air-mine/seeking-air-mine-1.png",
+        "upgrade-price1": 12000
+      },
+      "2": {
+        "level-icon": "/home-base/traps/seeking-air-mine/seeking-air-mine-1.png",
+        "upgrade-price1": 600000
+      },
+      "3": {
+        "level-icon": "/home-base/traps/seeking-air-mine/seeking-air-mine-3.png",
+        "upgrade-price1": 1200000
+      },
+      "4": {
+        "level-icon": "/home-base/traps/seeking-air-mine/seeking-air-mine-3.png",
+        "upgrade-price1": 2500000
+      },
+      "5": {
+        "level-icon": "/home-base/traps/seeking-air-mine/seeking-air-mine-5.png",
+        "upgrade-price1": 5000000
+      },
+      "6": {
+        "level-icon": "/home-base/traps/seeking-air-mine/seeking-air-mine-5.png",
+        "upgrade-price1": 6500000
+      },
+      "7": {
+        "level-icon": "/home-base/traps/seeking-air-mine/seeking-air-mine-7.png",
+        "upgrade-price1": 12000000
+      },
+      "8": {
+        "level-icon": "/home-base/traps/seeking-air-mine/seeking-air-mine-7.png",
+        "upgrade-price1": 19000000
+      }
     }
   },
   "12000008": {
     "name": "Skeleton Trap",
     "levels": {
-      "1": "/home-base/traps/skeleton-trap/skeleton-trap-1.png",
-      "2": "/home-base/traps/skeleton-trap/skeleton-trap-1.png",
-      "3": "/home-base/traps/skeleton-trap/skeleton-trap-3.png",
-      "4": "/home-base/traps/skeleton-trap/skeleton-trap-3.png",
-      "5": "/home-base/traps/skeleton-trap/skeleton-trap-5.png",
-      "6": "/home-base/traps/skeleton-trap/skeleton-trap-5.png"
+      "1": {
+        "level-icon": "/home-base/traps/skeleton-trap/skeleton-trap-1.png",
+        "upgrade-price1": 6000
+      },
+      "2": {
+        "level-icon": "/home-base/traps/skeleton-trap/skeleton-trap-1.png",
+        "upgrade-price1": 250000
+      },
+      "3": {
+        "level-icon": "/home-base/traps/skeleton-trap/skeleton-trap-3.png",
+        "upgrade-price1": 400000
+      },
+      "4": {
+        "level-icon": "/home-base/traps/skeleton-trap/skeleton-trap-3.png",
+        "upgrade-price1": 1000000
+      },
+      "5": {
+        "level-icon": "/home-base/traps/skeleton-trap/skeleton-trap-5.png",
+        "upgrade-price1": 18000000
+      }
     }
   },
   "12000010": {
@@ -3217,18 +3313,39 @@
   "12000016": {
     "name": "Tornado Trap",
     "levels": {
-      "1": "/home-base/traps/tornado-trap/tornado-trap-1.png",
-      "2": "/home-base/traps/tornado-trap/tornado-trap-2.png",
-      "3": "/home-base/traps/tornado-trap/tornado-trap-2.png"
+      "1": {
+        "level-icon": "/home-base/traps/tornado-trap/tornado-trap-1.png",
+        "upgrade-price1": 1800000
+      },
+      "2": {
+        "level-icon": "/home-base/traps/tornado-trap/tornado-trap-2.png",
+        "upgrade-price1": 2000000
+      },
+      "3": {
+        "level-icon": "/home-base/traps/tornado-trap/tornado-trap-2.png",
+        "upgrade-price1": 2500000
+      }
     }
   },
   "12000020": {
     "name": "Giga Bomb",
     "levels": {
-      "1": "/home-base/traps/giga-bomb/giga-bomb-1.png",
-      "2": "/home-base/traps/giga-bomb/giga-bomb-2.png",
-      "3": "/home-base/traps/giga-bomb/giga-bomb-3.png",
-      "4": "/home-base/traps/giga-bomb/giga-bomb-4.png"
+      "1": {
+        "level-icon": "/home-base/traps/giga-bomb/giga-bomb-1.png",
+        "upgrade-price1": 4500000
+      },
+      "2": {
+        "level-icon": "/home-base/traps/giga-bomb/giga-bomb-2.png",
+        "upgrade-price1": 8500000
+      },
+      "3": {
+        "level-icon": "/home-base/traps/giga-bomb/giga-bomb-3.png",
+        "upgrade-price1": 12500000
+      },
+      "4": {
+        "level-icon": "/home-base/traps/giga-bomb/giga-bomb-4.png",
+        "upgrade-price1": 20000000
+      }
     }
   },
   "4000000": {
