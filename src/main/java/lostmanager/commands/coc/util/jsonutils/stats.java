@@ -474,7 +474,8 @@ public class stats extends ListenerAdapter {
 				String headerText = "**Spieler:** " + (playerName != null ? playerName : playerTag) + "\n"
 						+ "**Stat:** " + statType + "\n"
 						+ "**Modus:** " + (MODE_MISSING.equals(normalizedMode) ? "Fehlend" : "Vorhanden") + "\n"
-						+ "**Hochgeladen:** " + uploadFormatiert + "\n\n";
+						+ "**Hochgeladen:** " + uploadFormatiert + "\n"
+						+ formatUpgradePriceSummary() + "\n";
 
 				// Split into pages if needed
 				List<String> pages = splitIntoPages(formattedData, headerText);
@@ -1151,6 +1152,55 @@ public class stats extends ListenerAdapter {
 			System.err.println("Error getting mapped value for '" + dataValue + "': " + e.getMessage());
 			return dataValue;
 		}
+	}
+
+	private String formatUpgradePriceSummary() {
+		long[] totals = new long[3];
+		JSONObject imageMap = lostmanager.util.ImageMapCache.fetchFullMapOnce();
+		if (imageMap == null) {
+			return "";
+		}
+
+		for (String id : imageMap.keySet()) {
+			if (!id.startsWith("1000")) {
+				continue;
+			}
+
+			JSONObject levels = imageMap.optJSONObject(id) != null
+					? imageMap.optJSONObject(id).optJSONObject("levels")
+					: null;
+			if (levels == null) {
+				continue;
+			}
+
+			for (String level : levels.keySet()) {
+				JSONObject levelData = levels.optJSONObject(level);
+				if (levelData == null) {
+					continue;
+				}
+
+				for (String priceKey : levelData.keySet()) {
+					String normalizedPriceKey = priceKey.trim();
+					if (!normalizedPriceKey.startsWith("upgrade-price")) {
+						continue;
+					}
+
+					try {
+						int priceNumber = Integer.parseInt(normalizedPriceKey.substring("upgrade-price".length()));
+						if (priceNumber >= 1 && priceNumber <= 3) {
+							totals[priceNumber - 1] += levelData.getNumber(priceKey).longValue();
+						}
+					} catch (NumberFormatException e) {
+						// Ignore malformed upgrade-price keys
+					}
+				}
+			}
+		}
+
+		return "Upgrade-Preise gesamt:\n"
+				+ "Summe Gold: " + totals[0] + "\n"
+				+ "Summe Elixier: " + totals[1] + "\n"
+				+ "Summe Dunkles Elixier: " + totals[2] + "\n";
 	}
 
 	/**
