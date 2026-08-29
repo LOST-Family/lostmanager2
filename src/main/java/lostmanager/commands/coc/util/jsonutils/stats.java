@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -471,11 +472,14 @@ public class stats extends ListenerAdapter {
 				// Build description header
 				Player p = new Player(playerTag);
 				String playerName = p.getNameDB() != null ? p.getNameDB() : p.getNameAPI();
+				boolean missingMode = MODE_MISSING.equals(normalizedMode);
+				String priceSummary = formatUpgradePriceSummary(dataToDisplay, missingMode);
 				String headerText = "**Spieler:** " + (playerName != null ? playerName : playerTag) + "\n"
 						+ "**Stat:** " + statType + "\n"
-						+ "**Modus:** " + (MODE_MISSING.equals(normalizedMode) ? "Fehlend" : "Vorhanden") + "\n"
+						+ "**Modus:** " + (missingMode ? "Fehlend" : "Vorhanden") + "\n"
 						+ "**Hochgeladen:** " + uploadFormatiert + "\n"
-						+ formatUpgradePriceSummary() + "\n";
+						+ (priceSummary.isEmpty() ? "" : priceSummary + "\n")
+						+ "\n";
 
 				// Split into pages if needed
 				List<String> pages = splitIntoPages(formattedData, headerText);
@@ -1154,82 +1158,213 @@ public class stats extends ListenerAdapter {
 		}
 	}
 
-	private String formatUpgradePriceSummary() {
-		long[] totals = new long[3];
-		JSONObject imageMap = lostmanager.util.ImageMapCache.fetchFullMapOnce();
+	/**
+	 * Currency slots as they appear in image_map.json ({@code upgrade-priceN}).
+	 * Slots 4 and 5 belong to the Builder Base; slot 5 has no data yet, so it
+	 * falls through to the generic label until the prices are filled in.
+	 */
+	private static final Map<Integer, String> PRICE_LABELS = new LinkedHashMap<>();
+
+	static {
+		PRICE_LABELS.put(1, "Gold");
+		PRICE_LABELS.put(2, "Elixier");
+		PRICE_LABELS.put(3, "Dunkles Elixier");
+		PRICE_LABELS.put(4, "Baumeister-Elixier");
+	}
+
+	private static final String PRICE_KEY_PREFIX = "upgrade-price";
+
+	/**
+	 * Hammer Jam cuts upgrade costs, and the Gold Pass discount stacks on top of
+	 * the event: with a Gold Pass an upgrade ends up at 40 percent of its normal
+	 * price, without one at 50 percent.
+	 */
+	private static final double HAMMER_JAM_FACTOR_WITH_GOLD_PASS = 0.40;
+	private static final double HAMMER_JAM_FACTOR_WITHOUT_GOLD_PASS = 0.50;
+
+	/**
+	 * Apply the Hammer Jam price to a set of totals.
+	 *
+	 * @param totals   the undiscounted sums per currency slot
+	 * @param goldPass whether the player holds the Gold Pass
+	 * @return the same slots at their Hammer Jam price
+	 */
+	private Map<Integer, Long> applyHammerJamPrice(Map<Integer, Long> totals, boolean goldPass) {
+		double factor = goldPass ? HAMMER_JAM_FACTOR_WITH_GOLD_PASS : HAMMER_JAM_FACTOR_WITHOUT_GOLD_PASS;
+		Map<Integer, Long> discounted = new TreeMap<>();
+
+		for (Map.Entry<Integer, Long> total : totals.entrySet()) {
+			discounted.put(total.getKey(), Math.round(total.getValue() * factor));
+		}
+
+		return discounted;
+	}
+
+	/**
+	 * Group digits the German way so the big numbers stay readable.
+	 */
+	private String formatAmount(long amount) {
+		return String.format(Locale.GERMANY, "%,d", amount);
+	}
+
+	/**
+	 * One "· Label: 1.234" line per currency slot.
+	 */
+	private void appendPriceLines(StringBuilder sb, Map<Integer, Long> totals) {
+		for (Map.Entry<Integer, Long> total : totals.entrySet()) {
+			String label = PRICE_LABELS.getOrDefault(total.getKey(), "Währung " + total.getKey());
+			sb.append("\n").append(EmbedBuilder.ZERO_WIDTH_SPACE.repeat(2)).append("· ")
+					.append(label).append(": ").append(formatAmount(total.getValue()));
+		}
+	}
+
+	/**
+	 * Sum up what the entries currently on screen cost.
+	 *
+	 * The summary follows the view: in "Vorhanden" mode it adds up every level
+	 * the player has actually reached, in "Fehlend" mode the full cost of the
+	 * entries they do not own yet - a number under a header that says
+	 * "Buildings / Fehlend" has to be about exactly those.
+	 *
+	 * @param dataToDisplay the same data the page renders
+	 * @param missingMode   true while the missing entries are shown
+	 * @return the formatted block, or an empty string when nothing has a price
+	 */
+	@SuppressWarnings("null")
+	private String formatUpgradePriceSummary(Object dataToDisplay, boolean missingMode) {
+		JSONObject imageMap;
+		try {
+			imageMap = lostmanager.util.ImageMapCache.fetchFullMapOnce();
+		} catch (Exception e) {
+			System.err.println("Failed to fetch image map for upgrade prices: " + e.getMessage());
+			return "";
+		}
+
 		if (imageMap == null) {
 			return "";
 		}
 
-		for (String id : imageMap.keySet()) {
-			if (!id.startsWith("1000")) {
-				continue;
-			}
+		// TreeMap: slots come out in numeric order, whichever ones the data holds.
+		Map<Integer, Long> totals = new TreeMap<>();
+		collectUpgradePrices(dataToDisplay, imageMap, missingMode, totals);
 
-			JSONObject itemData = imageMap.optJSONObject(id);
-			if (itemData == null) {
-				continue;
-			}
+		if (totals.isEmpty()) {
+			return "";
+		}
 
-			// Process levels
-			JSONObject levels = itemData.optJSONObject("levels");
-			if (levels != null) {
-				for (String level : levels.keySet()) {
-					JSONObject levelData = levels.optJSONObject(level);
-					if (levelData == null) {
-						continue;
-					}
+		StringBuilder sb = new StringBuilder();
+		sb.append("**").append(missingMode ? "Kosten der fehlenden Einträge (voll ausgebaut)"
+				: "Investierte Upgrade-Kosten").append(":**");
+		appendPriceLines(sb, totals);
 
-					for (String priceKey : levelData.keySet()) {
-						String normalizedPriceKey = priceKey.trim();
-						if (!normalizedPriceKey.startsWith("upgrade-price")) {
-							continue;
-						}
+		// Hammer Jam only says anything about costs the player still has ahead of
+		// them - discounting what is already built and paid for would be nonsense.
+		if (missingMode) {
+			Map<Integer, Long> withGoldPass = applyHammerJamPrice(totals, true);
+			Map<Integer, Long> withoutGoldPass = applyHammerJamPrice(totals, false);
 
-						try {
-							int priceNumber = Integer.parseInt(normalizedPriceKey.substring("upgrade-price".length()));
-							if (priceNumber >= 1 && priceNumber <= 3) {
-								totals[priceNumber - 1] += levelData.getNumber(priceKey).longValue();
-							}
-						} catch (NumberFormatException e) {
-							// Ignore malformed upgrade-price keys
-						}
-					}
-				}
-			}
-
-			// Process supercharge levels
-			JSONObject supercharge = itemData.optJSONObject("supercharge");
-			if (supercharge != null) {
-				for (String scLevel : supercharge.keySet()) {
-					JSONObject superchargeData = supercharge.optJSONObject(scLevel);
-					if (superchargeData == null) {
-						continue;
-					}
-
-					for (String priceKey : superchargeData.keySet()) {
-						String normalizedPriceKey = priceKey.trim();
-						if (!normalizedPriceKey.startsWith("upgrade-price")) {
-							continue;
-						}
-
-						try {
-							int priceNumber = Integer.parseInt(normalizedPriceKey.substring("upgrade-price".length()));
-							if (priceNumber >= 1 && priceNumber <= 3) {
-								totals[priceNumber - 1] += superchargeData.getNumber(priceKey).longValue();
-							}
-						} catch (NumberFormatException e) {
-							// Ignore malformed upgrade-price keys
-						}
-					}
-				}
+			sb.append("\n").append("**Im Hammer Jam (mit / ohne Gold Pass):**");
+			for (Integer slot : totals.keySet()) {
+				String label = PRICE_LABELS.getOrDefault(slot, "Währung " + slot);
+				sb.append("\n").append(EmbedBuilder.ZERO_WIDTH_SPACE.repeat(2)).append("· ")
+						.append(label).append(": ").append(formatAmount(withGoldPass.get(slot)))
+						.append(" / ").append(formatAmount(withoutGoldPass.get(slot)));
 			}
 		}
 
-		return "Upgrade-Preise gesamt:\n"
-				+ "Summe Gold: " + totals[0] + "\n"
-				+ "Summe Elixier: " + totals[1] + "\n"
-				+ "Summe Dunkles Elixier: " + totals[2] + "\n";
+		return sb.toString();
+	}
+
+	/**
+	 * Walk the displayed data and add up the prices of every entry in it. Shaped
+	 * like {@link #collectOwnedIds} so it reaches entries in nested structures
+	 * the same way.
+	 */
+	private void collectUpgradePrices(Object current, JSONObject imageMap, boolean missingMode,
+			Map<Integer, Long> totals) {
+		if (current == null || current == JSONObject.NULL) {
+			return;
+		}
+
+		if (current instanceof JSONArray arr) {
+			for (int i = 0; i < arr.length(); i++) {
+				collectUpgradePrices(arr.get(i), imageMap, missingMode, totals);
+			}
+			return;
+		}
+
+		if (current instanceof JSONObject obj) {
+			if (obj.has("data") && obj.get("data") != JSONObject.NULL) {
+				JSONObject itemData = imageMap.optJSONObject(String.valueOf(obj.get("data")));
+				if (itemData != null) {
+					// Identical buildings are grouped into one entry via "cnt", and each
+					// of them was paid for separately.
+					int count = Math.max(1, obj.optInt("cnt", 1));
+					addSectionPrices(itemData.optJSONObject("levels"), obj.optInt("lvl", 0), missingMode, count, totals);
+					addSectionPrices(itemData.optJSONObject("supercharge"), obj.optInt("supercharge", 0), missingMode,
+							count, totals);
+				}
+			}
+
+			for (String key : obj.keySet()) {
+				Object nested = obj.get(key);
+				if (nested instanceof JSONObject || nested instanceof JSONArray) {
+					collectUpgradePrices(nested, imageMap, missingMode, totals);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Add the prices of one section ("levels" or "supercharge") to the totals.
+	 *
+	 * A level entry carries the price of reaching that level (level 1 of the Town
+	 * Hall costs 0), so everything up to the reached level is what was paid.
+	 *
+	 * @param reachedLevel the level the player is on; ignored when allLevels is set
+	 * @param allLevels    sum the whole section instead - the item is not owned
+	 */
+	private void addSectionPrices(JSONObject section, int reachedLevel, boolean allLevels, int count,
+			Map<Integer, Long> totals) {
+		if (section == null) {
+			return;
+		}
+
+		for (String levelKey : section.keySet()) {
+			if (!allLevels) {
+				try {
+					if (Integer.parseInt(levelKey) > reachedLevel) {
+						continue;
+					}
+				} catch (NumberFormatException e) {
+					continue;
+				}
+			}
+
+			JSONObject levelData = section.optJSONObject(levelKey);
+			if (levelData == null) {
+				continue;
+			}
+
+			for (String priceKey : levelData.keySet()) {
+				if (!priceKey.startsWith(PRICE_KEY_PREFIX)) {
+					continue;
+				}
+
+				// No slot allowlist on purpose: whatever slot the data introduces gets
+				// its own line instead of being dropped without a trace.
+				int slot;
+				try {
+					slot = Integer.parseInt(priceKey.substring(PRICE_KEY_PREFIX.length()));
+				} catch (NumberFormatException e) {
+					continue;
+				}
+
+				if (levelData.get(priceKey) instanceof Number price) {
+					totals.merge(slot, price.longValue() * count, Long::sum);
+				}
+			}
+		}
 	}
 
 	/**
