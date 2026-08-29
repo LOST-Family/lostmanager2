@@ -1717,7 +1717,23 @@ Clan Games:
 ```
 /listeningevent list
 /listeningevent list clan:LOST_F2P
+/listeningevent list type:Clan_War status:Bereits_gefeuert
+/listeningevent list actiontype:Kickpoint channel:#war-logs
 ```
+
+**Filter Options** (all optional, combinable):
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `clan` | Autocomplete | Only events of this clan |
+| `type` | Choice | Only events of this listening type (cs, cw, cwlday, cwlend, raid, seasonend, fixtimeinterval) |
+| `actiontype` | Autocomplete | Only events with this action type; the suggestions are the action types actually in use |
+| `channel` | Channel | Only events posting into this channel |
+| `status` | Choice | `Geplant` (fire time in the future), `Bereits gefeuert` (fire time has passed), `Wartet auf Event` (no fire time yet, the clan event is not running) |
+
+The active filters are printed above the results. If the output would exceed
+Discord's embed limit, the list is cut off and reports how many events were left
+out.
 
 **Output**:
 ```

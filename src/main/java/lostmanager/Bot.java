@@ -20,6 +20,7 @@ import com.google.genai.Client;
 
 import lostmanager.apiutil.ApiRegistry;
 import lostmanager.util.ClanGamesWindow;
+import lostmanager.util.PhishTrap;
 import lostmanager.commands.api.ApiCommand;
 import lostmanager.commands.coc.kickpoints.clanconfig;
 import lostmanager.commands.coc.kickpoints.kpadd;
@@ -435,7 +436,28 @@ public class Bot extends ListenerAdapter {
 													"Liste alle Listening Events auf")
 													.addOptions(new OptionData(OptionType.STRING, "clan",
 															"Filtere nach Clan (optional)", false)
-															.setAutoComplete(true)),
+															.setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.STRING, "type",
+															"Filtere nach Event-Typ (optional)", false)
+															.addChoices(new Command.Choice("Clan Games", "cs"),
+																	new Command.Choice("Clan War", "cw"),
+																	new Command.Choice("CWL Day", "cwlday"),
+																	new Command.Choice("CWL Ende", "cwlend"),
+																	new Command.Choice("Raid", "raid"),
+																	new Command.Choice("Season Ende", "seasonend"),
+																	new Command.Choice("Festes Intervall",
+																			"fixtimeinterval")))
+													.addOptions(new OptionData(OptionType.STRING, "actiontype",
+															"Filtere nach Aktionstyp (optional)", false)
+															.setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.CHANNEL, "channel",
+															"Filtere nach Ziel-Channel (optional)", false))
+													.addOptions(new OptionData(OptionType.STRING, "status",
+															"Filtere danach, ob das Event ansteht (optional)", false)
+															.addChoices(new Command.Choice("Geplant", "scheduled"),
+																	new Command.Choice("Bereits gefeuert", "fired"),
+																	new Command.Choice("Wartet auf Event",
+																			"waiting"))),
 											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("remove",
 													"Lösche ein Listening Event")
 													.addOptions(new OptionData(OptionType.INTEGER, "id",
@@ -667,6 +689,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new lostmanager.commands.roster.RosterCommand());
 		classes.add(new giveaway());
 		classes.add(new ApiCommand());
+		classes.add(new PhishTrap());
 
 		return classes.toArray();
 	}

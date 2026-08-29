@@ -675,105 +675,229 @@ public class listeningevent extends ListenerAdapter {
 		Bot.restartAllEvents();
 	}
 
+	/** Leaves room for the last entry under the 4096 character embed description limit. */
+	private static final int EMBED_DESCRIPTION_BUDGET = 3600;
+
+	/**
+	 * Where an event stands relative to its next firing. It is derived from the
+	 * fire timestamp the list has always shown, so the status filter can never
+	 * disagree with the "Feuert in" line printed next to it.
+	 */
+	private enum FireState {
+		/** Has a fire time in the future. */
+		SCHEDULED("Geplant"),
+		/** Its fire time has passed. */
+		FIRED("Bereits gefeuert"),
+		/** Has no fire time because the clan event it listens for is not running. */
+		WAITING("Wartet auf Event");
+
+		private final String label;
+
+		FireState(String label) {
+			this.label = label;
+		}
+
+		String getLabel() {
+			return label;
+		}
+	}
+
+	/** The "Feuert in" line of an event together with the state it was derived from. */
+	private record FireInfo(FireState state, String text) {
+	}
+
 	private void handleList(SlashCommandInteractionEvent event, String title) {
 		event.deferReply().queue();
 
 		OptionMapping clanOption = event.getOption("clan");
+		OptionMapping typeOption = event.getOption("type");
+		OptionMapping actionOption = event.getOption("actiontype");
+		OptionMapping channelOption = event.getOption("channel");
+		OptionMapping statusOption = event.getOption("status");
+
 		String clantag = clanOption != null ? clanOption.getAsString() : null;
+		String channelFilter = channelOption != null ? channelOption.getAsChannel().getId() : null;
 
-		StringBuilder desc = new StringBuilder("## Listening Events\n\n");
-
-		String sql;
-		ArrayList<Long> ids;
-
-		if (clantag != null) {
-			sql = "SELECT id FROM listening_events WHERE clan_tag = ?";
-			ids = DBUtil.getArrayListFromSQL(sql, Long.class, clantag);
-		} else {
-			sql = "SELECT id FROM listening_events";
-			ids = DBUtil.getArrayListFromSQL(sql, Long.class);
+		ListeningEvent.LISTENINGTYPE typeFilter = null;
+		if (typeOption != null) {
+			try {
+				typeFilter = ListeningEvent.LISTENINGTYPE.valueOf(typeOption.getAsString().trim().toUpperCase());
+			} catch (final IllegalArgumentException e) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Unbekannter Event-Typ: " + typeOption.getAsString(), MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
 		}
 
-		if (ids.isEmpty()) {
-			desc.append("Keine Events gefunden.");
+		ListeningEvent.ACTIONTYPE actionFilter = null;
+		if (actionOption != null) {
+			try {
+				actionFilter = ListeningEvent.ACTIONTYPE.valueOf(actionOption.getAsString().trim().toUpperCase());
+			} catch (final IllegalArgumentException e) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Unbekannter Aktionstyp: " + actionOption.getAsString(), MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
+		}
+
+		FireState statusFilter = null;
+		if (statusOption != null) {
+			try {
+				statusFilter = FireState.valueOf(statusOption.getAsString().trim().toUpperCase());
+			} catch (final IllegalArgumentException e) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Unbekannter Status: " + statusOption.getAsString(), MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
+		}
+
+		// Clan and channel are stored verbatim, so the database narrows those two down.
+		// Type and action are matched below on the parsed enums instead, which also
+		// covers the legacy "cwl" spelling of CWLDAY, and the status is only known once
+		// the fire time has been calculated.
+		StringBuilder sql = new StringBuilder("SELECT id FROM listening_events");
+		ArrayList<Object> params = new ArrayList<>();
+
+		if (clantag != null) {
+			sql.append(params.isEmpty() ? " WHERE " : " AND ").append("clan_tag = ?");
+			params.add(clantag);
+		}
+		if (channelFilter != null) {
+			sql.append(params.isEmpty() ? " WHERE " : " AND ").append("channel_id = ?");
+			params.add(channelFilter);
+		}
+		sql.append(" ORDER BY clan_tag, id");
+
+		ArrayList<Long> ids = DBUtil.getArrayListFromSQL(sql.toString(), Long.class, params.toArray());
+
+		ArrayList<String> entries = new ArrayList<>();
+		for (final Long id : ids) {
+			ListeningEvent le = new ListeningEvent(id);
+
+			ListeningEvent.LISTENINGTYPE listeningType = le.getListeningType();
+			if (typeFilter != null && listeningType != typeFilter) {
+				continue;
+			}
+
+			ListeningEvent.ACTIONTYPE actionType = le.getActionType();
+			if (actionFilter != null && actionType != actionFilter) {
+				continue;
+			}
+
+			FireInfo fire = describeFire(le, listeningType);
+			if (statusFilter != null && fire.state() != statusFilter) {
+				continue;
+			}
+
+			Clan clan = new Clan(le.getClanTag());
+			StringBuilder entry = new StringBuilder();
+			entry.append("**ID:** ").append(id).append("\n");
+			entry.append("**Clan:** ").append(clan.getNameDB()).append(" (").append(le.getClanTag()).append(")\n");
+
+			// Handle null listening type gracefully
+			if (listeningType == null) {
+				entry.append("**Typ:** UNKNOWN (Fehler in Datenbank)\n");
+			} else {
+				entry.append("**Typ:** ").append(listeningType).append("\n");
+			}
+
+			entry.append("**Dauer:** ").append(formatDuration(le.getDurationUntilEnd())).append("\n");
+			entry.append("**Action:** ").append(actionType).append("\n");
+			entry.append("**Channel:** <#").append(le.getChannelID()).append(">\n");
+			entry.append("**Status:** ").append(fire.state().getLabel()).append("\n");
+			entry.append("**Feuert in:** ").append(fire.text()).append("\n\n");
+			entries.add(entry.toString());
+		}
+
+		List<String> activeFilters = new ArrayList<>();
+		if (clantag != null) {
+			activeFilters.add("Clan: " + new Clan(clantag).getNameDB() + " (" + clantag + ")");
+		}
+		if (typeFilter != null) {
+			activeFilters.add("Typ: " + typeFilter);
+		}
+		if (actionFilter != null) {
+			activeFilters.add("Action: " + actionFilter.name().toLowerCase());
+		}
+		if (channelFilter != null) {
+			activeFilters.add("Channel: <#" + channelFilter + ">");
+		}
+		if (statusFilter != null) {
+			activeFilters.add("Status: " + statusFilter.getLabel());
+		}
+
+		StringBuilder desc = new StringBuilder("## Listening Events\n\n");
+		if (!activeFilters.isEmpty()) {
+			desc.append("*Filter: ").append(String.join(" | ", activeFilters)).append("*\n\n");
+		}
+
+		if (entries.isEmpty()) {
+			desc.append(activeFilters.isEmpty() ? "Keine Events gefunden."
+					: "Keine Events gefunden, die zu den Filtern passen.");
 		} else {
-			for (final Long id : ids) {
-				ListeningEvent le = new ListeningEvent(id);
-				Clan clan = new Clan(le.getClanTag());
-				desc.append("**ID:** ").append(id).append("\n");
-				desc.append("**Clan:** ").append(clan.getNameDB()).append(" (").append(le.getClanTag()).append(")\n");
-
-				// Handle null listening type gracefully
-				ListeningEvent.LISTENINGTYPE listeningType = le.getListeningType();
-				if (listeningType == null) {
-					desc.append("**Typ:** UNKNOWN (Fehler in Datenbank)\n");
-				} else {
-					desc.append("**Typ:** ").append(listeningType).append("\n");
+			int shown = 0;
+			for (final String entry : entries) {
+				// Discord rejects an embed whose description is over 4096 characters, so
+				// stop before the whole reply is lost and say how many were left out.
+				if (desc.length() + entry.length() > EMBED_DESCRIPTION_BUDGET) {
+					desc.append("*... und ").append(entries.size() - shown)
+							.append(" weitere. Grenze die Liste mit den Filter-Optionen ein.*");
+					break;
 				}
-
-				desc.append("**Dauer:** ").append(formatDuration(le.getDurationUntilEnd())).append("\n");
-				desc.append("**Action:** ").append(le.getActionType()).append("\n");
-				desc.append("**Channel:** <#").append(le.getChannelID()).append(">\n");
-
-				// Display user-friendly message for events without valid timestamps
-				Long timestamp = le.getTimestamp();
-				if (timestamp == null || timestamp == Long.MAX_VALUE) {
-					// Event doesn't have a valid timestamp - provide descriptive text
-					String fireDescription = getFireDescriptionForEvent(le);
-					desc.append("**Feuert in:** ").append(fireDescription).append("\n");
-				} else {
-					long minutesUntilFire = (timestamp - System.currentTimeMillis()) / 1000 / 60;
-
-					// Check if the timestamp is in the past (negative minutes)
-					if (minutesUntilFire < 0) {
-						long minutesSinceFire = Math.abs(minutesUntilFire);
-
-						// Format based on event type for better user experience
-						if (listeningType == ListeningEvent.LISTENINGTYPE.CW) {
-							// Check if war is actually ended
-							try {
-								Clan leclan = new Clan(le.getClanTag());
-								if (leclan.isCWActive()) {
-									// War is still active but event already fired
-									desc.append("**Feuert in:** Event bereits gefeuert vor ").append(minutesSinceFire)
-											.append(" Minuten\n");
-								} else {
-									// War has ended
-									long hours = minutesSinceFire / 60;
-									long days = hours / 24;
-
-									if (days > 0) {
-										desc.append("**Feuert in:** Letzter CW ist vor ").append(days)
-												.append(" Tagen geendet und es wurde bisher keiner gestartet\n");
-									} else if (hours > 0) {
-										desc.append("**Feuert in:** Letzter CW ist vor ").append(hours)
-												.append(" Stunden geendet und es wurde bisher keiner gestartet\n");
-									} else {
-										desc.append("**Feuert in:** Letzter CW ist vor ").append(minutesSinceFire)
-												.append(" Minuten geendet und es wurde bisher keiner gestartet\n");
-									}
-								}
-							} catch (final Exception e) {
-								// Fallback if we can't check war status
-								desc.append("**Feuert in:** Event bereits gefeuert vor ").append(minutesSinceFire)
-										.append(" Minuten\n");
-							}
-						} else {
-							// For other event types, just show that it already fired
-							desc.append("**Feuert in:** Event bereits gefeuert vor ").append(minutesSinceFire)
-									.append(" Minuten\n");
-						}
-					} else {
-						desc.append("**Feuert in:** ").append(minutesUntilFire).append(" Minuten\n");
-					}
-				}
-
-				desc.append("\n");
+				shown++;
+				desc.append(entry);
 			}
 		}
 
 		event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc.toString(), MessageUtil.EmbedType.INFO))
 				.queue();
+	}
+
+	/**
+	 * Builds the "Feuert in" line of an event together with the state it is in.
+	 *
+	 * A clan war event whose war has ended counts as waiting rather than as fired:
+	 * the timestamp it missed belonged to a war that no longer exists, and the next
+	 * war has not started yet.
+	 */
+	private FireInfo describeFire(ListeningEvent le, ListeningEvent.LISTENINGTYPE listeningType) {
+		Long timestamp = le.getTimestamp();
+
+		// Events without a valid timestamp are waiting for their clan event
+		if (timestamp == null || timestamp == Long.MAX_VALUE) {
+			return new FireInfo(FireState.WAITING, getFireDescriptionForEvent(le));
+		}
+
+		long minutesUntilFire = (timestamp - System.currentTimeMillis()) / 1000 / 60;
+		if (minutesUntilFire >= 0) {
+			return new FireInfo(FireState.SCHEDULED, minutesUntilFire + " Minuten");
+		}
+
+		long minutesSinceFire = Math.abs(minutesUntilFire);
+		if (listeningType == ListeningEvent.LISTENINGTYPE.CW) {
+			// Check if war is actually ended
+			try {
+				Clan leclan = new Clan(le.getClanTag());
+				if (!leclan.isCWActive()) {
+					long hours = minutesSinceFire / 60;
+					long days = hours / 24;
+					String ago = days > 0 ? days + " Tagen"
+							: hours > 0 ? hours + " Stunden" : minutesSinceFire + " Minuten";
+					return new FireInfo(FireState.WAITING,
+							"Letzter CW ist vor " + ago + " geendet und es wurde bisher keiner gestartet");
+				}
+			} catch (final Exception e) {
+				// Fallback if we can't check war status
+			}
+		}
+
+		return new FireInfo(FireState.FIRED, "Event bereits gefeuert vor " + minutesSinceFire + " Minuten");
 	}
 
 	private void handleRemove(SlashCommandInteractionEvent event, String title) {
@@ -1258,6 +1382,14 @@ public class listeningevent extends ListenerAdapter {
                                 });
                             }
                         case "actiontype" ->                             {
+                                // The list filter only offers action types that are actually
+                                // configured somewhere, so a picked value never comes back empty.
+                                if ("list".equals(event.getSubcommandName())) {
+                                    event.replyChoices(storedActionTypeChoices(input)).queue(_ -> {
+                                    }, _ -> {
+                                    });
+                                    return;
+                                }
                                 // Get the event type to filter action types
                                 OptionMapping typeOption = event.getOption("type");
                                 String eventType = typeOption != null ? typeOption.getAsString() : "";
@@ -1411,6 +1543,45 @@ public class listeningevent extends ListenerAdapter {
                         }
                     }
 		}, "ListeningeventAutocomplete-" + event.getUser().getId()).start();
+	}
+
+	/**
+	 * Action types the list filter can be set to: the ones that are actually stored
+	 * on an event, labelled the way they were labelled when it was created.
+	 */
+	private static List<Command.Choice> storedActionTypeChoices(String input) {
+		ArrayList<String> stored = DBUtil.getArrayListFromSQL(
+				"SELECT DISTINCT actiontype FROM listening_events ORDER BY actiontype", String.class);
+
+		List<Command.Choice> choices = new ArrayList<>();
+		for (final String actionType : stored) {
+			if (actionType == null || choices.size() >= 25) {
+				continue;
+			}
+			String label = actionTypeDisplayName(actionType);
+			if (actionType.toLowerCase().contains(input.toLowerCase())
+					|| label.toLowerCase().contains(input.toLowerCase())) {
+				choices.add(new Command.Choice(label, actionType));
+			}
+		}
+		return choices;
+	}
+
+	/** German label of a stored action type, or the raw value if it is unknown. */
+	private static String actionTypeDisplayName(String actionType) {
+            return switch (actionType.toLowerCase()) {
+                case "infomessage" -> "Info-Nachricht";
+                case "custommessage" -> "Benutzerdefinierte Nachricht";
+                case "kickpoint" -> "Kickpoint";
+                case "cwdonator" -> "CW Donator";
+                case "filler" -> "Filler";
+                case "raidfails" -> "Districts (Raid)";
+                case "starfails" -> "Schlechte Angriffe (Info)";
+                case "starfails_kickpoint" -> "Schlechte Angriffe (Kickpoints)";
+                case "cwcount" -> "CW-Anzahl (Info)";
+                case "cwcount_kickpoint" -> "CW-Anzahl (Kickpoints)";
+                default -> actionType;
+            };
 	}
 
 	/**

@@ -1373,12 +1373,26 @@ View all configured events.
 /listeningevent list clan:LOST_F2P
 ```
 
+**Filter by anything else** (options can be combined):
+```
+/listeningevent list type:Clan_War
+/listeningevent list actiontype:Kickpoint
+/listeningevent list channel:#war-logs
+/listeningevent list status:Bereits_gefeuert
+```
+
+- `type` - only one kind of event (Clan Games, Clan War, CWL Day, CWL Ende, Raid, Season Ende, Festes Intervall)
+- `actiontype` - only events doing this (Kickpoint, Info-Nachricht, Filler, ...)
+- `channel` - only events posting into that channel
+- `status` - `Geplant` (fires soon), `Bereits gefeuert` (fire time has passed) or `Wartet auf Event` (the clan event is not running yet)
+
 **What you'll see:**
 - Event ID
 - Clan name
 - Event type
 - Action type
 - Target channel
+- Status
 - When it fires next
 
 **Example:**
