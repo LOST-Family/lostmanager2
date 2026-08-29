@@ -1166,32 +1166,61 @@ public class stats extends ListenerAdapter {
 				continue;
 			}
 
-			JSONObject levels = imageMap.optJSONObject(id) != null
-					? imageMap.optJSONObject(id).optJSONObject("levels")
-					: null;
-			if (levels == null) {
+			JSONObject itemData = imageMap.optJSONObject(id);
+			if (itemData == null) {
 				continue;
 			}
 
-			for (String level : levels.keySet()) {
-				JSONObject levelData = levels.optJSONObject(level);
-				if (levelData == null) {
-					continue;
-				}
-
-				for (String priceKey : levelData.keySet()) {
-					String normalizedPriceKey = priceKey.trim();
-					if (!normalizedPriceKey.startsWith("upgrade-price")) {
+			// Process levels
+			JSONObject levels = itemData.optJSONObject("levels");
+			if (levels != null) {
+				for (String level : levels.keySet()) {
+					JSONObject levelData = levels.optJSONObject(level);
+					if (levelData == null) {
 						continue;
 					}
 
-					try {
-						int priceNumber = Integer.parseInt(normalizedPriceKey.substring("upgrade-price".length()));
-						if (priceNumber >= 1 && priceNumber <= 3) {
-							totals[priceNumber - 1] += levelData.getNumber(priceKey).longValue();
+					for (String priceKey : levelData.keySet()) {
+						String normalizedPriceKey = priceKey.trim();
+						if (!normalizedPriceKey.startsWith("upgrade-price")) {
+							continue;
 						}
-					} catch (NumberFormatException e) {
-						// Ignore malformed upgrade-price keys
+
+						try {
+							int priceNumber = Integer.parseInt(normalizedPriceKey.substring("upgrade-price".length()));
+							if (priceNumber >= 1 && priceNumber <= 3) {
+								totals[priceNumber - 1] += levelData.getNumber(priceKey).longValue();
+							}
+						} catch (NumberFormatException e) {
+							// Ignore malformed upgrade-price keys
+						}
+					}
+				}
+			}
+
+			// Process supercharge levels
+			JSONObject supercharge = itemData.optJSONObject("supercharge");
+			if (supercharge != null) {
+				for (String scLevel : supercharge.keySet()) {
+					JSONObject superchargeData = supercharge.optJSONObject(scLevel);
+					if (superchargeData == null) {
+						continue;
+					}
+
+					for (String priceKey : superchargeData.keySet()) {
+						String normalizedPriceKey = priceKey.trim();
+						if (!normalizedPriceKey.startsWith("upgrade-price")) {
+							continue;
+						}
+
+						try {
+							int priceNumber = Integer.parseInt(normalizedPriceKey.substring("upgrade-price".length()));
+							if (priceNumber >= 1 && priceNumber <= 3) {
+								totals[priceNumber - 1] += superchargeData.getNumber(priceKey).longValue();
+							}
+						} catch (NumberFormatException e) {
+							// Ignore malformed upgrade-price keys
+						}
 					}
 				}
 			}
