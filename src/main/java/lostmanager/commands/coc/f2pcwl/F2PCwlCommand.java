@@ -889,6 +889,13 @@ public class F2PCwlCommand extends ListenerAdapter {
 
 		F2PCwlRanking.Assignment a = F2PCwlRanking.assign(rangliste, teams, ohneHistorie);
 
+		// Wer keine Historie hat, hat keinen Score - eine 0.00 an seiner Stelle
+		// liesse sich als "vom Bot bewertet und fuer schlecht befunden" lesen.
+		java.util.Set<String> unbewertet = new java.util.HashSet<>();
+		for (F2PCwlRanking.Scored s : a.ohneHistorie()) {
+			unbewertet.add(s.playerTag());
+		}
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("Quelle: ").append(quelle).append(" · ").append(kandidaten.size()).append(" Kandidaten\n");
 		sb.append("-# Nach Stärke sortiert, Hitrate auf Team-1-Niveau normalisiert.\n\n");
@@ -907,7 +914,8 @@ public class F2PCwlCommand extends ListenerAdapter {
 				continue;
 			}
 			for (F2PCwlRanking.Scored s : platz) {
-				sb.append("`").append(String.format("%.2f", s.score())).append("` ")
+				String score = unbewertet.contains(s.playerTag()) ? "  — " : String.format("%.2f", s.score());
+				sb.append("`").append(score).append("` ")
 						.append(s.name()).append(" (TH").append(s.townhall()).append(")\n");
 			}
 		}
