@@ -93,4 +93,42 @@ public class Roster {
     public static void setMinTh(String name, int minTh) {
         DBUtil.executeUpdate("UPDATE rosters SET min_th = ? WHERE name = ?", minTh, name);
     }
+
+    // ------------------------------------------------------------------
+    // Mehrere Clans je Roster
+    //
+    // Ursprünglich kannte ein Roster genau einen Clan. Der F2P-Verbund meldet
+    // sich aber über zwei Clans gemeinsam an, und das ist nichts CWL-Eigenes -
+    // deshalb liegt es hier und nicht in den f2pcwl-Klassen.
+    //
+    // rosters.clan bleibt als erster Clan und Anzeigewert erhalten. Steht in
+    // roster_clans nichts, gilt er allein: Bestandsroster verhalten sich damit
+    // unverändert.
+    // ------------------------------------------------------------------
+
+    /** Alle Clans dieses Rosters; niemals leer, solange rosters.clan gesetzt ist. */
+    public static List<String> getClans(String rosterName) {
+        List<String> tags = DBUtil.getArrayListFromSQL(
+                "SELECT clan_tag FROM roster_clans WHERE roster_name = ? ORDER BY clan_tag",
+                String.class, rosterName);
+        if (tags != null && !tags.isEmpty()) {
+            return tags;
+        }
+        Roster roster = getRoster(rosterName);
+        List<String> fallback = new ArrayList<>();
+        if (roster != null && roster.getClan() != null && !roster.getClan().isBlank()) {
+            fallback.add(roster.getClan());
+        }
+        return fallback;
+    }
+
+    public static void addClan(String rosterName, String clanTag) {
+        DBUtil.executeUpdate("INSERT INTO roster_clans (roster_name, clan_tag) VALUES (?, ?) "
+                + "ON CONFLICT DO NOTHING", rosterName, clanTag);
+    }
+
+    public static void removeClan(String rosterName, String clanTag) {
+        DBUtil.executeUpdate("DELETE FROM roster_clans WHERE roster_name = ? AND clan_tag = ?",
+                rosterName, clanTag);
+    }
 }

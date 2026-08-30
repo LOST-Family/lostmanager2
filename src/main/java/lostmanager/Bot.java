@@ -587,6 +587,8 @@ public class Bot extends ListenerAdapter {
 											new SubcommandData("create", "Erstellt einen neuen Roster")
 													.addOption(OptionType.STRING, "clan", "Der Clan für den Roster", true, true)
 													.addOption(OptionType.STRING, "name", "Name des Rosters", true)
+													.addOption(OptionType.STRING, "clan_2", "Zweiter Clan (optional)", false, true)
+													.addOption(OptionType.STRING, "clan_3", "Dritter Clan (optional)", false, true)
 													.addOption(OptionType.INTEGER, "min_town_hall", "Minimales Rathaus-Level", false)
 													.addOption(OptionType.INTEGER, "delete_after", "Tage bis zur Löschung (Standard: 60, -1 für nie)", false)
 													.addOption(OptionType.BOOLEAN, "only_signoff", "Nur Abmeldungen erlauben?", false),
@@ -609,8 +611,105 @@ public class Bot extends ListenerAdapter {
 													.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true),
 											new SubcommandData("force_signoff", "Meldet einen anderen Spieler für den Roster ab")
 													.addOption(OptionType.STRING, "name", "Der Roster", true, true)
-													.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
+													.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true),
+											new SubcommandData("clan_add", "Fügt einem Roster einen weiteren Clan hinzu")
+													.addOption(OptionType.STRING, "name", "Der Roster", true, true)
+													.addOption(OptionType.STRING, "clan", "Der Clan", true, true),
+											new SubcommandData("clan_remove", "Entfernt einen Clan aus einem Roster")
+													.addOption(OptionType.STRING, "name", "Der Roster", true, true)
+													.addOption(OptionType.STRING, "clan", "Der Clan", true, true)
 											),
+
+							Commands.slash("f2pcwl", "CWL-Verwaltung der beiden F2P-Clans")
+									.addSubcommands(
+											new SubcommandData("show", "Zeigt die Konfiguration aller fünf Teams"),
+											new SubcommandData("config", "Konfiguriert ein Team")
+													.addOption(OptionType.INTEGER, "team", "Teamnummer (1-5)", true)
+													.addOptions(new OptionData(OptionType.STRING, "clan",
+															"Clan, in dem das Team die CWL spielt", false)
+															.setAutoComplete(true))
+													.addOption(OptionType.ROLE, "rolle", "Discord-Teamrolle", false)
+													.addOption(OptionType.CHANNEL, "team_chat", "Team-Chat", false)
+													.addOption(OptionType.CHANNEL, "plan_kanal",
+															"Kanal für Ankündigungen und Pläne", false)
+													.addOption(OptionType.STRING, "startzeit",
+															"Startzeit als HH:MM, z. B. 18:00", false)
+													.addOption(OptionType.USER, "zustaendig",
+															"Wer sich um dieses Team kümmert", false)
+													.addOption(OptionType.INTEGER, "soll_sterne",
+															"Erwartete Sterne je Angriff", false)
+													.addOption(OptionType.INTEGER, "groesse",
+															"Sollgröße des Teams", false)
+													.addOption(OptionType.INTEGER, "min_rathaus",
+															"Mindest-Rathaus (normalerweise ungenutzt)", false)
+													.addOption(OptionType.INTEGER, "max_kader",
+															"Wie viele Spieler das Team haben darf (inkl. Bank)",
+															false),
+											new SubcommandData("wechselstatus",
+													"Prüft für alle Teams, wer noch nicht im CWL-Clan ist"),
+											new SubcommandData("aufstellung",
+													"Wer an einem Kriegstag spielt und wer aussetzt")
+													.addOption(OptionType.INTEGER, "team", "Teamnummer (1-5)", true)
+													.addOption(OptionType.INTEGER, "tag",
+															"Kriegstag 1-7 (Standard: der nächste)", false)
+													.addOption(OptionType.STRING, "saison",
+															"Saison (Standard: die neueste)", false),
+											new SubcommandData("start",
+													"Eröffnet eine Saison und legt den Anmelde-Roster an")
+													.addOption(OptionType.STRING, "saison",
+															"Saison als JJJJ-MM (Standard: dieser Monat)", false),
+											new SubcommandData("ankuendigen",
+													"Erzeugt die Team-Ankündigungen zum CWL-Start")
+													.addOption(OptionType.STRING, "frist",
+															"Beitrittsfrist, z. B. 01.09.", false)
+													.addOption(OptionType.INTEGER, "team",
+															"Nur dieses Team (Standard: alle)", false)
+													.addOption(OptionType.STRING, "saison",
+															"Saison (Standard: die neueste)", false),
+											new SubcommandData("auswertung",
+													"Verdichtet die Tagesdaten zur Spielerbilanz")
+													.addOption(OptionType.STRING, "saison",
+															"Saison (Standard: die neueste)", false),
+											new SubcommandData("bonus",
+													"Bonus-Rangliste eines Teams")
+													.addOption(OptionType.INTEGER, "team", "Teamnummer (1-5)", true)
+													.addOption(OptionType.INTEGER, "anzahl",
+															"Wie viele Boni vergeben werden", false)
+													.addOption(OptionType.STRING, "saison",
+															"Saison (Standard: die neueste)", false),
+											new SubcommandData("trockenlauf",
+													"Zeigt oder setzt, ob der Bot postet oder nur mitschreibt")
+													.addOption(OptionType.BOOLEAN, "an",
+															"An = nur mitschreiben. Ohne Angabe wird nur angezeigt.",
+															false)
+													.addOption(OptionType.STRING, "saison",
+															"Saison (Standard: die neueste)", false),
+											new SubcommandData("vorschlag",
+													"Schlägt eine Einteilung vor")
+													.addOption(OptionType.STRING, "roster",
+															"Roster mit den Anmeldungen (Standard: alle Mitglieder)",
+															false, true)
+													.addOption(OptionType.BOOLEAN, "speichern",
+															"Als Entwurf ablegen, statt nur anzuzeigen", false)
+													.addOption(OptionType.STRING, "saison",
+															"Saison (Standard: die neueste)", false),
+											new SubcommandData("verschiebe",
+													"Schiebt einen Spieler in ein anderes Team")
+													.addOptions(new OptionData(OptionType.STRING, "spieler",
+															"Der Spieler", true).setAutoComplete(true))
+													.addOption(OptionType.INTEGER, "team", "Zielteam (1-5)", true)
+													.addOption(OptionType.STRING, "saison",
+															"Saison (Standard: die neueste)", false),
+											new SubcommandData("uebernehmen",
+													"Vergibt die Teamrollen nach der gespeicherten Aufstellung")
+													.addOption(OptionType.STRING, "saison",
+															"Saison (Standard: die neueste)", false),
+											new SubcommandData("tag", "Zeigt die Ergebnisse eines Kriegstages")
+													.addOption(OptionType.INTEGER, "team", "Teamnummer (1-5)", true)
+													.addOption(OptionType.INTEGER, "tag",
+															"Kriegstag 1-7 (Standard: der letzte erfasste)", false)
+													.addOption(OptionType.STRING, "saison",
+															"Saison, z. B. 2026-09 (Standard: die neueste)", false)),
 
 							Commands.slash("giveaway", "Giveaway-System")
 									.addSubcommands(
@@ -687,6 +786,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new stats());
 		classes.add(new f2pcheck());
 		classes.add(new lostmanager.commands.roster.RosterCommand());
+		classes.add(new lostmanager.commands.coc.f2pcwl.F2PCwlCommand());
 		classes.add(new giveaway());
 		classes.add(new ApiCommand());
 		classes.add(new PhishTrap());
@@ -1483,6 +1583,7 @@ public class Bot extends ListenerAdapter {
 
 			backfillClanGamesBaselines();
 			recordClanWarParticipation();
+			lostmanager.commands.coc.util.automation.F2PCwlRecorder.recordAll();
 
 			// Update clan badges and descriptions
 			String clanSql = "SELECT tag FROM clans";
@@ -1539,6 +1640,19 @@ public class Bot extends ListenerAdapter {
 		  }
 		};
 		schedulernames.scheduleAtFixedRate(task, 0, 2, TimeUnit.HOURS);
+
+		// Die CWL-Meldungen brauchen einen feineren Takt als zwei Stunden - "30
+		// Minuten vor Tagesende" liesse sich damit nicht treffen. Kosten
+		// entstehen dabei keine: die Endzeiten stehen gecacht in f2pcwl_war_tags,
+		// es wird nur die Datenbank gefragt und kein API-Request gestellt.
+		Runnable cwlMeldungen = () -> {
+			try {
+				lostmanager.commands.coc.f2pcwl.F2PCwlNotifier.tick();
+			} catch (final Throwable t) {
+				System.err.println("Unerwarteter Fehler bei den CWL-Meldungen: " + t.getMessage());
+			}
+		};
+		schedulertasks.scheduleAtFixedRate(cwlMeldungen, 1, 5, TimeUnit.MINUTES);
 	}
 
 	public void stopScheduler() {
