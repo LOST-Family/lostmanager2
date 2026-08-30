@@ -1188,10 +1188,10 @@
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 9000000
+        "upgrade-price1": 10000000
       },
       "2": {
-        "upgrade-price1": 7000000
+        "upgrade-price1": 8000000
       }
     }
   },
@@ -2441,10 +2441,10 @@
     },
     "supercharge":{
       "1": {
-        "upgrade-price3": 9000000
+        "upgrade-price3": 220000
       },
       "2": {
-        "upgrade-price3": 7000000
+        "upgrade-price3": 200000
       }
     }
   },
@@ -3198,7 +3198,7 @@
         "upgrade-price1": 13000000
       },
       "13": {
-        "level-icon": "/home-base/traps/spring-trap/spring-trap-3.png",
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-13.png",
         "upgrade-price1": 16000000
       }
     }
@@ -7129,6 +7129,21 @@
       },
       "10": {
         "upgrade-price3": 180000
+      },
+      "11": {
+        "upgrade-price3": 220000
+      },
+      "12": {
+        "upgrade-price3": 250000
+      },
+      "13": {
+        "upgrade-price3": 280000
+      },
+      "14": {
+        "upgrade-price3": 310000
+      },
+      "15": {
+        "upgrade-price3": 350000
       }
     }
   },
@@ -7484,6 +7499,10 @@
     "name": "Rocket Backpack",
     "icon": "/home-base/equipments/53.png"
   },
+  "90000055": {
+    "name": "Revenge Deck",
+    "icon": "/home-base/equipments/55.png"
+  },
   "90000056": {
     "name": "Stun Blaster",
     "icon": "/home-base/equipments/56.png"
@@ -7495,10 +7514,6 @@
   "90000059": {
     "name": "Electro Fangs",
     "icon": "/home-base/equipments/59.png"
-  },
-  "90000060": {
-    "name": "Revenge Deck",
-    "icon": "/home-base/equipments/60.png"
   },
   "18000000": {
     "name": "Mighty Statue (Aug. 2012)",
