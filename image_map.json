@@ -7499,10 +7499,6 @@
     "name": "Rocket Backpack",
     "icon": "/home-base/equipments/53.png"
   },
-  "90000055": {
-    "name": "Revenge Deck",
-    "icon": "/home-base/equipments/55.png"
-  },
   "90000056": {
     "name": "Stun Blaster",
     "icon": "/home-base/equipments/56.png"
@@ -7514,6 +7510,10 @@
   "90000059": {
     "name": "Electro Fangs",
     "icon": "/home-base/equipments/59.png"
+  },
+  "90000060": {
+    "name": "Revenge Deck",
+    "icon": "/home-base/equipments/60.png"
   },
   "18000000": {
     "name": "Mighty Statue (Aug. 2012)",
