@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -1160,8 +1161,7 @@ public class stats extends ListenerAdapter {
 
 	/**
 	 * Currency slots as they appear in image_map.json ({@code upgrade-priceN}).
-	 * Slots 4 and 5 belong to the Builder Base; slot 5 has no data yet, so it
-	 * falls through to the generic label until the prices are filled in.
+	 * Slots 4 and 5 belong to the Builder Base.
 	 */
 	private static final Map<Integer, String> PRICE_LABELS = new LinkedHashMap<>();
 
@@ -1169,10 +1169,43 @@ public class stats extends ListenerAdapter {
 		PRICE_LABELS.put(1, "Gold");
 		PRICE_LABELS.put(2, "Elixier");
 		PRICE_LABELS.put(3, "Dunkles Elixier");
-		PRICE_LABELS.put(4, "Baumeister-Elixier");
+		PRICE_LABELS.put(4, "Bauarbeiter-Elixier");
+		PRICE_LABELS.put(5, "Bauarbeiter-Gold");
 	}
 
 	private static final String PRICE_KEY_PREFIX = "upgrade-price";
+
+	/**
+	 * Army Camps and Reinforcement Camps are not upgraded, they are bought: what
+	 * they cost hangs on how many of them a player owns, not on a level, and the
+	 * image map carries no prices for them at all. The tables below are running
+	 * totals - the entry for the player's count already is everything the camps
+	 * cost them together.
+	 */
+	private record CountBasedPrices(int slot, NavigableMap<Integer, Long> byCount) {
+	}
+
+	private static final Map<String, CountBasedPrices> COUNT_BASED_PRICES = new HashMap<>();
+
+	static {
+		// Army Camp
+		COUNT_BASED_PRICES.put("1000042",
+				buildCountPrices(4, 0L, 12_000L, 192_000L, 542_000L, 2_542_000L, 5_542_000L));
+		// Reinforcement Camp
+		COUNT_BASED_PRICES.put("1000049", buildCountPrices(4, 0L, 4_000_000L));
+	}
+
+	/**
+	 * Turn the prices for owning one, two, three ... of a building into a lookup
+	 * keyed by that count.
+	 */
+	private static CountBasedPrices buildCountPrices(int slot, long... pricesByCount) {
+		NavigableMap<Integer, Long> prices = new TreeMap<>();
+		for (int i = 0; i < pricesByCount.length; i++) {
+			prices.put(i + 1, pricesByCount[i]);
+		}
+		return new CountBasedPrices(slot, prices);
+	}
 
 	/**
 	 * Hammer Jam cuts upgrade costs, and the Gold Pass discount stacks on top of
@@ -1246,7 +1279,9 @@ public class stats extends ListenerAdapter {
 
 		// TreeMap: slots come out in numeric order, whichever ones the data holds.
 		Map<Integer, Long> totals = new TreeMap<>();
-		collectUpgradePrices(dataToDisplay, imageMap, missingMode, totals);
+		Map<String, Integer> countBasedOwned = new HashMap<>();
+		collectUpgradePrices(dataToDisplay, imageMap, missingMode, totals, countBasedOwned);
+		addCountBasedPrices(countBasedOwned, missingMode, totals);
 
 		if (totals.isEmpty()) {
 			return "";
@@ -1281,36 +1316,73 @@ public class stats extends ListenerAdapter {
 	 * the same way.
 	 */
 	private void collectUpgradePrices(Object current, JSONObject imageMap, boolean missingMode,
-			Map<Integer, Long> totals) {
+			Map<Integer, Long> totals, Map<String, Integer> countBasedOwned) {
 		if (current == null || current == JSONObject.NULL) {
 			return;
 		}
 
 		if (current instanceof JSONArray arr) {
 			for (int i = 0; i < arr.length(); i++) {
-				collectUpgradePrices(arr.get(i), imageMap, missingMode, totals);
+				collectUpgradePrices(arr.get(i), imageMap, missingMode, totals, countBasedOwned);
 			}
 			return;
 		}
 
 		if (current instanceof JSONObject obj) {
 			if (obj.has("data") && obj.get("data") != JSONObject.NULL) {
-				JSONObject itemData = imageMap.optJSONObject(String.valueOf(obj.get("data")));
+				String dataId = String.valueOf(obj.get("data"));
+				JSONObject itemData = imageMap.optJSONObject(dataId);
 				if (itemData != null) {
 					// Identical buildings are grouped into one entry via "cnt", and each
 					// of them was paid for separately.
 					int count = Math.max(1, obj.optInt("cnt", 1));
-					addSectionPrices(itemData.optJSONObject("levels"), obj.optInt("lvl", 0), missingMode, count, totals);
-					addSectionPrices(itemData.optJSONObject("supercharge"), obj.optInt("supercharge", 0), missingMode,
-							count, totals);
+
+					if (COUNT_BASED_PRICES.containsKey(dataId)) {
+						// Here the price follows the total number owned, and that total can
+						// be spread over several entries - so only tally the camps now and
+						// price them once the whole walk is done.
+						countBasedOwned.merge(dataId, count, Integer::sum);
+					} else {
+						addSectionPrices(itemData.optJSONObject("levels"), obj.optInt("lvl", 0), missingMode, count,
+								totals);
+						addSectionPrices(itemData.optJSONObject("supercharge"), obj.optInt("supercharge", 0),
+								missingMode, count, totals);
+					}
 				}
 			}
 
 			for (String key : obj.keySet()) {
 				Object nested = obj.get(key);
 				if (nested instanceof JSONObject || nested instanceof JSONArray) {
-					collectUpgradePrices(nested, imageMap, missingMode, totals);
+					collectUpgradePrices(nested, imageMap, missingMode, totals, countBasedOwned);
 				}
+			}
+		}
+	}
+
+	/**
+	 * Add what the count-based buildings cost to the totals.
+	 *
+	 * @param countBasedOwned how many of each of them the walk found
+	 * @param missingMode     price them as if every one of them were bought - a
+	 *                        missing entry carries no count, and the summary above
+	 *                        it promises the cost of the finished building
+	 */
+	private void addCountBasedPrices(Map<String, Integer> countBasedOwned, boolean missingMode,
+			Map<Integer, Long> totals) {
+		for (Map.Entry<String, Integer> owned : countBasedOwned.entrySet()) {
+			CountBasedPrices prices = COUNT_BASED_PRICES.get(owned.getKey());
+			if (prices == null || prices.byCount().isEmpty()) {
+				continue;
+			}
+
+			int count = missingMode ? prices.byCount().lastKey() : owned.getValue();
+
+			// A count past the end of the table stays at its last entry rather than
+			// dropping out of the sum.
+			Map.Entry<Integer, Long> price = prices.byCount().floorEntry(count);
+			if (price != null && price.getValue() > 0) {
+				totals.merge(prices.slot(), price.getValue(), Long::sum);
 			}
 		}
 	}
