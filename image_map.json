@@ -2984,6 +2984,14 @@
       }
     }
   },
+  "1000064": {
+      "name": "B.O.B Hut",
+      "levels": {
+        "1": {
+          "level-icon": "/builder-base/buildings/bob-hut/bob-hut.png"
+        }
+      }
+    },
   "4000000": {
     "name": "Barbarian",
     "character": "/home-base/troops/barbarian/barbarian-character.png",
