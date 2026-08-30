@@ -112,9 +112,27 @@ public class cwdonator extends ListenerAdapter {
 				return signoff.isActive();
 			});
 
+			if (warMemberList.isEmpty()) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Es sind keine Mitglieder verfügbar, die als Spender eingeteilt werden könnten.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
+
 			HashMap<Integer, ArrayList<Tuple<Integer, Integer>>> mappings = getMappings();
 
 			ArrayList<Tuple<Integer, Integer>> currentmap = mappings.get(cwsize);
+
+			if (currentmap == null) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Für die Kriegsgröße " + cwsize + " ist keine Spendereinteilung hinterlegt.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
 
 			// If using lists, initialize/sync them
 			if (useLists) {
@@ -128,37 +146,12 @@ public class cwdonator extends ListenerAdapter {
 					// Pick from list A
 					chosen = pickPlayerFromListA(clantag, warMemberList, range, excludeLeaders);
 				} else {
-					// Original random logic
-					Collections.shuffle(warMemberList);
-					chosen = warMemberList.get(0);
-					int mapposition = chosen.getWarMapPosition();
-					int i = 0;
-					while (true) {
-						if (mapposition >= range.getFirst() && mapposition <= range.getSecond()) {
-							chosen = warMemberList.get(i);
-							mapposition = chosen.getWarMapPosition();
-							i++;
-							continue;
-						}
-						if (chosen.getWarPreference() == false) {
-							chosen = warMemberList.get(i);
-							mapposition = chosen.getWarMapPosition();
-							i++;
-							continue;
-						}
-						// Check exclude_leaders if enabled
-						if (excludeLeaders && isLeaderOrCoLeader(chosen)) {
-							chosen = warMemberList.get(i);
-							mapposition = chosen.getWarMapPosition();
-							i++;
-							continue;
-						}
-						break;
-					}
+					chosen = pickRandomEligible(warMemberList, range, excludeLeaders);
 				}
 
 				if (chosen == null) {
-					continue; // Should not happen but safety check
+					desc += range.getFirst() + "-" + range.getSecond() + ": kein geeigneter Spender verfügbar\n";
+					continue;
 				}
 
 				int mapposition = chosen.getWarMapPosition();
@@ -359,7 +352,9 @@ public class cwdonator extends ListenerAdapter {
 	}
 
 	/**
-	 * Pick a player from List A, move to List B, handle list swap if needed
+	 * Pick a player from List A and move him to List B. If nobody in List A can
+	 * donate for this range, List B is merged back into List A once to start a new
+	 * cycle. Returns null if no eligible donator exists at all.
 	 */
 	private Player pickPlayerFromListA(String clanTag, ArrayList<Player> warMemberList, Tuple<Integer, Integer> map,
 			boolean excludeLeaders) {
@@ -386,122 +381,90 @@ public class cwdonator extends ListenerAdapter {
 				}
 			}
 
-			// If List A is empty, swap List B to List A
-			if (listA.isEmpty()) {
-				listA.addAll(listB);
-				listB.clear();
-			}
-
 			// Build a list of eligible players from warMemberList that are in List A
-			ArrayList<Player> eligiblePlayers = new ArrayList<>();
-			for (Player p : warMemberList) {
-				if (listA.contains(p.getTag())) {
-					// Check constraints
-					int mapposition = p.getWarMapPosition();
-					if (mapposition >= map.getFirst() && mapposition <= map.getSecond()) {
-						continue; // Skip if in donation range
-					}
-					if (!p.getWarPreference()) {
-						continue; // Skip if opted out
-					}
-					// Skip leaders if excludeLeaders is enabled
-					if (excludeLeaders && isLeaderOrCoLeader(p)) {
-						continue;
-					}
-					eligiblePlayers.add(p);
-				}
-			}
+			ArrayList<Player> eligiblePlayers = collectEligibleFromList(warMemberList, listA, map, excludeLeaders);
 
-			// Pick a player
-			Player chosen;
-			if (!eligiblePlayers.isEmpty()) {
-				Collections.shuffle(eligiblePlayers);
-
-				chosen = eligiblePlayers.get(0);
-
-				// Defensive check: should not happen since leaders are filtered upfront, but
-				// kept as safeguard
-				if (isLeaderOrCoLeader(chosen) && excludeLeaders) {
-					listA.remove(chosen.getTag());
-					listB.add(chosen.getTag());
-
-					// Update database
-					String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
-					try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
-						updateStmt.setArray(1, conn.createArrayOf("text", listA.toArray()));
-						updateStmt.setArray(2, conn.createArrayOf("text", listB.toArray()));
-						updateStmt.setString(3, clanTag);
-						updateStmt.executeUpdate();
-					}
-
-					// Recursive call to pick again
-					return pickPlayerFromListA(clanTag, warMemberList, map, excludeLeaders);
-				}
-			} else {
+			// Nobody in List A can donate for this range (list empty, everybody in the
+			// range itself, opted out, signed off, ...) => merge List B back into List A
+			// and start a new cycle. This happens at most once per pick, so it can never
+			// loop, no matter how many ineligible tags are stuck in List A.
+			if (eligiblePlayers.isEmpty() && !listB.isEmpty()) {
 				listA.addAll(listB);
 				listB.clear();
-
-				String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
-				try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
-					updateStmt.setArray(1, conn.createArrayOf("text", listA.toArray()));
-					updateStmt.setArray(2, conn.createArrayOf("text", listB.toArray()));
-					updateStmt.setString(3, clanTag);
-					updateStmt.executeUpdate();
-				}
-				// Recursive call to pick again
-				return pickPlayerFromListA(clanTag, warMemberList, map, excludeLeaders);
+				eligiblePlayers = collectEligibleFromList(warMemberList, listA, map, excludeLeaders);
 			}
 
-			if (chosen != null) {
-				// Move chosen player from List A to List B
-				listA.remove(chosen.getTag());
-				listB.add(chosen.getTag());
+			if (eligiblePlayers.isEmpty()) {
+				return null; // no eligible donator, leave the lists untouched
+			}
 
-				// Update database
-				String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
-				try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
-					updateStmt.setArray(1, conn.createArrayOf("text", listA.toArray()));
-					updateStmt.setArray(2, conn.createArrayOf("text", listB.toArray()));
-					updateStmt.setString(3, clanTag);
-					updateStmt.executeUpdate();
-				}
+			Collections.shuffle(eligiblePlayers);
+			Player chosen = eligiblePlayers.get(0);
+
+			// Move chosen player from List A to List B
+			listA.remove(chosen.getTag());
+			listB.add(chosen.getTag());
+
+			// Update database
+			String updateSql = "UPDATE cwdonator_lists SET list_a = ?::text[], list_b = ?::text[] WHERE clan_tag = ?";
+			try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+				updateStmt.setArray(1, conn.createArrayOf("text", listA.toArray()));
+				updateStmt.setArray(2, conn.createArrayOf("text", listB.toArray()));
+				updateStmt.setString(3, clanTag);
+				updateStmt.executeUpdate();
 			}
 
 			return chosen;
 		} catch (Exception e) {
 			System.err.println("Error picking player from List A: " + e.getMessage());
-			System.err.println(e.getMessage());
-			// Fallback: find an eligible player, respecting excludeLeaders if enabled
-			if (!warMemberList.isEmpty()) {
-				Collections.shuffle(warMemberList);
-				for (Player p : warMemberList) {
-					// Skip leaders if excludeLeaders is enabled
-					if (excludeLeaders && isLeaderOrCoLeader(p)) {
-						continue;
-					}
-					// Skip players in donation range or opted out
-					int mapposition = p.getWarMapPosition();
-					if (mapposition >= map.getFirst() && mapposition <= map.getSecond()) {
-						continue;
-					}
-					if (!p.getWarPreference()) {
-						continue;
-					}
-					return p;
-				}
-				// If no eligible player found, return any non-leader
-				if (excludeLeaders) {
-					for (Player p : warMemberList) {
-						if (!isLeaderOrCoLeader(p)) {
-							return p;
-						}
-					}
-				}
-				// Last resort: return first player
-				return warMemberList.get(0);
-			}
-			return null;
+			// Fallback: ignore the lists and pick a random eligible player
+			return pickRandomEligible(warMemberList, map, excludeLeaders);
 		}
+	}
+
+	/**
+	 * All war members that are still in List A and may donate for the given range
+	 */
+	private ArrayList<Player> collectEligibleFromList(ArrayList<Player> warMemberList, ArrayList<String> listA,
+			Tuple<Integer, Integer> map, boolean excludeLeaders) {
+		ArrayList<Player> eligiblePlayers = new ArrayList<>();
+		for (Player p : warMemberList) {
+			if (listA.contains(p.getTag()) && isEligibleDonator(p, map, excludeLeaders)) {
+				eligiblePlayers.add(p);
+			}
+		}
+		return eligiblePlayers;
+	}
+
+	/**
+	 * Pick a random eligible donator without using the A/B lists. Returns null if
+	 * nobody is eligible.
+	 */
+	private Player pickRandomEligible(ArrayList<Player> warMemberList, Tuple<Integer, Integer> map,
+			boolean excludeLeaders) {
+		ArrayList<Player> candidates = new ArrayList<>(warMemberList);
+		Collections.shuffle(candidates);
+		for (Player p : candidates) {
+			if (isEligibleDonator(p, map, excludeLeaders)) {
+				return p;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * A player may donate for a range if he is not in that range himself, did not
+	 * opt out of the war and - if requested - is no (co-)leader
+	 */
+	private boolean isEligibleDonator(Player player, Tuple<Integer, Integer> map, boolean excludeLeaders) {
+		int mapposition = player.getWarMapPosition();
+		if (mapposition >= map.getFirst() && mapposition <= map.getSecond()) {
+			return false; // would donate for himself
+		}
+		if (!player.getWarPreference()) {
+			return false; // opted out of the war
+		}
+		return !(excludeLeaders && isLeaderOrCoLeader(player));
 	}
 
 	/**
