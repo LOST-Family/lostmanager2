@@ -8296,7 +8296,7 @@
     }
   },
   "1000053": {
-    "name": "Battle Machine",
+    "name": "Battle Machine Altar",
     "levels": {
       "1": "/builder-base/buildings/battle-machine/battle-machine-1.png"
     }
@@ -8337,7 +8337,7 @@
     }
   },
   "1000080": {
-    "name": "Battle Copter",
+    "name": "Battle Copter Altar",
     "levels": {
       "1": "/builder-base/buildings/battle-copter/battle-copter-1.png"
     }
