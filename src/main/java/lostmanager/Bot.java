@@ -632,6 +632,8 @@ public class Bot extends ListenerAdapter {
 													.addOption(OptionType.CHANNEL, "team_chat", "Team-Chat", false)
 													.addOption(OptionType.CHANNEL, "plan_kanal",
 															"Kanal für Ankündigungen und Pläne", false)
+													.addOption(OptionType.CHANNEL, "vize_kanal",
+															"Planungschat der Vize für den Tagesbericht", false)
 													.addOption(OptionType.STRING, "startzeit",
 															"Startzeit als HH:MM, z. B. 18:00", false)
 													.addOption(OptionType.USER, "zustaendig",

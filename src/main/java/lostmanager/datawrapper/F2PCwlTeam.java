@@ -28,6 +28,7 @@ public class F2PCwlTeam {
 	private final String roleId;
 	private final String chatChannelId;
 	private final String planChannelId;
+	private final String vizeChannelId;
 	private final Time startTime;
 	private final int sizeTarget;
 	private final int defaultSollStars;
@@ -36,12 +37,14 @@ public class F2PCwlTeam {
 	private final String managerDiscordId;
 
 	public F2PCwlTeam(int teamNo, String hostClanTag, String roleId, String chatChannelId, String planChannelId,
-			Time startTime, int sizeTarget, int defaultSollStars, int minTh, int maxRoster, String managerDiscordId) {
+			String vizeChannelId, Time startTime, int sizeTarget, int defaultSollStars, int minTh, int maxRoster,
+			String managerDiscordId) {
 		this.teamNo = teamNo;
 		this.hostClanTag = hostClanTag;
 		this.roleId = roleId;
 		this.chatChannelId = chatChannelId;
 		this.planChannelId = planChannelId;
+		this.vizeChannelId = vizeChannelId;
 		this.startTime = startTime;
 		this.sizeTarget = sizeTarget;
 		this.defaultSollStars = defaultSollStars;
@@ -55,6 +58,15 @@ public class F2PCwlTeam {
 	public String getRoleId() { return roleId; }
 	public String getChatChannelId() { return chatChannelId; }
 	public String getPlanChannelId() { return planChannelId; }
+
+	/**
+	 * Kanal für die Fassung, die nur die Vize sehen - der Planungschat.
+	 *
+	 * Getrennt vom Ankündigungskanal, weil dort die Aufstellung für morgen
+	 * steht: das ist ein Vorschlag zur Entscheidung, keine Ansage an die Member.
+	 * Ist er nicht gesetzt, entfällt diese Fassung.
+	 */
+	public String getVizeChannelId() { return vizeChannelId; }
 	public Time getStartTime() { return startTime; }
 	public int getSizeTarget() { return sizeTarget; }
 	public int getDefaultSollStars() { return defaultSollStars; }
@@ -77,6 +89,7 @@ public class F2PCwlTeam {
 				rs.getString("role_id"),
 				rs.getString("chat_channel_id"),
 				rs.getString("plan_channel_id"),
+				rs.getString("vize_channel_id"),
 				rs.getTime("start_time"),
 				rs.getInt("size_target"),
 				rs.getInt("default_soll_stars"),
@@ -126,17 +139,19 @@ public class F2PCwlTeam {
 	public void save() {
 		DBUtil.executeUpdate(
 				"INSERT INTO f2pcwl_teams (team_no, host_clan_tag, role_id, chat_channel_id, plan_channel_id, "
-						+ "start_time, size_target, default_soll_stars, min_th, max_roster, manager_discord_id) "
-						+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+						+ "vize_channel_id, start_time, size_target, default_soll_stars, min_th, max_roster, "
+						+ "manager_discord_id) "
+						+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
 						+ "ON CONFLICT (team_no) DO UPDATE SET "
 						+ "host_clan_tag = EXCLUDED.host_clan_tag, role_id = EXCLUDED.role_id, "
 						+ "chat_channel_id = EXCLUDED.chat_channel_id, plan_channel_id = EXCLUDED.plan_channel_id, "
+						+ "vize_channel_id = EXCLUDED.vize_channel_id, "
 						+ "start_time = EXCLUDED.start_time, size_target = EXCLUDED.size_target, "
 						+ "default_soll_stars = EXCLUDED.default_soll_stars, min_th = EXCLUDED.min_th, "
 							+ "max_roster = EXCLUDED.max_roster, "
 						+ "manager_discord_id = EXCLUDED.manager_discord_id",
-				teamNo, hostClanTag, roleId, chatChannelId, planChannelId, startTime, sizeTarget, defaultSollStars,
-				minTh, maxRoster, managerDiscordId);
+				teamNo, hostClanTag, roleId, chatChannelId, planChannelId, vizeChannelId, startTime, sizeTarget,
+				defaultSollStars, minTh, maxRoster, managerDiscordId);
 	}
 
 	/**
@@ -145,12 +160,14 @@ public class F2PCwlTeam {
 	 * {@link #blank} die Ausgangszeile.
 	 */
 	public F2PCwlTeam merged(String hostClanTag, String roleId, String chatChannelId, String planChannelId,
-			Time startTime, Integer sizeTarget, Integer defaultSollStars, Integer minTh, Integer maxRoster, String managerDiscordId) {
+			String vizeChannelId, Time startTime, Integer sizeTarget, Integer defaultSollStars, Integer minTh,
+			Integer maxRoster, String managerDiscordId) {
 		return new F2PCwlTeam(this.teamNo,
 				hostClanTag      != null ? hostClanTag      : this.hostClanTag,
 				roleId           != null ? roleId           : this.roleId,
 				chatChannelId    != null ? chatChannelId    : this.chatChannelId,
 				planChannelId    != null ? planChannelId    : this.planChannelId,
+				vizeChannelId    != null ? vizeChannelId    : this.vizeChannelId,
 				startTime        != null ? startTime        : this.startTime,
 				sizeTarget       != null ? sizeTarget       : this.sizeTarget,
 				defaultSollStars != null ? defaultSollStars : this.defaultSollStars,
@@ -161,6 +178,6 @@ public class F2PCwlTeam {
 
 	/** Leeres Team mit den Standardwerten, als Basis für ein neu angelegtes. */
 	public static F2PCwlTeam blank(int teamNo) {
-		return new F2PCwlTeam(teamNo, null, null, null, null, null, 15, 3, 1, 16, null);
+		return new F2PCwlTeam(teamNo, null, null, null, null, null, null, 15, 3, 1, 16, null);
 	}
 }

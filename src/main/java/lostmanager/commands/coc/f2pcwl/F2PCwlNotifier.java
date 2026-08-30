@@ -45,6 +45,16 @@ public class F2PCwlNotifier {
 	/** Rolle der Vize, für die zweite Eskalationsstufe. */
 	private static final String VIZE_ROLLE = "1086732949501788240";
 
+	/**
+	 * Wie lange nach Kriegsende der Tagesbericht noch nachgereicht wird.
+	 *
+	 * Ohne dieses Fenster würde beim ersten Lauf die gesamte mitgeschriebene
+	 * Historie auf einmal in die Kanäle laufen. Der Recorder läuft alle zwei
+	 * Stunden, zwölf sind also reichlich Luft - und war der Bot länger weg,
+	 * ist ein Bericht von gestern ohnehin nichts wert.
+	 */
+	private static final long BERICHT_FENSTER_MS = 12 * 60 * 60 * 1000L;
+
 	public static void tick() {
 		List<F2PCwlTeam> teams = F2PCwlTeam.getAll();
 		if (teams.isEmpty() || Bot.getJda() == null) {
@@ -90,6 +100,55 @@ public class F2PCwlNotifier {
 			} else if ("inWar".equals(state)) {
 				melde(season, team, day, "BATTLE", "Kampftag " + day + " hat begonnen.");
 				pruefeEskalation(season, team, day, ende);
+			}
+		}
+
+		pruefeTagesbericht(team);
+	}
+
+	/**
+	 * Postet den Abendbericht, sobald ein Kampftag abgerechnet ist.
+	 *
+	 * Ausgelöst wird über {@code state = 'warEnded'} und nicht über die
+	 * Endzeit: der Zustand wird erst gesetzt, wenn der Recorder den beendeten
+	 * Krieg gesehen hat, und damit stehen auch die letzten Angriffe fest. Über
+	 * die Endzeit ausgelöst käme der Bericht mitunter zu früh und wäre falsch.
+	 */
+	private static void pruefeTagesbericht(F2PCwlTeam team) {
+		String sql = "SELECT season, day FROM f2pcwl_war_tags "
+				+ "WHERE team_no = ? AND state = 'warEnded' AND end_time IS NOT NULL "
+				+ "AND end_time > ? ORDER BY day";
+		List<Object[]> tage = new ArrayList<>();
+		try (PreparedStatement pstmt = Connection.getConnection().prepareStatement(sql)) {
+			pstmt.setInt(1, team.getTeamNo());
+			pstmt.setTimestamp(2, new Timestamp(System.currentTimeMillis() - BERICHT_FENSTER_MS));
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					tage.add(new Object[] { rs.getString("season"), rs.getInt("day") });
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("Database error: " + e.getMessage());
+			return;
+		}
+
+		for (Object[] t : tage) {
+			String season = (String) t[0];
+			int day = (Integer) t[1];
+
+			String fuerMember = F2PCwlReport.tagesbericht(season, team, day, false);
+			if (fuerMember != null) {
+				melde(season, team, day, "TAGESBERICHT", fuerMember);
+			}
+
+			// Die Vize-Fassung hängt den Aufstellungsvorschlag für morgen an.
+			// Sie geht in den Planungschat, damit die Entscheidung dort fällt
+			// und nicht im Teamkanal vorweggenommen wird.
+			if (team.getVizeChannelId() != null) {
+				String fuerVize = F2PCwlReport.tagesbericht(season, team, day, true);
+				if (fuerVize != null) {
+					meldeIn(team.getVizeChannelId(), season, team, day, "TAGESBERICHT_VIZE", fuerVize);
+				}
 			}
 		}
 	}
@@ -166,7 +225,12 @@ public class F2PCwlNotifier {
 	 * erneut probiert.
 	 */
 	private static void melde(String season, F2PCwlTeam team, int day, String kind, String text) {
-		if (team.getPlanChannelId() == null) {
+		meldeIn(team.getPlanChannelId(), season, team, day, kind, text);
+	}
+
+	private static void meldeIn(String channelId, String season, F2PCwlTeam team, int day, String kind,
+			String text) {
+		if (channelId == null) {
 			return;
 		}
 		int neu = DBUtil.executeUpdate(
@@ -182,9 +246,9 @@ public class F2PCwlNotifier {
 					+ ": " + text);
 			return;
 		}
-		TextChannel ch = Bot.getJda().getTextChannelById(team.getPlanChannelId());
+		TextChannel ch = Bot.getJda().getTextChannelById(channelId);
 		if (ch == null) {
-			System.err.println("CWL-Meldung: Kanal " + team.getPlanChannelId() + " nicht gefunden");
+			System.err.println("CWL-Meldung: Kanal " + channelId + " nicht gefunden");
 			return;
 		}
 		ch.sendMessage(text).queue(_ -> {

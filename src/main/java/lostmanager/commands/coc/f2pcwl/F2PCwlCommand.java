@@ -148,6 +148,7 @@ public class F2PCwlCommand extends ListenerAdapter {
 		Role role = event.getOption("rolle", null, OptionMapping::getAsRole);
 		GuildChannel chat = event.getOption("team_chat", null, OptionMapping::getAsChannel);
 		GuildChannel plan = event.getOption("plan_kanal", null, OptionMapping::getAsChannel);
+		GuildChannel vize = event.getOption("vize_kanal", null, OptionMapping::getAsChannel);
 		String startRaw = optString(event, "startzeit");
 		Integer sizeTarget = optInt(event, "groesse");
 		Integer sollStars = optInt(event, "soll_sterne");
@@ -168,7 +169,8 @@ public class F2PCwlCommand extends ListenerAdapter {
 
 		Integer maxRoster = optInt(event, "max_kader");
 		F2PCwlTeam merged = base.merged(clanTag, role != null ? role.getId() : null,
-				chat != null ? chat.getId() : null, plan != null ? plan.getId() : null, startTime, sizeTarget,
+				chat != null ? chat.getId() : null, plan != null ? plan.getId() : null,
+				vize != null ? vize.getId() : null, startTime, sizeTarget,
 				sollStars, minTh, maxRoster, manager != null ? manager.getId() : null);
 
 		if (merged.getHostClanTag() == null) {
@@ -264,6 +266,7 @@ public class F2PCwlCommand extends ListenerAdapter {
 		sb.append("**Rolle:** ").append(mention(team.getRoleId(), "@&")).append("\n");
 		sb.append("**Kanäle:** ").append(mention(team.getChatChannelId(), "#")).append(" / ")
 				.append(mention(team.getPlanChannelId(), "#")).append("\n");
+		sb.append("**Tagesbericht an die Vize:** ").append(mention(team.getVizeChannelId(), "#")).append("\n");
 		sb.append("**Start:** ").append(team.getStartTime() != null ? team.getStartTime().toString() : "—");
 		sb.append(" · **Soll:** ").append(team.getDefaultSollStars()).append("★");
 		sb.append(" · **Kader:** ").append(team.getSizeTarget()).append(" + ")
@@ -1090,108 +1093,18 @@ public class F2PCwlCommand extends ListenerAdapter {
 			}
 		}
 
-		List<DayRow> rows = loadDay(season, teamNo, day);
-		if (rows.isEmpty()) {
+		// Auf Abruf fragt ein Vize - also mit dem Vorschlag für den Folgetag,
+		// derselbe Text, den der Bot abends von sich aus in den Planungschat
+		// stellt.
+		String text = F2PCwlReport.tagesbericht(season, team, day, true);
+		if (text == null) {
 			reply(event, "Für Team " + teamNo + ", Tag " + day + " der Saison `" + season
 					+ "` liegen keine Ergebnisse vor.", MessageUtil.EmbedType.WARNING);
 			return;
 		}
-
-		String warState = DBUtil.getValueFromSQL(
-				"SELECT state FROM f2pcwl_war_tags WHERE season = ? AND team_no = ? AND day = ?",
-				String.class, season, teamNo, day);
-
-		int attacked = 0;
-		int stars = 0;
-		List<String> missing = new ArrayList<>();
-		for (DayRow row : rows) {
-			if (row.attacked) {
-				attacked++;
-				stars += row.stars;
-			} else {
-				missing.add(row.name);
-			}
-		}
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("**Team ").append(teamNo).append("** · Saison `").append(season).append("` · Tag ").append(day)
-				.append("\n");
-		sb.append(stateLabel(warState)).append("\n\n");
-		sb.append("**").append(attacked).append(" von ").append(rows.size()).append(" angegriffen** · ")
-				.append(stars).append(" Sterne");
-		if (attacked > 0) {
-			sb.append(" · Ø ").append(String.format("%.2f", (double) stars / attacked));
-		}
-		sb.append("\n\n");
-
-		if (!missing.isEmpty()) {
-			sb.append("**Ohne Angriff (").append(missing.size()).append("):**\n");
-			for (String name : missing) {
-				sb.append("• ").append(name).append("\n");
-			}
-			sb.append("\n");
-		}
-
-		sb.append("**Angriffe:**\n");
-		for (DayRow row : rows) {
-			if (!row.attacked) {
-				continue;
-			}
-			sb.append(row.stars).append("★ ");
-			if (row.destruction > 0) {
-				sb.append("(").append(Math.round(row.destruction)).append("%) ");
-			}
-			sb.append(row.name);
-			if (row.donor) {
-				sb.append(" · Spender");
-			}
-			sb.append("\n");
-		}
-
-		String desc = sb.toString();
-		if (desc.length() > 4000) {
-			desc = desc.substring(0, 4000) + "\n…";
-		}
-		reply(event, desc, MessageUtil.EmbedType.INFO);
+		reply(event, text, MessageUtil.EmbedType.INFO);
 	}
 
-	private String stateLabel(String warState) {
-		if (warState == null) {
-			return "Status unbekannt";
-		}
-		return switch (warState) {
-			case "preparation" -> "Vorbereitungstag - es wurde noch nicht angegriffen";
-			case "inWar" -> "Kampftag läuft";
-			case "warEnded" -> "Kampftag beendet";
-			default -> "Status: " + warState;
-		};
-	}
-
-	private record DayRow(String name, boolean attacked, int stars, double destruction, boolean donor) {
-	}
-
-	private List<DayRow> loadDay(String season, int teamNo, int day) {
-		List<DayRow> rows = new ArrayList<>();
-		String sql = "SELECT COALESCE(NULLIF(p.name, ''), d.player_tag) AS name, "
-				+ "d.attacked, d.stars, COALESCE(d.destruction, 0) AS destruction, d.donor "
-				+ "FROM f2pcwl_day_results d LEFT JOIN players p ON p.coc_tag = d.player_tag "
-				+ "WHERE d.season = ? AND d.team_no = ? AND d.day = ? "
-				+ "ORDER BY d.attacked DESC, d.stars DESC, d.destruction DESC";
-		try (PreparedStatement pstmt = Connection.getConnection().prepareStatement(sql)) {
-			pstmt.setString(1, season);
-			pstmt.setInt(2, teamNo);
-			pstmt.setInt(3, day);
-			try (ResultSet rs = pstmt.executeQuery()) {
-				while (rs.next()) {
-					rows.add(new DayRow(rs.getString("name"), rs.getBoolean("attacked"), rs.getInt("stars"),
-							rs.getDouble("destruction"), rs.getBoolean("donor")));
-				}
-			}
-		} catch (SQLException e) {
-			System.err.println("Database error: " + e.getMessage());
-		}
-		return rows;
-	}
 
 	// ------------------------------------------------------------------
 
