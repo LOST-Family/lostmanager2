@@ -2360,7 +2360,7 @@
         "upgrade-price2": 10000000
       },
       "12": {
-        "level-icon": "",
+        "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-12.png",
         "upgrade-price2": 16000000
       },
       "13": {
@@ -2988,7 +2988,7 @@
       "name": "B.O.B Hut",
       "levels": {
         "1": {
-          "level-icon": "/builder-base/buildings/bob-hut/bob-hut.png"
+          "level-icon": "/builder-base/buildings/bob-hut/bob-hut-1.png"
         }
       }
     },
