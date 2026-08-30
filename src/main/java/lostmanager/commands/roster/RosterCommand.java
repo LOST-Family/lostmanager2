@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import lostmanager.datawrapper.Clan;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.Roster;
 import lostmanager.datawrapper.RosterParticipant;
@@ -73,8 +72,42 @@ public class RosterCommand extends ListenerAdapter {
             case "ping" -> handlePing(event);
             case "force_signup" -> handleForceSign(event, "signup");
             case "force_signoff" -> handleForceSign(event, "signoff");
+            case "clan_add" -> handleClan(event, true);
+            case "clan_remove" -> handleClan(event, false);
             default -> event.reply("Unbekannter Subcommand.").setEphemeral(true).queue();
         }
+    }
+
+    /**
+     * Fügt einem bestehenden Roster einen Clan hinzu oder nimmt ihn weg.
+     *
+     * Beim Anlegen lassen sich drei Clans angeben; darüber hinaus - und für
+     * Änderungen an einem laufenden Roster - führt der Weg hierher. Bisher ließ
+     * sich die Clanzuordnung nach dem Anlegen überhaupt nicht mehr ändern.
+     */
+    private void handleClan(SlashCommandInteractionEvent event, boolean add) {
+        String name = getOptString(event, "name", "");
+        String clanTag = getOptString(event, "clan", "");
+
+        if (Roster.getRoster(name) == null) {
+            event.reply("Dieser Roster existiert nicht.").setEphemeral(true).queue();
+            return;
+        }
+
+        List<String> vorher = Roster.getClans(name);
+        if (add) {
+            Roster.addClan(name, clanTag);
+        } else {
+            if (vorher.size() <= 1) {
+                event.reply("Der letzte Clan lässt sich nicht entfernen - sonst erreicht der Roster niemanden mehr.")
+                        .setEphemeral(true).queue();
+                return;
+            }
+            Roster.removeClan(name, clanTag);
+        }
+
+        List<String> nachher = Roster.getClans(name);
+        event.reply("Roster `" + name + "` läuft jetzt über: " + String.join(", ", nachher)).queue();
     }
 
     private void handleCreate(SlashCommandInteractionEvent event) {
@@ -95,7 +128,22 @@ public class RosterCommand extends ListenerAdapter {
         }
 
         Roster.createRoster(name, clanStr, minTh, deleteAt, onlySignoff);
-        event.reply("Roster `" + name + "` erfolgreich erstellt!").queue();
+
+        // Der erste Clan steht in rosters.clan und wird ebenfalls hier geführt,
+        // damit die Auflösung nur eine Quelle kennt.
+        Roster.addClan(name, clanStr);
+        List<String> weitere = new ArrayList<>();
+        for (String opt : new String[] { "clan_2", "clan_3" }) {
+            String tag = getOptString(event, opt, "");
+            if (!tag.isBlank() && !tag.equals(clanStr)) {
+                Roster.addClan(name, tag);
+                weitere.add(tag);
+            }
+        }
+
+        String hinweis = weitere.isEmpty() ? ""
+                : " Anmeldung läuft über " + (weitere.size() + 1) + " Clans.";
+        event.reply("Roster `" + name + "` erfolgreich erstellt!" + hinweis).queue();
     }
 
     private void handleClone(SlashCommandInteractionEvent event) {
@@ -115,6 +163,11 @@ public class RosterCommand extends ListenerAdapter {
 
         Timestamp deleteAt = new Timestamp(System.currentTimeMillis() + (60 * 86400000L)); // default 60 days for clone
         Roster.createRoster(newName, base.getClan(), base.getMinTh(), deleteAt, base.isOnlySignoff());
+        // Ohne das würde aus einem Zwei-Clan-Roster still ein Ein-Clan-Roster,
+        // und beim Ping fehlte die Hälfte der Leute.
+        for (String tag : Roster.getClans(baseName)) {
+            Roster.addClan(newName, tag);
+        }
         event.reply("Roster erfolgreich zu `" + newName + "` geklont!").queue();
     }
 
@@ -172,18 +225,23 @@ public class RosterCommand extends ListenerAdapter {
             return;
         }
 
-        // Get clan users
-        String clanTag = roster.getClan(); // Might need mapping from clan name to tag if clanStr is not a tag
-        // Wait! Let's check how autocomplete is structured. The autocomplete returns Clan names and tags probably.
+        // Ein Roster kann über mehrere Clans laufen - der F2P-Verbund meldet sich
+        // etwa über LOST F2P und LOST F2P 2 gemeinsam an. Ohne Eintrag in
+        // roster_clans bleibt es beim einen Clan aus rosters.clan.
+        List<String> clanTags = Roster.getClans(name);
+        if (clanTags.isEmpty()) {
+            event.reply("Diesem Roster ist kein Clan zugeordnet.").setEphemeral(true).queue();
+            return;
+        }
         try {
-            // Validates if the clan exists, throws exception if not
-			@SuppressWarnings("unused")
-			Clan _clan = new Clan(clanTag);
             List<String> allClanMemberTags = new java.util.ArrayList<>();
-            // Assuming we get members from DB or API:
             String sql = "SELECT player_tag FROM clan_members WHERE clan_tag = ?";
-            for (String pTag : DBUtil.getArrayListFromSQL(sql, String.class, clanTag)) {
-                allClanMemberTags.add(pTag);
+            for (String clanTag : clanTags) {
+                for (String pTag : DBUtil.getArrayListFromSQL(sql, String.class, clanTag)) {
+                    if (!allClanMemberTags.contains(pTag)) {
+                        allClanMemberTags.add(pTag);
+                    }
+                }
             }
 
             List<RosterParticipant> participants = RosterParticipant.getParticipants(name);
@@ -305,7 +363,9 @@ public class RosterCommand extends ListenerAdapter {
         eb.addField("Dabei (" + signedUp.size() + ")", upStr.toString(), true);
         eb.addField("Abgemeldet (" + signedOff.size() + ")", offStr.toString(), true);
 
-        eb.setFooter("Clan: " + r.getClan() + " | Min TH: " + r.getMinTh());
+        List<String> clans = Roster.getClans(r.getName());
+        String clanLabel = clans.size() > 1 ? String.join(", ", clans) : r.getClan();
+        eb.setFooter("Clan: " + clanLabel + " | Min TH: " + r.getMinTh());
         return eb;
     }
 
@@ -489,7 +549,7 @@ public class RosterCommand extends ListenerAdapter {
         String currentStr = event.getFocusedOption().getValue().toLowerCase();
 
         switch (opt) {
-            case "clan" ->                 {
+            case "clan", "clan_2", "clan_3" -> {
                     List<Choice> choices = DBManager.getClansAutocompleteWithSideclans(currentStr);
                     event.replyChoices(choices).queue();
                 }

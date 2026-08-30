@@ -60,6 +60,7 @@ public class Clan {
 	// CWL
 	private Boolean cwlactive;
 	private Long CWLDayEndTimeMillis;
+	private Long CWLEndTimeMillis;
 	private ArrayList<Player> cwlmemberlist;
 
 	// CS
@@ -108,6 +109,7 @@ public class Clan {
 		// CWL
 		cwlactive = null;
 		CWLDayEndTimeMillis = null;
+		CWLEndTimeMillis = null;
 		cwlmemberlist = null;
 
 		// CG
@@ -452,11 +454,63 @@ public class Clan {
 		return CWLDayEndTimeMillis;
 	}
 
+	/**
+	 * Endzeit der gesamten CWL, also des letzten Kriegstages.
+	 *
+	 * War vorher ein leerer Rumpf, der die Endzeit des <i>laufenden Tages</i>
+	 * zurueckgab - oder null. Der Eventtyp CWLEND konnte damit nie richtig
+	 * feuern.
+	 *
+	 * Gesucht wird die spaeteste Endzeit ueber alle Runden, in denen der eigene
+	 * Clan auftaucht. Ueber die Runden rueckwaerts zu gehen spart Requests: die
+	 * letzte ausgeloste Runde ist fast immer die gesuchte.
+	 */
 	public Long getCWLEndTimeMillis() {
-		if (CWLDayEndTimeMillis == null) {
-
+		if (CWLEndTimeMillis != null) {
+			return CWLEndTimeMillis;
 		}
-		return CWLDayEndTimeMillis;
+		if (clan_tag == null || !isCWLActive()) {
+			return null;
+		}
+
+		JSONObject cwlJson = getCWLJson();
+		if (!cwlJson.has("rounds") || cwlJson.isNull("rounds")) {
+			return null;
+		}
+		JSONArray rounds = cwlJson.getJSONArray("rounds");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSS'Z'")
+				.withZone(ZoneOffset.UTC);
+
+		for (int r = rounds.length() - 1; r >= 0; r--) {
+			JSONArray warTags = rounds.getJSONObject(r).optJSONArray("warTags");
+			if (warTags == null) {
+				continue;
+			}
+			for (int w = 0; w < warTags.length(); w++) {
+				String warTag = warTags.getString(w);
+				if (warTag.equals("#0")) {
+					continue; // Runde noch nicht ausgelost
+				}
+				try {
+					JSONObject warData = getCWLDayJson(warTag);
+					if (!warData.has("clan") || !warData.has("opponent")) {
+						continue;
+					}
+					boolean isOurWar = warData.getJSONObject("clan").getString("tag").equals(clan_tag)
+							|| warData.getJSONObject("opponent").getString("tag").equals(clan_tag);
+					if (!isOurWar || !warData.has("endTime") || warData.isNull("endTime")) {
+						continue;
+					}
+					CWLEndTimeMillis = Instant
+							.from(formatter.parse(warData.getString("endTime"))).toEpochMilli();
+					return CWLEndTimeMillis;
+				} catch (final JSONException e) {
+					System.err.println("Warning: Error retrieving CWL war data for tag " + warTag + ": "
+							+ e.getMessage());
+				}
+			}
+		}
+		return null;
 	}
 
 	public ArrayList<Player> getCWLMemberList() {

@@ -23,3 +23,9 @@ buildNumber.properties
 .DS_Store
 Thumbs.db
 target/
+
+# Lokale Secrets / Arbeitsdateien
+.lostmanager_test_token
+*.env
+__pycache__/
+*.pyc
