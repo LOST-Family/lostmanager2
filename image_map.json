@@ -5044,25 +5044,25 @@
         "upgrade-price3": 185000
       },
       "83": {
-        "upgrade-price3": 190000
-      },
-      "84": {
         "upgrade-price3": 195000
       },
-      "85": {
-        "upgrade-price3": 200000
+      "84": {
+        "upgrade-price3": 205000
       },
-      "86": {
+      "85": {
         "upgrade-price3": 215000
       },
+      "86": {
+        "upgrade-price3": 220000
+      },
       "87": {
-        "upgrade-price3": 225000
+        "upgrade-price3": 230000
       },
       "88": {
-        "upgrade-price3": 235000
+        "upgrade-price3": 240000
       },
       "89": {
-        "upgrade-price3": 245000
+        "upgrade-price3": 250000
       },
       "90": {
         "upgrade-price3": 255000
@@ -5470,7 +5470,7 @@
     "character": "/home-base/heroes/grand-warden-character.png",
     "levels": {
       "1": {
-        "upgrade-price2": 0
+        "upgrade-price2": 1000000
       },
       "2": {
         "upgrade-price2": 1000000
@@ -5530,136 +5530,136 @@
         "upgrade-price2": 6000000
       },
       "21": {
-        "upgrade-price2": 6500000
+        "upgrade-price2": 6100000
       },
       "22": {
-        "upgrade-price2": 6600000
+        "upgrade-price2": 6200000
       },
       "23": {
-        "upgrade-price2": 6700000
+        "upgrade-price2": 6300000
       },
       "24": {
-        "upgrade-price2": 6800000
+        "upgrade-price2": 6400000
       },
       "25": {
-        "upgrade-price2": 6900000
+        "upgrade-price2": 6500000
       },
       "26": {
-        "upgrade-price2": 7000000
+        "upgrade-price2": 6600000
       },
       "27": {
-        "upgrade-price2": 7100000
+        "upgrade-price2": 6700000
       },
       "28": {
-        "upgrade-price2": 7200000
+        "upgrade-price2": 6800000
       },
       "29": {
-        "upgrade-price2": 7300000
+        "upgrade-price2": 6900000
       },
       "30": {
-        "upgrade-price2": 7400000
+        "upgrade-price2": 7000000
       },
       "31": {
-        "upgrade-price2": 7500000
+        "upgrade-price2": 7100000
       },
       "32": {
-        "upgrade-price2": 7600000
+        "upgrade-price2": 7200000
       },
       "33": {
-        "upgrade-price2": 7700000
+        "upgrade-price2": 7300000
       },
       "34": {
-        "upgrade-price2": 7800000
+        "upgrade-price2": 7400000
       },
       "35": {
-        "upgrade-price2": 7900000
+        "upgrade-price2": 7500000
       },
       "36": {
-        "upgrade-price2": 8000000
+        "upgrade-price2": 7600000
       },
       "37": {
-        "upgrade-price2": 8100000
+        "upgrade-price2": 7700000
       },
       "38": {
-        "upgrade-price2": 8200000
+        "upgrade-price2": 7800000
       },
       "39": {
-        "upgrade-price2": 8300000
+        "upgrade-price2": 7900000
       },
       "40": {
-        "upgrade-price2": 8400000
+        "upgrade-price2": 8000000
       },
       "41": {
-        "upgrade-price2": 8500000
+        "upgrade-price2": 8300000
       },
       "42": {
-        "upgrade-price2": 8800000
+        "upgrade-price2": 8600000
       },
       "43": {
-        "upgrade-price2": 9100000
+        "upgrade-price2": 8900000
       },
       "44": {
-        "upgrade-price2": 9400000
+        "upgrade-price2": 9200000
       },
       "45": {
-        "upgrade-price2": 9700000
+        "upgrade-price2": 9500000
       },
       "46": {
-        "upgrade-price2": 10000000
+        "upgrade-price2": 9800000
       },
       "47": {
-        "upgrade-price2": 10300000
+        "upgrade-price2": 10100000
       },
       "48": {
-        "upgrade-price2": 10600000
+        "upgrade-price2": 10400000
       },
       "49": {
-        "upgrade-price2": 11000000
+        "upgrade-price2": 10700000
       },
       "50": {
-        "upgrade-price2": 11500000
+        "upgrade-price2": 11000000
       },
       "51": {
-        "upgrade-price2": 12000000
+        "upgrade-price2": 11400000
       },
       "52": {
-        "upgrade-price2": 12500000
+        "upgrade-price2": 11800000
       },
       "53": {
-        "upgrade-price2": 13000000
+        "upgrade-price2": 12200000
       },
       "54": {
-        "upgrade-price2": 13500000
+        "upgrade-price2": 12600000
       },
       "55": {
-        "upgrade-price2": 14000000
+        "upgrade-price2": 13000000
       },
       "56": {
-        "upgrade-price2": 14500000
+        "upgrade-price2": 13400000
       },
       "57": {
-        "upgrade-price2": 15000000
+        "upgrade-price2": 13800000
       },
       "58": {
-        "upgrade-price2": 15500000
+        "upgrade-price2": 14200000
       },
       "59": {
-        "upgrade-price2": 16000000
+        "upgrade-price2": 14600000
       },
       "60": {
-        "upgrade-price2": 16200000
+        "upgrade-price2": 15000000
       },
       "61": {
-        "upgrade-price2": 16700000
+        "upgrade-price2": 15500000
       },
       "62": {
-        "upgrade-price2": 16900000
+        "upgrade-price2": 16000000
       },
       "63": {
-        "upgrade-price2": 17100000
+        "upgrade-price2": 16500000
       },
       "64": {
-        "upgrade-price2": 17300000
+        "upgrade-price2": 17000000
       },
       "65": {
         "upgrade-price2": 17500000
@@ -7056,398 +7056,1184 @@
   "1000044": {
     "name": "Cannon",
     "levels": {
-      "1": "/builder-base/buildings/cannon/cannon-1.png",
-      "2": "/builder-base/buildings/cannon/cannon-2.png",
-      "3": "/builder-base/buildings/cannon/cannon-3.png",
-      "4": "/builder-base/buildings/cannon/cannon-4.png",
-      "5": "/builder-base/buildings/cannon/cannon-5.png",
-      "6": "/builder-base/buildings/cannon/cannon-6.png",
-      "7": "/builder-base/buildings/cannon/cannon-7.png",
-      "8": "/builder-base/buildings/cannon/cannon-8.png",
-      "9": "/builder-base/buildings/cannon/cannon-9.png",
-      "10": "/builder-base/buildings/cannon/cannon-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/cannon/cannon-1.png",
+        "upgrade-price5": 10000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/cannon/cannon-2.png",
+        "upgrade-price5": 20000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/cannon/cannon-3.png",
+        "upgrade-price5": 50000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/cannon/cannon-4.png",
+        "upgrade-price5": 200000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/cannon/cannon-5.png",
+        "upgrade-price5": 600000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/cannon/cannon-6.png",
+        "upgrade-price5": 1000000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/cannon/cannon-7.png",
+        "upgrade-price5": 1800000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/cannon/cannon-8.png",
+        "upgrade-price5": 2500000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/cannon/cannon-9.png",
+        "upgrade-price5": 3300000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/cannon/cannon-10.png",
+        "upgrade-price5": 4500000
+      }
     }
   },
   "1000041": {
     "name": "Double Cannon",
     "levels": {
-      "1": "/builder-base/buildings/double-cannon/double-cannon-1.png",
-      "2": "/builder-base/buildings/double-cannon/double-cannon-2.png",
-      "3": "/builder-base/buildings/double-cannon/double-cannon-3.png",
-      "4": "/builder-base/buildings/double-cannon/double-cannon-4.png",
-      "5": "/builder-base/buildings/double-cannon/double-cannon-5.png",
-      "6": "/builder-base/buildings/double-cannon/double-cannon-6.png",
-      "7": "/builder-base/buildings/double-cannon/double-cannon-7.png",
-      "8": "/builder-base/buildings/double-cannon/double-cannon-8.png",
-      "9": "/builder-base/buildings/double-cannon/double-cannon-9.png",
-      "10": "/builder-base/buildings/double-cannon/double-cannon-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/double-cannon/double-cannon-1.png",
+        "upgrade-price5": 20000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/double-cannon/double-cannon-2.png",
+        "upgrade-price5": 50000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/double-cannon/double-cannon-3.png",
+        "upgrade-price5": 80000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/double-cannon/double-cannon-4.png",
+        "upgrade-price5": 300000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/double-cannon/double-cannon-5.png",
+        "upgrade-price5": 900000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/double-cannon/double-cannon-6.png",
+        "upgrade-price5": 1400000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/double-cannon/double-cannon-7.png",
+        "upgrade-price5": 2200000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/double-cannon/double-cannon-8.png",
+        "upgrade-price5": 3200000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/double-cannon/double-cannon-9.png",
+        "upgrade-price5": 4200000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/double-cannon/double-cannon-10.png",
+        "upgrade-price5": 5200000
+      }
     }
   },
   "1000048": {
     "name": "Archer Tower",
     "levels": {
-      "1": "/builder-base/buildings/archer-tower/archer-tower-1.png",
-      "2": "/builder-base/buildings/archer-tower/archer-tower-2.png",
-      "3": "/builder-base/buildings/archer-tower/archer-tower-3.png",
-      "4": "/builder-base/buildings/archer-tower/archer-tower-4.png",
-      "5": "/builder-base/buildings/archer-tower/archer-tower-5.png",
-      "6": "/builder-base/buildings/archer-tower/archer-tower-6.png",
-      "7": "/builder-base/buildings/archer-tower/archer-tower-7.png",
-      "8": "/builder-base/buildings/archer-tower/archer-tower-8.png",
-      "9": "/builder-base/buildings/archer-tower/archer-tower-9.png",
-      "10": "/builder-base/buildings/archer-tower/archer-tower-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/archer-tower/archer-tower-1.png",
+        "upgrade-price5": 12000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/archer-tower/archer-tower-2.png",
+        "upgrade-price5": 30000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/archer-tower/archer-tower-3.png",
+        "upgrade-price5": 60000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/archer-tower/archer-tower-4.png",
+        "upgrade-price5": 250000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/archer-tower/archer-tower-5.png",
+        "upgrade-price5": 800000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/archer-tower/archer-tower-6.png",
+        "upgrade-price5": 1200000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/archer-tower/archer-tower-7.png",
+        "upgrade-price5": 2000000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/archer-tower/archer-tower-8.png",
+        "upgrade-price5": 2800000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/archer-tower/archer-tower-9.png",
+        "upgrade-price5": 3600000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/archer-tower/archer-tower-10.png",
+        "upgrade-price5": 4600000
+      }
     }
   },
   "1000043": {
     "name": "Hidden Tesla",
     "levels": {
-      "1": "/builder-base/buildings/hidden-tesla/hidden-tesla-1.png",
-      "2": "/builder-base/buildings/hidden-tesla/hidden-tesla-2.png",
-      "3": "/builder-base/buildings/hidden-tesla/hidden-tesla-3.png",
-      "4": "/builder-base/buildings/hidden-tesla/hidden-tesla-4.png",
-      "5": "/builder-base/buildings/hidden-tesla/hidden-tesla-5.png",
-      "6": "/builder-base/buildings/hidden-tesla/hidden-tesla-6.png",
-      "7": "/builder-base/buildings/hidden-tesla/hidden-tesla-7.png",
-      "8": "/builder-base/buildings/hidden-tesla/hidden-tesla-8.png",
-      "9": "/builder-base/buildings/hidden-tesla/hidden-tesla-9.png",
-      "10": "/builder-base/buildings/hidden-tesla/hidden-tesla-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/hidden-tesla/hidden-tesla-1.png",
+        "upgrade-price5": 50000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/hidden-tesla/hidden-tesla-2.png",
+        "upgrade-price5": 100000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/hidden-tesla/hidden-tesla-3.png",
+        "upgrade-price5": 150000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/hidden-tesla/hidden-tesla-4.png",
+        "upgrade-price5": 280000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/hidden-tesla/hidden-tesla-5.png",
+        "upgrade-price5": 700000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/hidden-tesla/hidden-tesla-6.png",
+        "upgrade-price5": 1300000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/hidden-tesla/hidden-tesla-7.png",
+        "upgrade-price5": 2100000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/hidden-tesla/hidden-tesla-8.png",
+        "upgrade-price5": 3100000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/hidden-tesla/hidden-tesla-9.png",
+        "upgrade-price5": 4100000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/hidden-tesla/hidden-tesla-10.png",
+        "upgrade-price5": 5100000
+      }
     }
   },
   "1000050": {
     "name": "Firecrackers",
     "levels": {
-      "1": "/builder-base/buildings/firecrackers/firecrackers-1.png",
-      "2": "/builder-base/buildings/firecrackers/firecrackers-2.png",
-      "3": "/builder-base/buildings/firecrackers/firecrackers-3.png",
-      "4": "/builder-base/buildings/firecrackers/firecrackers-4.png",
-      "5": "/builder-base/buildings/firecrackers/firecrackers-5.png",
-      "6": "/builder-base/buildings/firecrackers/firecrackers-6.png",
-      "7": "/builder-base/buildings/firecrackers/firecrackers-7.png",
-      "8": "/builder-base/buildings/firecrackers/firecrackers-8.png",
-      "9": "/builder-base/buildings/firecrackers/firecrackers-9.png",
-      "10": "/builder-base/buildings/firecrackers/firecrackers-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/firecrackers/firecrackers-1.png",
+        "upgrade-price5": 40000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/firecrackers/firecrackers-2.png",
+        "upgrade-price5": 80000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/firecrackers/firecrackers-3.png",
+        "upgrade-price5": 120000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/firecrackers/firecrackers-4.png",
+        "upgrade-price5": 300000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/firecrackers/firecrackers-5.png",
+        "upgrade-price5": 800000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/firecrackers/firecrackers-6.png",
+        "upgrade-price5": 1200000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/firecrackers/firecrackers-7.png",
+        "upgrade-price5": 2000000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/firecrackers/firecrackers-8.png",
+        "upgrade-price5": 3000000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/firecrackers/firecrackers-9.png",
+        "upgrade-price5": 4000000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/firecrackers/firecrackers-10.png",
+        "upgrade-price5": 5000000
+      }
     }
   },
   "1000055": {
     "name": "Crusher",
     "levels": {
-      "1": "/builder-base/buildings/crusher/crusher-1.png",
-      "2": "/builder-base/buildings/crusher/crusher-2.png",
-      "3": "/builder-base/buildings/crusher/crusher-3.png",
-      "4": "/builder-base/buildings/crusher/crusher-4.png",
-      "5": "/builder-base/buildings/crusher/crusher-5.png",
-      "6": "/builder-base/buildings/crusher/crusher-6.png",
-      "7": "/builder-base/buildings/crusher/crusher-7.png",
-      "8": "/builder-base/buildings/crusher/crusher-8.png",
-      "9": "/builder-base/buildings/crusher/crusher-9.png",
-      "10": "/builder-base/buildings/crusher/crusher-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/crusher/crusher-1.png",
+        "upgrade-price5": 120000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/crusher/crusher-2.png",
+        "upgrade-price5": 180000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/crusher/crusher-3.png",
+        "upgrade-price5": 220000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/crusher/crusher-4.png",
+        "upgrade-price5": 350000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/crusher/crusher-5.png",
+        "upgrade-price5": 1200000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/crusher/crusher-6.png",
+        "upgrade-price5": 1500000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/crusher/crusher-7.png",
+        "upgrade-price5": 2400000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/crusher/crusher-8.png",
+        "upgrade-price5": 3400000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/crusher/crusher-9.png",
+        "upgrade-price5": 4400000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/crusher/crusher-10.png",
+        "upgrade-price5": 5400000
+      }
     }
   },
   "1000051": {
     "name": "Guard Post",
     "levels": {
-      "1": "/builder-base/buildings/guard-post/guard-post-1.png",
-      "2": "/builder-base/buildings/guard-post/guard-post-2.png",
-      "3": "/builder-base/buildings/guard-post/guard-post-3.png",
-      "4": "/builder-base/buildings/guard-post/guard-post-4.png",
-      "5": "/builder-base/buildings/guard-post/guard-post-5.png",
-      "6": "/builder-base/buildings/guard-post/guard-post-6.png",
-      "7": "/builder-base/buildings/guard-post/guard-post-7.png",
-      "8": "/builder-base/buildings/guard-post/guard-post-8.png",
-      "9": "/builder-base/buildings/guard-post/guard-post-9.png",
-      "10": "/builder-base/buildings/guard-post/guard-post-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/guard-post/guard-post-1.png",
+        "upgrade-price5": 200000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/guard-post/guard-post-2.png",
+        "upgrade-price5": 240000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/guard-post/guard-post-3.png",
+        "upgrade-price5": 280000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/guard-post/guard-post-4.png",
+        "upgrade-price5": 320000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/guard-post/guard-post-5.png",
+        "upgrade-price5": 1000000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/guard-post/guard-post-6.png",
+        "upgrade-price5": 1400000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/guard-post/guard-post-7.png",
+        "upgrade-price5": 2300000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/guard-post/guard-post-8.png",
+        "upgrade-price5": 3200000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/guard-post/guard-post-9.png",
+        "upgrade-price5": 4100000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/guard-post/guard-post-10.png",
+        "upgrade-price5": 5100000
+      }
     }
   },
   "1000054": {
     "name": "Air Bombs",
     "levels": {
-      "1": "/builder-base/buildings/air-bombs/air-bombs-1.png",
-      "2": "/builder-base/buildings/air-bombs/air-bombs-2.png",
-      "3": "/builder-base/buildings/air-bombs/air-bombs-3.png",
-      "4": "/builder-base/buildings/air-bombs/air-bombs-4.png",
-      "5": "/builder-base/buildings/air-bombs/air-bombs-5.png",
-      "6": "/builder-base/buildings/air-bombs/air-bombs-6.png",
-      "7": "/builder-base/buildings/air-bombs/air-bombs-7.png",
-      "8": "/builder-base/buildings/air-bombs/air-bombs-8.png",
-      "9": "/builder-base/buildings/air-bombs/air-bombs-9.png",
-      "10": "/builder-base/buildings/air-bombs/air-bombs-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/air-bombs/air-bombs-1.png",
+        "upgrade-price5": 300000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/air-bombs/air-bombs-2.png",
+        "upgrade-price5": 320000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/air-bombs/air-bombs-3.png",
+        "upgrade-price5": 340000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/air-bombs/air-bombs-4.png",
+        "upgrade-price5": 360000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/air-bombs/air-bombs-5.png",
+        "upgrade-price5": 1200000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/air-bombs/air-bombs-6.png",
+        "upgrade-price5": 1500000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/air-bombs/air-bombs-7.png",
+        "upgrade-price5": 2400000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/air-bombs/air-bombs-8.png",
+        "upgrade-price5": 3400000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/air-bombs/air-bombs-9.png",
+        "upgrade-price5": 4400000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/air-bombs/air-bombs-10.png",
+        "upgrade-price5": 5400000
+      }
     }
   },
   "1000045": {
     "name": "Multi Mortar",
     "levels": {
-      "1": "/builder-base/buildings/multi-mortar/multi-mortar-1.png",
-      "2": "/builder-base/buildings/multi-mortar/multi-mortar-2.png",
-      "3": "/builder-base/buildings/multi-mortar/multi-mortar-3.png",
-      "4": "/builder-base/buildings/multi-mortar/multi-mortar-4.png",
-      "5": "/builder-base/buildings/multi-mortar/multi-mortar-5.png",
-      "6": "/builder-base/buildings/multi-mortar/multi-mortar-6.png",
-      "7": "/builder-base/buildings/multi-mortar/multi-mortar-7.png",
-      "8": "/builder-base/buildings/multi-mortar/multi-mortar-8.png",
-      "9": "/builder-base/buildings/multi-mortar/multi-mortar-9.png",
-      "10": "/builder-base/buildings/multi-mortar/multi-mortar-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/multi-mortar/multi-mortar-1.png",
+        "upgrade-price5": 600000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/multi-mortar/multi-mortar-2.png",
+        "upgrade-price5": 700000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/multi-mortar/multi-mortar-3.png",
+        "upgrade-price5": 800000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/multi-mortar/multi-mortar-4.png",
+        "upgrade-price5": 1000000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/multi-mortar/multi-mortar-5.png",
+        "upgrade-price5": 1200000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/multi-mortar/multi-mortar-6.png",
+        "upgrade-price5": 1600000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/multi-mortar/multi-mortar-7.png",
+        "upgrade-price5": 2500000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/multi-mortar/multi-mortar-8.png",
+        "upgrade-price5": 3500000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/multi-mortar/multi-mortar-9.png",
+        "upgrade-price5": 4500000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/multi-mortar/multi-mortar-10.png",
+        "upgrade-price5": 5500000
+      }
     }
   },
   "1000078": {
     "name": "O.T.T.O's Outpost",
     "levels": {
-      "1": "/builder-base/buildings/ottos-outpost/ottos-outpost-1.png",
-      "2": "/builder-base/buildings/ottos-outpost/ottos-outpost-2.png",
-      "3": "/builder-base/buildings/ottos-outpost/ottos-outpost-3.png",
-      "4": "/builder-base/buildings/ottos-outpost/ottos-outpost-4.png",
-      "5": "/builder-base/buildings/ottos-outpost/ottos-outpost-5.png",
-      "6": "/builder-base/buildings/ottos-outpost/ottos-outpost-6.png",
-      "7": "/builder-base/buildings/ottos-outpost/ottos-outpost-7.png",
-      "8": "/builder-base/buildings/ottos-outpost/ottos-outpost-8.png",
-      "9": "/builder-base/buildings/ottos-outpost/ottos-outpost-9.png",
-      "10": "/builder-base/buildings/ottos-outpost/ottos-outpost-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/ottos-outpost/ottos-outpost-1.png",
+        "upgrade-price5": 0
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/ottos-outpost/ottos-outpost-2.png",
+        "upgrade-price5": 1000000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/ottos-outpost/ottos-outpost-3.png",
+        "upgrade-price5": 1250000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/ottos-outpost/ottos-outpost-4.png",
+        "upgrade-price5": 1500000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/ottos-outpost/ottos-outpost-5.png",
+        "upgrade-price5": 1750000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/ottos-outpost/ottos-outpost-6.png",
+        "upgrade-price5": 2000000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/ottos-outpost/ottos-outpost-7.png",
+        "upgrade-price5": 3000000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/ottos-outpost/ottos-outpost-8.png",
+        "upgrade-price5": 4000000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/ottos-outpost/ottos-outpost-9.png",
+        "upgrade-price5": 5000000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/ottos-outpost/ottos-outpost-10.png",
+        "upgrade-price5": 6000000
+      }
     }
   },
   "1000056": {
     "name": "Roaster",
     "levels": {
-      "1": "/builder-base/buildings/roaster/roaster-1.png",
-      "2": "/builder-base/buildings/roaster/roaster-2.png",
-      "3": "/builder-base/buildings/roaster/roaster-3.png",
-      "4": "/builder-base/buildings/roaster/roaster-4.png",
-      "5": "/builder-base/buildings/roaster/roaster-5.png",
-      "6": "/builder-base/buildings/roaster/roaster-6.png",
-      "7": "/builder-base/buildings/roaster/roaster-7.png",
-      "8": "/builder-base/buildings/roaster/roaster-8.png",
-      "9": "/builder-base/buildings/roaster/roaster-9.png",
-      "10": "/builder-base/buildings/roaster/roaster-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/roaster/roaster-1.png",
+        "upgrade-price5": 1000000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/roaster/roaster-2.png",
+        "upgrade-price5": 1200000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/roaster/roaster-3.png",
+        "upgrade-price5": 1400000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/roaster/roaster-4.png",
+        "upgrade-price5": 1500000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/roaster/roaster-5.png",
+        "upgrade-price5": 1600000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/roaster/roaster-6.png",
+        "upgrade-price5": 1700000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/roaster/roaster-7.png",
+        "upgrade-price5": 2600000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/roaster/roaster-8.png",
+        "upgrade-price5": 3600000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/roaster/roaster-9.png",
+        "upgrade-price5": 4600000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/roaster/roaster-10.png",
+        "upgrade-price5": 5600000
+      }
     }
   },
   "1000057": {
     "name": "Giant Cannon",
     "levels": {
-      "1": "/builder-base/buildings/giant-cannon/giant-cannon-1.png",
-      "2": "/builder-base/buildings/giant-cannon/giant-cannon-2.png",
-      "3": "/builder-base/buildings/giant-cannon/giant-cannon-3.png",
-      "4": "/builder-base/buildings/giant-cannon/giant-cannon-4.png",
-      "5": "/builder-base/buildings/giant-cannon/giant-cannon-5.png",
-      "6": "/builder-base/buildings/giant-cannon/giant-cannon-6.png",
-      "7": "/builder-base/buildings/giant-cannon/giant-cannon-7.png",
-      "8": "/builder-base/buildings/giant-cannon/giant-cannon-8.png",
-      "9": "/builder-base/buildings/giant-cannon/giant-cannon-9.png",
-      "10": "/builder-base/buildings/giant-cannon/giant-cannon-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/giant-cannon/giant-cannon-1.png",
+        "upgrade-price5": 2000000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/giant-cannon/giant-cannon-2.png",
+        "upgrade-price5": 2100000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/giant-cannon/giant-cannon-3.png",
+        "upgrade-price5": 2200000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/giant-cannon/giant-cannon-4.png",
+        "upgrade-price5": 2300000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/giant-cannon/giant-cannon-5.png",
+        "upgrade-price5": 2400000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/giant-cannon/giant-cannon-6.png",
+        "upgrade-price5": 2500000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/giant-cannon/giant-cannon-7.png",
+        "upgrade-price5": 2700000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/giant-cannon/giant-cannon-8.png",
+        "upgrade-price5": 3800000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/giant-cannon/giant-cannon-9.png",
+        "upgrade-price5": 4700000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/giant-cannon/giant-cannon-10.png",
+        "upgrade-price5": 5700000
+      }
     }
   },
   "1000052": {
     "name": "Mega Tesla",
     "levels": {
-      "1": "/builder-base/buildings/mega-tesla/mega-tesla-1.png",
-      "2": "/builder-base/buildings/mega-tesla/mega-tesla-2.png",
-      "3": "/builder-base/buildings/mega-tesla/mega-tesla-3.png",
-      "4": "/builder-base/buildings/mega-tesla/mega-tesla-4.png",
-      "5": "/builder-base/buildings/mega-tesla/mega-tesla-5.png",
-      "6": "/builder-base/buildings/mega-tesla/mega-tesla-6.png",
-      "7": "/builder-base/buildings/mega-tesla/mega-tesla-7.png",
-      "8": "/builder-base/buildings/mega-tesla/mega-tesla-8.png",
-      "9": "/builder-base/buildings/mega-tesla/mega-tesla-9.png",
-      "10": "/builder-base/buildings/mega-tesla/mega-tesla-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/mega-tesla/mega-tesla-1.png",
+        "upgrade-price5": 3000000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/mega-tesla/mega-tesla-2.png",
+        "upgrade-price5": 3100000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/mega-tesla/mega-tesla-3.png",
+        "upgrade-price5": 3200000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/mega-tesla/mega-tesla-4.png",
+        "upgrade-price5": 3300000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/mega-tesla/mega-tesla-5.png",
+        "upgrade-price5": 3400000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/mega-tesla/mega-tesla-6.png",
+        "upgrade-price5": 3600000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/mega-tesla/mega-tesla-7.png",
+        "upgrade-price5": 3800000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/mega-tesla/mega-tesla-8.png",
+        "upgrade-price5": 4000000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/mega-tesla/mega-tesla-9.png",
+        "upgrade-price5": 4800000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/mega-tesla/mega-tesla-10.png",
+        "upgrade-price5": 5800000
+      }
     }
   },
   "1000063": {
     "name": "Lava Launcher",
     "levels": {
-      "1": "/builder-base/buildings/lava-launcher/lava-launcher-1.png",
-      "2": "/builder-base/buildings/lava-launcher/lava-launcher-2.png",
-      "3": "/builder-base/buildings/lava-launcher/lava-launcher-3.png",
-      "4": "/builder-base/buildings/lava-launcher/lava-launcher-4.png",
-      "5": "/builder-base/buildings/lava-launcher/lava-launcher-5.png",
-      "6": "/builder-base/buildings/lava-launcher/lava-launcher-6.png",
-      "7": "/builder-base/buildings/lava-launcher/lava-launcher-7.png",
-      "8": "/builder-base/buildings/lava-launcher/lava-launcher-8.png",
-      "9": "/builder-base/buildings/lava-launcher/lava-launcher-9.png",
-      "10": "/builder-base/buildings/lava-launcher/lava-launcher-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/lava-launcher/lava-launcher-1.png",
+        "upgrade-price5": 3000000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/lava-launcher/lava-launcher-2.png",
+        "upgrade-price5": 3100000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/lava-launcher/lava-launcher-3.png",
+        "upgrade-price5": 3200000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/lava-launcher/lava-launcher-4.png",
+        "upgrade-price5": 3400000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/lava-launcher/lava-launcher-5.png",
+        "upgrade-price5": 3700000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/lava-launcher/lava-launcher-6.png",
+        "upgrade-price5": 4000000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/lava-launcher/lava-launcher-7.png",
+        "upgrade-price5": 4300000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/lava-launcher/lava-launcher-8.png",
+        "upgrade-price5": 4600000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/lava-launcher/lava-launcher-9.png",
+        "upgrade-price5": 4900000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/lava-launcher/lava-launcher-10.png",
+        "upgrade-price5": 5900000
+      }
     }
   },
   "1000081": {
     "name": "X-Bow",
     "levels": {
-      "1": "/builder-base/buildings/x-bow/x-bow-1.png",
-      "2": "/builder-base/buildings/x-bow/x-bow-2.png",
-      "3": "/builder-base/buildings/x-bow/x-bow-3.png",
-      "4": "/builder-base/buildings/x-bow/x-bow-4.png",
-      "5": "/builder-base/buildings/x-bow/x-bow-5.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/x-bow/x-bow-1.png",
+        "upgrade-price5": 4400000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/x-bow/x-bow-2.png",
+        "upgrade-price5": 4800000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/x-bow/x-bow-3.png",
+        "upgrade-price5": 5200000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/x-bow/x-bow-4.png",
+        "upgrade-price5": 5600000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/x-bow/x-bow-5.png",
+        "upgrade-price5": 6000000
+      }
     }
   },
   "1000033": {
     "name": "Wall",
     "levels": {
-      "1": "/builder-base/buildings/wall/wall-1.png",
-      "2": "/builder-base/buildings/wall/wall-2.png",
-      "3": "/builder-base/buildings/wall/wall-3.png",
-      "4": "/builder-base/buildings/wall/wall-4.png",
-      "5": "/builder-base/buildings/wall/wall-5.png",
-      "6": "/builder-base/buildings/wall/wall-6.png",
-      "7": "/builder-base/buildings/wall/wall-7.png",
-      "8": "/builder-base/buildings/wall/wall-8.png",
-      "9": "/builder-base/buildings/wall/wall-9.png",
-      "10": "/builder-base/buildings/wall/wall-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/wall/wall-1.png",
+        "upgrade-price5": 0
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/wall/wall-2.png",
+        "upgrade-price5": 2000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/wall/wall-3.png",
+        "upgrade-price5": 12000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/wall/wall-4.png",
+        "upgrade-price5": 62000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/wall/wall-5.png",
+        "upgrade-price5": 212000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/wall/wall-6.png",
+        "upgrade-price5": 452000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/wall/wall-7.png",
+        "upgrade-price5": 852000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/wall/wall-8.png",
+        "upgrade-price5": 1452000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/wall/wall-9.png",
+        "upgrade-price5": 2252000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/wall/wall-10.png",
+        "upgrade-price5": 3252000
+      }
     }
   },
   "12000011": {
     "name": "Push Trap",
     "levels": {
-      "1": "/builder-base/traps/push-trap/push-trap-1.png",
-      "2": "/builder-base/traps/push-trap/push-trap-2.png",
-      "3": "/builder-base/traps/push-trap/push-trap-3.png",
-      "4": "/builder-base/traps/push-trap/push-trap-4.png",
-      "5": "/builder-base/traps/push-trap/push-trap-5.png",
-      "6": "/builder-base/traps/push-trap/push-trap-6.png",
-      "7": "/builder-base/traps/push-trap/push-trap-7.png",
-      "8": "/builder-base/traps/push-trap/push-trap-8.png",
-      "9": "/builder-base/traps/push-trap/push-trap-9.png",
-      "10": "/builder-base/traps/push-trap/push-trap-10.png"
+      "1": {
+        "level-icon": "/builder-base/traps/push-trap/push-trap-1.png",
+        "upgrade-price5": 1000
+      },
+      "2": {
+        "level-icon": "/builder-base/traps/push-trap/push-trap-2.png",
+        "upgrade-price5": 3000
+      },
+      "3": {
+        "level-icon": "/builder-base/traps/push-trap/push-trap-3.png",
+        "upgrade-price5": 10000
+      },
+      "4": {
+        "level-icon": "/builder-base/traps/push-trap/push-trap-4.png",
+        "upgrade-price5": 20000
+      },
+      "5": {
+        "level-icon": "/builder-base/traps/push-trap/push-trap-5.png",
+        "upgrade-price5": 40000
+      },
+      "6": {
+        "level-icon": "/builder-base/traps/push-trap/push-trap-6.png",
+        "upgrade-price5": 60000
+      },
+      "7": {
+        "level-icon": "/builder-base/traps/push-trap/push-trap-7.png",
+        "upgrade-price5": 100000
+      },
+      "8": {
+        "level-icon": "/builder-base/traps/push-trap/push-trap-8.png",
+        "upgrade-price5": 200000
+      },
+      "9": {
+        "level-icon": "/builder-base/traps/push-trap/push-trap-9.png",
+        "upgrade-price5": 300000
+      },
+      "10": {
+        "level-icon": "/builder-base/traps/push-trap/push-trap-10.png",
+        "upgrade-price5": 500000
+      }
     }
   },
   "12000010": {
     "name": "Spring Trap",
     "levels": {
-      "1": "/builder-base/traps/spring-trap/spring-trap-1.png",
-      "2": "/builder-base/traps/spring-trap/spring-trap-2.png",
-      "3": "/builder-base/traps/spring-trap/spring-trap-3.png",
-      "4": "/builder-base/traps/spring-trap/spring-trap-4.png",
-      "5": "/builder-base/traps/spring-trap/spring-trap-5.png"
+      "1": {
+        "level-icon": "/builder-base/traps/spring-trap/spring-trap-1.png",
+        "upgrade-price5": 10000
+      },
+      "2": {
+        "level-icon": "/builder-base/traps/spring-trap/spring-trap-2.png",
+        "upgrade-price5": 30000
+      },
+      "3": {
+        "level-icon": "/builder-base/traps/spring-trap/spring-trap-3.png",
+        "upgrade-price5": 100000
+      },
+      "4": {
+        "level-icon": "/builder-base/traps/spring-trap/spring-trap-4.png",
+        "upgrade-price5": 300000
+      },
+      "5": {
+        "level-icon": "/builder-base/traps/spring-trap/spring-trap-5.png",
+        "upgrade-price5": 500000
+      }
     }
   },
   "12000013": {
     "name": "Mine",
     "levels": {
-      "1": "/builder-base/traps/mine/mine-1.png",
-      "2": "/builder-base/traps/mine/mine-2.png",
-      "3": "/builder-base/traps/mine/mine-3.png",
-      "4": "/builder-base/traps/mine/mine-4.png",
-      "5": "/builder-base/traps/mine/mine-5.png",
-      "6": "/builder-base/traps/mine/mine-6.png",
-      "7": "/builder-base/traps/mine/mine-7.png",
-      "8": "/builder-base/traps/mine/mine-8.png",
-      "9": "/builder-base/traps/mine/mine-9.png",
-      "10": "/builder-base/traps/mine/mine-10.png"
+      "1": {
+        "level-icon": "/builder-base/traps/mine/mine-1.png",
+        "upgrade-price5": 5000
+      },
+      "2": {
+        "level-icon": "/builder-base/traps/mine/mine-2.png",
+        "upgrade-price5": 10000
+      },
+      "3": {
+        "level-icon": "/builder-base/traps/mine/mine-3.png",
+        "upgrade-price5": 15000
+      },
+      "4": {
+        "level-icon": "/builder-base/traps/mine/mine-4.png",
+        "upgrade-price5": 25000
+      },
+      "5": {
+        "level-icon": "/builder-base/traps/mine/mine-5.png",
+        "upgrade-price5": 50000
+      },
+      "6": {
+        "level-icon": "/builder-base/traps/mine/mine-6.png",
+        "upgrade-price5": 80000
+      },
+      "7": {
+        "level-icon": "/builder-base/traps/mine/mine-7.png",
+        "upgrade-price5": 120000
+      },
+      "8": {
+        "level-icon": "/builder-base/traps/mine/mine-8.png",
+        "upgrade-price5": 250000
+      },
+      "9": {
+        "level-icon": "/builder-base/traps/mine/mine-9.png",
+        "upgrade-price5": 500000
+      },
+      "10": {
+        "level-icon": "/builder-base/traps/mine/mine-10.png",
+        "upgrade-price5": 1500000
+      }
     }
   },
   "12000014": {
     "name": "Mega Mine",
     "levels": {
-      "1": "/builder-base/traps/mega-mine/mega-mine-1.png",
-      "2": "/builder-base/traps/mega-mine/mega-mine-2.png",
-      "3": "/builder-base/traps/mega-mine/mega-mine-3.png",
-      "4": "/builder-base/traps/mega-mine/mega-mine-4.png",
-      "5": "/builder-base/traps/mega-mine/mega-mine-5.png",
-      "6": "/builder-base/traps/mega-mine/mega-mine-6.png",
-      "7": "/builder-base/traps/mega-mine/mega-mine-7.png",
-      "8": "/builder-base/traps/mega-mine/mega-mine-8.png",
-      "9": "/builder-base/traps/mega-mine/mega-mine-9.png",
-      "10": "/builder-base/traps/mega-mine/mega-mine-10.png"
+      "1": {
+        "level-icon": "/builder-base/traps/mega-mine/mega-mine-1.png",
+        "upgrade-price5": 30000
+      },
+      "2": {
+        "level-icon": "/builder-base/traps/mega-mine/mega-mine-2.png",
+        "upgrade-price5": 40000
+      },
+      "3": {
+        "level-icon": "/builder-base/traps/mega-mine/mega-mine-3.png",
+        "upgrade-price5": 50000
+      },
+      "4": {
+        "level-icon": "/builder-base/traps/mega-mine/mega-mine-4.png",
+        "upgrade-price5": 80000
+      },
+      "5": {
+        "level-icon": "/builder-base/traps/mega-mine/mega-mine-5.png",
+        "upgrade-price5": 120000
+      },
+      "6": {
+        "level-icon": "/builder-base/traps/mega-mine/mega-mine-6.png",
+        "upgrade-price5": 300000
+      },
+      "7": {
+        "level-icon": "/builder-base/traps/mega-mine/mega-mine-7.png",
+        "upgrade-price5": 600000
+      },
+      "8": {
+        "level-icon": "/builder-base/traps/mega-mine/mega-mine-8.png",
+        "upgrade-price5": 1000000
+      },
+      "9": {
+        "level-icon": "/builder-base/traps/mega-mine/mega-mine-9.png",
+        "upgrade-price5": 1400000
+      },
+      "10": {
+        "level-icon": "/builder-base/traps/mega-mine/mega-mine-10.png",
+        "upgrade-price5": 2500000
+      }
     }
   },
   "1000034": {
     "name": "Builder Hall",
     "levels": {
-      "1": "/builder-base/buildings/builder-hall/builder-hall-1.png",
-      "2": "/builder-base/buildings/builder-hall/builder-hall-2.png",
-      "3": "/builder-base/buildings/builder-hall/builder-hall-3.png",
-      "4": "/builder-base/buildings/builder-hall/builder-hall-4.png",
-      "5": "/builder-base/buildings/builder-hall/builder-hall-5.png",
-      "6": "/builder-base/buildings/builder-hall/builder-hall-6.png",
-      "7": "/builder-base/buildings/builder-hall/builder-hall-7.png",
-      "8": "/builder-base/buildings/builder-hall/builder-hall-8.png",
-      "9": "/builder-base/buildings/builder-hall/builder-hall-9.png",
-      "10": "/builder-base/buildings/builder-hall/builder-hall-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/builder-hall/builder-hall-1.png",
+        "upgrade-price5": 0
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/builder-hall/builder-hall-2.png",
+        "upgrade-price5": 3500
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/builder-hall/builder-hall-3.png",
+        "upgrade-price5": 30000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/builder-hall/builder-hall-4.png",
+        "upgrade-price5": 200000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/builder-hall/builder-hall-5.png",
+        "upgrade-price5": 400000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/builder-hall/builder-hall-6.png",
+        "upgrade-price5": 1200000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/builder-hall/builder-hall-7.png",
+        "upgrade-price5": 1800000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/builder-hall/builder-hall-8.png",
+        "upgrade-price5": 2800000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/builder-hall/builder-hall-9.png",
+        "upgrade-price5": 3800000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/builder-hall/builder-hall-10.png",
+        "upgrade-price5": 4800000
+      }
     }
   },
   "1000037": {
     "name": "Gold Mine",
     "levels": {
-      "1": "/builder-base/buildings/gold-mine/gold-mine-1.png",
-      "2": "/builder-base/buildings/gold-mine/gold-mine-2.png",
-      "3": "/builder-base/buildings/gold-mine/gold-mine-3.png",
-      "4": "/builder-base/buildings/gold-mine/gold-mine-4.png",
-      "5": "/builder-base/buildings/gold-mine/gold-mine-5.png",
-      "6": "/builder-base/buildings/gold-mine/gold-mine-6.png",
-      "7": "/builder-base/buildings/gold-mine/gold-mine-7.png",
-      "8": "/builder-base/buildings/gold-mine/gold-mine-8.png",
-      "9": "/builder-base/buildings/gold-mine/gold-mine-9.png",
-      "10": "/builder-base/buildings/gold-mine/gold-mine-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/gold-mine/gold-mine-1.png",
+        "upgrade-price4": 1000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/gold-mine/gold-mine-2.png",
+        "upgrade-price4": 5000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/gold-mine/gold-mine-3.png",
+        "upgrade-price4": 10000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/gold-mine/gold-mine-4.png",
+        "upgrade-price4": 30000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/gold-mine/gold-mine-5.png",
+        "upgrade-price4": 60000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/gold-mine/gold-mine-6.png",
+        "upgrade-price4": 100000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/gold-mine/gold-mine-7.png",
+        "upgrade-price4": 200000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/gold-mine/gold-mine-8.png",
+        "upgrade-price4": 300000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/gold-mine/gold-mine-9.png",
+        "upgrade-price4": 400000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/gold-mine/gold-mine-10.png",
+        "upgrade-price4": 800000
+      }
     }
   },
   "1000035": {
     "name": "Elixir Collector",
     "levels": {
-      "1": "/builder-base/buildings/elixir-collector/elixir-collector-1.png",
-      "2": "/builder-base/buildings/elixir-collector/elixir-collector-2.png",
-      "3": "/builder-base/buildings/elixir-collector/elixir-collector-3.png",
-      "4": "/builder-base/buildings/elixir-collector/elixir-collector-4.png",
-      "5": "/builder-base/buildings/elixir-collector/elixir-collector-5.png",
-      "6": "/builder-base/buildings/elixir-collector/elixir-collector-6.png",
-      "7": "/builder-base/buildings/elixir-collector/elixir-collector-7.png",
-      "8": "/builder-base/buildings/elixir-collector/elixir-collector-8.png",
-      "9": "/builder-base/buildings/elixir-collector/elixir-collector-9.png",
-      "10": "/builder-base/buildings/elixir-collector/elixir-collector-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/elixir-collector/elixir-collector-1.png",
+        "upgrade-price5": 1000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/elixir-collector/elixir-collector-2.png",
+        "upgrade-price5": 5000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/elixir-collector/elixir-collector-3.png",
+        "upgrade-price5": 10000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/elixir-collector/elixir-collector-4.png",
+        "upgrade-price5": 30000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/elixir-collector/elixir-collector-5.png",
+        "upgrade-price5": 60000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/elixir-collector/elixir-collector-6.png",
+        "upgrade-price5": 100000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/elixir-collector/elixir-collector-7.png",
+        "upgrade-price5": 200000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/elixir-collector/elixir-collector-8.png",
+        "upgrade-price5": 300000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/elixir-collector/elixir-collector-9.png",
+        "upgrade-price5": 400000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/elixir-collector/elixir-collector-10.png",
+        "upgrade-price5": 800000
+      }
     }
   },
   "1000038": {
     "name": "Gold Storage",
     "levels": {
-      "1": "/builder-base/buildings/gold-storage/gold-storage-1.png",
-      "2": "/builder-base/buildings/gold-storage/gold-storage-2.png",
-      "3": "/builder-base/buildings/gold-storage/gold-storage-3.png",
-      "4": "/builder-base/buildings/gold-storage/gold-storage-4.png",
-      "5": "/builder-base/buildings/gold-storage/gold-storage-5.png",
-      "6": "/builder-base/buildings/gold-storage/gold-storage-6.png",
-      "7": "/builder-base/buildings/gold-storage/gold-storage-7.png",
-      "8": "/builder-base/buildings/gold-storage/gold-storage-8.png",
-      "9": "/builder-base/buildings/gold-storage/gold-storage-9.png",
-      "10": "/builder-base/buildings/gold-storage/gold-storage-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/gold-storage/gold-storage-1.png",
+        "upgrade-price4": 20000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/gold-storage/gold-storage-2.png",
+        "upgrade-price4": 80000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/gold-storage/gold-storage-3.png",
+        "upgrade-price4": 200000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/gold-storage/gold-storage-4.png",
+        "upgrade-price4": 300000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/gold-storage/gold-storage-5.png",
+        "upgrade-price4": 600000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/gold-storage/gold-storage-6.png",
+        "upgrade-price4": 1000000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/gold-storage/gold-storage-7.png",
+        "upgrade-price4": 1500000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/gold-storage/gold-storage-8.png",
+        "upgrade-price4": 2000000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/gold-storage/gold-storage-9.png",
+        "upgrade-price4": 2500000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/gold-storage/gold-storage-10.png",
+        "upgrade-price4": 3200000
+      }
     }
   },
   "1000036": {
     "name": "Elixir Storage",
     "levels": {
-      "1": "/builder-base/buildings/elixir-storage/elixir-storage-1.png",
-      "2": "/builder-base/buildings/elixir-storage/elixir-storage-2.png",
-      "3": "/builder-base/buildings/elixir-storage/elixir-storage-3.png",
-      "4": "/builder-base/buildings/elixir-storage/elixir-storage-4.png",
-      "5": "/builder-base/buildings/elixir-storage/elixir-storage-5.png",
-      "6": "/builder-base/buildings/elixir-storage/elixir-storage-6.png",
-      "7": "/builder-base/buildings/elixir-storage/elixir-storage-7.png",
-      "8": "/builder-base/buildings/elixir-storage/elixir-storage-8.png",
-      "9": "/builder-base/buildings/elixir-storage/elixir-storage-9.png",
-      "10": "/builder-base/buildings/elixir-storage/elixir-storage-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/elixir-storage/elixir-storage-1.png",
+        "upgrade-price5": 20000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/elixir-storage/elixir-storage-2.png",
+        "upgrade-price5": 80000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/elixir-storage/elixir-storage-3.png",
+        "upgrade-price5": 200000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/elixir-storage/elixir-storage-4.png",
+        "upgrade-price5": 300000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/elixir-storage/elixir-storage-5.png",
+        "upgrade-price5": 600000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/elixir-storage/elixir-storage-6.png",
+        "upgrade-price5": 1000000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/elixir-storage/elixir-storage-7.png",
+        "upgrade-price5": 1500000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/elixir-storage/elixir-storage-8.png",
+        "upgrade-price5": 2000000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/elixir-storage/elixir-storage-9.png",
+        "upgrade-price5": 2500000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/elixir-storage/elixir-storage-10.png",
+        "upgrade-price5": 3200000
+      }
     }
   },
   "1000058": {
     "name": "Gem Mine",
     "levels": {
-      "1": "/builder-base/buildings/gem-mine/gem-mine-1.png",
-      "2": "/builder-base/buildings/gem-mine/gem-mine-2.png",
-      "3": "/builder-base/buildings/gem-mine/gem-mine-3.png",
-      "4": "/builder-base/buildings/gem-mine/gem-mine-4.png",
-      "5": "/builder-base/buildings/gem-mine/gem-mine-5.png",
-      "6": "/builder-base/buildings/gem-mine/gem-mine-6.png",
-      "7": "/builder-base/buildings/gem-mine/gem-mine-7.png",
-      "8": "/builder-base/buildings/gem-mine/gem-mine-8.png",
-      "9": "/builder-base/buildings/gem-mine/gem-mine-9.png",
-      "10": "/builder-base/buildings/gem-mine/gem-mine-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/gem-mine/gem-mine-1.png",
+        "upgrade-price4": 120000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/gem-mine/gem-mine-2.png",
+        "upgrade-price4": 180000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/gem-mine/gem-mine-3.png",
+        "upgrade-price4": 240000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/gem-mine/gem-mine-4.png",
+        "upgrade-price4": 450000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/gem-mine/gem-mine-5.png",
+        "upgrade-price4": 1000000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/gem-mine/gem-mine-6.png",
+        "upgrade-price4": 1500000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/gem-mine/gem-mine-7.png",
+        "upgrade-price4": 2500000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/gem-mine/gem-mine-8.png",
+        "upgrade-price4": 3500000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/gem-mine/gem-mine-9.png",
+        "upgrade-price4": 4500000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/gem-mine/gem-mine-10.png",
+        "upgrade-price4": 5500000
+      }
     }
   },
   "1000040": {
     "name": "Builder Barracks",
     "levels": {
-      "1": "/builder-base/buildings/builder-barracks/builder-barracks-1.png",
-      "2": "/builder-base/buildings/builder-barracks/builder-barracks-2.png",
-      "3": "/builder-base/buildings/builder-barracks/builder-barracks-3.png",
-      "4": "/builder-base/buildings/builder-barracks/builder-barracks-4.png",
-      "5": "/builder-base/buildings/builder-barracks/builder-barracks-5.png",
-      "6": "/builder-base/buildings/builder-barracks/builder-barracks-6.png",
-      "7": "/builder-base/buildings/builder-barracks/builder-barracks-7.png",
-      "8": "/builder-base/buildings/builder-barracks/builder-barracks-8.png",
-      "9": "/builder-base/buildings/builder-barracks/builder-barracks-9.png",
-      "10": "/builder-base/buildings/builder-barracks/builder-barracks-10.png",
-      "11": "/builder-base/buildings/builder-barracks/builder-barracks-11.png",
-      "12": "/builder-base/buildings/builder-barracks/builder-barracks-12.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/builder-barracks/builder-barracks-1.png",
+        "upgrade-price4": 1000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/builder-barracks/builder-barracks-2.png",
+        "upgrade-price4": 4000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/builder-barracks/builder-barracks-3.png",
+        "upgrade-price4": 10000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/builder-barracks/builder-barracks-4.png",
+        "upgrade-price4": 25000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/builder-barracks/builder-barracks-5.png",
+        "upgrade-price4": 100000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/builder-barracks/builder-barracks-6.png",
+        "upgrade-price4": 150000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/builder-barracks/builder-barracks-7.png",
+        "upgrade-price4": 300000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/builder-barracks/builder-barracks-8.png",
+        "upgrade-price4": 500000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/builder-barracks/builder-barracks-9.png",
+        "upgrade-price4": 1000000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/builder-barracks/builder-barracks-10.png",
+        "upgrade-price4": 1500000
+      },
+      "11": {
+        "level-icon": "/builder-base/buildings/builder-barracks/builder-barracks-11.png",
+        "upgrade-price4": 2000000
+      },
+      "12": {
+        "level-icon": "/builder-base/buildings/builder-barracks/builder-barracks-12.png",
+        "upgrade-price4": 3000000
+      }
     }
   },
   "1000042": {
@@ -7459,16 +8245,46 @@
   "1000046": {
     "name": "Star Laboratory",
     "levels": {
-      "1": "/builder-base/buildings/star-laboratory/star-laboratory-1.png",
-      "2": "/builder-base/buildings/star-laboratory/star-laboratory-2.png",
-      "3": "/builder-base/buildings/star-laboratory/star-laboratory-3.png",
-      "4": "/builder-base/buildings/star-laboratory/star-laboratory-4.png",
-      "5": "/builder-base/buildings/star-laboratory/star-laboratory-5.png",
-      "6": "/builder-base/buildings/star-laboratory/star-laboratory-6.png",
-      "7": "/builder-base/buildings/star-laboratory/star-laboratory-7.png",
-      "8": "/builder-base/buildings/star-laboratory/star-laboratory-8.png",
-      "9": "/builder-base/buildings/star-laboratory/star-laboratory-9.png",
-      "10": "/builder-base/buildings/star-laboratory/star-laboratory-10.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/star-laboratory/star-laboratory-1.png",
+        "upgrade-price4": 1000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/star-laboratory/star-laboratory-2.png",
+        "upgrade-price4": 15000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/star-laboratory/star-laboratory-3.png",
+        "upgrade-price4": 50000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/star-laboratory/star-laboratory-4.png",
+        "upgrade-price4": 300000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/star-laboratory/star-laboratory-5.png",
+        "upgrade-price4": 700000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/star-laboratory/star-laboratory-6.png",
+        "upgrade-price4": 1000000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/star-laboratory/star-laboratory-7.png",
+        "upgrade-price4": 2000000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/star-laboratory/star-laboratory-8.png",
+        "upgrade-price4": 3000000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/star-laboratory/star-laboratory-9.png",
+        "upgrade-price4": 4000000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/star-laboratory/star-laboratory-10.png",
+        "upgrade-price4": 5000000
+      }
     }
   },
   "1000053": {
@@ -7486,12 +8302,30 @@
   "1000082": {
     "name": "Healing Hut",
     "levels": {
-      "1": "/builder-base/buildings/healing-hut/healing-hut-1.png",
-      "2": "/builder-base/buildings/healing-hut/healing-hut-2.png",
-      "3": "/builder-base/buildings/healing-hut/healing-hut-3.png",
-      "4": "/builder-base/buildings/healing-hut/healing-hut-4.png",
-      "5": "/builder-base/buildings/healing-hut/healing-hut-5.png",
-      "6": "/builder-base/buildings/healing-hut/healing-hut-6.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/healing-hut/healing-hut-1.png",
+        "upgrade-price4": 1500000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/healing-hut/healing-hut-2.png",
+        "upgrade-price4": 2000000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/healing-hut/healing-hut-3.png",
+        "upgrade-price4": 2000000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/healing-hut/healing-hut-4.png",
+        "upgrade-price4": 3250000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/healing-hut/healing-hut-5.png",
+        "upgrade-price4": 4000000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/healing-hut/healing-hut-6.png",
+        "upgrade-price4": 5000000
+      }
     }
   },
   "1000080": {
@@ -7503,81 +8337,632 @@
   "1000039": {
     "name": "Clock Tower",
     "levels": {
-      "1": "/builder-base/buildings/clock-tower/clock-tower-1.png",
-      "2": "/builder-base/buildings/clock-tower/clock-tower-2.png",
-      "3": "/builder-base/buildings/clock-tower/clock-tower-3.png",
-      "4": "/builder-base/buildings/clock-tower/clock-tower-4.png",
-      "5": "/builder-base/buildings/clock-tower/clock-tower-5.png",
-      "6": "/builder-base/buildings/clock-tower/clock-tower-6.png",
-      "7": "/builder-base/buildings/clock-tower/clock-tower-7.png",
-      "8": "/builder-base/buildings/clock-tower/clock-tower-8.png",
-      "9": "/builder-base/buildings/clock-tower/clock-tower-9.png",
-      "10": "/builder-base/buildings/clock-tower/clock-tower-10.png"
-    }
-  },
-  "1000064": {
-    "name": "B.O.B's Hut",
-    "levels": {
-      "1": "/builder-base/buildings/bob-hut/bob-hut-1.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/clock-tower/clock-tower-1.png",
+        "upgrade-price5": 150000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/clock-tower/clock-tower-2.png",
+        "upgrade-price5": 180000
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/clock-tower/clock-tower-3.png",
+        "upgrade-price5": 220000
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/clock-tower/clock-tower-4.png",
+        "upgrade-price5": 300000
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/clock-tower/clock-tower-5.png",
+        "upgrade-price5": 700000
+      },
+      "6": {
+        "level-icon": "/builder-base/buildings/clock-tower/clock-tower-6.png",
+        "upgrade-price5": 1200000
+      },
+      "7": {
+        "level-icon": "/builder-base/buildings/clock-tower/clock-tower-7.png",
+        "upgrade-price5": 1700000
+      },
+      "8": {
+        "level-icon": "/builder-base/buildings/clock-tower/clock-tower-8.png",
+        "upgrade-price5": 2200000
+      },
+      "9": {
+        "level-icon": "/builder-base/buildings/clock-tower/clock-tower-9.png",
+        "upgrade-price5": 2700000
+      },
+      "10": {
+        "level-icon": "/builder-base/buildings/clock-tower/clock-tower-10.png",
+        "upgrade-price5": 3700000
+      }
     }
   },
   "1000065": {
     "name": "B.O.B Control",
     "levels": {
-      "1": "/builder-base/buildings/bob-control/bob-control-1.png",
-      "2": "/builder-base/buildings/bob-control/bob-control-2.png",
-      "3": "/builder-base/buildings/bob-control/bob-control-3.png",
-      "4": "/builder-base/buildings/bob-control/bob-control-4.png",
-      "5": "/builder-base/buildings/bob-control/bob-control-5.png"
+      "1": {
+        "level-icon": "/builder-base/buildings/bob-control/bob-control-1.png",
+        "upgrade-price5": 100000
+      },
+      "2": {
+        "level-icon": "/builder-base/buildings/bob-control/bob-control-2.png"
+      },
+      "3": {
+        "level-icon": "/builder-base/buildings/bob-control/bob-control-3.png"
+      },
+      "4": {
+        "level-icon": "/builder-base/buildings/bob-control/bob-control-4.png"
+      },
+      "5": {
+        "level-icon": "/builder-base/buildings/bob-control/bob-control-5.png"
+      }
+    }
+  },
+  "1000047": {
+    "name": "B.O.T.O.'s Shack",
+    "levels": {
+      "1": "/builder-base/buildings/boto-hut/boto-hut.png"
     }
   },
   "4000031": {
     "name": "Raged Barbarian",
-    "character": "/builder-base/troops/raged-barbarian/raged-barbarian-character.png"
+    "character": "/builder-base/troops/raged-barbarian/raged-barbarian-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price4": 0
+      },
+      "2": {
+        "upgrade-price4": 3500
+      },
+      "3": {
+        "upgrade-price4": 7000
+      },
+      "4": {
+        "upgrade-price4": 10000
+      },
+      "5": {
+        "upgrade-price4": 90000
+      },
+      "6": {
+        "upgrade-price4": 180000
+      },
+      "7": {
+        "upgrade-price4": 300000
+      },
+      "8": {
+        "upgrade-price4": 330000
+      },
+      "9": {
+        "upgrade-price4": 700000
+      },
+      "10": {
+        "upgrade-price4": 900000
+      },
+      "11": {
+        "upgrade-price4": 1000000
+      },
+      "12": {
+        "upgrade-price4": 1200000
+      },
+      "13": {
+        "upgrade-price4": 2000000
+      },
+      "14": {
+        "upgrade-price4": 2200000
+      },
+      "15": {
+        "upgrade-price4": 3000000
+      },
+      "16": {
+        "upgrade-price4": 3200000
+      },
+      "17": {
+        "upgrade-price4": 3800000
+      },
+      "18": {
+        "upgrade-price4": 4000000
+      },
+      "19": {
+        "upgrade-price4": 4600000
+      },
+      "20": {
+        "upgrade-price4": 5200000
+      }
+    }
   },
   "4000032": {
     "name": "Sneaky Archer",
-    "character": "/builder-base/troops/sneaky-archer/sneaky-archer-character.png"
+    "character": "/builder-base/troops/sneaky-archer/sneaky-archer-character.png",
+    "levels": {
+      "1": {
+        "upgrade-price4": 0
+      },
+      "2": {
+        "upgrade-price4": 5000
+      },
+      "3": {
+        "upgrade-price4": 8000
+      },
+      "4": {
+        "upgrade-price4": 12000
+      },
+      "5": {
+        "upgrade-price4": 100000
+      },
+      "6": {
+        "upgrade-price4": 200000
+      },
+      "7": {
+        "upgrade-price4": 320000
+      },
+      "8": {
+        "upgrade-price4": 350000
+      },
+      "9": {
+        "upgrade-price4": 800000
+      },
+      "10": {
+        "upgrade-price4": 1000000
+      },
+      "11": {
+        "upgrade-price4": 1100000
+      },
+      "12": {
+        "upgrade-price4": 1300000
+      },
+      "13": {
+        "upgrade-price4": 2100000
+      },
+      "14": {
+        "upgrade-price4": 2300000
+      },
+      "15": {
+        "upgrade-price4": 3100000
+      },
+      "16": {
+        "upgrade-price4": 3300000
+      },
+      "17": {
+        "upgrade-price4": 3900000
+      },
+      "18": {
+        "upgrade-price4": 4100000
+      },
+      "19": {
+        "upgrade-price4": 4700000
+      },
+      "20": {
+        "upgrade-price4": 5300000
+      }
+    }
   },
   "4000034": {
     "name": "Boxer Giant",
-    "character": "/builder-base/troops/boxer-giant/boxer-giant-character.png"
+    "character": "/builder-base/troops/boxer-giant/boxer-giant-character.png",
+    "levels": {
+      "3": {
+        "upgrade-price4": 0
+      },
+      "4": {
+        "upgrade-price4": 60000
+      },
+      "5": {
+        "upgrade-price4": 120000
+      },
+      "6": {
+        "upgrade-price4": 240000
+      },
+      "7": {
+        "upgrade-price4": 350000
+      },
+      "8": {
+        "upgrade-price4": 380000
+      },
+      "9": {
+        "upgrade-price4": 1000000
+      },
+      "10": {
+        "upgrade-price4": 1200000
+      },
+      "11": {
+        "upgrade-price4": 1300000
+      },
+      "12": {
+        "upgrade-price4": 1500000
+      },
+      "13": {
+        "upgrade-price4": 2300000
+      },
+      "14": {
+        "upgrade-price4": 2500000
+      },
+      "15": {
+        "upgrade-price4": 3300000
+      },
+      "16": {
+        "upgrade-price4": 3500000
+      },
+      "17": {
+        "upgrade-price4": 4000000
+      },
+      "18": {
+        "upgrade-price4": 4200000
+      },
+      "19": {
+        "upgrade-price4": 4800000
+      },
+      "20": {
+        "upgrade-price4": 5400000
+      }
+    }
   },
   "4000033": {
     "name": "Beta Minion",
-    "character": "/builder-base/troops/beta-minion/beta-minion-character.png"
+    "character": "/builder-base/troops/beta-minion/beta-minion-character.png",
+    "levels": {
+      "3": {
+        "upgrade-price4": 0
+      },
+      "4": {
+        "upgrade-price4": 50000
+      },
+      "5": {
+        "upgrade-price4": 110000
+      },
+      "6": {
+        "upgrade-price4": 220000
+      },
+      "7": {
+        "upgrade-price4": 330000
+      },
+      "8": {
+        "upgrade-price4": 360000
+      },
+      "9": {
+        "upgrade-price4": 900000
+      },
+      "10": {
+        "upgrade-price4": 1100000
+      },
+      "11": {
+        "upgrade-price4": 1300000
+      },
+      "12": {
+        "upgrade-price4": 1500000
+      },
+      "13": {
+        "upgrade-price4": 2300000
+      },
+      "14": {
+        "upgrade-price4": 2500000
+      },
+      "15": {
+        "upgrade-price4": 3300000
+      },
+      "16": {
+        "upgrade-price4": 3500000
+      },
+      "17": {
+        "upgrade-price4": 4000000
+      },
+      "18": {
+        "upgrade-price4": 4200000
+      },
+      "19": {
+        "upgrade-price4": 4800000
+      },
+      "20": {
+        "upgrade-price4": 5400000
+      }
+    }
   },
   "4000035": {
     "name": "Bomber",
-    "character": "/builder-base/troops/bomber/bomber-character.png"
+    "character": "/builder-base/troops/bomber/bomber-character.png",
+    "levels": {
+      "5": {
+        "upgrade-price4": 0
+      },
+      "6": {
+        "upgrade-price4": 320000
+      },
+      "7": {
+        "upgrade-price4": 340000
+      },
+      "8": {
+        "upgrade-price4": 360000
+      },
+      "9": {
+        "upgrade-price4": 900000
+      },
+      "10": {
+        "upgrade-price4": 1000000
+      },
+      "11": {
+        "upgrade-price4": 1200000
+      },
+      "12": {
+        "upgrade-price4": 1400000
+      },
+      "13": {
+        "upgrade-price4": 2200000
+      },
+      "14": {
+        "upgrade-price4": 2400000
+      },
+      "15": {
+        "upgrade-price4": 3200000
+      },
+      "16": {
+        "upgrade-price4": 3400000
+      },
+      "17": {
+        "upgrade-price4": 3900000
+      },
+      "18": {
+        "upgrade-price4": 4100000
+      },
+      "19": {
+        "upgrade-price4": 4700000
+      },
+      "20": {
+        "upgrade-price4": 5300000
+      }
+    }
   },
   "4000041": {
     "name": "Baby Dragon",
-    "icon": "/builder-base/troops/baby-dragon/baby-dragon-character.png"
+    "icon": "/builder-base/troops/baby-dragon/baby-dragon-character.png",
+    "levels": {
+      "5": {
+        "upgrade-price4": 0
+      },
+      "6": {
+        "upgrade-price4": 360000
+      },
+      "7": {
+        "upgrade-price4": 380000
+      },
+      "8": {
+        "upgrade-price4": 400000
+      },
+      "9": {
+        "upgrade-price4": 1000000
+      },
+      "10": {
+        "upgrade-price4": 1200000
+      },
+      "11": {
+        "upgrade-price4": 1400000
+      },
+      "12": {
+        "upgrade-price4": 1600000
+      },
+      "13": {
+        "upgrade-price4": 2400000
+      },
+      "14": {
+        "upgrade-price4": 2600000
+      },
+      "15": {
+        "upgrade-price4": 3400000
+      },
+      "16": {
+        "upgrade-price4": 3600000
+      },
+      "17": {
+        "upgrade-price4": 4100000
+      },
+      "18": {
+        "upgrade-price4": 4300000
+      },
+      "19": {
+        "upgrade-price4": 5100000
+      },
+      "20": {
+        "upgrade-price4": 5500000
+      }
+    }
   },
   "4000037": {
     "name": "Cannon Cart",
-    "character": "/builder-base/troops/cannon-cart/cannon-cart-character.png"
+    "character": "/builder-base/troops/cannon-cart/cannon-cart-character.png",
+    "levels": {
+      "7": {
+        "upgrade-price4": 0
+      },
+      "8": {
+        "upgrade-price4": 1000000
+      },
+      "9": {
+        "upgrade-price4": 1100000
+      },
+      "10": {
+        "upgrade-price4": 1200000
+      },
+      "11": {
+        "upgrade-price4": 1400000
+      },
+      "12": {
+        "upgrade-price4": 1600000
+      },
+      "13": {
+        "upgrade-price4": 2400000
+      },
+      "14": {
+        "upgrade-price4": 2600000
+      },
+      "15": {
+        "upgrade-price4": 3400000
+      },
+      "16": {
+        "upgrade-price4": 3600000
+      },
+      "17": {
+        "upgrade-price4": 4100000
+      },
+      "18": {
+        "upgrade-price4": 4300000
+      },
+      "19": {
+        "upgrade-price4": 5300000
+      },
+      "20": {
+        "upgrade-price4": 5700000
+      }
+    }
   },
   "4000042": {
     "name": "Night Witch",
-    "character": "/builder-base/troops/night-witch/night-witch-character.png"
+    "character": "/builder-base/troops/night-witch/night-witch-character.png",
+    "levels": {
+      "9": {
+        "upgrade-price4": 0
+      },
+      "10": {
+        "upgrade-price4": 1400000
+      },
+      "11": {
+        "upgrade-price4": 1600000
+      },
+      "12": {
+        "upgrade-price4": 1800000
+      },
+      "13": {
+        "upgrade-price4": 2500000
+      },
+      "14": {
+        "upgrade-price4": 2700000
+      },
+      "15": {
+        "upgrade-price4": 3500000
+      },
+      "16": {
+        "upgrade-price4": 3700000
+      },
+      "17": {
+        "upgrade-price4": 4200000
+      },
+      "18": {
+        "upgrade-price4": 4400000
+      },
+      "19": {
+        "upgrade-price4": 5200000
+      },
+      "20": {
+        "upgrade-price4": 5600000
+      }
+    }
   },
   "4000038": {
     "name": "Drop Ship",
-    "character": "/builder-base/troops/drop-ship/drop-ship-character.png"
+    "character": "/builder-base/troops/drop-ship/drop-ship-character.png",
+    "levels": {
+      "11": {
+        "upgrade-price4": 0
+      },
+      "12": {
+        "upgrade-price4": 2400000
+      },
+      "13": {
+        "upgrade-price4": 2600000
+      },
+      "14": {
+        "upgrade-price4": 2800000
+      },
+      "15": {
+        "upgrade-price4": 3600000
+      },
+      "16": {
+        "upgrade-price4": 3800000
+      },
+      "17": {
+        "upgrade-price4": 4300000
+      },
+      "18": {
+        "upgrade-price4": 4500000
+      },
+      "19": {
+        "upgrade-price4": 5500000
+      },
+      "20": {
+        "upgrade-price4": 5700000
+      }
+    }
   },
   "4000036": {
     "name": "Power P.E.K.K.A",
-    "character": "/builder-base/troops/power-pekka/power-pekka-character.png"
+    "character": "/builder-base/troops/power-pekka/power-pekka-character.png",
+    "levels": {
+      "13": {
+        "upgrade-price4": 0
+      },
+      "14": {
+        "upgrade-price4": 3600000
+      },
+      "15": {
+        "upgrade-price4": 3800000
+      },
+      "16": {
+        "upgrade-price4": 4000000
+      },
+      "17": {
+        "upgrade-price4": 4600000
+      },
+      "18": {
+        "upgrade-price4": 4800000
+      },
+      "19": {
+        "upgrade-price4": 5600000
+      },
+      "20": {
+        "upgrade-price4": 5800000
+      }
+    }
   },
   "4000070": {
     "name": "Hog Glider",
-    "character": "/builder-base/troops/hog-glider/hog-glider-character.png"
+    "character": "/builder-base/troops/hog-glider/hog-glider-character.png",
+    "levels": {
+      "15": {
+        "upgrade-price4": 0
+      },
+      "16": {
+        "upgrade-price4": 4000000
+      },
+      "17": {
+        "upgrade-price4": 4200000
+      },
+      "18": {
+        "upgrade-price4": 4400000
+      },
+      "19": {
+        "upgrade-price4": 5400000
+      },
+      "20": {
+        "upgrade-price4": 5800000
+      }
+    }
   },
   "4000106": {
     "name": "Electrofire Wizard",
-    "character": "/builder-base/troops/electrofire-wizard/electrofire-wizard-character.png"
+    "character": "/builder-base/troops/electrofire-wizard/electrofire-wizard-character.png",
+    "levels": {
+      "17": {
+        "upgrade-price4": 0
+      },
+      "18": {
+        "upgrade-price4": 4400000
+      },
+      "19": {
+        "upgrade-price4": 5400000
+      },
+      "20": {
+        "upgrade-price4": 5800000
+      }
+    }
   },
   "28000003": {
     "name": "Battle Machine",

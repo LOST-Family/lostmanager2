@@ -1169,7 +1169,8 @@ public class stats extends ListenerAdapter {
 		PRICE_LABELS.put(1, "Gold");
 		PRICE_LABELS.put(2, "Elixier");
 		PRICE_LABELS.put(3, "Dunkles Elixier");
-		PRICE_LABELS.put(4, "Baumeister-Elixier");
+		PRICE_LABELS.put(4, "Bauarbeiter-Elixier");
+		PRICE_LABELS.put(5, "Bauarbeiter-Gold");
 	}
 
 	private static final String PRICE_KEY_PREFIX = "upgrade-price";
