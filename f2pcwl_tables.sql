@@ -17,10 +17,12 @@ CREATE TABLE IF NOT EXISTS f2pcwl_teams (
     role_id             TEXT,                    -- Discord-Teamrolle
     chat_channel_id     TEXT,                    -- Team-Chat
     plan_channel_id     TEXT,                    -- Ankündigungen / Pläne
+    vize_channel_id     TEXT,                    -- Planungschat der Vize (Tagesbericht mit Vorschlag)
     start_time          TIME,                    -- Startzeit variiert je Team (20/19/18 Uhr)
     size_target         SMALLINT NOT NULL DEFAULT 15,
     default_soll_stars  SMALLINT NOT NULL DEFAULT 3,  -- Soll-Sterne; T4/T5 fahren teils 2
     min_th              SMALLINT NOT NULL DEFAULT 1,   -- Mindest-Rathaus, harte Schranke
+    max_roster          SMALLINT NOT NULL DEFAULT 16,  -- Obergrenze inkl. Bank; darueber wird durchgewechselt
     manager_discord_id  TEXT                     -- Zuständiger, änderbar wenn er wechselt
 );
 

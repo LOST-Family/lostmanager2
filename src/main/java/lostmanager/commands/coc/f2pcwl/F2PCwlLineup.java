@@ -172,7 +172,7 @@ public class F2PCwlLineup {
 				)
 				SELECT v.player_tag,
 				       COALESCE(NULLIF(p.name, ''), v.player_tag) AS name,
-				       v.sterne, v.tage, v.ausgelassen,
+				       v.sterne, v.tage, v.angriffe, v.ausgelassen,
 				       COALESCE(h.rate, 0) AS rate
 				FROM verlauf v
 				LEFT JOIN players p ON p.coc_tag = v.player_tag

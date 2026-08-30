@@ -225,53 +225,67 @@ public class F2PCwlRanking {
 		// aufzuweiten schmerzt unten am wenigsten. Oben muss die Aufstellung
 		// eingespielt bleiben, weil man dort jemanden ersetzen können muss, der
 		// einen Angriff verhaut.
-		if (!offen.isEmpty()) {
-			List<F2PCwlTeam> vonUnten = new ArrayList<>(teams);
-			vonUnten.sort(Comparator.comparingInt(F2PCwlTeam::getTeamNo).reversed());
-
-			// Aufgeweitet wird von unten nach oben, und zwar jeweils ganz: erst
-			// bekommt das unterste Team seine Toleranz voll, dann das nächste.
-			// Reihum zu verteilen würde die Schwächsten bis nach Team 1 hochspülen
-			// - genau dorthin, wo die Aufstellung am verlässlichsten sein muss.
-			int toleranz = 1;
-			while (!offen.isEmpty() && toleranz <= MAX_UEBERHANG) {
-				for (F2PCwlTeam team : vonUnten) {
-					List<Scored> platz = verteilt.get(team.getTeamNo());
-					while (!offen.isEmpty() && platz.size() < team.getMaxRoster() + toleranz) {
-						// Immer der Schwächste zuerst, und der gehört nach unten.
-						platz.add(offen.remove(offen.size() - 1));
-					}
-					if (offen.isEmpty()) {
-						break;
-					}
-				}
-				toleranz++;
-			}
-		}
+		verteileVonUnten(offen, teams, verteilt);
 
 		// Ohne Historie lässt sich niemand bewerten. Sie kommen in die unteren
 		// Teams, wo Überhang am wenigsten wehtut, und werden ausdrücklich als
 		// unbewertet ausgewiesen - ein starker Neuzugang gehört woandershin, das
 		// kann aber nur jemand entscheiden, der ihn kennt.
-		List<Scored> ohne = new ArrayList<>();
-		if (kandidatenOhneHistorie != null && !teams.isEmpty()) {
-			List<F2PCwlTeam> vonUnten = new ArrayList<>(teams);
-			vonUnten.sort(Comparator.comparingInt(F2PCwlTeam::getTeamNo).reversed());
-			int i = 0;
-			// Name und Rathaus stehen in players - sie hier nicht aufzulösen hieße,
-			// diese Leute als nackten Tag mit "TH0" anzuzeigen.
-			for (Scored s : mitStammdaten(kandidatenOhneHistorie)) {
-				ohne.add(s);
-				verteilt.get(vonUnten.get(i % vonUnten.size()).getTeamNo()).add(s);
-				i++;
-			}
+		//
+		// Name und Rathaus stehen in players - sie hier nicht aufzulösen hieße,
+		// diese Leute als nackten Tag mit "TH0" anzuzeigen.
+		List<Scored> ohne = new ArrayList<>(mitStammdaten(kandidatenOhneHistorie));
+		if (!ohne.isEmpty() && !teams.isEmpty()) {
+			// Ohne Quote bleibt allein das Rathaus als Anhaltspunkt. Es sagt
+			// innerhalb eines Teams nichts über die Trefferquote - über die Teams
+			// hinweg aber sehr wohl, T1 und T2 sind reine TH18-Runden. Absteigend
+			// sortiert, weil die Verteilung von hinten nimmt: so landet der
+			// niedrigste unten statt ein TH14 in Team 3.
+			ohne.sort(Comparator.comparingInt(Scored::townhall).reversed()
+					.thenComparing(Scored::name));
+			verteileVonUnten(new ArrayList<>(ohne), teams, verteilt);
 		}
 		return new Assignment(verteilt, offen, ohne);
+	}
+
+	/**
+	 * Verteilt von unten nach oben, bis alle untergekommen sind.
+	 *
+	 * Genommen wird jeweils der Letzte der Liste; die Aufrufer legen sie so, dass
+	 * das der Schwächste ist. Aufgeweitet wird stufenweise - erst bekommt jedes
+	 * Team einen über seiner Obergrenze, dann zwei. Reihum in einem Rutsch zu
+	 * verteilen würde die Schwächsten bis nach Team 1 hochspülen, genau dorthin,
+	 * wo die Aufstellung am verlässlichsten sein muss.
+	 */
+	private static void verteileVonUnten(List<Scored> offen, List<F2PCwlTeam> teams,
+			Map<Integer, List<Scored>> verteilt) {
+		if (offen.isEmpty()) {
+			return;
+		}
+		List<F2PCwlTeam> vonUnten = new ArrayList<>(teams);
+		vonUnten.sort(Comparator.comparingInt(F2PCwlTeam::getTeamNo).reversed());
+
+		int toleranz = 1;
+		while (!offen.isEmpty() && toleranz <= MAX_UEBERHANG) {
+			for (F2PCwlTeam team : vonUnten) {
+				List<Scored> platz = verteilt.get(team.getTeamNo());
+				while (!offen.isEmpty() && platz.size() < team.getMaxRoster() + toleranz) {
+					platz.add(offen.remove(offen.size() - 1));
+				}
+				if (offen.isEmpty()) {
+					break;
+				}
+			}
+			toleranz++;
+		}
 	}
 
 	/** Spieler ohne CWL-Historie, aber mit Name und Rathaus aus {@code players}. */
 	private static List<Scored> mitStammdaten(Collection<String> tags) {
 		List<Scored> out = new ArrayList<>();
+		if (tags == null) {
+			return out;
+		}
 		String sql = "SELECT COALESCE(NULLIF(name, ''), coc_tag) AS name, COALESCE(townhall, 0) AS th "
 				+ "FROM players WHERE coc_tag = ?";
 		for (String tag : tags) {
