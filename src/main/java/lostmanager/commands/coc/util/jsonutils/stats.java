@@ -981,9 +981,11 @@ public class stats extends ListenerAdapter {
 		StringBuilder sb = new StringBuilder();
 		String prefix = indent > 0 ? "· ".repeat(indent) : "";
 
+		String dataId = null;
+
 		// Show identifier if present
 		if (obj.has("data") && obj.get("data") != null && obj.get("data") != JSONObject.NULL) {
-			String dataId = obj.get("data").toString();
+			dataId = obj.get("data").toString();
 			if (FilteredIdsCache.isFiltered(dataId)) {
 				return ""; // whole object is filtered
 			}
@@ -1000,6 +1002,27 @@ public class stats extends ListenerAdapter {
 				continue;
 
 			String translatedKey = ATTR_TRANSLATIONS.getOrDefault(key, key);
+
+			// Items with levels carry their emoji on the level line - the rule
+			// formatGroupedData follows for top level entries. Without the same rule
+			// here, everything rendered as a nested object stays without an icon, the
+			// modules underneath a seasonal defense among them.
+			if (key.equals("lvl") && dataId != null) {
+				sb.append("\n").append(prefix).append(translatedKey).append(": ").append(value.toString());
+
+				if (lostmanager.util.ImageMapCache.hasLevels(dataId)) {
+					try {
+						String levelEmoji = getEmojiForLevel(dataId, Integer.parseInt(value.toString()));
+						if (levelEmoji != null) {
+							sb.append(" ").append(levelEmoji);
+						}
+					} catch (NumberFormatException e) {
+						// Level is not a number, skip the emoji
+					}
+				}
+
+				continue;
+			}
 
 			if (key.equals("timer") || key.equals("helper_cooldown")) {
 				switch (value) {
@@ -1704,7 +1727,12 @@ public class stats extends ListenerAdapter {
 			int selectedLevel = Integer.MAX_VALUE;
 
 			for (String lvl : levels.keySet()) {
-				String levelPath = levels.optString(lvl, "");
+				// Level values used to be the path itself and are objects now, so
+				// optString would hand back the whole JSON text of the level.
+				Object levelValue = levels.get(lvl);
+				String levelPath = levelValue instanceof JSONObject levelObject
+						? levelObject.optString("level-icon", "")
+						: String.valueOf(levelValue);
 				if (levelPath.isEmpty()) {
 					continue;
 				}

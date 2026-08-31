@@ -624,7 +624,15 @@ public class EmojiManager {
     // Maximum allowed is 32 chars total, so sanitized part should be max 28 chars
     int maxLength = 32 - BOT_EMOJI_PREFIX.length();
     if (sanitized.length() > maxLength) {
-      sanitized = sanitized.substring(0, maxLength);
+      // Cutting the tail off would take the level number with it, and every
+      // level of the item would end up sharing one emoji - whichever level was
+      // rendered first would then show up for all of them. So keep a readable
+      // head and make the name unique again with a hash of the full name.
+      // String.hashCode is specified by the language, so the name stays the
+      // same across restarts and the emoji is found again instead of recreated.
+      String discriminator = "_" + Integer.toHexString(sanitized.hashCode());
+      String head = sanitized.substring(0, maxLength - discriminator.length());
+      sanitized = head.replaceAll("_+$", "") + discriminator;
     }
     
     return sanitized.toLowerCase();

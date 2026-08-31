@@ -149,17 +149,26 @@ public class ImageMapCache {
   
   /**
    * Get the icon path for a data ID (for items without levels)
+   *
+   * Helpers and super troops carry their image under "character" instead of
+   * "icon" - without the fallback they end up with no emoji at all.
+   *
    * @param dataId The data ID to lookup
    * @return The relative icon path or null if not found
    */
   public static String getIconPath(String dataId) {
     JSONObject itemData = getItemData(dataId);
-    if (itemData != null && itemData.has("icon")) {
-      String icon = itemData.getString("icon");
-      if (icon != null && !icon.isEmpty()) {
-        return icon;
+    if (itemData == null) {
+      return null;
+    }
+
+    for (String key : new String[] { "icon", "character", "character_2", "character-2" }) {
+      String path = itemData.optString(key, "");
+      if (!path.isEmpty()) {
+        return path;
       }
     }
+
     return null;
   }
   
