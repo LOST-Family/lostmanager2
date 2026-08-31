@@ -2837,7 +2837,7 @@
         "upgrade-price2": 600000
       },
       "2": {
-        "level-icon": "/home-base/buildings/blacksmith/blacksmith-2.png",
+        "level-icon": "/home-base/buildings/blacksmith/blacksmith-1.png",
         "upgrade-price2": 1200000
       },
       "3": {
@@ -2845,7 +2845,7 @@
         "upgrade-price2": 2300000
       },
       "4": {
-        "level-icon": "/home-base/buildings/blacksmith/blacksmith-4.png",
+        "level-icon": "/home-base/buildings/blacksmith/blacksmith-3.png",
         "upgrade-price2": 3000000
       },
       "5": {
@@ -2853,7 +2853,7 @@
         "upgrade-price2": 5000000
       },
       "6": {
-        "level-icon": "/home-base/buildings/blacksmith/blacksmith-6.png",
+        "level-icon": "/home-base/buildings/blacksmith/blacksmith-3.png",
         "upgrade-price2": 6200000
       },
       "7": {
@@ -2861,7 +2861,7 @@
         "upgrade-price2": 9200000
       },
       "8": {
-        "level-icon": "/home-base/buildings/blacksmith/blacksmith-8.png",
+        "level-icon": "/home-base/buildings/blacksmith/blacksmith-7.png",
         "upgrade-price2": 10000000
       },
       "9": {
@@ -2869,7 +2869,7 @@
         "upgrade-price2": 11000000
       },
       "10": {
-        "level-icon": "/home-base/buildings/blacksmith/blacksmith-10.png",
+        "level-icon": "/home-base/buildings/blacksmith/blacksmith-9.png",
         "upgrade-price2": 18000000
       }
     }
@@ -10528,7 +10528,7 @@
   },
   "60000072": {
     "name": "ClashaMania Scenery (Apr. 2025)",
-    "icon": "/home-base/sceneries/2.png",
+    "icon": "/home-base/sceneries/72.png",
     "index": 49
   },
   "60000073": {
