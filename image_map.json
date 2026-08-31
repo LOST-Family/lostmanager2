@@ -4584,7 +4584,7 @@
   },
   "26000123": {
     "name": "Angry Spell",
-    "character": "/home-base/spells/121.png",
+    "character": "/home-base/spells/123.png",
     "levels": {
       "1": {
         "upgrade-price3": 0
