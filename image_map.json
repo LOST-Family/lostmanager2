@@ -4785,7 +4785,7 @@
   },
   "4000188": {
     "name": "Sky Wagon",
-    "character": "/home-base/sky-wagon/sky-wagon/sky-wagon-character.png",
+    "character": "/home-base/troops/sky-wagon/sky-wagon-character.png",
     "levels": {
       "1": {
         "upgrade-price2": 0
@@ -8722,7 +8722,7 @@
   },
   "4000041": {
     "name": "Baby Dragon",
-    "icon": "/builder-base/troops/baby-dragon/baby-dragon-character.png",
+    "characters": "/builder-base/troops/baby-dragon/baby-dragon-character.png",
     "levels": {
       "5": {
         "upgrade-price4": 0
