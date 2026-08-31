@@ -530,55 +530,55 @@
     "name": "Bomb Tower",
     "levels": {
       "1": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-1.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-1.png",
         "upgrade-price1": 700000
       },
       "2": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-2.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-2.png",
         "upgrade-price1": 1000000
       },
       "3": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-3.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-3.png",
         "upgrade-price1": 1300000
       },
       "4": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-4.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-4.png",
         "upgrade-price1": 1800000
       },
       "5": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-5.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-5.png",
         "upgrade-price1": 1900000
       },
       "6": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-6.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-6.png",
         "upgrade-price1": 2000000
       },
       "7": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-7.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-7.png",
         "upgrade-price1": 4000000
       },
       "8": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-8.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-8.png",
         "upgrade-price1": 5000000
       },
       "9": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-9.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-9.png",
         "upgrade-price1": 6000000
       },
       "10": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-10.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-10.png",
         "upgrade-price1": 7000000
       },
       "11": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-11.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-11.png",
         "upgrade-price1": 8500000
       },
       "12": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-12.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-12.png",
         "upgrade-price1": 14500000
       },
       "13": {
-        "level-icon": "/home-base/traps/bomb-tower/bomb-tower-13.png",
+        "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-13.png",
         "upgrade-price1": 25000000
       }
     },
@@ -1570,7 +1570,7 @@
         "upgrade-price1": 40000
       },
       "5": {
-        "level-icon": "/home-base/traps/bomb/bomb-4.png",
+        "level-icon": "/home-base/traps/bomb/bomb-5.png",
         "upgrade-price1": 100000
       },
       "6": {
@@ -8722,7 +8722,7 @@
   },
   "4000041": {
     "name": "Baby Dragon",
-    "characters": "/builder-base/troops/baby-dragon/baby-dragon-character.png",
+    "character": "/builder-base/troops/baby-dragon/baby-dragon-character.png",
     "levels": {
       "5": {
         "upgrade-price4": 0
