@@ -2049,7 +2049,7 @@ public class ListeningEvent {
 				message.append("\n");
 
 				if (getActionType() == ACTIONTYPE.KICKPOINT) {
-					addKickpointForPlayer(p, "Raid nicht teilgenommen");
+					addKickpointForPlayer(p, "Raid nicht teilgenommen", "nicht teilgenommen");
 				}
 			}
 		}
@@ -2070,7 +2070,8 @@ public class ListeningEvent {
 				message.append(": ").append(attacks).append("/").append(maxAttacks).append("\n");
 
 				if (getActionType() == ACTIONTYPE.KICKPOINT) {
-					addKickpointForPlayer(p, "Raid Angriffe verpasst (" + attacks + "/" + maxAttacks + ")");
+					addKickpointForPlayer(p, "Raid Angriffe verpasst (" + attacks + "/" + maxAttacks + ")",
+							attacks + "/" + maxAttacks + " Angriffe");
 				}
 			}
 		}
@@ -2137,14 +2138,26 @@ public class ListeningEvent {
 	private static class RaidDistrictFail {
 		Player player;
 		String districtName;
+		int totalAttacks;
 		int attacks;
 		int threshold;
 
-		RaidDistrictFail(Player player, String districtName, int attacks, int threshold) {
+		RaidDistrictFail(Player player, String districtName, int totalAttacks, int attacks, int threshold) {
 			this.player = player;
 			this.districtName = districtName;
+			this.totalAttacks = totalAttacks;
 			this.attacks = attacks;
 			this.threshold = threshold;
+		}
+
+		/** Description used when the event has no kickpoint reason configured. */
+		String describe() {
+			return "Zu viele Angriffe auf " + districtName + " (" + attacks + "/" + threshold + ")";
+		}
+
+		/** Suffix appended to the configured kickpoint reason, see addKickpointForPlayer. */
+		String detail() {
+			return districtName + " " + totalAttacks + "/" + threshold + ", davon " + attacks + " selbst";
 		}
 	}
 
@@ -2304,7 +2317,15 @@ public class ListeningEvent {
 							if (p.getUser() != null) {
 								message.append(" (<@").append(p.getUser().getUserID()).append(">)");
 							}
-							penalizedPlayers.add(new RaidDistrictFail(p, districtName, maxAttacks, threshold));
+							// A player the kickpoint cannot be booked on would otherwise be
+							// listed as penalized while nothing happens for them
+							KickpointTarget target = resolveKickpointTarget(p);
+							if (target.isSkipped()) {
+								message.append(" - **kein Kickpunkt:** ").append(target.skipReason);
+							} else {
+								penalizedPlayers
+										.add(new RaidDistrictFail(p, districtName, totalAttacks, maxAttacks, threshold));
+							}
 						} catch (Exception e) {
 							message.append(" (nicht in Datenbank gefunden)");
 						}
@@ -2542,8 +2563,7 @@ public class ListeningEvent {
 					&& event.getActionType() == ACTIONTYPE.RAIDFAILS;
 			if (shouldProcessKickpoints) {
 				for (RaidDistrictFail fail : result.penalizedPlayers) {
-					addKickpointForPlayer(fail.player, "Zu viele Angriffe auf " + fail.districtName + " ("
-							+ fail.attacks + "/" + fail.threshold + ")");
+					addKickpointForPlayer(fail.player, fail.describe(), fail.detail());
 				}
 			}
 
@@ -2611,35 +2631,49 @@ public class ListeningEvent {
 		}
 
 		for (RaidDistrictFail fail : result.penalizedPlayers) {
-			addKickpointForPlayer(fail.player,
-					"Zu viele Angriffe auf " + fail.districtName + " (" + fail.attacks + "/" + fail.threshold + ")");
+			addKickpointForPlayer(fail.player, fail.describe(), fail.detail());
 		}
 
 		System.out.println("Completed raid district verification for clan " + clanTag
 				+ " (dataReliable=false, kickpoints=true via fallback)");
 	}
 
-	private void addKickpointForPlayer(Player player, String reason) {
-		// Check if player is signed off - skip automatic kickpoints
+	/**
+	 * Outcome of checking whether an automatic kickpoint can be handed out for a
+	 * player: either the clan it would be booked on, or the reason it is skipped.
+	 */
+	private static class KickpointTarget {
+		final String clanTag;
+		final String skipReason;
+
+		private KickpointTarget(String clanTag, String skipReason) {
+			this.clanTag = clanTag;
+			this.skipReason = skipReason;
+		}
+
+		static KickpointTarget of(String clanTag) {
+			return new KickpointTarget(clanTag, null);
+		}
+
+		static KickpointTarget skip(String reason) {
+			return new KickpointTarget(null, reason);
+		}
+
+		boolean isSkipped() {
+			return clanTag == null;
+		}
+	}
+
+	/**
+	 * Resolves the clan an automatic kickpoint for this player would be booked on.
+	 * Callers that name their penalized players in a message before the kickpoints
+	 * are handed out use this to mark the ones that end up being skipped, instead
+	 * of reporting a punishment that silently never happens.
+	 */
+	private KickpointTarget resolveKickpointTarget(Player player) {
+		// Signed off members are exempt from automatic kickpoints
 		if (MemberSignoff.isSignedOff(player.getTag())) {
-			System.out
-					.println("Skipping automatic kickpoint for player " + player.getTag() + " - player is signed off");
-			return;
-		}
-
-		// Get kickpoint reason from action values if specified
-		KickpointReason kpReason = null;
-		for (ActionValue av : getActionValues()) {
-			if (av.getSaved() == ActionValue.kind.reason) {
-				kpReason = av.getReason();
-				break;
-			}
-		}
-
-		int amount = 1; // Default
-		if (kpReason != null && kpReason.Exists()) {
-			amount = (int) kpReason.getAmount();
-			reason = kpReason.getName();
+			return KickpointTarget.skip("Spieler ist abgemeldet");
 		}
 
 		// Get the event's configured clan
@@ -2667,23 +2701,65 @@ public class ListeningEvent {
 			}
 		}
 
-		// If we couldn't determine a matching clan for the player, skip adding
-		// kickpoint
 		if (chosenClanTag == null) {
-			System.out.println("Skipping kickpoint for player " + player.getTag() +
-					" - player not found in belongs_to, belongs_to_2, or event clan DB (event clan: " + eventClanTag
-					+ ")");
-			return;
+			return KickpointTarget.skip("nicht in der Clan-Datenbank");
 		}
-
-		Clan clan = new Clan(chosenClanTag);
 
 		// Verify the chosen clan exists in DB before proceeding
-		if (!clan.ExistsDB()) {
-			System.out.println("Cannot add kickpoint for player " + player.getTag() +
-					" - chosen clan " + chosenClanTag + " does not exist in DB");
+		if (!new Clan(chosenClanTag).ExistsDB()) {
+			return KickpointTarget.skip("Clan " + chosenClanTag + " nicht in der Datenbank");
+		}
+
+		return KickpointTarget.of(chosenClanTag);
+	}
+
+	private void addKickpointForPlayer(Player player, String reason) {
+		addKickpointForPlayer(player, reason, null);
+	}
+
+	/**
+	 * @param reason description used when the event has no kickpoint reason
+	 *               configured
+	 * @param detail short description of the concrete violation. A configured
+	 *               kickpoint reason replaces {@code reason} entirely, so without
+	 *               this the stored description would no longer say which violation
+	 *               an event covering several of them actually punished - the raid
+	 *               event hands out kickpoints both for missing the raid and for
+	 *               leaving attacks open.
+	 */
+	private void addKickpointForPlayer(Player player, String reason, String detail) {
+		KickpointTarget target = resolveKickpointTarget(player);
+		if (target.isSkipped()) {
+			System.out.println("Skipping automatic kickpoint for player " + player.getTag() + " - "
+					+ target.skipReason + " (event clan: " + getClanTag() + ")");
 			return;
 		}
+
+		// Get kickpoint reason from action values if specified
+		KickpointReason kpReason = null;
+		for (ActionValue av : getActionValues()) {
+			if (av.getSaved() == ActionValue.kind.reason) {
+				kpReason = av.getReason();
+				break;
+			}
+		}
+
+		int amount = 1; // Default
+		if (kpReason != null && kpReason.Exists()) {
+			amount = (int) kpReason.getAmount();
+			reason = kpReason.getName();
+			if (detail != null && !detail.isEmpty()) {
+				reason = reason + " (" + detail + ")";
+			}
+		}
+
+		// kickpoints.description is varchar(100) - an overlong text would abort the
+		// insert and the kickpoint would be lost without anyone noticing
+		if (reason.length() > 100) {
+			reason = reason.substring(0, 97) + "...";
+		}
+
+		Clan clan = new Clan(target.clanTag);
 
 		Integer daysExpire = clan.getDaysKickpointsExpireAfter();
 		// Default to 30 days if not configured

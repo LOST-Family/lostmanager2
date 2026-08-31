@@ -491,6 +491,55 @@ public class listeningevent extends ListenerAdapter {
 	}
 
 	/**
+	 * @return the name of the kickpoint reason stored on the event, or null if it
+	 *         has none configured and therefore hands out no kickpoints
+	 */
+	private static String configuredKickpointReason(ListeningEvent le) {
+		ArrayList<ActionValue> actionValues = le.getActionValues();
+		if (actionValues == null) {
+			return null;
+		}
+		for (final ActionValue av : actionValues) {
+			if (av.getSaved() == ActionValue.kind.reason && av.getReason() != null) {
+				return av.getReason().getName();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Plain wording for the violation an event hands out kickpoints for. The reason
+	 * is picked from the clan's free-form list, so nothing stops a raid event from
+	 * being wired to the reason of a different raid violation - which is exactly
+	 * how the district reason and the missing-attacks reason ended up swapped once.
+	 * Spelling out what the event actually punishes makes that visible right away.
+	 *
+	 * @return the description, or null if the action type hands out no kickpoints
+	 */
+	private static String describePunishedViolation(String type, String actionTypeStr) {
+		if (actionTypeStr.equals("raidfails") || actionTypeStr.equals("raidfails_kickpoint")) {
+			return "zu viele Angriffe auf denselben Distrikt";
+		}
+		if (actionTypeStr.equals("starfails") || actionTypeStr.equals("starfails_kickpoint")) {
+			return "Angriffe mit zu wenig Sternen";
+		}
+		if (actionTypeStr.equals("cwcount_kickpoint")) {
+			return "zu wenige Clankriege in der Season";
+		}
+		if (actionTypeStr.equals("kickpoint")) {
+			return switch (type) {
+				case "raid" -> "fehlende oder nicht beendete Raid-Angriffe";
+				case "cw" -> "nicht gemachte CW-Angriffe";
+				case "cwlday" -> "nicht gemachte CWL-Angriffe";
+				case "cs" -> "zu wenige Clan-Games-Punkte";
+				case "seasonend" -> "zu wenige Season-Wins";
+				default -> null;
+			};
+		}
+		return null;
+	}
+
+	/**
 	 * @param namedSettings optional settings stored by key instead of by position,
 	 *                      so they can be read back without depending on the order
 	 *                      of the positional value entries
@@ -611,6 +660,10 @@ public class listeningevent extends ListenerAdapter {
 		desc += "**Channel:** <#" + channelId + ">\n";
 		if (kickpointReasonName != null) {
 			desc += "**Kickpoint-Grund:** " + kickpointReasonName + "\n";
+			String punished = describePunishedViolation(type, actionTypeStr);
+			if (punished != null) {
+				desc += "**Vergeben für:** " + punished + "\n";
+			}
 		}
 		if (customMessage != null) {
 			desc += "**Nachricht:** " + customMessage.substring(0, Math.min(100, customMessage.length()))
@@ -809,6 +862,21 @@ public class listeningevent extends ListenerAdapter {
 
 			entry.append("**Dauer:** ").append(formatDuration(le.getDurationUntilEnd())).append("\n");
 			entry.append("**Action:** ").append(actionType).append("\n");
+
+			// Without the reason the list gives no way to spot an event wired to the
+			// wrong one, which is only visible once kickpoints have been handed out
+			String reasonName = configuredKickpointReason(le);
+			if (reasonName != null) {
+				entry.append("**Kickpoint-Grund:** ").append(reasonName).append("\n");
+				String punished = listeningType != null && actionType != null
+						? describePunishedViolation(listeningType.name().toLowerCase(),
+								actionType.name().toLowerCase())
+						: null;
+				if (punished != null) {
+					entry.append("**Vergeben für:** ").append(punished).append("\n");
+				}
+			}
+
 			entry.append("**Channel:** <#").append(le.getChannelID()).append(">\n");
 			entry.append("**Status:** ").append(fire.state().getLabel()).append("\n");
 			entry.append("**Feuert in:** ").append(fire.text()).append("\n\n");
