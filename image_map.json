@@ -9994,7 +9994,7 @@
   "18000222": {
     "name": "Manga Reader (Aug. 2026)",
     "icon": "/home-base/decorations/222.png",
-    "index": 161
+    "index": 100002
   },
   "18000237": {
     "name": "Money in the Bank Title (Sep. 2026)",
@@ -10021,30 +10021,40 @@
     "icon": "/home-base/decorations/238.png",
     "index": 165
   },
-  "18000243": {
-    "name": "Ultimate Hot Streak (Aug. 2026)",
-    "icon": "/home-base/decorations/243.png",
-    "index": 166
-  },
   "18000244": {
     "name": "Amber Hot Streak (Sep. 2026)",
     "icon": "/home-base/decorations/244.png",
+    "index": 166
+  },
+  "18000242": {
+    "name": "Emerald Hot Streak (Aug. 2026)",
+    "icon": "/home-base/decorations/242.png",
     "index": 167
   },
-  "18000247": {
-    "name": "Coin Collector (Oct. 2026)",
-    "icon": "/home-base/decorations/247.png",
+  "18000245": {
+    "name": "Violet Hot Streak (Sep. 2026)",
+    "icon": "/home-base/decorations/245.png",
     "index": 168
+  },
+  "18000243": {
+    "name": "Ultimate Hot Streak (Aug. 2026)",
+    "icon": "/home-base/decorations/243.png",
+    "index": 169
   },
   "18000250": {
     "name": "Portal Staff (Oct. 2026)",
     "icon": "/home-base/decorations/250.png",
-    "index": 169
+    "index": 170
+  },
+  "18000247": {
+    "name": "Coin Collector (Oct. 2026)",
+    "icon": "/home-base/decorations/247.png",
+    "index": 171
   },
   "18000248": {
     "name": "Sour Elixir Fountain (Oct. 2026)",
     "icon": "/home-base/decorations/248.png",
-    "index": 170
+    "index": 172
   },
   "8000015": {
     "name": "2012 Stone",

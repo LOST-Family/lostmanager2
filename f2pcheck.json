@@ -1773,32 +1773,13 @@
                         "allowed": 0,
                         "elements": [{
                                 "type": "element",
-                                "name": "Monolith Arrow Equipment",
-                                "id": "90000055"
-                            },{
-                                "type": "element",
                                 "name": "Fury Figurine Deco",
                                 "id": "18000218"
                             }]
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Monolith Arrow Equipment' und 'Fury Figurine Deco'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 1,
-                                "elements": [{
-                                    "type": "element",
-                                    "name": "Monolith Arrow Equipment",
-                                    "id": "90000055"
-                                },{
-                                    "type": "element",
-                                    "name": "Fury Figurine Deco",
-                                    "id": "18000218"
-                                }]
-                            }
-                        },{
-                            "name": "Hat 'Monolith Arrow Equipment' oder 'Fury Figurine Deco' und mindestens ein 'Anime 26 Clan House'",
+                            "name": "Hat 'Fury Figurine Deco' und mindestens ein 'Anime 26 Clan House'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
@@ -1861,6 +1842,68 @@
                             }
                         },{
                             "name": "Hat 'Revenge Deck Equipment' oder 'Card Flipper Deco' und oder mindestens ein 'Awesome Clan House'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 0,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Awesome Deco",
+                                    "id": "82000158"
+                                },{
+                                    "type": "element",
+                                    "name": "Awesome Walls",
+                                    "id": "82000159"
+                                },{
+                                    "type": "element",
+                                    "name": "Awesome Ground",
+                                    "id": "82000160"
+                                },{
+                                    "type": "element",
+                                    "name": "Awesome Roof",
+                                    "id": "82000161"
+                                }]
+                            }
+                        }]
+                    }
+                }]
+            }
+        },
+        {
+            "Cases": {
+                "name": "Oct. 2026 Event",
+                "CasesStrict": [{
+                    "name": "",
+                    "IfMoreThan":   {
+                        "type": "quantity",
+                        "allowed": 0,
+                        "elements": [{
+                                "type": "element",
+                                "name": "Portal Pendant Equipment",
+                                "id": "90000061"
+                            },{
+                                "type": "element",
+                                "name": "Coin Collector Deco",
+                                "id": "18000247"
+                            }]
+                    },
+                    "ThenForbidden": {
+                        "CasesStrict": [{
+                            "name": "Hat 'Portal Pendant Equipment' und 'Coin Collector Deco'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 1,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "Portal Pendant Equipment",
+                                    "id": "90000061"
+                                },{
+                                    "type": "element",
+                                    "name": "Coin Collector Deco",
+                                    "id": "18000247"
+                                }]
+                            }
+                        },{
+                            "name": "Hat 'Portal Pendant Equipment' oder 'Coin Collector Deco' und oder mindestens ein 'Cosmic Clan House'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
@@ -2119,28 +2162,6 @@
                             "type": "element",
                             "name": "Lucky Cookies",
                             "id": "18000169"
-                        }]
-                    }   
-                }, {
-                    "name": "Hat mehr als 1 'Golden Giant Deco'",
-                    "IfMoreThan": {
-                        "type": "count",
-                        "allowed": 1,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Golden Giant",
-                            "id": "18000173"
-                        }]
-                    }   
-                }, {
-                    "name": "Hat mehr als 1 'Surprise Wheel Deco'",
-                    "IfMoreThan": {
-                        "type": "count",
-                        "allowed": 1,
-                        "elements": [{
-                            "type": "element",
-                            "name": "Surprise Wheel",
-                            "id": "18000175"
                         }]
                     }   
                 }, {
