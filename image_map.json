@@ -9996,6 +9996,56 @@
     "icon": "/home-base/decorations/222.png",
     "index": 161
   },
+  "18000237": {
+    "name": "Money in the Bank Title (Sep. 2026)",
+    "icon": "/home-base/decorations/237.png",
+    "index": 161
+  },
+  "18000236": {
+    "name": "Codys Callout (Sep. 2026)",
+    "icon": "/home-base/decorations/236.png",
+    "index": 162
+  },
+  "18000239": {
+    "name": "Bro Force (Sep. 2026)",
+    "icon": "/home-base/decorations/239.png",
+    "index": 163
+  },
+  "18000246": {
+    "name": "Clash Contest (Sep. 2026)",
+    "icon": "/home-base/decorations/246.png",
+    "index": 164
+  },
+  "18000238": {
+    "name": "Superstar Trophy (Aug. 2026)",
+    "icon": "/home-base/decorations/238.png",
+    "index": 165
+  },
+  "18000243": {
+    "name": "Ultimate Hot Streak (Aug. 2026)",
+    "icon": "/home-base/decorations/243.png",
+    "index": 166
+  },
+  "18000244": {
+    "name": "Amber Hot Streak (Sep. 2026)",
+    "icon": "/home-base/decorations/244.png",
+    "index": 167
+  },
+  "18000247": {
+    "name": "Coin Collector (Oct. 2026)",
+    "icon": "/home-base/decorations/247.png",
+    "index": 168
+  },
+  "18000250": {
+    "name": "Portal Staff (Oct. 2026)",
+    "icon": "/home-base/decorations/250.png",
+    "index": 169
+  },
+  "18000248": {
+    "name": "Sour Elixir Fountain (Oct. 2026)",
+    "icon": "/home-base/decorations/248.png",
+    "index": 170
+  },
   "8000015": {
     "name": "2012 Stone",
     "icon": "/home-base/obstacles/15.png",
