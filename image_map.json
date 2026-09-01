@@ -12846,6 +12846,26 @@
     "icon": "/home-base/clancapital/161.png",
     "index": 135
   },
+  "82000163": {
+    "name": "WWE 2026 Walls",
+    "icon": "/home-base/clancapital/163.png",
+    "index": 136
+  },
+  "82000164": {
+    "name": "WWE 2026 Ground",
+    "icon": "/home-base/clancapital/164.png",
+    "index": 137
+  },
+  "82000165": {
+    "name": "Cosmic Roof",
+    "icon": "/home-base/clancapital/165.png",
+    "index": 138
+  },
+  "82000162": {
+    "name": "Cosmic Deco",
+    "icon": "/home-base/clancapital/162.png",
+    "index": 139
+  },
   "4000026": {
     "name": "Super Barbarian",
     "icon": "/home-base/troops/super-barbarian/super-barbarian-character.png"

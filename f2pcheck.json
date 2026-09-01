@@ -1868,6 +1868,41 @@
                 }]
             }
         },
+                {
+            "Cases": {
+                "name": "Sep. 2026 Event",
+                "CasesStrict": [{
+                    "name": "",
+                    "IfMoreThan":   {
+                        "type": "quantity",
+                        "allowed": 0,
+                        "elements": [{
+                                "type": "element",
+                                "name": "Clash Contest Deco",
+                                "id": "18000246"
+                            }]
+                    },
+                    "ThenForbidden": {
+                        "CasesStrict": [{
+                            "name": "Hat 'Clash Contest Deco' oder und mindestens ein 'WWE 2026 Clan House'",
+                            "IfMoreThan": {
+                                "type": "quantity",
+                                "allowed": 0,
+                                "elements": [{
+                                    "type": "element",
+                                    "name": "WWE 2026 Walls",
+                                    "id": "82000163"
+                                },{
+                                    "type": "element",
+                                    "name": "WWE 2026 Ground",
+                                    "id": "82000164"
+                                }]
+                            }
+                        }]
+                    }
+                }]
+            }
+        },
         {
             "Cases": {
                 "name": "Oct. 2026 Event",
@@ -1909,20 +1944,12 @@
                                 "allowed": 0,
                                 "elements": [{
                                     "type": "element",
-                                    "name": "Awesome Deco",
-                                    "id": "82000158"
+                                    "name": "Cosmic Roof",
+                                    "id": "82000165"
                                 },{
                                     "type": "element",
-                                    "name": "Awesome Walls",
-                                    "id": "82000159"
-                                },{
-                                    "type": "element",
-                                    "name": "Awesome Ground",
-                                    "id": "82000160"
-                                },{
-                                    "type": "element",
-                                    "name": "Awesome Roof",
-                                    "id": "82000161"
+                                    "name": "Cosmic Deco",
+                                    "id": "82000162"
                                 }]
                             }
                         }]
