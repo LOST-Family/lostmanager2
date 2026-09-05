@@ -10326,6 +10326,11 @@
     "icon": "/home-base/obstacles/138.png",
     "index": 53
   },
+  "8000139": {
+    "name": "2026 Anniversary Cake",
+    "icon": "/home-base/obstacles/139.png",
+    "index": 54
+  },
   "60000004": {
     "name": "Clashy Constructs Scenery (Jun. 2020)",
     "icon": "/home-base/sceneries/4.png",
@@ -11517,27 +11522,27 @@
     "index": 159
   },
   "52000253": {
-    "name": "Prince Mysterio (Apr. 2025 GP, WWE Event (exclusive!))",
+    "name": "Prince Mysterio (Apr. 2025, (WWE GP exclusive!))",
     "icon": "/home-base/skins/253.png",
     "index": 160
   },
   "52000199": {
-    "name": "King Cody (Apr. 2025, WWE Event (exclusive!))",
+    "name": "King Cody (Apr. 2025, (WWE exclusive!))",
     "icon": "/home-base/skins/199.png",
     "index": 161
   },
   "52000179": {
-    "name": "The RoyalEST (Apr. 2025, WWE Event (exclusive!))",
+    "name": "The RoyalEST (Apr. 2025, (WWE exclusive!))",
     "icon": "/home-base/skins/179.png",
     "index": 162
   },
   "52000214": {
-    "name": "Brutality Queen (Apr. 2025, WWE Event (exclusive!))",
+    "name": "Brutality Queen (Apr. 2025, (WWE exclusive!))",
     "icon": "/home-base/skins/214.png",
     "index": 163
   },
   "52000235": {
-    "name": "Darkness Warden (Apr. 2025, WWE Event (exclusive!))",
+    "name": "Darkness Warden (Apr. 2025, (WWE exclusive!))",
     "icon": "/home-base/skins/235.png",
     "index": 164
   },
@@ -11862,7 +11867,7 @@
     "index": 228
   },
   "52000287": {
-    "name": "Skeleton King Resurrected (May 2026, Clash vs Skeletons Event (exclusive!))",
+    "name": "Skeleton King Resurrected (May 2026, Clash vs Skeletons Event exclusive!)",
     "icon": "/home-base/skins/287.png",
     "index": 229
   },
@@ -11922,7 +11927,7 @@
     "index": 240
   },
   "52000333": {
-    "name": "CWL Violet Half-Time Warden (Jun. 2026 (exclusive!))",
+    "name": "CWL Violet Half-Time Warden (Jun. 2026 (Football exclusive!))",
     "icon": "/home-base/skins/333.png",
     "index": 241
   },
@@ -11957,17 +11962,17 @@
     "index": 247
   },
   "52000321": {
-    "name": "Rosy Half-Time Queen (Jun. 2026 (exclusive!))",
+    "name": "Rosy Half-Time Queen (Jun. 2026 (Football exclusive!))",
     "icon": "/home-base/skins/321.png",
     "index": 248
   },
   "52000378": {
-    "name": "Amber Half-Time Champion (Jun. 2026 (exclusive!))",
+    "name": "Amber Half-Time Champion (Jun. 2026 (Football exclusive!))",
     "icon": "/home-base/skins/378.png",
     "index": 249
   },
   "52000293": {
-    "name": "Sapphire Half-Time King (Jun. 2026 (F2P exclusive!))",
+    "name": "Sapphire Half-Time King (Jun. 2026 (Football F2P exclusive!))",
     "icon": "/home-base/skins/293.png",
     "index": 250
   },
@@ -12041,68 +12046,68 @@
     "icon": "/home-base/skins/268.png",
     "index": 264
   },
-  "52000354": {
-    "name": "CWL League Prince (Aug. 2026)",
-    "icon": "/home-base/skins/354.png",
+  "52000355": {
+    "name": "Jey Uso Prince (Sep. 2026 (WWE2 GP exclusive!))",
+    "icon": "/home-base/skins/355.png",
     "index": 265
   },
-  "52000329": {
-    "name": "? Warden (Sep. 2026)",
-    "icon": "/home-base/skins/329.png",
+  "52000290": {
+    "name": "King Rhodes (Sep. 2026 (WWE2 exclusive!))",
+    "icon": "/home-base/skins/290.png",
     "index": 266
   },
-  "52000290": {
-    "name": "? King (Sep. 2026)",
-    "icon": "/home-base/skins/290.png",
+  "52000229": {
+    "name": "Alexa Queen (Sep. 2026 (WWE2 exclusive!))",
+    "icon": "/home-base/skins/229.png",
     "index": 267
   },
-  "52000229": {
-    "name": "? Queen (Sep. 2026)",
-    "icon": "/home-base/skins/229.png",
+  "52000379": {
+    "name": "Iyo Sky Champion (Sep. 2026 (WWE2 exclusive!))",
+    "icon": "/home-base/skins/379.png",
     "index": 268
   },
   "52000347": {
-    "name": "? Duke (Sep. 2026)",
+    "name": "Kane Duke (Sep. 2026 (WWE2 exclusive!))",
     "icon": "/home-base/skins/347.png",
     "index": 269
   },
-  "52000355": {
-    "name": "? Prince (Sep. 2026)",
-    "icon": "/home-base/skins/355.png",
-    "index": 269
-  },
-  "52000379": {
-    "name": "? Champion (Sep. 2026)",
-    "icon": "/home-base/skins/379.png",
+  "52000329": {
+    "name": "American Badass Undertaker Warden (Sep. 2026 (WWE2 exclusive!))",
+    "icon": "/home-base/skins/329.png",
     "index": 270
   },
+  "52000354": {
+    "name": "CWL League Prince (Aug. 2026)",
+    "icon": "/home-base/skins/354.png",
+    "index": 271
+  },
   "52000332": {
-    "name": "? Warden (Oct. 2026)",
+    "name": "Spider Warden (Oct. 2026)",
     "icon": "/home-base/skins/332.png",
     "index": 271
   },
   "52000368": {
-    "name": "? King (Oct. 2026)",
+    "name": "FireSkull King (Oct. 2026)",
     "icon": "/home-base/skins/368.png",
     "index": 272
   },
   "52000323": {
-    "name": "? Queen (Oct. 2026)",
+    "name": "Creepy Queen (Oct. 2026)",
     "icon": "/home-base/skins/323.png",
     "index": 273
   },
   "52000351": {
-    "name": "? Duke (Oct. 2026)",
+    "name": "Juggernaugt Duke (Oct. 2026)",
     "icon": "/home-base/skins/351.png",
     "index": 274
   },
   "52000356": {
-    "name": "? Prince (Oct. 2026)",
+    "name": "Collector Prince (Oct. 2026)",
     "icon": "/home-base/skins/356.png",
     "index": 275
   },
   "52000380": {
-    "name": "? Champion (Oct. 2026)",
+    "name": "Lich Champion (Oct. 2026)",
     "icon": "/home-base/skins/380.png",
     "index": 276
   },
