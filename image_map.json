@@ -2837,7 +2837,7 @@
         "upgrade-price2": 600000
       },
       "2": {
-        "level-icon": "/home-base/buildings/blacksmith/blacksmith-2.png",
+        "level-icon": "/home-base/buildings/blacksmith/blacksmith-1.png",
         "upgrade-price2": 1200000
       },
       "3": {
@@ -2845,7 +2845,7 @@
         "upgrade-price2": 2300000
       },
       "4": {
-        "level-icon": "/home-base/buildings/blacksmith/blacksmith-4.png",
+        "level-icon": "/home-base/buildings/blacksmith/blacksmith-3.png",
         "upgrade-price2": 3000000
       },
       "5": {
@@ -2853,7 +2853,7 @@
         "upgrade-price2": 5000000
       },
       "6": {
-        "level-icon": "/home-base/buildings/blacksmith/blacksmith-6.png",
+        "level-icon": "/home-base/buildings/blacksmith/blacksmith-3.png",
         "upgrade-price2": 6200000
       },
       "7": {
@@ -2861,7 +2861,7 @@
         "upgrade-price2": 9200000
       },
       "8": {
-        "level-icon": "/home-base/buildings/blacksmith/blacksmith-8.png",
+        "level-icon": "/home-base/buildings/blacksmith/blacksmith-7.png",
         "upgrade-price2": 10000000
       },
       "9": {
@@ -2869,7 +2869,7 @@
         "upgrade-price2": 11000000
       },
       "10": {
-        "level-icon": "/home-base/buildings/blacksmith/blacksmith-10.png",
+        "level-icon": "/home-base/buildings/blacksmith/blacksmith-9.png",
         "upgrade-price2": 18000000
       }
     }
@@ -9994,7 +9994,67 @@
   "18000222": {
     "name": "Manga Reader (Aug. 2026)",
     "icon": "/home-base/decorations/222.png",
+    "index": 100002
+  },
+  "18000237": {
+    "name": "Money in the Bank Title (Sep. 2026)",
+    "icon": "/home-base/decorations/237.png",
     "index": 161
+  },
+  "18000236": {
+    "name": "Codys Callout (Sep. 2026)",
+    "icon": "/home-base/decorations/236.png",
+    "index": 162
+  },
+  "18000239": {
+    "name": "Bro Force (Sep. 2026)",
+    "icon": "/home-base/decorations/239.png",
+    "index": 163
+  },
+  "18000246": {
+    "name": "Clash Contest (Sep. 2026)",
+    "icon": "/home-base/decorations/246.gif",
+    "index": 164
+  },
+  "18000238": {
+    "name": "Superstar Trophy (Aug. 2026)",
+    "icon": "/home-base/decorations/238.png",
+    "index": 165
+  },
+  "18000244": {
+    "name": "Amber Hot Streak (Sep. 2026)",
+    "icon": "/home-base/decorations/244.png",
+    "index": 166
+  },
+  "18000242": {
+    "name": "Emerald Hot Streak (Aug. 2026)",
+    "icon": "/home-base/decorations/242.png",
+    "index": 167
+  },
+  "18000245": {
+    "name": "Violet Hot Streak (Sep. 2026)",
+    "icon": "/home-base/decorations/245.png",
+    "index": 168
+  },
+  "18000243": {
+    "name": "Ultimate Hot Streak (Aug. 2026)",
+    "icon": "/home-base/decorations/243.png",
+    "index": 169
+  },
+  "18000250": {
+    "name": "Portal Staff (Oct. 2026)",
+    "icon": "/home-base/decorations/250.png",
+    "index": 170
+  },
+  "18000247": {
+    "name": "Coin Collector (Oct. 2026)",
+    "icon": "/home-base/decorations/247.png",
+    "index": 171
+  },
+  "18000248": {
+    "name": "Sour Elixir Fountain (Oct. 2026)",
+    "icon": "/home-base/decorations/248.png",
+    "index": 172
   },
   "8000015": {
     "name": "2012 Stone",
@@ -10266,6 +10326,11 @@
     "icon": "/home-base/obstacles/138.png",
     "index": 53
   },
+  "8000139": {
+    "name": "2026 Anniversary Cake",
+    "icon": "/home-base/obstacles/139.png",
+    "index": 54
+  },
   "60000004": {
     "name": "Clashy Constructs Scenery (Jun. 2020)",
     "icon": "/home-base/sceneries/4.png",
@@ -10528,7 +10593,7 @@
   },
   "60000072": {
     "name": "ClashaMania Scenery (Apr. 2025)",
-    "icon": "/home-base/sceneries/2.png",
+    "icon": "/home-base/sceneries/72.png",
     "index": 49
   },
   "60000073": {
@@ -11457,27 +11522,27 @@
     "index": 159
   },
   "52000253": {
-    "name": "Prince Mysterio (Apr. 2025 GP, WWE Event (exclusive!))",
+    "name": "Prince Mysterio (Apr. 2025, (WWE GP exclusive!))",
     "icon": "/home-base/skins/253.png",
     "index": 160
   },
   "52000199": {
-    "name": "King Cody (Apr. 2025, WWE Event (exclusive!))",
+    "name": "King Cody (Apr. 2025, (WWE exclusive!))",
     "icon": "/home-base/skins/199.png",
     "index": 161
   },
   "52000179": {
-    "name": "The RoyalEST (Apr. 2025, WWE Event (exclusive!))",
+    "name": "The RoyalEST (Apr. 2025, (WWE exclusive!))",
     "icon": "/home-base/skins/179.png",
     "index": 162
   },
   "52000214": {
-    "name": "Brutality Queen (Apr. 2025, WWE Event (exclusive!))",
+    "name": "Brutality Queen (Apr. 2025, (WWE exclusive!))",
     "icon": "/home-base/skins/214.png",
     "index": 163
   },
   "52000235": {
-    "name": "Darkness Warden (Apr. 2025, WWE Event (exclusive!))",
+    "name": "Darkness Warden (Apr. 2025, (WWE exclusive!))",
     "icon": "/home-base/skins/235.png",
     "index": 164
   },
@@ -11802,7 +11867,7 @@
     "index": 228
   },
   "52000287": {
-    "name": "Skeleton King Resurrected (May 2026, Clash vs Skeletons Event (exclusive!))",
+    "name": "Skeleton King Resurrected (May 2026, Clash vs Skeletons Event exclusive!)",
     "icon": "/home-base/skins/287.png",
     "index": 229
   },
@@ -11862,7 +11927,7 @@
     "index": 240
   },
   "52000333": {
-    "name": "CWL Violet Half-Time Warden (Jun. 2026 (exclusive!))",
+    "name": "CWL Violet Half-Time Warden (Jun. 2026 (Football exclusive!))",
     "icon": "/home-base/skins/333.png",
     "index": 241
   },
@@ -11897,17 +11962,17 @@
     "index": 247
   },
   "52000321": {
-    "name": "Rosy Half-Time Queen (Jun. 2026 (exclusive!))",
+    "name": "Rosy Half-Time Queen (Jun. 2026 (Football exclusive!))",
     "icon": "/home-base/skins/321.png",
     "index": 248
   },
   "52000378": {
-    "name": "Amber Half-Time Champion (Jun. 2026 (exclusive!))",
+    "name": "Amber Half-Time Champion (Jun. 2026 (Football exclusive!))",
     "icon": "/home-base/skins/378.png",
     "index": 249
   },
   "52000293": {
-    "name": "Sapphire Half-Time King (Jun. 2026 (F2P exclusive!))",
+    "name": "Sapphire Half-Time King (Jun. 2026 (Football F2P exclusive!))",
     "icon": "/home-base/skins/293.png",
     "index": 250
   },
@@ -11981,68 +12046,68 @@
     "icon": "/home-base/skins/268.png",
     "index": 264
   },
-  "52000354": {
-    "name": "CWL League Prince (Aug. 2026)",
-    "icon": "/home-base/skins/354.png",
+  "52000355": {
+    "name": "Jey Uso Prince (Sep. 2026 (WWE2 GP exclusive!))",
+    "icon": "/home-base/skins/355.png",
     "index": 265
   },
-  "52000329": {
-    "name": "? Warden (Sep. 2026)",
-    "icon": "/home-base/skins/329.png",
+  "52000290": {
+    "name": "King Rhodes (Sep. 2026 (WWE2 exclusive!))",
+    "icon": "/home-base/skins/290.png",
     "index": 266
   },
-  "52000290": {
-    "name": "? King (Sep. 2026)",
-    "icon": "/home-base/skins/290.png",
+  "52000229": {
+    "name": "Alexa Queen (Sep. 2026 (WWE2 exclusive!))",
+    "icon": "/home-base/skins/229.png",
     "index": 267
   },
-  "52000229": {
-    "name": "? Queen (Sep. 2026)",
-    "icon": "/home-base/skins/229.png",
+  "52000379": {
+    "name": "Iyo Sky Champion (Sep. 2026 (WWE2 exclusive!))",
+    "icon": "/home-base/skins/379.png",
     "index": 268
   },
   "52000347": {
-    "name": "? Duke (Sep. 2026)",
+    "name": "Kane Duke (Sep. 2026 (WWE2 exclusive!))",
     "icon": "/home-base/skins/347.png",
     "index": 269
   },
-  "52000355": {
-    "name": "? Prince (Sep. 2026)",
-    "icon": "/home-base/skins/355.png",
-    "index": 269
-  },
-  "52000379": {
-    "name": "? Champion (Sep. 2026)",
-    "icon": "/home-base/skins/379.png",
+  "52000329": {
+    "name": "American Badass Undertaker Warden (Sep. 2026 (WWE2 exclusive!))",
+    "icon": "/home-base/skins/329.png",
     "index": 270
   },
+  "52000354": {
+    "name": "CWL League Prince (Aug. 2026)",
+    "icon": "/home-base/skins/354.png",
+    "index": 271
+  },
   "52000332": {
-    "name": "? Warden (Oct. 2026)",
+    "name": "Spider Warden (Oct. 2026)",
     "icon": "/home-base/skins/332.png",
     "index": 271
   },
   "52000368": {
-    "name": "? King (Oct. 2026)",
+    "name": "FireSkull King (Oct. 2026)",
     "icon": "/home-base/skins/368.png",
     "index": 272
   },
   "52000323": {
-    "name": "? Queen (Oct. 2026)",
+    "name": "Creepy Queen (Oct. 2026)",
     "icon": "/home-base/skins/323.png",
     "index": 273
   },
   "52000351": {
-    "name": "? Duke (Oct. 2026)",
+    "name": "Juggernaugt Duke (Oct. 2026)",
     "icon": "/home-base/skins/351.png",
     "index": 274
   },
   "52000356": {
-    "name": "? Prince (Oct. 2026)",
+    "name": "Collector Prince (Oct. 2026)",
     "icon": "/home-base/skins/356.png",
     "index": 275
   },
   "52000380": {
-    "name": "? Champion (Oct. 2026)",
+    "name": "Lich Champion (Oct. 2026)",
     "icon": "/home-base/skins/380.png",
     "index": 276
   },
@@ -12785,6 +12850,26 @@
     "name": "Awesome Roof",
     "icon": "/home-base/clancapital/161.png",
     "index": 135
+  },
+  "82000163": {
+    "name": "WWE 2026 Walls",
+    "icon": "/home-base/clancapital/163.png",
+    "index": 136
+  },
+  "82000164": {
+    "name": "WWE 2026 Ground",
+    "icon": "/home-base/clancapital/164.png",
+    "index": 137
+  },
+  "82000165": {
+    "name": "Cosmic Roof",
+    "icon": "/home-base/clancapital/165.png",
+    "index": 138
+  },
+  "82000162": {
+    "name": "Cosmic Deco",
+    "icon": "/home-base/clancapital/162.png",
+    "index": 139
   },
   "4000026": {
     "name": "Super Barbarian",
