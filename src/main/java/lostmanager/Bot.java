@@ -455,7 +455,8 @@ public class Bot extends ListenerAdapter {
 													.addOptions(new OptionData(OptionType.STRING, "status",
 															"Filtere danach, ob das Event ansteht (optional)", false)
 															.addChoices(new Command.Choice("Geplant", "scheduled"),
-																	new Command.Choice("Bereits gefeuert", "fired"),
+																	new Command.Choice("Feuerzeit vorbei", "fired"),
+																	new Command.Choice("Verpasst", "missed"),
 																	new Command.Choice("Wartet auf Event",
 																			"waiting"))),
 											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("remove",
@@ -872,7 +873,7 @@ public class Bot extends ListenerAdapter {
 	 * @param maxRetries Maximum number of retry attempts
 	 */
 	@SuppressWarnings("BusyWait")
-	private static void executeEventWithRetry(ListeningEvent le, Long eventId, int maxRetries) {
+	private static String executeEventWithRetry(ListeningEvent le, Long eventId, int maxRetries) {
 		int attempt = 0;
 		boolean success = false;
 
@@ -884,7 +885,7 @@ public class Bot extends ListenerAdapter {
 				// Validate that the event should still fire
 				if (!shouldEventFire(le)) {
 					System.out.println("Event " + eventId + " validation failed - conditions no longer met, skipping");
-					return;
+					return ListeningEvent.RESULT_CONDITION_GONE;
 				}
 
 				// Execute the event
@@ -907,7 +908,7 @@ public class Bot extends ListenerAdapter {
 					} catch (InterruptedException ie) {
 						Thread.currentThread().interrupt();
 						System.err.println("Event " + eventId + " retry interrupted");
-						return;
+						return ListeningEvent.RESULT_ERROR;
 					}
 				} else {
 					System.err.println("Event " + eventId + " failed after " + (maxRetries + 1) + " attempts");
@@ -915,6 +916,63 @@ public class Bot extends ListenerAdapter {
 			}
 			attempt++;
 		}
+		return success ? ListeningEvent.RESULT_FIRED : ListeningEvent.RESULT_ERROR;
+	}
+
+	/**
+	 * Runs an event and records what came of it, so the list command can tell a
+	 * firing that delivered from one that ran and found nothing worth posting from
+	 * one that never happened at all.
+	 *
+	 * @param le         the event
+	 * @param fireTarget the calculated fire time this run belongs to
+	 */
+	private static void runAndRecord(ListeningEvent le, long fireTarget) {
+		// Claim the fire time before doing the work. A CWL day handler takes the better
+		// part of a minute, and the claim is what stops a poll cycle that starts in the
+		// meantime from scheduling the same firing a second time - which for a kickpoint
+		// event would mean punishing people twice.
+		try {
+			le.markFired(fireTarget, ListeningEvent.RESULT_RUNNING);
+		} catch (final Exception e) {
+			System.err.println("Could not claim event " + le.getId() + ": " + e.getMessage());
+		}
+
+		String result = ListeningEvent.RESULT_ERROR;
+		try {
+			result = executeEventWithRetry(le, le.getId(), 3);
+		} catch (final Exception e) {
+			System.err.println("Error executing event " + le.getId() + ": " + e.getMessage());
+		} finally {
+			try {
+				le.markFireResult(result);
+			} catch (final Exception e) {
+				System.err.println("Could not record firing of event " + le.getId() + ": " + e.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Two calculated fire times this close together are the same firing occasion,
+	 * only re-read after the CoC API nudged a war end time. Consecutive occasions of
+	 * one event are a CWL day, a war or a raid weekend apart, so six hours separates
+	 * the two cases with room to spare.
+	 */
+	private static final long SAME_OCCASION_TOLERANCE = 6 * 60 * 60 * 1000L;
+
+	/**
+	 * How late an event may be and still be worth firing. A reminder is bounded by
+	 * its own lead time - a "15 minutes left" ping half an hour late would be about
+	 * a war that is already over - and nothing waits longer than half an hour.
+	 *
+	 * The old code used a flat five minutes and, worse, remembered the event as
+	 * handled once it fell past that, so a single slow or API-throttled poll cycle
+	 * dropped the reminder for good without printing anything.
+	 */
+	private static long latenessToleranceFor(ListeningEvent le) {
+		long cap = 30 * 60 * 1000L;
+		long duration = le.getDurationUntilEnd();
+		return duration > 0 ? Math.min(cap, duration) : cap;
 	}
 
 	/**
@@ -1020,6 +1078,10 @@ public class Bot extends ListenerAdapter {
 				String sql = "SELECT id FROM listening_events";
 				ArrayList<Long> ids = DBUtil.getArrayListFromSQL(sql, Long.class);
 
+				// Fresh every cycle: shared within a cycle to save requests, thrown away
+				// afterwards so no event is ever scheduled off stale war data.
+				final java.util.Map<String, lostmanager.datawrapper.Clan> clanCache = new java.util.HashMap<>();
+
 				long currentTime = System.currentTimeMillis();
 				long schedulingThreshold = 5 * 60 * 1000; // 5 minutes in milliseconds
 				long cleanupThreshold = 60 * 60 * 1000; // 1 hour - events scheduled this long ago can be cleaned up
@@ -1061,10 +1123,18 @@ public class Bot extends ListenerAdapter {
 							continue; // Don't process start triggers as regular time-based events yet
 						}
 
-						// Skip if already scheduled (only for non-start events)
+						// Skip if already handed to the scheduler in this run
 						if (scheduledEvents.contains(id)) {
 							continue;
 						}
+
+						// Share one Clan per tag for the whole cycle. Clan memoises its API
+						// lookups, so this turns "one league group request plus a full war tag
+						// scan per event" into "per clan" - with 65 CWL events across 17 clans
+						// that is the difference between a cycle that fits in its two minute
+						// period and one that does not.
+						le.withCachedClan(clanCache.computeIfAbsent(le.getClanTag(),
+								lostmanager.datawrapper.Clan::new));
 
 						// For regular time-based events, check timestamp
 						Long timestamp = le.getTimestamp();
@@ -1074,45 +1144,50 @@ public class Bot extends ListenerAdapter {
 							continue;
 						}
 
+						// Already dealt with for this firing occasion? Compared with a wide
+						// tolerance because the CoC API shifts war end times by minutes while a
+						// war runs, while two consecutive occasions of the same event are a day
+						// or more apart. This lives in the database rather than in memory so a
+						// restart cannot replay a reminder that already went out.
+						Long lastTarget = le.getLastFireTarget();
+						if (lastTarget != null && Math.abs(lastTarget - timestamp) < SAME_OCCASION_TOLERANCE) {
+							continue;
+						}
+
 						// Use fresh current time for calculation to avoid processing delays
 						long timeUntilFire = timestamp - System.currentTimeMillis();
 
-						// If event is within threshold and not yet scheduled, schedule it
-						if (timeUntilFire <= schedulingThreshold && timeUntilFire > 0) {
-							System.out.println("Scheduling event " + id + " to fire in " + (timeUntilFire / 1000 / 60)
-									+ " minutes");
+						if (timeUntilFire > schedulingThreshold) {
+							continue; // not due yet, a later cycle will pick it up
+						}
+
+						if (timeUntilFire > 0) {
+							System.out.println(
+									"Scheduling event " + id + " to fire in " + (timeUntilFire / 1000) + " seconds");
 							scheduledEvents.add(id);
 							scheduledEventTimestamps.put(id, timestamp);
-							schedulertasks.schedule(() -> {
-								try {
-									executeEventWithRetry(le, id, 3);
-									// Keep in scheduled set to prevent re-scheduling
-									// Event will be removed when conditions change (new war, etc.)
-								} catch (final Exception e) {
-									System.err.println("Error executing event " + id + ": " + e.getMessage());
-									System.out.println(e.getMessage());
-									// Keep in set even on error to prevent retry loops
-								}
-							}, timeUntilFire, TimeUnit.MILLISECONDS);
-						} else if (timeUntilFire <= 0 && timeUntilFire > -5 * 60 * 1000) {
-							// Event is overdue but very recently (e.g. within 5 mins)
-							// This can happen if the polling loop was slow or the bot just started
-							System.out.println("Firing recently overdue event " + id + " immediately");
-							scheduledEvents.add(id);
-							scheduledEventTimestamps.put(id, timestamp);
-							schedulertasks.execute(() -> {
-								try {
-									executeEventWithRetry(le, id, 3);
-								} catch (final Exception e) {
-									System.err.println("Error executing overdue event " + id + ": " + e.getMessage());
-								}
-							});
-						} else if (timeUntilFire <= -5 * 60 * 1000) {
-							// Event is overdue - skip it instead of firing to prevent duplicate triggers
-							// after restart
-							// Mark as scheduled so we don't keep trying to process it
-							scheduledEvents.add(id);
-							scheduledEventTimestamps.put(id, timestamp);
+							schedulertasks.schedule(() -> runAndRecord(le, timestamp), timeUntilFire,
+									TimeUnit.MILLISECONDS);
+						} else {
+							long lateBy = -timeUntilFire;
+							long tolerance = latenessToleranceFor(le);
+							if (lateBy <= tolerance) {
+								System.out.println("Firing overdue event " + id + " immediately ("
+										+ (lateBy / 1000 / 60) + " min late)");
+								scheduledEvents.add(id);
+								scheduledEventTimestamps.put(id, timestamp);
+								schedulertasks.execute(() -> runAndRecord(le, timestamp));
+							} else {
+								// This is the case that used to disappear without a trace: too
+								// late to be useful, so still not fired - but now said out loud
+								// and written down, so the list command can show it.
+								System.err.println("Skipping event " + id + " (" + le.getListeningType() + ", clan "
+										+ le.getClanTag() + "): fire time missed by " + (lateBy / 1000 / 60)
+										+ " minutes, tolerance is " + (tolerance / 1000 / 60) + " minutes");
+								scheduledEvents.add(id);
+								scheduledEventTimestamps.put(id, timestamp);
+								le.markFired(timestamp, ListeningEvent.RESULT_LATE_SKIPPED);
+							}
 						}
 					} catch (final Exception e) {
 						System.err.println("Error processing event " + id + ": " + e.getMessage());
@@ -1127,13 +1202,19 @@ public class Bot extends ListenerAdapter {
 					java.util.List<Long> eventIds = entry.getValue();
 
 					try {
-						lostmanager.datawrapper.Clan clan = new lostmanager.datawrapper.Clan(clanTag);
+						lostmanager.datawrapper.Clan clan = clanCache.computeIfAbsent(clanTag,
+								lostmanager.datawrapper.Clan::new);
 
 						// Get last known state (only once per clan)
 						String lastState = getCWLastState(clanTag);
 
 						// Get current state (only once per clan)
 						org.json.JSONObject cwJson = clan.getCWJson();
+						if (cwJson == null) {
+							System.err.println("No war state for clan " + clanTag + " this cycle, skipping its "
+									+ eventIds.size() + " start event(s)");
+							continue;
+						}
 						String currentState = cwJson.getString("state");
 
 						// Check if war just started (only once per clan)
@@ -1189,8 +1270,11 @@ public class Bot extends ListenerAdapter {
 										+ previousState + " to notInWar");
 							}
 						}
-					} catch (final org.json.JSONException e) {
-						System.err.println("Error checking war state for clan " + clanTag + ": " + e.getMessage());
+					} catch (final Exception e) {
+						// Was JSONException only, so a null war response threw an NPE straight
+						// past this handler and aborted the whole poll cycle - every event not
+						// yet reached that round simply never got looked at.
+						System.err.println("Error checking war state for clan " + clanTag + ": " + e);
 					}
 				}
 
@@ -1229,14 +1313,20 @@ public class Bot extends ListenerAdapter {
 
 				if (clan.isCWActive()) {
 					org.json.JSONObject cwJson = clan.getCWJson();
-					currentState = cwJson.getString("state");
+					// getCWJson returns null when the API call fails outright. Reading
+					// through it threw an NPE past the JSONException handler below and out
+					// of startEventPolling, which would have left the bot with no event
+					// polling at all until the next restart.
+					if (cwJson != null) {
+						currentState = cwJson.optString("state", currentState);
+					}
 				}
 
 				// Initialize last state to current state
 				setCWLastState(clanTag, currentState);
 				System.out.println("Initialized CW state for clan " + clanTag + ": " + currentState);
-			} catch (final org.json.JSONException e) {
-				System.err.println("Error initializing CW state for clan " + clanTag + ": " + e.getMessage());
+			} catch (final Exception e) {
+				System.err.println("Error initializing CW state for clan " + clanTag + ": " + e);
 			}
 		}
 	}
@@ -1349,6 +1439,9 @@ public class Bot extends ListenerAdapter {
 					}
 
 					org.json.JSONObject cwJson = clan.getCWJson();
+					if (cwJson == null) {
+						continue; // API call failed, nothing to judge the lineup by
+					}
 					String state = cwJson.optString("state", "");
 					// Before battle day the lineup can still change
 					if (!state.equals("inWar") && !state.equals("warEnded")) {
