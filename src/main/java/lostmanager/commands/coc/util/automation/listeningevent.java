@@ -153,7 +153,21 @@ public class listeningevent extends ListenerAdapter {
 			return;
 		}
 
-		String clantag = clanOption.getAsString();
+		// The clan option is a free text field with autocomplete, and Discord submits
+		// whatever was typed when the user does not pick a suggestion. Storing that
+		// verbatim is how "2R8V8LYV9" (no #), "LOST 4 (#2LU2V2LPU)" (the autocomplete
+		// label) and plain "Lost" ended up in the database as clan tags - each one an
+		// event that could never fire, and none of them said so anywhere.
+		String rawClantag = clanOption.getAsString();
+		String clantag = lostmanager.util.ClanTag.parse(rawClantag);
+		if (clantag == null) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title,
+					"'" + rawClantag + "' ist kein gültiger Clan-Tag.\n"
+							+ "Wähle den Clan aus der Autocomplete-Liste aus oder gib den Tag direkt an, z.B. `#2LU2V2LPU`.",
+					MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+
 		String type = typeOption.getAsString();
 		String durationStr = durationOption.getAsString();
 		String actionTypeStr = actionTypeOption.getAsString();
@@ -739,8 +753,13 @@ public class listeningevent extends ListenerAdapter {
 	private enum FireState {
 		/** Has a fire time in the future. */
 		SCHEDULED("Geplant"),
-		/** Its fire time has passed. */
-		FIRED("Bereits gefeuert"),
+		/**
+		 * Its fire time has passed. Says nothing about whether the event actually ran -
+		 * the "Zuletzt gelaufen" line below it does.
+		 */
+		FIRED("Feuerzeit vorbei"),
+		/** Fire time passed without the event running, and it is too late to catch up. */
+		MISSED("Verpasst"),
 		/** Has no fire time because the clan event it listens for is not running. */
 		WAITING("Wartet auf Event");
 
@@ -848,10 +867,20 @@ public class listeningevent extends ListenerAdapter {
 				continue;
 			}
 
-			Clan clan = new Clan(le.getClanTag());
+			String eventClanTag = le.getClanTag();
+			Clan clan = new Clan(eventClanTag);
 			StringBuilder entry = new StringBuilder();
 			entry.append("**ID:** ").append(id).append("\n");
-			entry.append("**Clan:** ").append(clan.getNameDB()).append(" (").append(le.getClanTag()).append(")\n");
+
+			// Side clans live in their own table, so getNameDB alone printed "Clan: null"
+			// for every CWL clan. A tag that is not even tag shaped is called out here
+			// rather than left to fail silently forever in the poller.
+			String clanName = clan.getDisplayName();
+			entry.append("**Clan:** ").append(clanName != null ? clanName + " (" + eventClanTag + ")" : eventClanTag);
+			if (!lostmanager.util.ClanTag.isValid(eventClanTag)) {
+				entry.append(" ⚠️ **ungültiger Clan-Tag - dieses Event kann nie feuern**");
+			}
+			entry.append("\n");
 
 			// Handle null listening type gracefully
 			if (listeningType == null) {
@@ -879,7 +908,8 @@ public class listeningevent extends ListenerAdapter {
 
 			entry.append("**Channel:** <#").append(le.getChannelID()).append(">\n");
 			entry.append("**Status:** ").append(fire.state().getLabel()).append("\n");
-			entry.append("**Feuert in:** ").append(fire.text()).append("\n\n");
+			entry.append("**Feuert in:** ").append(fire.text()).append("\n");
+			entry.append("**Zuletzt gelaufen:** ").append(describeLastRun(le)).append("\n\n");
 			entries.add(entry.toString());
 		}
 
@@ -927,6 +957,56 @@ public class listeningevent extends ListenerAdapter {
 				.queue();
 	}
 
+	/** Day and time in the format the rest of the bot's embeds use. */
+	private static final java.time.format.DateTimeFormatter RUN_TIME_FORMAT = java.time.format.DateTimeFormatter
+			.ofPattern("dd.MM.yyyy, HH:mm").withZone(java.time.ZoneId.of("Europe/Berlin"));
+
+	/**
+	 * What actually became of the last firing.
+	 *
+	 * The list used to derive everything from the calculated fire time alone, so an
+	 * event the poller had quietly dropped was indistinguishable from one that had
+	 * delivered - the question "it says it fired, so why is the channel empty?" had
+	 * no answer anywhere in the bot. The poller now records every decision and the
+	 * send helpers record every delivery, and this turns the two into one line.
+	 */
+	private String describeLastRun(ListeningEvent le) {
+		Long firedAt = le.getLastFiredAt();
+		if (firedAt == null) {
+			return "noch nie";
+		}
+
+		String when = RUN_TIME_FORMAT.format(java.time.Instant.ofEpochMilli(firedAt));
+		String result = le.getLastFireResult();
+
+		if (ListeningEvent.RESULT_LATE_SKIPPED.equals(result)) {
+			return when + " - **ausgelassen**, Feuerzeit war zu lange her";
+		}
+		if (ListeningEvent.RESULT_CONDITION_GONE.equals(result)) {
+			return when + " - nicht ausgeführt, das Clan-Event lief nicht mehr";
+		}
+		if (ListeningEvent.RESULT_ERROR.equals(result)) {
+			return when + " - **fehlgeschlagen**, siehe Bot-Log";
+		}
+		if (ListeningEvent.RESULT_RUNNING.equals(result)) {
+			return when + " - läuft gerade";
+		}
+		if (ListeningEvent.RESULT_PRE_DEPLOY.equals(result)) {
+			return "vor der Umstellung - kein Protokoll, ab dem nächsten Mal wird mitgeschrieben";
+		}
+
+		// Ran normally: did anything actually reach the channel? A reminder with
+		// nothing to remind about sends nothing, and that is a legitimate outcome
+		// worth telling apart from a failure.
+		// last_fired_at stays at the moment the run was claimed, so anything posted at
+		// or after it belongs to that run.
+		Long messageAt = le.getLastMessageAt();
+		if (messageAt != null && messageAt >= firedAt) {
+			return when + " - Nachricht gesendet";
+		}
+		return when + " - gelaufen, aber nichts zu melden (keine Nachricht gesendet)";
+	}
+
 	/**
 	 * Builds the "Feuert in" line of an event together with the state it is in.
 	 *
@@ -965,7 +1045,17 @@ public class listeningevent extends ListenerAdapter {
 			}
 		}
 
-		return new FireInfo(FireState.FIRED, "Event bereits gefeuert vor " + minutesSinceFire + " Minuten");
+		// The poller writes down when it gives up on a fire time it can no longer
+		// usefully catch up on. Wide tolerance on the comparison because the CoC API
+		// nudges war end times by minutes while a war runs.
+		String lastResult = le.getLastFireResult();
+		Long lastTarget = le.getLastFireTarget();
+		if (ListeningEvent.RESULT_LATE_SKIPPED.equals(lastResult) && lastTarget != null
+				&& Math.abs(lastTarget - timestamp) < 6 * 60 * 60 * 1000L) {
+			return new FireInfo(FireState.MISSED, "Feuerzeit vor " + minutesSinceFire + " Minuten verpasst");
+		}
+
+		return new FireInfo(FireState.FIRED, "Feuerzeit war vor " + minutesSinceFire + " Minuten");
 	}
 
 	private void handleRemove(SlashCommandInteractionEvent event, String title) {

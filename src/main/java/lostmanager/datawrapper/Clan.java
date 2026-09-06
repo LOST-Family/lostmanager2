@@ -78,7 +78,13 @@ public class Clan {
 	}
 
 	public Clan(String clantag) {
-		clan_tag = clantag;
+		// Tags reach this constructor from the API, from the database and straight from
+		// user input. Normalising here means a tag that is merely missing its "#" no
+		// longer 404s on every single API call. Anything that is not tag shaped is kept
+		// verbatim so rows with a broken tag keep behaving exactly as before instead of
+		// silently resolving to some other clan.
+		String normalized = lostmanager.util.ClanTag.normalize(clantag);
+		clan_tag = lostmanager.util.ClanTag.isValid(normalized) ? normalized : clantag;
 	}
 
 	public Clan refreshData() {
@@ -174,6 +180,25 @@ public class Clan {
 
 	public String getInfoString() {
 		return getNameAPI() + " (" + clan_tag + ")";
+	}
+
+	/**
+	 * Display name from whichever table knows this clan, without touching the API.
+	 *
+	 * {@link #getNameDB()} only reads the main clan table, which holds the ten real
+	 * clans. Every CWL side clan lives in {@code sideclans} instead, so anything
+	 * printing a side clan through getNameDB alone showed a literal "null".
+	 *
+	 * @return the clan name, or null if neither table knows the tag.
+	 */
+	public String getDisplayName() {
+		String name = getNameDB();
+		if (name != null && !name.isBlank()) {
+			return name;
+		}
+		String sideName = DBUtil.getValueFromSQL("SELECT name FROM sideclans WHERE clan_tag = ?", String.class,
+				clan_tag);
+		return sideName != null && !sideName.isBlank() ? sideName : null;
 	}
 
 	public String getNameDB() {
@@ -418,6 +443,14 @@ public class Clan {
 
 						try {
 							JSONObject warData = getCWLDayJson(warTag);
+
+							// A failed fetch comes back as {"state":"warNotFound"}. Reading
+							// through it produced a second, misleading log line per timeout
+							// ("JSONObject[\"clan\"] not found") that read like malformed API
+							// data rather than a request that never arrived.
+							if (warData == null || !warData.has("clan") || !warData.has("opponent")) {
+								continue;
+							}
 
 							// Check if this war involves our clan (could be in "clan" or "opponent" field)
 							JSONObject clanData = warData.getJSONObject("clan");
@@ -915,6 +948,15 @@ public class Clan {
 		return getRaidJson();
 	}
 
+	/**
+	 * Fetches one CWL war.
+	 *
+	 * This was the only CoC call in the class without retries: one timeout and the
+	 * war was written off. That matters more here than anywhere else, because the
+	 * caller scans round by round for its own clan's war - lose the one request that
+	 * would have matched and the whole CWL day end time comes back null, which the
+	 * event poller reads as "no CWL running" and skips the reminder in silence.
+	 */
 	public static JSONObject getCWLDayJson(String warTag) {
 		String json;
 
@@ -926,10 +968,39 @@ public class Clan {
 				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
 
 		HttpResponse<String> response = null;
-		try {
-			response = Bot.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-		} catch (IOException | InterruptedException e) {
-			System.err.println("Warning: Failed to fetch CWL war data for " + warTag + ": " + e.getMessage());
+		// Exactly one retry. The poll cycle walks a lot of these in a row, so the cost
+		// of a failure is bounded at roughly two timeouts rather than three or more -
+		// and in practice the second attempt is the one that lands.
+		final int maxRetries = 1;
+		for (int attempt = 0; attempt <= maxRetries; attempt++) {
+			try {
+				response = Bot.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+				// 4xx other than throttling is a real answer - retrying cannot change it
+				if (response.statusCode() == 200
+						|| (response.statusCode() >= 400 && response.statusCode() < 500
+								&& response.statusCode() != 429)) {
+					break;
+				}
+			} catch (IOException | InterruptedException e) {
+				response = null;
+				if (e instanceof InterruptedException) {
+					Thread.currentThread().interrupt();
+					System.err.println("Warning: CWL war fetch for " + warTag + " interrupted");
+					break;
+				}
+				if (attempt == maxRetries) {
+					System.err.println("Warning: Failed to fetch CWL war data for " + warTag + " after "
+							+ (maxRetries + 1) + " attempts: " + e.getMessage());
+				}
+			}
+			if (attempt < maxRetries) {
+				try {
+					TimeUnit.MILLISECONDS.sleep(1000L << attempt); // 1s, 2s
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
+					break;
+				}
+			}
 		}
 
 		if (response != null && response.statusCode() == 200) {

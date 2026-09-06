@@ -72,6 +72,20 @@ public class ListeningEvent {
 
 	private Long timestamptofire;
 
+	/**
+	 * Clan instance used only to work out {@link #getTimestamp()}. The poller hands
+	 * every event of the same clan the same instance so the war and CWL lookups
+	 * behind it happen once per poll cycle instead of once per event - sixty five
+	 * CWL events across seventeen clans meant sixty five league group requests plus
+	 * a full war tag scan each, which is what pushed a cycle well past its two
+	 * minute period.
+	 *
+	 * Deliberately not used by {@link #fireEvent()}: a message must be built from
+	 * war data fetched at firing time, otherwise a member who attacked while the
+	 * event sat in the scheduler would still be reported as missing.
+	 */
+	private Clan cachedClan;
+
 	public ListeningEvent refreshData() {
 		clan_tag = null;
 		listeningtype = null;
@@ -80,6 +94,16 @@ public class ListeningEvent {
 		channelid = null;
 		actionvalues = null;
 		timestamptofire = null;
+		cachedClan = null;
+		return this;
+	}
+
+	/**
+	 * Share an already fetched {@link Clan} for the timestamp calculation. Only
+	 * safe for callers that resolve all events of one clan in one go.
+	 */
+	public ListeningEvent withCachedClan(Clan clan) {
+		this.cachedClan = clan;
 		return this;
 	}
 
@@ -256,7 +280,7 @@ public class ListeningEvent {
 				return Long.MAX_VALUE;
 			}
 
-			Clan c = new Clan(getClanTag());
+			Clan c = cachedClan != null ? cachedClan : new Clan(getClanTag());
 			Long endTimeMillis;
 			switch (type) {
 				case CS -> {
@@ -278,9 +302,17 @@ public class ListeningEvent {
                                     }
                         }
 				case RAID -> {
-                                    endTimeMillis = c.getRaidEndTimeMillis();
-                                    if (endTimeMillis != null) {
-                                        timestamptofire = endTimeMillis - getDurationUntilEnd();
+                                    // Only while a raid is actually running. RaidActive() records the end
+                                    // time of the most recent raid season whatever its state, so once the
+                                    // weekend is over getRaidEndTimeMillis keeps handing back last
+                                    // weekend's end - which reads as an event days overdue rather than one
+                                    // waiting for the next raid. CW and CWL already gate their end times
+                                    // this way; raid was the one that did not.
+                                    if (c.RaidActive()) {
+                                        endTimeMillis = c.getRaidEndTimeMillis();
+                                        if (endTimeMillis != null) {
+                                            timestamptofire = endTimeMillis - getDurationUntilEnd();
+                                        }
                                     }
                         }
 				case SEASONEND -> {
@@ -302,6 +334,91 @@ public class ListeningEvent {
 			}
 		}
 		return timestamptofire;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Firing bookkeeping
+	//
+	// The list command used to derive "already fired" purely from the calculated
+	// fire time being in the past, which says nothing about whether the handler ran
+	// or whether anything was ever posted. Nothing was recorded, so an event that
+	// the poller silently dropped looked exactly like one that had delivered. These
+	// four columns close that gap and double as the deduplication key that lets the
+	// poller catch up on a late event without risking a second firing.
+	// ---------------------------------------------------------------------------
+
+	/** Claimed by the poller and currently executing. */
+	public static final String RESULT_RUNNING = "running";
+	/** The handler ran and was allowed to do its work. */
+	public static final String RESULT_FIRED = "fired";
+	/** Fire time was missed by more than the event tolerates; deliberately not run. */
+	public static final String RESULT_LATE_SKIPPED = "late_skipped";
+	/** Handler ran but the clan event it reports on was no longer running. */
+	public static final String RESULT_CONDITION_GONE = "condition_gone";
+	/** Handler threw on every attempt. */
+	public static final String RESULT_ERROR = "error";
+	/**
+	 * Backfilled when this bookkeeping was introduced: the fire time had already
+	 * passed under the previous version, which kept no record of what it had sent.
+	 * Written once so the wider catch-up window could not repost reminders that had
+	 * already gone out.
+	 */
+	public static final String RESULT_PRE_DEPLOY = "pre_deploy";
+
+	/** The fire time the event was last acted on for, in epoch millis. */
+	public Long getLastFireTarget() {
+		return DBUtil.getValueFromSQL("SELECT last_fire_target FROM listening_events WHERE id = ?", Long.class, id);
+	}
+
+	/** When the event was last acted on, in epoch millis. */
+	public Long getLastFiredAt() {
+		return DBUtil.getValueFromSQL("SELECT last_fired_at FROM listening_events WHERE id = ?", Long.class, id);
+	}
+
+	/** One of the {@code RESULT_*} constants, or null if the event never ran. */
+	public String getLastFireResult() {
+		return DBUtil.getValueFromSQL("SELECT last_fire_result FROM listening_events WHERE id = ?", String.class, id);
+	}
+
+	/** When this event last actually posted something, in epoch millis. */
+	public Long getLastMessageAt() {
+		return DBUtil.getValueFromSQL("SELECT last_message_at FROM listening_events WHERE id = ?", Long.class, id);
+	}
+
+	/**
+	 * Record that the event was dealt with for a given fire time.
+	 *
+	 * @param fireTarget the calculated fire time this decision belongs to
+	 * @param result     one of the {@code RESULT_*} constants
+	 */
+	public void markFired(long fireTarget, String result) {
+		DBUtil.executeUpdate(
+				"UPDATE listening_events SET last_fire_target = ?, last_fired_at = ?, last_fire_result = ? WHERE id = ?",
+				fireTarget, System.currentTimeMillis(), result, id);
+	}
+
+	/**
+	 * Update only the outcome of a run that {@link #markFired} already claimed.
+	 * Leaving {@code last_fired_at} at the moment the run started is what lets the
+	 * list command tell whether a message that went out belongs to that run.
+	 */
+	public void markFireResult(String result) {
+		DBUtil.executeUpdate("UPDATE listening_events SET last_fire_result = ? WHERE id = ?", result, id);
+	}
+
+	/**
+	 * Record that something was actually posted to the channel. Called from the send
+	 * helpers so every path is covered, including the handlers that decide mid-way
+	 * that there is nothing worth reporting and post nothing at all.
+	 */
+	private void markMessageSent() {
+		try {
+			DBUtil.executeUpdate("UPDATE listening_events SET last_message_at = ? WHERE id = ?",
+					System.currentTimeMillis(), id);
+		} catch (final Exception e) {
+			// Bookkeeping must never break the delivery it is recording
+			System.err.println("Could not record message timestamp for event " + id + ": " + e.getMessage());
+		}
 	}
 
 	public void fireEvent() {
@@ -948,6 +1065,13 @@ public class ListeningEvent {
 		}
 
 		org.json.JSONObject cwJson = clan.getCWJson();
+		if (cwJson == null) {
+			// isCWActive() already said there is a war, so a null here is the API
+			// failing, not the absence of a war. Throwing puts it back into the retry
+			// loop instead of quietly returning as if the event had been handled.
+			throw new IllegalStateException(
+					"No clan war data for " + clan.getTag() + " while firing event " + getId());
+		}
 		String state = cwJson.getString("state");
 
 		if (getActionType() == ACTIONTYPE.STARFAILS || getActionType() == ACTIONTYPE.STARFAILS_KICKPOINT) {
@@ -1275,6 +1399,16 @@ public class ListeningEvent {
 			// Fetch fresh clan war data
 			Clan clan = new Clan(clanTag);
 			org.json.JSONObject cwJson = clan.getCWJson();
+			if (cwJson == null) {
+				// No fresh data to verify against. Say so on the message and hand out
+				// nothing - reading through the null used to throw an NPE that ended this
+				// task without a word and left the message unverified forever.
+				System.err.println("CW verification for clan " + clanTag
+						+ " could not fetch war data, leaving the original message in place");
+				editMessageInChannel(channelId, messageId, originalMessage
+						+ "\n\n*Daten konnten nach 5min nicht überprüft werden (API nicht erreichbar)*");
+				return;
+			}
 			String currentState = cwJson.getString("state");
 
 			// Check if war data is still available (state is notInWar or warEnded)
@@ -1486,7 +1620,9 @@ public class ListeningEvent {
 				MessageChannelUnion channel = MessageUtil.getChannelById(channelId);
 				if (channel != null) {
 					// Use complete() instead of queue() to get the message synchronously
-					return channel.sendMessage(message).complete();
+					Message sent = channel.sendMessage(message).complete();
+					markMessageSent();
+					return sent;
 				}
 			} catch (Exception e) {
 				System.err.println("Failed to send message to channel " + channelId + ": " + e.getMessage());
@@ -2807,6 +2943,7 @@ public class ListeningEvent {
 				MessageChannelUnion channel = MessageUtil.getChannelById(channelId);
 				if (channel != null) {
 					channel.sendMessage(message).queue();
+					markMessageSent();
 				}
 			} catch (Exception e) {
 				System.err.println("Failed to send message to channel " + channelId + ": " + e.getMessage());
@@ -2817,6 +2954,10 @@ public class ListeningEvent {
 	@SuppressWarnings("null")
 	private void sendMessageInChunks(String message) {
 		String channelId = getChannelID();
+		if (message == null || message.isEmpty()) {
+			// Nothing goes out, so nothing may be recorded as delivered
+			return;
+		}
 		if (channelId != null && !channelId.isEmpty()) {
 			try {
 				MessageChannelUnion channel = MessageUtil.getChannelById(channelId);
@@ -2831,6 +2972,7 @@ public class ListeningEvent {
 						channel.sendMessage(chunk).queueAfter(delayMs, TimeUnit.MILLISECONDS);
 						delayMs += 100;
 					}
+					markMessageSent();
 				}
 			} catch (Exception e) {
 				System.err.println("Failed to send chunked message to channel " + channelId + ": " + e.getMessage());
@@ -3511,6 +3653,16 @@ public class ListeningEvent {
 		try {
 			Clan clan = new Clan(clanTag);
 			org.json.JSONObject cwJson = clan.getCWJson();
+			if (cwJson == null) {
+				// Same as the missed attacks verification: without fresh data nothing is
+				// verified and nothing is punished, and it is said out loud rather than
+				// dying on an NPE.
+				System.err.println("CW bad attacks verification for clan " + clanTag
+						+ " could not fetch war data, leaving the original message in place");
+				editMessageInChannel(channelId, messageId, originalMessage
+						+ "\n\n*Daten konnten nach 5min nicht überprüft werden (API nicht erreichbar)*");
+				return;
+			}
 			String currentState = cwJson.getString("state");
 			boolean dataIsReliable = currentState.equals("warEnded");
 			boolean sameWar = dataIsReliable && cwJson.has("endTime")
