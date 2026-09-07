@@ -6318,7 +6318,7 @@
     "icon": "/home-base/equipments/9.png"
   },
   "90000010": {
-    "name": "Giant Gauntlet",
+    "name": "Giant Gauntlet (Dec. 2023",
     "icon": "/home-base/equipments/10.png"
   },
   "90000011": {
@@ -6330,19 +6330,19 @@
     "icon": "/home-base/equipments/12.png"
   },
   "90000013": {
-    "name": "Rocket Spear",
+    "name": "Rocket Spear (Jun. 2024)",
     "icon": "/home-base/equipments/13.png"
   },
   "90000014": {
-    "name": "Spiky Ball",
+    "name": "Spiky Ball (May 2024",
     "icon": "/home-base/equipments/14.png"
   },
   "90000015": {
-    "name": "Frozen Arrow",
+    "name": "Frozen Arrow (Feb. 2024)",
     "icon": "/home-base/equipments/15.png"
   },
   "90000016": {
-    "name": "Monolith Arrow",
+    "name": "Monolith Arrow (Jun. 2026)",
     "icon": "/home-base/equipments/16.png"
   },
   "90000017": {
@@ -6350,7 +6350,7 @@
     "icon": "/home-base/equipments/17.png"
   },
   "90000019": {
-    "name": "Heroic Torch",
+    "name": "Heroic Torch (Aug. 2025)",
     "icon": "/home-base/equipments/19.png"
   },
   "90000020": {
@@ -6358,7 +6358,7 @@
     "icon": "/home-base/equipments/20.png"
   },
   "90000022": {
-    "name": "Fireball",
+    "name": "Fireball (Mar. 2024)",
     "icon": "/home-base/equipments/22.png"
   },
   "90000024": {
@@ -6366,7 +6366,7 @@
     "icon": "/home-base/equipments/24.png"
   },
   "90000032": {
-    "name": "Snake Bracelet",
+    "name": "Snake Bracelet (Feb. 2025)",
     "icon": "/home-base/equipments/32.png"
   },
   "90000034": {
@@ -6374,19 +6374,19 @@
     "icon": "/home-base/equipments/34.png"
   },
   "90000035": {
-    "name": "Dark Crown",
+    "name": "Dark Crown (Aug. 2025)",
     "icon": "/home-base/equipments/35.png"
   },
   "90000039": {
-    "name": "Magic Mirror",
+    "name": "Magic Mirror (Aug. 2024)",
     "icon": "/home-base/equipments/39.png"
   },
   "90000040": {
-    "name": "Electro Boots",
+    "name": "Electro Boots (Dec. 2024)",
     "icon": "/home-base/equipments/40.png"
   },
   "90000041": {
-    "name": "Lavaloon Puppet",
+    "name": "Lavaloon Puppet (Oct. 2024)",
     "icon": "/home-base/equipments/41.png"
   },
   "90000042": {
@@ -6406,19 +6406,19 @@
     "icon": "/home-base/equipments/47.png"
   },
   "90000048": {
-    "name": "Action Figure",
+    "name": "Action Figure (Apr. 2025)",
     "icon": "/home-base/equipments/48.png"
   },
   "90000049": {
-    "name": "Meteor Staff",
+    "name": "Meteor Staff (Oct. 2025)",
     "icon": "/home-base/equipments/49.png"
   },
   "90000050": {
-    "name": "Frost Flake",
+    "name": "Frost Flake (Dec. 2025)",
     "icon": "/home-base/equipments/50.png"
   },
   "90000051": {
-    "name": "Stick Horse",
+    "name": "Stick Horse (Feb. 2026)",
     "icon": "/home-base/equipments/51.png"
   },
   "90000052": {
@@ -6426,7 +6426,7 @@
     "icon": "/home-base/equipments/52.png"
   },
   "90000053": {
-    "name": "Rocket Backpack",
+    "name": "Rocket Backpack (Apr. 2026)",
     "icon": "/home-base/equipments/53.png"
   },
   "90000056": {
@@ -6442,8 +6442,12 @@
     "icon": "/home-base/equipments/59.png"
   },
   "90000060": {
-    "name": "Revenge Deck",
+    "name": "Revenge Deck (Aug. 2026)",
     "icon": "/home-base/equipments/60.png"
+  },
+  "90000061": {
+    "name": "Portal Pendant (Oct. 2026)",
+    "icon": "/home-base/equipments/61.png"
   },
   "73000000": {
     "name": "L.A.S.S.I",
