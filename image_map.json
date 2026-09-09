@@ -10700,6 +10700,11 @@
     "icon": "/home-base/sceneries/93.png",
     "index": 72
   },
+  "60000094": {
+    "name": "WWE2 Money in the Bank Scenery (Sep. 2026, XL (WWE2 exclusive!))",
+    "icon": "/home-base/sceneries/94.png",
+    "index": 73
+  },
   "52000001": {
     "name": "Gladiator King (Apr. 2019 GP)",
     "icon": "/home-base/skins/1.png",
@@ -12051,7 +12056,7 @@
     "index": 264
   },
   "52000355": {
-    "name": "Jey Uso Prince (Sep. 2026 (WWE2 GP exclusive!))",
+    "name": "Uso Prince (Sep. 2026 (WWE2 GP exclusive!))",
     "icon": "/home-base/skins/355.png",
     "index": 265
   },
@@ -12066,7 +12071,7 @@
     "index": 267
   },
   "52000379": {
-    "name": "Iyo Sky Champion (Sep. 2026 (WWE2 exclusive!))",
+    "name": "Sky Champion (Sep. 2026 (WWE2 exclusive!))",
     "icon": "/home-base/skins/379.png",
     "index": 268
   },
@@ -13054,5 +13059,9 @@
   "4000165": {
     "name": "The Disarmer",
     "icon": "/home-base/troops/the-disarmer/the-disarmer-character.png"
+  },
+  "4000166": {
+    "name": "Yeti Undertaker",
+    "icon": "/home-base/troops/yeti-undertaker/yeti-undertaker-character.png"
   }
 }
