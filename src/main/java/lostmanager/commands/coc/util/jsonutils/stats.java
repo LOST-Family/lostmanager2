@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -686,8 +687,8 @@ public class stats extends ListenerAdapter {
 				JSONObject json = new JSONObject(rs.getString("json"));
 				java.sql.Timestamp timestamp = rs.getTimestamp("timestamp");
 
-				Map<Integer, Long> totals = collectAllUpgradePrices(json);
-				if (totals == null) {
+				Map<String, Map<Integer, Long>> byCategory = collectUpgradePricesByCategory(json);
+				if (byCategory == null) {
 					hook.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
 							"Die Preisliste konnte nicht geladen werden. Bitte später erneut versuchen.",
 							MessageUtil.EmbedType.ERROR)).queue();
@@ -695,7 +696,6 @@ public class stats extends ListenerAdapter {
 				}
 
 				double factor = priceFactor(hammerJam, goldPass);
-				Map<Integer, Long> priced = applyPriceFactor(totals, factor);
 
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
 				String uploadFormatiert = timestamp.toInstant().atZone(ZoneId.of("Europe/Berlin")).format(formatter);
@@ -710,7 +710,7 @@ public class stats extends ListenerAdapter {
 						.append("**Gold Pass:** ").append(goldPass ? "Ja" : "Nein").append("\n")
 						.append("**Preis:** ").append(formatPriceFactor(factor)).append("\n")
 						.append("**Hochgeladen:** ").append(uploadFormatiert).append("\n");
-				description.append(formatPriceTotals(totals, priced, factor));
+				description.append(formatPriceTotals(byCategory, factor));
 
 				String formatiert = ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(formatter);
 
@@ -1389,6 +1389,15 @@ public class stats extends ListenerAdapter {
 	private record CountBasedPrices(int slot, NavigableMap<Integer, Long> byCount) {
 	}
 
+	/**
+	 * Where the prices of a walked entry are added up. The summary of a single
+	 * field puts everything into one pot; the prices view holds a pot per
+	 * category and asks per entry which one the item belongs in.
+	 */
+	private interface PriceTarget {
+		Map<Integer, Long> totalsFor(String dataId);
+	}
+
 	private static final Map<String, CountBasedPrices> COUNT_BASED_PRICES = new HashMap<>();
 
 	static {
@@ -1435,23 +1444,6 @@ public class stats extends ListenerAdapter {
 		return goldPass ? PRICE_FACTOR_GOLD_PASS : PRICE_FACTOR_FULL;
 	}
 
-	/**
-	 * Put every currency slot at the given share of its original sum.
-	 *
-	 * @param totals the undiscounted sums per currency slot
-	 * @param factor the share of them that is left, see {@link #priceFactor}
-	 * @return the same slots at their discounted price
-	 */
-	private Map<Integer, Long> applyPriceFactor(Map<Integer, Long> totals, double factor) {
-		Map<Integer, Long> priced = new TreeMap<>();
-
-		for (Map.Entry<Integer, Long> total : totals.entrySet()) {
-			priced.put(total.getKey(), Math.round(total.getValue() * factor));
-		}
-
-		return priced;
-	}
-
 	private String formatPriceFactor(double factor) {
 		if (factor >= PRICE_FACTOR_FULL) {
 			return "Originalpreis";
@@ -1468,14 +1460,15 @@ public class stats extends ListenerAdapter {
 	private static final List<Integer> BUILDER_PRICE_SLOTS = List.of(4, 5);
 
 	/**
-	 * Add up the upgrade costs of everything a player owns, across every field
-	 * the stats views know - one Gold line covering the buildings, the traps and
-	 * whatever else is paid for in Gold.
+	 * Add up the upgrade costs of everything a player owns, kept apart by the
+	 * category they sit in, so every currency can be broken down into what each
+	 * category of the upload spent on it.
 	 *
 	 * @param json the player's uploaded data
-	 * @return the sums per currency slot, or null when the price list is missing
+	 * @return the sums per currency slot per category, the categories in
+	 *         alphabetical order, or null when the price list could not be loaded
 	 */
-	private Map<Integer, Long> collectAllUpgradePrices(JSONObject json) {
+	private Map<String, Map<Integer, Long>> collectUpgradePricesByCategory(JSONObject json) {
 		JSONObject imageMap;
 		try {
 			imageMap = lostmanager.util.ImageMapCache.fetchFullMapOnce();
@@ -1488,68 +1481,148 @@ public class stats extends ListenerAdapter {
 			return null;
 		}
 
-		// TreeMap: slots come out in numeric order, whichever ones the data holds.
-		Map<Integer, Long> totals = new TreeMap<>();
-		Map<String, Integer> countBasedOwned = new HashMap<>();
+		// TreeMap: the categories come out alphabetically, the order they are
+		// listed in under every currency.
+		Map<String, Map<Integer, Long>> byCategory = new TreeMap<>();
 
-		for (String field : STAT_TO_FIELD.values()) {
-			if (json.has(field)) {
-				collectUpgradePrices(json.get(field), imageMap, false, totals, countBasedOwned);
+		for (Map.Entry<String, String> category : STAT_TO_FIELD.entrySet()) {
+			String field = category.getValue();
+			if (!json.has(field)) {
+				continue;
 			}
+
+			// Every item asks for its own pot, which is its field's unless the
+			// breakdown lists the item apart from it.
+			String fieldCategory = category.getKey();
+			PriceTarget target = dataId -> byCategory.computeIfAbsent(
+					priceCategoryFor(dataId, imageMap, fieldCategory), _ -> new TreeMap<>());
+
+			// A count-based building belongs to exactly one field, so its running
+			// total is still read exactly once.
+			Map<String, Integer> countBasedOwned = new HashMap<>();
+			collectUpgradePrices(json.get(field), imageMap, false, target, countBasedOwned);
+			addCountBasedPrices(countBasedOwned, false, target);
 		}
 
-		addCountBasedPrices(countBasedOwned, false, totals);
+		// A category whose entries all cost nothing has nothing to show.
+		byCategory.values().removeIf(this::isEverythingFree);
 
-		return totals;
+		return byCategory;
 	}
 
 	/**
-	 * The whole price block: the home village first, the Builder Base after it.
+	 * The category an item's costs are listed under: the field it was read from,
+	 * unless it is one the breakdown pulls out of that field.
 	 *
-	 * Every known slot gets a line even when nothing in the data carries that
-	 * currency - a missing line reads like a bug, a zero reads like an answer -
-	 * and a slot the price list introduces later still gets one of its own.
+	 * Walls are stored among the buildings, but they are what most of a Gold
+	 * pile actually went into, so they get a line of their own instead of
+	 * disappearing into the buildings.
 	 */
-	private String formatPriceTotals(Map<Integer, Long> totals, Map<Integer, Long> priced, double factor) {
-		StringBuilder sb = new StringBuilder();
+	private String priceCategoryFor(String dataId, JSONObject imageMap, String fieldCategory) {
+		JSONObject entry = imageMap.optJSONObject(dataId);
+		if (entry == null) {
+			return fieldCategory;
+		}
 
-		sb.append("\n**Heimatdorf:**");
-		appendPricedLines(sb, HOME_PRICE_SLOTS, totals, priced, factor);
-		sb.append("\n**Baumeisterbasis:**");
-		appendPricedLines(sb, BUILDER_PRICE_SLOTS, totals, priced, factor);
+		// "/buildings/wall/" and not just "wall": Wall Breakers and Wall Wreckers
+		// are troops and stay where they are.
+		String path = getEntryPath(entry).toLowerCase();
+		if (path.contains("/buildings/wall/")) {
+			return path.contains("/builder-base/") ? "Walls (BB)" : "Walls";
+		}
 
-		List<Integer> otherSlots = new ArrayList<>();
-		for (Integer slot : priced.keySet()) {
-			if (!HOME_PRICE_SLOTS.contains(slot) && !BUILDER_PRICE_SLOTS.contains(slot)) {
-				otherSlots.add(slot);
+		return fieldCategory;
+	}
+
+	private boolean isEverythingFree(Map<Integer, Long> totals) {
+		for (Long amount : totals.values()) {
+			if (amount != null && amount > 0) {
+				return false;
 			}
 		}
 
-		if (!otherSlots.isEmpty()) {
-			sb.append("\n**Weitere:**");
-			appendPricedLines(sb, otherSlots, totals, priced, factor);
+		return true;
+	}
+
+	/**
+	 * The whole price block: one section per currency, the home village first and
+	 * the Builder Base after it.
+	 *
+	 * Every known currency gets a section even when nothing in the data is paid
+	 * for in it - a missing section reads like a bug, a zero reads like an
+	 * answer.
+	 */
+	private String formatPriceTotals(Map<String, Map<Integer, Long>> byCategory, double factor) {
+		StringBuilder sb = new StringBuilder();
+
+		for (Integer slot : orderedPriceSlots(byCategory)) {
+			appendResourceSection(sb, slot, byCategory, factor);
 		}
 
 		return sb.toString();
 	}
 
 	/**
-	 * One "· Label: 1.234" line per slot, at the discounted price. As long as a
-	 * discount is in play the untouched sum stays next to it, so the number can
-	 * be checked against what the game shows without a second call.
+	 * The currencies to print, in village order, followed by any slot the price
+	 * list introduces later - leaving one out would hide costs without a trace.
 	 */
-	private void appendPricedLines(StringBuilder sb, List<Integer> slots, Map<Integer, Long> totals,
-			Map<Integer, Long> priced, double factor) {
-		for (Integer slot : slots) {
-			String label = PRICE_LABELS.getOrDefault(slot, "Währung " + slot);
+	private List<Integer> orderedPriceSlots(Map<String, Map<Integer, Long>> byCategory) {
+		List<Integer> slots = new ArrayList<>(HOME_PRICE_SLOTS);
+		slots.addAll(BUILDER_PRICE_SLOTS);
 
-			sb.append("\n").append(EmbedBuilder.ZERO_WIDTH_SPACE.repeat(2)).append("· ")
-					.append(label).append(": ").append(formatAmount(priced.getOrDefault(slot, 0L)));
-
-			if (factor < PRICE_FACTOR_FULL) {
-				sb.append(" (Original: ").append(formatAmount(totals.getOrDefault(slot, 0L))).append(")");
+		Set<Integer> unknownSlots = new TreeSet<>();
+		for (Map<Integer, Long> totals : byCategory.values()) {
+			for (Integer slot : totals.keySet()) {
+				if (!slots.contains(slot)) {
+					unknownSlots.add(slot);
+				}
 			}
 		}
+		slots.addAll(unknownSlots);
+
+		return slots;
+	}
+
+	/**
+	 * One currency: every category that is paid for in it, alphabetically, and
+	 * the sum of exactly those lines underneath them. A category that costs
+	 * nothing in this currency has nothing to say here and stays out.
+	 */
+	private void appendResourceSection(StringBuilder sb, int slot, Map<String, Map<Integer, Long>> byCategory,
+			double factor) {
+		String label = PRICE_LABELS.getOrDefault(slot, "Währung " + slot);
+		String indent = EmbedBuilder.ZERO_WIDTH_SPACE.repeat(2);
+
+		sb.append("\n**").append(label).append(":**");
+
+		long total = 0L;
+		long originalTotal = 0L;
+
+		for (Map.Entry<String, Map<Integer, Long>> category : byCategory.entrySet()) {
+			long original = category.getValue().getOrDefault(slot, 0L);
+			if (original <= 0) {
+				continue;
+			}
+
+			long amount = priceAtFactor(original, factor);
+			total += amount;
+			originalTotal += original;
+
+			sb.append("\n").append(indent).append("· ").append(category.getKey()).append(": ")
+					.append(formatAmount(amount));
+		}
+
+		// Added up from the rounded lines above instead of being rounded itself,
+		// so the section adds up exactly as it is printed.
+		sb.append("\n").append(indent).append("**Gesamt: ").append(formatAmount(total)).append("**");
+
+		if (factor < PRICE_FACTOR_FULL) {
+			sb.append(" (Original: ").append(formatAmount(originalTotal)).append(")");
+		}
+	}
+
+	private long priceAtFactor(long amount, double factor) {
+		return Math.round(amount * factor);
 	}
 
 	/**
@@ -1599,8 +1672,11 @@ public class stats extends ListenerAdapter {
 		// TreeMap: slots come out in numeric order, whichever ones the data holds.
 		Map<Integer, Long> totals = new TreeMap<>();
 		Map<String, Integer> countBasedOwned = new HashMap<>();
-		collectUpgradePrices(dataToDisplay, imageMap, missingMode, totals, countBasedOwned);
-		addCountBasedPrices(countBasedOwned, missingMode, totals);
+
+		// One field, one pot - this summary does not break the costs down.
+		PriceTarget target = _ -> totals;
+		collectUpgradePrices(dataToDisplay, imageMap, missingMode, target, countBasedOwned);
+		addCountBasedPrices(countBasedOwned, missingMode, target);
 
 		if (totals.isEmpty()) {
 			return "";
@@ -1622,14 +1698,14 @@ public class stats extends ListenerAdapter {
 	 * the same way.
 	 */
 	private void collectUpgradePrices(Object current, JSONObject imageMap, boolean missingMode,
-			Map<Integer, Long> totals, Map<String, Integer> countBasedOwned) {
+			PriceTarget target, Map<String, Integer> countBasedOwned) {
 		if (current == null || current == JSONObject.NULL) {
 			return;
 		}
 
 		if (current instanceof JSONArray arr) {
 			for (int i = 0; i < arr.length(); i++) {
-				collectUpgradePrices(arr.get(i), imageMap, missingMode, totals, countBasedOwned);
+				collectUpgradePrices(arr.get(i), imageMap, missingMode, target, countBasedOwned);
 			}
 			return;
 		}
@@ -1649,6 +1725,7 @@ public class stats extends ListenerAdapter {
 						// price them once the whole walk is done.
 						countBasedOwned.merge(dataId, count, Integer::sum);
 					} else {
+						Map<Integer, Long> totals = target.totalsFor(dataId);
 						addSectionPrices(itemData.optJSONObject("levels"), obj.optInt("lvl", 0), missingMode, count,
 								totals);
 						addSectionPrices(itemData.optJSONObject("supercharge"), obj.optInt("supercharge", 0),
@@ -1660,7 +1737,7 @@ public class stats extends ListenerAdapter {
 			for (String key : obj.keySet()) {
 				Object nested = obj.get(key);
 				if (nested instanceof JSONObject || nested instanceof JSONArray) {
-					collectUpgradePrices(nested, imageMap, missingMode, totals, countBasedOwned);
+					collectUpgradePrices(nested, imageMap, missingMode, target, countBasedOwned);
 				}
 			}
 		}
@@ -1675,7 +1752,7 @@ public class stats extends ListenerAdapter {
 	 *                        it promises the cost of the finished building
 	 */
 	private void addCountBasedPrices(Map<String, Integer> countBasedOwned, boolean missingMode,
-			Map<Integer, Long> totals) {
+			PriceTarget target) {
 		for (Map.Entry<String, Integer> owned : countBasedOwned.entrySet()) {
 			CountBasedPrices prices = COUNT_BASED_PRICES.get(owned.getKey());
 			if (prices == null || prices.byCount().isEmpty()) {
@@ -1688,7 +1765,7 @@ public class stats extends ListenerAdapter {
 			// dropping out of the sum.
 			Map.Entry<Integer, Long> price = prices.byCount().floorEntry(count);
 			if (price != null && price.getValue() > 0) {
-				totals.merge(prices.slot(), price.getValue(), Long::sum);
+				target.totalsFor(owned.getKey()).merge(prices.slot(), price.getValue(), Long::sum);
 			}
 		}
 	}
