@@ -579,7 +579,18 @@ public class Bot extends ListenerAdapter {
 																	.addChoice("Traps", "Traps")
 																	.addChoice("Traps (BB)", "Traps (BB)")
 																	.addChoice("Units", "Units")
-																	.addChoice("Units (BB)", "Units (BB)"))),
+																	.addChoice("Units (BB)", "Units (BB)")),
+											new SubcommandData("prices",
+													"Zeigt die aufsummierten Upgrade-Kosten eines Spielers")
+													.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
+													.addOptions(new OptionData(OptionType.STRING, "hammerjam",
+															"Kosten zum Hammer-Jam-Preis berechnen", true)
+																	.addChoice("Ja", "ja")
+																	.addChoice("Nein", "nein"))
+													.addOptions(new OptionData(OptionType.STRING, "goldpass",
+															"Kosten mit Gold-Pass-Rabatt berechnen", true)
+																	.addChoice("Ja", "ja")
+																	.addChoice("Nein", "nein"))),
 
 							Commands.slash("f2pcheck", "Check ob ein Spieler F2P ist.")
 									.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true),

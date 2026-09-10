@@ -44,10 +44,13 @@ public class stats extends ListenerAdapter {
 	private static final String SELECT_PREFIX = "stats_select_";
 	private static final String BUTTON_FORWARD_PREFIX = "stats_forward_";
 	private static final String BUTTON_BACKWARD_PREFIX = "stats_backward_";
+	private static final String BUTTON_PRICES_PREFIX = "stats_prices_refresh_";
 	private static final String MODE_OWNED = "owned";
 	private static final String MODE_MISSING = "missing";
 	private static final String SUBCOMMAND_SHOW = "show";
 	private static final String SUBCOMMAND_MISSING = "missing";
+	private static final String SUBCOMMAND_PRICES = "prices";
+	private static final String PRICES_TITLE = "Spieler Upgrade-Kosten";
 
 	// Maximum characters per page (Discord embed description limit is ~4096, we use
 	// 4000 for safety)
@@ -116,8 +119,14 @@ public class stats extends ListenerAdapter {
 			return;
 
 		String subcommand = event.getSubcommandName();
-		if (subcommand != null && !subcommand.equals(SUBCOMMAND_SHOW) && !subcommand.equals(SUBCOMMAND_MISSING)) {
+		if (subcommand != null && !subcommand.equals(SUBCOMMAND_SHOW) && !subcommand.equals(SUBCOMMAND_MISSING)
+				&& !subcommand.equals(SUBCOMMAND_PRICES)) {
 			event.reply("Unbekannter Subcommand.").setEphemeral(true).queue();
+			return;
+		}
+
+		if (SUBCOMMAND_PRICES.equals(subcommand)) {
+			handlePricesCommand(event);
 			return;
 		}
 
@@ -157,6 +166,96 @@ public class stats extends ListenerAdapter {
 		}, "StatsCommand-" + event.getUser().getId()).start();
 	}
 
+	/**
+	 * Handle {@code /stats prices}: the upgrade costs of everything a player owns,
+	 * added up per currency and priced for the event and pass they picked.
+	 */
+	private void handlePricesCommand(SlashCommandInteractionEvent event) {
+		event.deferReply().queue();
+
+		new Thread(() -> {
+			OptionMapping playerOption = event.getOption("player");
+			OptionMapping hammerJamOption = event.getOption("hammerjam");
+			OptionMapping goldPassOption = event.getOption("goldpass");
+
+			if (playerOption == null || hammerJamOption == null || goldPassOption == null) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+								"Die Parameter 'player', 'hammerjam' und 'goldpass' sind erforderlich.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
+
+			String playerTag = playerOption.getAsString();
+			boolean hammerJam = isYes(hammerJamOption.getAsString());
+			boolean goldPass = isYes(goldPassOption.getAsString());
+
+			User userExecuted = new User(event.getUser().getId());
+			if (!canAccessPlayer(userExecuted, playerTag)) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+								"Du hast keine Berechtigung, die Daten dieses Spielers anzusehen.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
+
+			performPricesDisplay(event.getHook(), playerTag, hammerJam, goldPass);
+
+		}, "StatsPrices-" + event.getUser().getId()).start();
+	}
+
+	/**
+	 * Rebuild the prices view behind its refresh button, on the same player and
+	 * the same Hammer Jam / Gold Pass answers the command was given.
+	 */
+	private void handlePricesRefresh(ButtonInteractionEvent event) {
+		event.deferEdit().queue();
+
+		new Thread(() -> {
+			try {
+				String[] params = decodePricesButtonId(event.getComponentId());
+				if (params.length < 3) {
+					event.getHook()
+							.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+									"Fehler: Button-Daten konnten nicht dekodiert werden.",
+									MessageUtil.EmbedType.ERROR))
+							.queue();
+					return;
+				}
+
+				String playerTag = params[0];
+				boolean hammerJam = isYes(params[1]);
+				boolean goldPass = isYes(params[2]);
+
+				User userExecuted = new User(event.getUser().getId());
+				if (!canAccessPlayer(userExecuted, playerTag)) {
+					event.getHook()
+							.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+									"Du hast keine Berechtigung, die Daten dieses Spielers anzusehen.",
+									MessageUtil.EmbedType.ERROR))
+							.queue();
+					return;
+				}
+
+				performPricesDisplay(event.getHook(), playerTag, hammerJam, goldPass);
+
+			} catch (IllegalArgumentException e) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+								"Fehler: Button-Daten konnten nicht dekodiert werden.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+			}
+
+		}, "StatsPricesRefresh-" + event.getUser().getId()).start();
+	}
+
+	private boolean isYes(String value) {
+		return value != null && value.equalsIgnoreCase("ja");
+	}
+
 	@SuppressWarnings("null")
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
@@ -183,6 +282,11 @@ public class stats extends ListenerAdapter {
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 		String id = event.getComponentId();
+		if (id.startsWith(BUTTON_PRICES_PREFIX)) {
+			handlePricesRefresh(event);
+			return;
+		}
+
 		if (!id.startsWith(BUTTON_PREFIX) && !id.startsWith(BUTTON_FORWARD_PREFIX)
 				&& !id.startsWith(BUTTON_BACKWARD_PREFIX))
 			return;
@@ -554,6 +658,83 @@ public class stats extends ListenerAdapter {
 			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 					"Unerwarteter Fehler beim Laden der Daten: " + e.getMessage(), MessageUtil.EmbedType.ERROR))
 					.queue();
+		}
+	}
+
+	/**
+	 * Show what every upgrade a player owns has cost them, added up per currency.
+	 *
+	 * Every field the other stats views show one at a time is walked in one go
+	 * here, so the Gold line carries the buildings, the traps and everything else
+	 * that is paid for in Gold together.
+	 */
+	private void performPricesDisplay(net.dv8tion.jda.api.interactions.InteractionHook hook, String playerTag,
+			boolean hammerJam, boolean goldPass) {
+
+		String sql = "SELECT json, timestamp FROM userjsons WHERE tag = ? LIMIT 1";
+
+		try (java.sql.PreparedStatement pstmt = lostmanager.dbutil.Connection.getConnection().prepareStatement(sql)) {
+			pstmt.setString(1, playerTag);
+
+			try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+				if (!rs.next()) {
+					hook.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+							"Keine JSON-Daten für diesen Spieler gefunden.", MessageUtil.EmbedType.ERROR)).queue();
+					return;
+				}
+
+				JSONObject json = new JSONObject(rs.getString("json"));
+				java.sql.Timestamp timestamp = rs.getTimestamp("timestamp");
+
+				Map<Integer, Long> totals = collectAllUpgradePrices(json);
+				if (totals == null) {
+					hook.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+							"Die Preisliste konnte nicht geladen werden. Bitte später erneut versuchen.",
+							MessageUtil.EmbedType.ERROR)).queue();
+					return;
+				}
+
+				double factor = priceFactor(hammerJam, goldPass);
+				Map<Integer, Long> priced = applyPriceFactor(totals, factor);
+
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
+				String uploadFormatiert = timestamp.toInstant().atZone(ZoneId.of("Europe/Berlin")).format(formatter);
+
+				Player p = new Player(playerTag);
+				String playerName = p.getNameDB() != null ? p.getNameDB() : p.getNameAPI();
+
+				StringBuilder description = new StringBuilder();
+				description.append("**Spieler:** ").append(playerName != null ? playerName : playerTag)
+						.append("\n")
+						.append("**Hammer Jam:** ").append(hammerJam ? "Ja" : "Nein").append("\n")
+						.append("**Gold Pass:** ").append(goldPass ? "Ja" : "Nein").append("\n")
+						.append("**Preis:** ").append(formatPriceFactor(factor)).append("\n")
+						.append("**Hochgeladen:** ").append(uploadFormatiert).append("\n");
+				description.append(formatPriceTotals(totals, priced, factor));
+
+				String formatiert = ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(formatter);
+
+				hook.editOriginal("")
+						.setEmbeds(MessageUtil.buildEmbed(PRICES_TITLE, description.toString(),
+								MessageUtil.EmbedType.INFO, "Zuletzt aktualisiert am " + formatiert))
+						.setActionRow(Button
+								.secondary(encodePricesButtonId(playerTag, hammerJam, goldPass), "\u200B")
+								.withEmoji(Emoji.fromUnicode("🔁")))
+						.queue();
+			}
+		} catch (java.sql.SQLException e) {
+			System.err.println("Database error loading price data: " + e.getMessage());
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+					"Fehler beim Laden der Daten aus der Datenbank: " + e.getMessage(), MessageUtil.EmbedType.ERROR))
+					.queue();
+		} catch (org.json.JSONException e) {
+			System.err.println("JSON parsing error: " + e.getMessage());
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+					"Fehler beim Verarbeiten der JSON-Daten: " + e.getMessage(), MessageUtil.EmbedType.ERROR)).queue();
+		} catch (Exception e) {
+			System.err.println("Unexpected error loading price data: " + e.getMessage());
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+					"Unerwarteter Fehler beim Laden der Daten: " + e.getMessage(), MessageUtil.EmbedType.ERROR)).queue();
 		}
 	}
 
@@ -1231,29 +1412,144 @@ public class stats extends ListenerAdapter {
 	}
 
 	/**
-	 * Hammer Jam cuts upgrade costs, and the Gold Pass discount stacks on top of
-	 * the event: with a Gold Pass an upgrade ends up at 40 percent of its normal
-	 * price, without one at 50 percent.
+	 * Hammer Jam cuts upgrade costs and the Gold Pass discount stacks on top of
+	 * the event, so both answers together decide what an upgrade ends up
+	 * costing: 40 percent of the original price during the event with a pass, 50
+	 * percent during the event without one, 80 percent outside the event with a
+	 * pass, and the full price when neither applies.
 	 */
-	private static final double HAMMER_JAM_FACTOR_WITH_GOLD_PASS = 0.40;
-	private static final double HAMMER_JAM_FACTOR_WITHOUT_GOLD_PASS = 0.50;
+	private static final double PRICE_FACTOR_HAMMER_JAM_AND_GOLD_PASS = 0.40;
+	private static final double PRICE_FACTOR_HAMMER_JAM = 0.50;
+	private static final double PRICE_FACTOR_GOLD_PASS = 0.80;
+	private static final double PRICE_FACTOR_FULL = 1.00;
 
 	/**
-	 * Apply the Hammer Jam price to a set of totals.
-	 *
-	 * @param totals   the undiscounted sums per currency slot
-	 * @param goldPass whether the player holds the Gold Pass
-	 * @return the same slots at their Hammer Jam price
+	 * The share of the original price that is left of it under the event and the
+	 * pass the caller asked for.
 	 */
-	private Map<Integer, Long> applyHammerJamPrice(Map<Integer, Long> totals, boolean goldPass) {
-		double factor = goldPass ? HAMMER_JAM_FACTOR_WITH_GOLD_PASS : HAMMER_JAM_FACTOR_WITHOUT_GOLD_PASS;
-		Map<Integer, Long> discounted = new TreeMap<>();
-
-		for (Map.Entry<Integer, Long> total : totals.entrySet()) {
-			discounted.put(total.getKey(), Math.round(total.getValue() * factor));
+	private double priceFactor(boolean hammerJam, boolean goldPass) {
+		if (hammerJam) {
+			return goldPass ? PRICE_FACTOR_HAMMER_JAM_AND_GOLD_PASS : PRICE_FACTOR_HAMMER_JAM;
 		}
 
-		return discounted;
+		return goldPass ? PRICE_FACTOR_GOLD_PASS : PRICE_FACTOR_FULL;
+	}
+
+	/**
+	 * Put every currency slot at the given share of its original sum.
+	 *
+	 * @param totals the undiscounted sums per currency slot
+	 * @param factor the share of them that is left, see {@link #priceFactor}
+	 * @return the same slots at their discounted price
+	 */
+	private Map<Integer, Long> applyPriceFactor(Map<Integer, Long> totals, double factor) {
+		Map<Integer, Long> priced = new TreeMap<>();
+
+		for (Map.Entry<Integer, Long> total : totals.entrySet()) {
+			priced.put(total.getKey(), Math.round(total.getValue() * factor));
+		}
+
+		return priced;
+	}
+
+	private String formatPriceFactor(double factor) {
+		if (factor >= PRICE_FACTOR_FULL) {
+			return "Originalpreis";
+		}
+
+		return Math.round(factor * 100) + " % vom Originalpreis";
+	}
+
+	/**
+	 * The currency slots of the home village and of the Builder Base, in the
+	 * order {@code /stats prices} lists them.
+	 */
+	private static final List<Integer> HOME_PRICE_SLOTS = List.of(1, 2, 3);
+	private static final List<Integer> BUILDER_PRICE_SLOTS = List.of(4, 5);
+
+	/**
+	 * Add up the upgrade costs of everything a player owns, across every field
+	 * the stats views know - one Gold line covering the buildings, the traps and
+	 * whatever else is paid for in Gold.
+	 *
+	 * @param json the player's uploaded data
+	 * @return the sums per currency slot, or null when the price list is missing
+	 */
+	private Map<Integer, Long> collectAllUpgradePrices(JSONObject json) {
+		JSONObject imageMap;
+		try {
+			imageMap = lostmanager.util.ImageMapCache.fetchFullMapOnce();
+		} catch (Exception e) {
+			System.err.println("Failed to fetch image map for upgrade prices: " + e.getMessage());
+			return null;
+		}
+
+		if (imageMap == null) {
+			return null;
+		}
+
+		// TreeMap: slots come out in numeric order, whichever ones the data holds.
+		Map<Integer, Long> totals = new TreeMap<>();
+		Map<String, Integer> countBasedOwned = new HashMap<>();
+
+		for (String field : STAT_TO_FIELD.values()) {
+			if (json.has(field)) {
+				collectUpgradePrices(json.get(field), imageMap, false, totals, countBasedOwned);
+			}
+		}
+
+		addCountBasedPrices(countBasedOwned, false, totals);
+
+		return totals;
+	}
+
+	/**
+	 * The whole price block: the home village first, the Builder Base after it.
+	 *
+	 * Every known slot gets a line even when nothing in the data carries that
+	 * currency - a missing line reads like a bug, a zero reads like an answer -
+	 * and a slot the price list introduces later still gets one of its own.
+	 */
+	private String formatPriceTotals(Map<Integer, Long> totals, Map<Integer, Long> priced, double factor) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("\n**Heimatdorf:**");
+		appendPricedLines(sb, HOME_PRICE_SLOTS, totals, priced, factor);
+		sb.append("\n**Baumeisterbasis:**");
+		appendPricedLines(sb, BUILDER_PRICE_SLOTS, totals, priced, factor);
+
+		List<Integer> otherSlots = new ArrayList<>();
+		for (Integer slot : priced.keySet()) {
+			if (!HOME_PRICE_SLOTS.contains(slot) && !BUILDER_PRICE_SLOTS.contains(slot)) {
+				otherSlots.add(slot);
+			}
+		}
+
+		if (!otherSlots.isEmpty()) {
+			sb.append("\n**Weitere:**");
+			appendPricedLines(sb, otherSlots, totals, priced, factor);
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * One "· Label: 1.234" line per slot, at the discounted price. As long as a
+	 * discount is in play the untouched sum stays next to it, so the number can
+	 * be checked against what the game shows without a second call.
+	 */
+	private void appendPricedLines(StringBuilder sb, List<Integer> slots, Map<Integer, Long> totals,
+			Map<Integer, Long> priced, double factor) {
+		for (Integer slot : slots) {
+			String label = PRICE_LABELS.getOrDefault(slot, "Währung " + slot);
+
+			sb.append("\n").append(EmbedBuilder.ZERO_WIDTH_SPACE.repeat(2)).append("· ")
+					.append(label).append(": ").append(formatAmount(priced.getOrDefault(slot, 0L)));
+
+			if (factor < PRICE_FACTOR_FULL) {
+				sb.append(" (Original: ").append(formatAmount(totals.getOrDefault(slot, 0L))).append(")");
+			}
+		}
 	}
 
 	/**
@@ -1315,21 +1611,8 @@ public class stats extends ListenerAdapter {
 				: "Investierte Upgrade-Kosten").append(":**");
 		appendPriceLines(sb, totals);
 
-		// Hammer Jam only says anything about costs the player still has ahead of
-		// them - discounting what is already built and paid for would be nonsense.
-		if (missingMode) {
-			Map<Integer, Long> withGoldPass = applyHammerJamPrice(totals, true);
-			Map<Integer, Long> withoutGoldPass = applyHammerJamPrice(totals, false);
-
-			sb.append("\n").append("**Im Hammer Jam (mit / ohne Gold Pass):**");
-			for (Integer slot : totals.keySet()) {
-				String label = PRICE_LABELS.getOrDefault(slot, "Währung " + slot);
-				sb.append("\n").append(EmbedBuilder.ZERO_WIDTH_SPACE.repeat(2)).append("· ")
-						.append(label).append(": ").append(formatAmount(withGoldPass.get(slot)))
-						.append(" / ").append(formatAmount(withoutGoldPass.get(slot)));
-			}
-		}
-
+		// What Hammer Jam and a Gold Pass leave of these costs is its own view,
+		// /stats prices, where both are answered per call instead of guessed at.
 		return sb.toString();
 	}
 
@@ -1817,6 +2100,25 @@ public class stats extends ListenerAdapter {
 		String data = new String(Base64.getUrlDecoder().decode(encoded));
 
 		// Split by |
+		return data.split("\\|", -1);
+	}
+
+	/**
+	 * Encode the prices view into its refresh button: the player plus the two
+	 * answers the view was built with, so a refresh recomputes the same view.
+	 */
+	private String encodePricesButtonId(String playerTag, boolean hammerJam, boolean goldPass) {
+		String data = playerTag + "|" + (hammerJam ? "ja" : "nein") + "|" + (goldPass ? "ja" : "nein");
+		return BUTTON_PRICES_PREFIX + Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
+	}
+
+	/**
+	 * Decode a prices refresh button ID
+	 */
+	private String[] decodePricesButtonId(String buttonId) {
+		String encoded = buttonId.substring(BUTTON_PRICES_PREFIX.length());
+		String data = new String(Base64.getUrlDecoder().decode(encoded));
+
 		return data.split("\\|", -1);
 	}
 
