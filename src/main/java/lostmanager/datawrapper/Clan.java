@@ -1,5 +1,7 @@
 package lostmanager.datawrapper;
 
+import lostmanager.apiutil.ApiUtil;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpRequest;
@@ -740,7 +742,7 @@ public class Clan {
 			}
 
 			String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-			String url = "https://api.clashofclans.com/v1/clans/" + encodedTag + "/currentwar";
+			String url = ApiUtil.BASIS_URL + "/clans/" + encodedTag + "/currentwar";
 
 			// Use retry logic with up to 3 attempts
 			HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
@@ -828,7 +830,7 @@ public class Clan {
 		}
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-		String url = "https://api.clashofclans.com/v1/clans/" + encodedTag + "/currentwar/leaguegroup";
+		String url = ApiUtil.BASIS_URL + "/clans/" + encodedTag + "/currentwar/leaguegroup";
 
 		// Use retry logic with up to 3 attempts
 		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
@@ -868,7 +870,7 @@ public class Clan {
 		}
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-		String url = "https://api.clashofclans.com/v1/clans/" + encodedTag + "/currentwar";
+		String url = ApiUtil.BASIS_URL + "/clans/" + encodedTag + "/currentwar";
 
 		// Use retry logic with up to 3 attempts
 		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
@@ -913,7 +915,7 @@ public class Clan {
 		}
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-		String url = "https://api.clashofclans.com/v1/clans/" + encodedTag + "/capitalraidseasons?limit=1";
+		String url = ApiUtil.BASIS_URL + "/clans/" + encodedTag + "/capitalraidseasons?limit=1";
 
 		// Use retry logic with up to 3 attempts
 		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
@@ -961,7 +963,7 @@ public class Clan {
 		String json;
 
 		String encodedTag = java.net.URLEncoder.encode(warTag, java.nio.charset.StandardCharsets.UTF_8);
-		String url = "https://api.clashofclans.com/v1/clanwarleagues/wars/" + encodedTag;
+		String url = ApiUtil.BASIS_URL + "/clanwarleagues/wars/" + encodedTag;
 
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
 				.timeout(java.time.Duration.ofSeconds(15))
@@ -1032,7 +1034,7 @@ public class Clan {
 
 		// URL-kodieren des Spieler-Tags (# -> %23)
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-		String url = "https://api.clashofclans.com/v1/clans/" + encodedTag;
+		String url = ApiUtil.BASIS_URL + "/clans/" + encodedTag;
 
 		// Use retry logic with up to 3 attempts
 		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);

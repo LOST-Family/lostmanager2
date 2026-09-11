@@ -1,5 +1,7 @@
 package lostmanager.datawrapper;
 
+import lostmanager.apiutil.ApiUtil;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -262,7 +264,7 @@ public class Player {
 		try {
 			String encodedTag = URLEncoder.encode(tag, "UTF-8");
 			// Clash of Clans API-Endpunkt
-			URL url = new URI("https://api.clashofclans.com/v1/players/" + encodedTag).toURL();
+			URL url = new URI(ApiUtil.BASIS_URL + "/players/" + encodedTag).toURL();
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("GET");
@@ -293,7 +295,7 @@ public class Player {
 	public boolean verifyCocTokenAPI(String playerApiToken) {
 		try {
 			String encodedTag = URLEncoder.encode(tag, "UTF-8");
-			URL url = new URI("https://api.clashofclans.com/v1/players/" + encodedTag + "/verifytoken").toURL();
+			URL url = new URI(ApiUtil.BASIS_URL + "/players/" + encodedTag + "/verifytoken").toURL();
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
@@ -686,7 +688,7 @@ public class Player {
 
 		// URL-kodieren des Spieler-Tags (# -> %23)
 		String encodedTag = java.net.URLEncoder.encode(tag, java.nio.charset.StandardCharsets.UTF_8);
-		String url = "https://api.clashofclans.com/v1/players/" + encodedTag;
+		String url = ApiUtil.BASIS_URL + "/players/" + encodedTag;
 
 		// Use retry logic with up to 3 attempts
 		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
