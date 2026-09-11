@@ -590,6 +590,20 @@ public class Bot extends ListenerAdapter {
 													.addOptions(new OptionData(OptionType.STRING, "goldpass",
 															"Kosten mit Gold-Pass-Rabatt berechnen", true)
 																	.addChoice("Ja", "ja")
+																	.addChoice("Nein", "nein")),
+											// Nur fuer Admins: dieselbe Ansicht, aber mit den alten Preisen
+											// (upgrade-price-old1 bis 3) und nur den drei Waehrungen des
+											// Heimatdorfs.
+											new SubcommandData("pricesold",
+													"Zeigt die aufsummierten Upgrade-Kosten zu den alten Preisen")
+													.addOption(OptionType.STRING, "player", "Der Spieler (Tag)", true, true)
+													.addOptions(new OptionData(OptionType.STRING, "hammerjam",
+															"Kosten zum Hammer-Jam-Preis berechnen", true)
+																	.addChoice("Ja", "ja")
+																	.addChoice("Nein", "nein"))
+													.addOptions(new OptionData(OptionType.STRING, "goldpass",
+															"Kosten mit Gold-Pass-Rabatt berechnen", true)
+																	.addChoice("Ja", "ja")
 																	.addChoice("Nein", "nein"))),
 
 							Commands.slash("f2pcheck", "Check ob ein Spieler F2P ist.")

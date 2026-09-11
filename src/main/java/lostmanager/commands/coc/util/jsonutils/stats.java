@@ -51,17 +51,30 @@ public class stats extends ListenerAdapter {
 	private static final String SUBCOMMAND_SHOW = "show";
 	private static final String SUBCOMMAND_MISSING = "missing";
 	private static final String SUBCOMMAND_PRICES = "prices";
+	private static final String SUBCOMMAND_PRICES_OLD = "pricesold";
 	private static final String PRICES_TITLE = "Spieler Upgrade-Kosten";
+	private static final String PRICES_OLD_TITLE = "Spieler Upgrade-Kosten (alte Preise)";
+
+	/**
+	 * The one account that may look at every player, and at the old prices. Kept
+	 * as a constant because {@link #canAccessPlayer} and the old-price view both
+	 * ask for it.
+	 */
+	private static final String UNRESTRICTED_USER_ID = "362260317071343630";
 
 	// Maximum characters per page (Discord embed description limit is ~4096, we use
 	// 4000 for safety)
 	private static final int MAX_PAGE_LENGTH = 4000;
 
 	// Mapping of stat options to JSON field names
+	private static final String CATEGORY_BUILDINGS = "Buildings";
+	private static final String FIELD_BUILDINGS = "buildings";
+	private static final String FIELD_OBSTACLES = "obstacles";
+
 	private static final Map<String, String> STAT_TO_FIELD = new HashMap<>();
 
 	static {
-		STAT_TO_FIELD.put("Buildings", "buildings");
+		STAT_TO_FIELD.put(CATEGORY_BUILDINGS, FIELD_BUILDINGS);
 		STAT_TO_FIELD.put("Buildings (BB)", "buildings2");
 		STAT_TO_FIELD.put("Decos", "decos");
 		STAT_TO_FIELD.put("Decos (BB)", "decos2");
@@ -71,7 +84,7 @@ public class stats extends ListenerAdapter {
 		STAT_TO_FIELD.put("Heroes (BB)", "heroes2");
 		STAT_TO_FIELD.put("Heroes", "heroes");
 		STAT_TO_FIELD.put("House Parts", "house_parts");
-		STAT_TO_FIELD.put("Obstacles", "obstacles");
+		STAT_TO_FIELD.put("Obstacles", FIELD_OBSTACLES);
 		STAT_TO_FIELD.put("Obstacles (BB)", "obstacles2");
 		STAT_TO_FIELD.put("Pets", "pets");
 		STAT_TO_FIELD.put("Sceneries", "sceneries");
@@ -121,13 +134,18 @@ public class stats extends ListenerAdapter {
 
 		String subcommand = event.getSubcommandName();
 		if (subcommand != null && !subcommand.equals(SUBCOMMAND_SHOW) && !subcommand.equals(SUBCOMMAND_MISSING)
-				&& !subcommand.equals(SUBCOMMAND_PRICES)) {
+				&& !subcommand.equals(SUBCOMMAND_PRICES) && !subcommand.equals(SUBCOMMAND_PRICES_OLD)) {
 			event.reply("Unbekannter Subcommand.").setEphemeral(true).queue();
 			return;
 		}
 
 		if (SUBCOMMAND_PRICES.equals(subcommand)) {
-			handlePricesCommand(event);
+			handlePricesCommand(event, SCHEME_CURRENT);
+			return;
+		}
+
+		if (SUBCOMMAND_PRICES_OLD.equals(subcommand)) {
+			handlePricesCommand(event, SCHEME_OLD);
 			return;
 		}
 
@@ -168,11 +186,14 @@ public class stats extends ListenerAdapter {
 	}
 
 	/**
-	 * Handle {@code /stats prices}: the upgrade costs of everything a player owns,
-	 * added up per currency and priced for the event and pass they picked.
+	 * Handle {@code /stats prices} and {@code /stats pricesold}: the upgrade costs
+	 * of everything a player owns, added up per currency and priced for the event
+	 * and pass they picked. The two differ only in which price keys of the image
+	 * map are read - and in who is allowed to ask.
 	 */
-	private void handlePricesCommand(SlashCommandInteractionEvent event) {
+	private void handlePricesCommand(SlashCommandInteractionEvent event, PriceScheme scheme) {
 		event.deferReply().queue();
+		String title = scheme.title();
 
 		new Thread(() -> {
 			OptionMapping playerOption = event.getOption("player");
@@ -181,7 +202,7 @@ public class stats extends ListenerAdapter {
 
 			if (playerOption == null || hammerJamOption == null || goldPassOption == null) {
 				event.getHook()
-						.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 								"Die Parameter 'player', 'hammerjam' und 'goldpass' sind erforderlich.",
 								MessageUtil.EmbedType.ERROR))
 						.queue();
@@ -193,18 +214,53 @@ public class stats extends ListenerAdapter {
 			boolean goldPass = isYes(goldPassOption.getAsString());
 
 			User userExecuted = new User(event.getUser().getId());
+			if (!mayUseScheme(userExecuted, scheme)) {
+				event.getHook()
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+								"Du hast keine Berechtigung, diesen Befehl zu benutzen.",
+								MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
+
 			if (!canAccessPlayer(userExecuted, playerTag)) {
 				event.getHook()
-						.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 								"Du hast keine Berechtigung, die Daten dieses Spielers anzusehen.",
 								MessageUtil.EmbedType.ERROR))
 						.queue();
 				return;
 			}
 
-			performPricesDisplay(event.getHook(), playerTag, hammerJam, goldPass);
+			performPricesDisplay(event.getHook(), playerTag, hammerJam, goldPass, scheme);
 
 		}, "StatsPrices-" + event.getUser().getId()).start();
+	}
+
+	/**
+	 * Who may run a price view at all.
+	 *
+	 * The current prices are open to everyone who may see the player. The old
+	 * ones are not: they are only interesting to compare against, and a wrong
+	 * number from them would look like a bug in the live view. So they stay with
+	 * the one account named above and with clan admins.
+	 */
+	private boolean mayUseScheme(User user, PriceScheme scheme) {
+		if (!scheme.restricted()) {
+			return true;
+		}
+
+		if (UNRESTRICTED_USER_ID.equals(user.getUserID())) {
+			return true;
+		}
+
+		for (String clantag : DBManager.getAllClans()) {
+			if (user.getClanRoles().get(clantag) == Player.RoleType.ADMIN) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -229,18 +285,22 @@ public class stats extends ListenerAdapter {
 				String playerTag = params[0];
 				boolean hammerJam = isYes(params[1]);
 				boolean goldPass = isYes(params[2]);
+				// Buttons from before the old-price view carry three fields; they
+				// mean the current prices.
+				PriceScheme scheme = params.length > 3 && SCHEME_OLD.key().equals(params[3]) ? SCHEME_OLD
+						: SCHEME_CURRENT;
 
 				User userExecuted = new User(event.getUser().getId());
-				if (!canAccessPlayer(userExecuted, playerTag)) {
+				if (!mayUseScheme(userExecuted, scheme) || !canAccessPlayer(userExecuted, playerTag)) {
 					event.getHook()
-							.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+							.editOriginalEmbeds(MessageUtil.buildEmbed(scheme.title(),
 									"Du hast keine Berechtigung, die Daten dieses Spielers anzusehen.",
 									MessageUtil.EmbedType.ERROR))
 							.queue();
 					return;
 				}
 
-				performPricesDisplay(event.getHook(), playerTag, hammerJam, goldPass);
+				performPricesDisplay(event.getHook(), playerTag, hammerJam, goldPass, scheme);
 
 			} catch (IllegalArgumentException e) {
 				event.getHook()
@@ -670,8 +730,9 @@ public class stats extends ListenerAdapter {
 	 * that is paid for in Gold together.
 	 */
 	private void performPricesDisplay(net.dv8tion.jda.api.interactions.InteractionHook hook, String playerTag,
-			boolean hammerJam, boolean goldPass) {
+			boolean hammerJam, boolean goldPass, PriceScheme scheme) {
 
+		String title = scheme.title();
 		String sql = "SELECT json, timestamp FROM userjsons WHERE tag = ? LIMIT 1";
 
 		try (java.sql.PreparedStatement pstmt = lostmanager.dbutil.Connection.getConnection().prepareStatement(sql)) {
@@ -679,7 +740,7 @@ public class stats extends ListenerAdapter {
 
 			try (java.sql.ResultSet rs = pstmt.executeQuery()) {
 				if (!rs.next()) {
-					hook.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+					hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 							"Keine JSON-Daten für diesen Spieler gefunden.", MessageUtil.EmbedType.ERROR)).queue();
 					return;
 				}
@@ -687,9 +748,9 @@ public class stats extends ListenerAdapter {
 				JSONObject json = new JSONObject(rs.getString("json"));
 				java.sql.Timestamp timestamp = rs.getTimestamp("timestamp");
 
-				Map<String, Map<Integer, Long>> byCategory = collectUpgradePricesByCategory(json);
+				Map<String, Map<Integer, Long>> byCategory = collectUpgradePricesByCategory(json, scheme);
 				if (byCategory == null) {
-					hook.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+					hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 							"Die Preisliste konnte nicht geladen werden. Bitte später erneut versuchen.",
 							MessageUtil.EmbedType.ERROR)).queue();
 					return;
@@ -710,30 +771,30 @@ public class stats extends ListenerAdapter {
 						.append("**Gold Pass:** ").append(goldPass ? "Ja" : "Nein").append("\n")
 						.append("**Preis:** ").append(formatPriceFactor(factor)).append("\n")
 						.append("**Hochgeladen:** ").append(uploadFormatiert).append("\n");
-				description.append(formatPriceTotals(byCategory, factor));
+				description.append(formatPriceTotals(byCategory, factor, scheme));
 
 				String formatiert = ZonedDateTime.now(ZoneId.of("Europe/Berlin")).format(formatter);
 
 				hook.editOriginal("")
-						.setEmbeds(MessageUtil.buildEmbed(PRICES_TITLE, description.toString(),
+						.setEmbeds(MessageUtil.buildEmbed(title, description.toString(),
 								MessageUtil.EmbedType.INFO, "Zuletzt aktualisiert am " + formatiert))
 						.setActionRow(Button
-								.secondary(encodePricesButtonId(playerTag, hammerJam, goldPass), "\u200B")
+								.secondary(encodePricesButtonId(playerTag, hammerJam, goldPass, scheme), "\u200B")
 								.withEmoji(Emoji.fromUnicode("🔁")))
 						.queue();
 			}
 		} catch (java.sql.SQLException e) {
 			System.err.println("Database error loading price data: " + e.getMessage());
-			hook.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 					"Fehler beim Laden der Daten aus der Datenbank: " + e.getMessage(), MessageUtil.EmbedType.ERROR))
 					.queue();
 		} catch (org.json.JSONException e) {
 			System.err.println("JSON parsing error: " + e.getMessage());
-			hook.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 					"Fehler beim Verarbeiten der JSON-Daten: " + e.getMessage(), MessageUtil.EmbedType.ERROR)).queue();
 		} catch (Exception e) {
 			System.err.println("Unexpected error loading price data: " + e.getMessage());
-			hook.editOriginalEmbeds(MessageUtil.buildEmbed(PRICES_TITLE,
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 					"Unerwarteter Fehler beim Laden der Daten: " + e.getMessage(), MessageUtil.EmbedType.ERROR)).queue();
 		}
 	}
@@ -1378,6 +1439,97 @@ public class stats extends ListenerAdapter {
 	}
 
 	private static final String PRICE_KEY_PREFIX = "upgrade-price";
+	private static final String PRICE_KEY_PREFIX_OLD = "upgrade-price-old";
+
+	/**
+	 * Which price keys a view adds up.
+	 *
+	 * {@code /stats prices} reads {@code upgrade-priceN}, {@code /stats pricesold}
+	 * reads {@code upgrade-price-oldN} - same walk, same categories, only another
+	 * set of keys. The old view is deliberately narrower: it shows the three home
+	 * village currencies and nothing else, and the count-based buildings stay out
+	 * of it because their prices are hardcoded here and have no old counterpart.
+	 *
+	 * @param key        what the refresh button carries to find its way back here
+	 * @param keyPrefix  the price keys in the image map
+	 * @param slots      the currencies to print, or null for "the usual ones plus
+	 *                   whatever the data introduces"
+	 * @param countBased whether the bought-not-upgraded buildings are counted
+	 * @param restricted whether the view is limited to admins
+	 */
+	private record PriceScheme(String key, String title, String keyPrefix, List<Integer> slots, boolean countBased,
+			boolean restricted) {
+	}
+
+	private static final PriceScheme SCHEME_CURRENT = new PriceScheme("neu", PRICES_TITLE, PRICE_KEY_PREFIX, null,
+			true, false);
+	private static final PriceScheme SCHEME_OLD = new PriceScheme("alt", PRICES_OLD_TITLE, PRICE_KEY_PREFIX_OLD,
+			List.of(1, 2, 3), false, true);
+
+	/**
+	 * The buildings the extra costs below hang on, by their id in the image map.
+	 */
+	private static final String DATA_TOWN_HALL = "1000001";
+	private static final String DATA_CANNON = "1000008";
+	private static final String DATA_ARCHER_TOWER = "1000009";
+	private static final String DATA_WIZARD_TOWER = "1000011";
+	private static final String DATA_EAGLE_ARTILLERY = "1000031";
+	private static final String DATA_MULTI_GEAR_TOWER = "1000079";
+	private static final String DATA_MULTI_ARCHER_TOWER = "1000084";
+	private static final String DATA_RICOCHET_CANNON = "1000085";
+	private static final String DATA_SUPER_WIZARD_TOWER = "1000102";
+
+	/**
+	 * What a merged defence was made of.
+	 *
+	 * Merging two Cannons into a Ricochet Cannon makes both Cannons disappear from
+	 * the upload, and with them everything that was ever spent on them - the
+	 * merged building only carries its own levels. So for every merged building a
+	 * player owns, its source buildings are added back at full price, level 1 to
+	 * their maximum.
+	 *
+	 * Counted per merged building, not once: a player with two Super Wizard Towers
+	 * burned four Wizard Towers on them.
+	 */
+	private static final Map<String, Map<String, Integer>> MERGED_BUILDING_SOURCES = new LinkedHashMap<>();
+
+	static {
+		MERGED_BUILDING_SOURCES.put(DATA_RICOCHET_CANNON, Map.of(DATA_CANNON, 2));
+		MERGED_BUILDING_SOURCES.put(DATA_MULTI_ARCHER_TOWER, Map.of(DATA_ARCHER_TOWER, 2));
+		MERGED_BUILDING_SOURCES.put(DATA_MULTI_GEAR_TOWER, Map.of(DATA_CANNON, 1, DATA_ARCHER_TOWER, 1));
+		MERGED_BUILDING_SOURCES.put(DATA_SUPER_WIZARD_TOWER, Map.of(DATA_WIZARD_TOWER, 2));
+	}
+
+	/**
+	 * From this Town Hall level on, an Eagle Artillery went into the merged
+	 * defence as well and is added at full price.
+	 */
+	private static final int EAGLE_ARTILLERY_FROM_TOWN_HALL = 17;
+
+	/**
+	 * Event obstacles a player never cleared - Clashmas Trees, Anniversary Cakes
+	 * and the like. Owning at least one of them adds a flat amount that depends on
+	 * the Town Hall, once, no matter how many of them are standing around.
+	 */
+	private static final int KEPT_OBSTACLE_ID_FIRST = 8000031;
+	private static final int KEPT_OBSTACLE_ID_LAST = 8000127;
+
+	/**
+	 * The currency slot the flat amounts above land in. They were given as bare
+	 * numbers; Gold is what every building they belong to is paid in.
+	 */
+	private static final int KEPT_OBSTACLE_SLOT = 1;
+
+	private static final Map<Integer, Long> KEPT_OBSTACLE_EXTRA = new HashMap<>();
+
+	static {
+		KEPT_OBSTACLE_EXTRA.put(13, 10_500_000L);
+		KEPT_OBSTACLE_EXTRA.put(14, 24_500_000L);
+		KEPT_OBSTACLE_EXTRA.put(15, 43_000_000L);
+		KEPT_OBSTACLE_EXTRA.put(16, 66_500_000L);
+		KEPT_OBSTACLE_EXTRA.put(17, 66_500_000L);
+		KEPT_OBSTACLE_EXTRA.put(18, 120_500_000L);
+	}
 
 	/**
 	 * Army Camps and Reinforcement Camps are not upgraded, they are bought: what
@@ -1468,7 +1620,7 @@ public class stats extends ListenerAdapter {
 	 * @return the sums per currency slot per category, the categories in
 	 *         alphabetical order, or null when the price list could not be loaded
 	 */
-	private Map<String, Map<Integer, Long>> collectUpgradePricesByCategory(JSONObject json) {
+	private Map<String, Map<Integer, Long>> collectUpgradePricesByCategory(JSONObject json, PriceScheme scheme) {
 		JSONObject imageMap;
 		try {
 			imageMap = lostmanager.util.ImageMapCache.fetchFullMapOnce();
@@ -1500,14 +1652,126 @@ public class stats extends ListenerAdapter {
 			// A count-based building belongs to exactly one field, so its running
 			// total is still read exactly once.
 			Map<String, Integer> countBasedOwned = new HashMap<>();
-			collectUpgradePrices(json.get(field), imageMap, false, target, countBasedOwned);
-			addCountBasedPrices(countBasedOwned, false, target);
+			collectUpgradePrices(json.get(field), imageMap, false, target, countBasedOwned, scheme);
+			if (scheme.countBased()) {
+				addCountBasedPrices(countBasedOwned, false, target);
+			}
 		}
+
+		// Merged defences and kept event obstacles are costs of the home village
+		// buildings that the walk above cannot see, so they are added to exactly
+		// that category.
+		addBuildingExtras(json, imageMap, scheme,
+				byCategory.computeIfAbsent(CATEGORY_BUILDINGS, _ -> new TreeMap<>()));
 
 		// A category whose entries all cost nothing has nothing to show.
 		byCategory.values().removeIf(this::isEverythingFree);
 
 		return byCategory;
+	}
+
+	/**
+	 * Costs of the home village buildings that the walk over the upload cannot
+	 * find on its own: what went into a merged defence before it was merged, and
+	 * the flat amount for event obstacles a player kept.
+	 *
+	 * @param buildingTotals the "Buildings" pot, which is where all of this lands
+	 */
+	private void addBuildingExtras(JSONObject json, JSONObject imageMap, PriceScheme scheme,
+			Map<Integer, Long> buildingTotals) {
+		Map<String, Integer> counts = new HashMap<>();
+		Map<String, Integer> levels = new HashMap<>();
+		collectCountsAndLevels(json.opt(FIELD_BUILDINGS), counts, levels);
+
+		for (Map.Entry<String, Map<String, Integer>> merged : MERGED_BUILDING_SOURCES.entrySet()) {
+			int owned = counts.getOrDefault(merged.getKey(), 0);
+			if (owned <= 0) {
+				continue;
+			}
+
+			for (Map.Entry<String, Integer> source : merged.getValue().entrySet()) {
+				addFullLevelPrices(imageMap, source.getKey(), owned * source.getValue(), scheme, buildingTotals);
+			}
+		}
+
+		int townHall = levels.getOrDefault(DATA_TOWN_HALL, 0);
+
+		if (townHall >= EAGLE_ARTILLERY_FROM_TOWN_HALL) {
+			addFullLevelPrices(imageMap, DATA_EAGLE_ARTILLERY, 1, scheme, buildingTotals);
+		}
+
+		Long obstacleExtra = KEPT_OBSTACLE_EXTRA.get(townHall);
+		if (obstacleExtra != null && hasKeptObstacle(json.opt(FIELD_OBSTACLES))) {
+			buildingTotals.merge(KEPT_OBSTACLE_SLOT, obstacleExtra, Long::sum);
+		}
+	}
+
+	/**
+	 * Add what {@code times} copies of a building cost over all of its levels.
+	 */
+	private void addFullLevelPrices(JSONObject imageMap, String dataId, int times, PriceScheme scheme,
+			Map<Integer, Long> totals) {
+		JSONObject entry = imageMap.optJSONObject(dataId);
+		if (entry == null || times <= 0) {
+			return;
+		}
+
+		addSectionPrices(entry.optJSONObject("levels"), 0, true, times, totals, scheme);
+	}
+
+	/**
+	 * How many of each building the upload holds, and the level each of them is
+	 * on. Walks like {@link #collectOwnedIds} so nested structures are reached the
+	 * same way.
+	 */
+	private void collectCountsAndLevels(Object current, Map<String, Integer> counts, Map<String, Integer> levels) {
+		if (current == null || current == JSONObject.NULL) {
+			return;
+		}
+
+		if (current instanceof JSONArray arr) {
+			for (int i = 0; i < arr.length(); i++) {
+				collectCountsAndLevels(arr.get(i), counts, levels);
+			}
+			return;
+		}
+
+		if (current instanceof JSONObject obj) {
+			if (obj.has("data") && obj.get("data") != JSONObject.NULL) {
+				String dataId = String.valueOf(obj.get("data"));
+				counts.merge(dataId, Math.max(1, obj.optInt("cnt", 1)), Integer::sum);
+				levels.merge(dataId, obj.optInt("lvl", 0), Math::max);
+			}
+
+			for (String key : obj.keySet()) {
+				Object nested = obj.get(key);
+				if (nested instanceof JSONObject || nested instanceof JSONArray) {
+					collectCountsAndLevels(nested, counts, levels);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Whether the upload holds at least one of the event obstacles. One is enough
+	 * - the amount is flat, not per obstacle.
+	 */
+	private boolean hasKeptObstacle(Object obstacles) {
+		Set<String> ids = new HashSet<>();
+		collectOwnedIds(obstacles, ids);
+
+		for (String id : ids) {
+			try {
+				int value = Integer.parseInt(id);
+				if (value >= KEPT_OBSTACLE_ID_FIRST && value <= KEPT_OBSTACLE_ID_LAST) {
+					return true;
+				}
+			} catch (NumberFormatException e) {
+				// Not an id we price on - the next one may well be.
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -1552,10 +1816,10 @@ public class stats extends ListenerAdapter {
 	 * for in it - a missing section reads like a bug, a zero reads like an
 	 * answer.
 	 */
-	private String formatPriceTotals(Map<String, Map<Integer, Long>> byCategory, double factor) {
+	private String formatPriceTotals(Map<String, Map<Integer, Long>> byCategory, double factor, PriceScheme scheme) {
 		StringBuilder sb = new StringBuilder();
 
-		for (Integer slot : orderedPriceSlots(byCategory)) {
+		for (Integer slot : orderedPriceSlots(byCategory, scheme)) {
 			appendResourceSection(sb, slot, byCategory, factor);
 		}
 
@@ -1566,7 +1830,13 @@ public class stats extends ListenerAdapter {
 	 * The currencies to print, in village order, followed by any slot the price
 	 * list introduces later - leaving one out would hide costs without a trace.
 	 */
-	private List<Integer> orderedPriceSlots(Map<String, Map<Integer, Long>> byCategory) {
+	private List<Integer> orderedPriceSlots(Map<String, Map<Integer, Long>> byCategory, PriceScheme scheme) {
+		// A scheme that names its currencies shows exactly those - the old prices
+		// exist for the three of the home village and nowhere else.
+		if (scheme.slots() != null) {
+			return scheme.slots();
+		}
+
 		List<Integer> slots = new ArrayList<>(HOME_PRICE_SLOTS);
 		slots.addAll(BUILDER_PRICE_SLOTS);
 
@@ -1675,7 +1945,7 @@ public class stats extends ListenerAdapter {
 
 		// One field, one pot - this summary does not break the costs down.
 		PriceTarget target = _ -> totals;
-		collectUpgradePrices(dataToDisplay, imageMap, missingMode, target, countBasedOwned);
+		collectUpgradePrices(dataToDisplay, imageMap, missingMode, target, countBasedOwned, SCHEME_CURRENT);
 		addCountBasedPrices(countBasedOwned, missingMode, target);
 
 		if (totals.isEmpty()) {
@@ -1698,14 +1968,14 @@ public class stats extends ListenerAdapter {
 	 * the same way.
 	 */
 	private void collectUpgradePrices(Object current, JSONObject imageMap, boolean missingMode,
-			PriceTarget target, Map<String, Integer> countBasedOwned) {
+			PriceTarget target, Map<String, Integer> countBasedOwned, PriceScheme scheme) {
 		if (current == null || current == JSONObject.NULL) {
 			return;
 		}
 
 		if (current instanceof JSONArray arr) {
 			for (int i = 0; i < arr.length(); i++) {
-				collectUpgradePrices(arr.get(i), imageMap, missingMode, target, countBasedOwned);
+				collectUpgradePrices(arr.get(i), imageMap, missingMode, target, countBasedOwned, scheme);
 			}
 			return;
 		}
@@ -1727,9 +1997,9 @@ public class stats extends ListenerAdapter {
 					} else {
 						Map<Integer, Long> totals = target.totalsFor(dataId);
 						addSectionPrices(itemData.optJSONObject("levels"), obj.optInt("lvl", 0), missingMode, count,
-								totals);
+								totals, scheme);
 						addSectionPrices(itemData.optJSONObject("supercharge"), obj.optInt("supercharge", 0),
-								missingMode, count, totals);
+								missingMode, count, totals, scheme);
 					}
 				}
 			}
@@ -1737,7 +2007,7 @@ public class stats extends ListenerAdapter {
 			for (String key : obj.keySet()) {
 				Object nested = obj.get(key);
 				if (nested instanceof JSONObject || nested instanceof JSONArray) {
-					collectUpgradePrices(nested, imageMap, missingMode, target, countBasedOwned);
+					collectUpgradePrices(nested, imageMap, missingMode, target, countBasedOwned, scheme);
 				}
 			}
 		}
@@ -1780,7 +2050,7 @@ public class stats extends ListenerAdapter {
 	 * @param allLevels    sum the whole section instead - the item is not owned
 	 */
 	private void addSectionPrices(JSONObject section, int reachedLevel, boolean allLevels, int count,
-			Map<Integer, Long> totals) {
+			Map<Integer, Long> totals, PriceScheme scheme) {
 		if (section == null) {
 			return;
 		}
@@ -1802,15 +2072,19 @@ public class stats extends ListenerAdapter {
 			}
 
 			for (String priceKey : levelData.keySet()) {
-				if (!priceKey.startsWith(PRICE_KEY_PREFIX)) {
+				if (!priceKey.startsWith(scheme.keyPrefix())) {
 					continue;
 				}
 
 				// No slot allowlist on purpose: whatever slot the data introduces gets
-				// its own line instead of being dropped without a trace.
+				// its own line instead of being dropped without a trace. What the
+				// number behind the prefix also does is keep the two schemes apart:
+				// "upgrade-price-old1" starts with "upgrade-price" as well, and only
+				// fails to parse as a number - which is exactly what keeps the old
+				// prices out of the current view.
 				int slot;
 				try {
-					slot = Integer.parseInt(priceKey.substring(PRICE_KEY_PREFIX.length()));
+					slot = Integer.parseInt(priceKey.substring(scheme.keyPrefix().length()));
 				} catch (NumberFormatException e) {
 					continue;
 				}
@@ -2184,8 +2458,9 @@ public class stats extends ListenerAdapter {
 	 * Encode the prices view into its refresh button: the player plus the two
 	 * answers the view was built with, so a refresh recomputes the same view.
 	 */
-	private String encodePricesButtonId(String playerTag, boolean hammerJam, boolean goldPass) {
-		String data = playerTag + "|" + (hammerJam ? "ja" : "nein") + "|" + (goldPass ? "ja" : "nein");
+	private String encodePricesButtonId(String playerTag, boolean hammerJam, boolean goldPass, PriceScheme scheme) {
+		String data = playerTag + "|" + (hammerJam ? "ja" : "nein") + "|" + (goldPass ? "ja" : "nein") + "|"
+				+ scheme.key();
 		return BUTTON_PRICES_PREFIX + Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes());
 	}
 
