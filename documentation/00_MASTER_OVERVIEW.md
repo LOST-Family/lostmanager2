@@ -30,7 +30,6 @@ The bot serves as a centralized management system for:
 - **Framework**: JDA (Java Discord API) 5.0.0-alpha.14
 - **Database**: PostgreSQL 42.7.7
 - **CoC API**: Clash of Clans official API
-- **AI Integration**: Google Gemini API (google-genai 1.22.0)
 - **Build Tool**: Maven
 - **JSON Processing**: org.json 20230227, Jackson 2.15.2
 
@@ -49,7 +48,7 @@ src/main/java/
 ├── commands/             # All Discord slash commands
 │   ├── discord/          # Discord-specific commands
 │   │   ├── admin/        # Admin commands (delete, restart, reactions)
-│   │   └── util/         # Utility commands (checkreacts, teamcheck, lmagent)
+│   │   └── util/         # Utility commands (checkreacts, teamcheck)
 │   └── coc/              # Clash of Clans commands
 │       ├── links/        # Account linking (verify, link, relink, unlink)
 │       ├── memberlist/   # Member management (add, remove, edit, list, transfer)
@@ -152,13 +151,6 @@ Located in: `commands/discord/util/`
   - `memberrole` (role): Primary member role
   - `team_role_1` through `team_role_5` (roles): Team roles to check
   - `memberrole_2` (role, optional): Second member role
-- **Files**: `teamcheck.java`
-
-#### `/lmagent`
-- **Purpose**: AI assistant using Google Gemini (context: context.txt)
-- **Parameters**:
-  - `prompt` (string): Question or command for AI
-- **Files**: `lmagent.java`
 
 ### CoC Linking Commands
 Located in: `commands/coc/links/`
@@ -814,23 +806,6 @@ See: `sideclans_table.sql`
 - 403 errors: Private war log or invalid API key
 - 503 errors: API maintenance, retry later
 
-### Google Gemini AI API
-
-**Purpose**: Powers the `/lmagent` command for AI assistance
-
-**Integration**: google-genai SDK 1.22.0
-
-**Authentication**: Via `GOOGLE_GENAI_API_KEY` environment variable
-
-**Context**: Loaded from `lost_manager/context.txt` file (system instructions)
-
-**Usage Pattern**:
-1. User provides prompt via `/lmagent` command
-2. Bot sends prompt with context to Gemini API
-3. Response returned to Discord channel
-
----
-
 ## Event System
 
 ### Scheduler Architecture
@@ -1047,17 +1022,7 @@ LOST_MANAGER_DB_PASSWORD=<Database password>
 
 # APIs
 LOST_MANAGER_API_KEY=<Clash of Clans API key>
-GOOGLE_GENAI_API_KEY=<Google Gemini API key>
 ```
-
-### File Structure
-
-```
-lost_manager/
-└── context.txt           # AI assistant context/instructions
-```
-
-**context.txt**: System instructions for the Google Gemini AI assistant. Defines the bot's behavior and knowledge when responding to `/lmagent` commands.
 
 ### Deployment
 
@@ -1076,7 +1041,6 @@ java -jar target/lostcrmanager-0.0.1-SNAPSHOT.jar
 - PostgreSQL 42.7.7 (Database driver)
 - org.json 20230227 (JSON parsing)
 - Jackson 2.15.2 (JSON serialization)
-- google-genai 1.22.0 (AI integration)
 
 ### Database Initialization
 
@@ -1215,28 +1179,6 @@ Some tables include audit fields:
 
 ---
 
-## AI Integration Details
-
-### Google Gemini Client
-Initialized in `Bot.main()`:
-```java
-genaiClient = Client.builder()
-    .apiKey(System.getenv("GOOGLE_GENAI_API_KEY"))
-    .build();
-```
-
-### Context Loading
-System instructions loaded from file:
-```java
-Path txtFile = jarDir.resolve("lost_manager").resolve("context.txt");
-systemInstructions = Files.readString(txtFile);
-```
-
-### Usage in `/lmagent`
-The command sends user prompts with system context to Gemini for responses. This allows for bot-specific knowledge and behavior customization.
-
----
-
 ## Maintenance Tasks
 
 ### Regular Maintenance
@@ -1338,7 +1280,6 @@ Potential improvements mentioned in documentation:
 ## Version History
 
 ### 2.1.0 (Current)
-- Google Gemini AI integration (`/lmagent` command)
 - Unified event polling system
 - CW start trigger detection
 - Raid fails analysis

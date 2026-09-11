@@ -3,8 +3,6 @@ package lostmanager;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -16,7 +14,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.google.genai.Client;
 
 import lostmanager.apiutil.ApiRegistry;
 import lostmanager.util.ClanGamesWindow;
@@ -62,7 +59,6 @@ import lostmanager.commands.discord.admin.restart;
 import lostmanager.commands.discord.util.checkpoll;
 import lostmanager.commands.discord.util.checkreacts;
 import lostmanager.commands.discord.util.giveaway;
-import lostmanager.commands.discord.util.lmagent;
 import lostmanager.commands.discord.util.teamcheck;
 import lostmanager.datawrapper.AchievementData.Type;
 import lostmanager.datawrapper.Clan;
@@ -103,8 +99,6 @@ public class Bot extends ListenerAdapter {
 	public static String password;
 	public static String verified_roleid;
 	public static String exmember_roleid;
-	public static Client genaiClient;
-	public static String systemInstructions;
 	public static int webserver_port;
 	public static String webserver_base_url;
 	public static int rest_api_port;
@@ -122,8 +116,6 @@ public class Bot extends ListenerAdapter {
 		password = System.getenv("LOST_MANAGER_DB_PASSWORD");
 		verified_roleid = System.getenv("DISCORD_VERIFIED_ROLE_ID");
 		exmember_roleid = System.getenv("DISCORD_EX_MEMBER_ROLE_ID");
-		genaiClient = Client.builder().apiKey(System.getenv("GOOGLE_GENAI_API_KEY")).build();
-
 		// Load webserver configuration
 		try {
 			webserver_port = Integer.parseInt(System.getenv().getOrDefault("WEBSERVER_PORT", "8080"));
@@ -140,15 +132,6 @@ public class Bot extends ListenerAdapter {
 			System.err.println("Invalid REST_API_PORT, using default 8070");
 			rest_api_port = 8070;
 		}
-
-		new Thread(() -> {
-                    File folder = new File(getRunningJarDirectory(), "lost_manager");
-                    Path filePath = folder.toPath().resolve("context.txt");
-                    try {
-                        systemInstructions = Files.readString(filePath);
-                    } catch (final IOException e) {
-                    }
-                }).start();
 
 		String token = System.getenv("LOST_MANAGER_TOKEN");
 
@@ -517,9 +500,6 @@ public class Bot extends ListenerAdapter {
 											"Der Clan, für den die Wins angezeigt werden sollen", false)
 											.setAutoComplete(true)),
 
-							Commands.slash("lmagent", "Dummy command mit einem Prompt-Parameter.")
-									.addOption(OptionType.STRING, "prompt", "Der Prompt als Text", true),
-
 							Commands.slash("jsonupload",
 									"Generiere einen Link zum Hochladen von JSON-Daten aus dem Spiel"),
 
@@ -797,7 +777,6 @@ public class Bot extends ListenerAdapter {
 		classes.add(new cwdonator());
 		classes.add(new checkreacts());
 		classes.add(new checkpoll());
-		classes.add(new lmagent());
 		classes.add(new setnick());
 		classes.add(new deletemessages());
 		classes.add(new reactionsrole());
