@@ -3,433 +3,457 @@
     "name": "Barbarian",
     "nameAPI": "Barbarian",
     "type": "troops",
-    "icon": "/home-base/troops/barbarian/barbarian-icon.png"
+    "icon": "/home-base/troops/barbarian/barbarian-character.png"
   },
   "4000001": {
     "name": "Archer",
     "nameAPI": "Archer",
     "type": "troops",
-    "icon": "/home-base/troops/archer/archer-icon.png"
+    "icon": "/home-base/troops/archer/archer-character.png"
   },
   "4000002": {
     "name": "Goblin",
     "nameAPI": "Goblin",
     "type": "troops",
-    "icon": "/home-base/troops/goblin/goblin-icon.png"
+    "icon": "/home-base/troops/goblin/goblin-character.png"
   },
   "4000003": {
     "name": "Giant",
     "nameAPI": "Giant",
     "type": "troops",
-    "icon": "/home-base/troops/giant/giant-icon.png"
+    "icon": "/home-base/troops/giant/giant-character.png"
   },
   "4000004": {
     "name": "Wall Breaker",
     "nameAPI": "Wall Breaker",
     "type": "troops",
-    "icon": "/home-base/troops/wall-breaker/wall-breaker-icon.png"
+    "icon": "/home-base/troops/wall-breaker/wall-breaker-character.png"
   },
   "4000005": {
     "name": "Balloon",
     "nameAPI": "Balloon",
     "type": "troops",
-    "icon": "/home-base/troops/balloon/balloon-icon.png"
+    "icon": "/home-base/troops/balloon/balloon-character.png"
   },
   "4000006": {
     "name": "Wizard",
     "nameAPI": "Wizard",
     "type": "troops",
-    "icon": "/home-base/troops/wizard/wizard-icon.png"
+    "icon": "/home-base/troops/wizard/wizard-character.png"
   },
   "4000007": {
     "name": "Healer",
     "nameAPI": "Healer",
     "type": "troops",
-    "icon": "/home-base/troops/healer/healer-icon.png"
+    "icon": "/home-base/troops/healer/healer-character.png"
   },
   "4000008": {
     "name": "Dragon",
     "nameAPI": "Dragon",
     "type": "troops",
-    "icon": "/home-base/troops/dragon/dragon-icon.png"
+    "icon": "/home-base/troops/dragon/dragon-character.png"
   },
   "4000009": {
     "name": "P.E.K.K.A",
     "nameAPI": "P.E.K.K.A",
     "type": "troops",
-    "icon": "/home-base/troops/pekka/pekka-icon.png"
+    "icon": "/home-base/troops/pekka/pekka-character.png"
   },
   "4000023": {
     "name": "Baby Dragon",
     "nameAPI": "Baby Dragon",
     "type": "troops",
-    "icon": "/home-base/troops/baby-dragon/baby-dragon-icon.png"
+    "icon": "/home-base/troops/baby-dragon/baby-dragon-character.png"
   },
   "4000024": {
     "name": "Miner",
     "nameAPI": "Miner",
     "type": "troops",
-    "icon": "/home-base/troops/miner/miner-icon.png"
+    "icon": "/home-base/troops/miner/miner-character.png"
   },
   "4000059": {
     "name": "Electro Dragon",
     "nameAPI": "Electro Dragon",
     "type": "troops",
-    "icon": "/home-base/troops/electro-dragon/electro-dragon-icon.png"
+    "icon": "/home-base/troops/electro-dragon/electro-dragon-character.png"
   },
   "4000053": {
     "name": "Yeti",
     "nameAPI": "Yeti",
     "type": "troops",
-    "icon": "/home-base/troops/yeti/yeti-icon.png"
+    "icon": "/home-base/troops/yeti/yeti-character.png"
   },
   "4000065": {
     "name": "Dragon Rider",
     "nameAPI": "Dragon Rider",
     "type": "troops",
-    "icon": "/home-base/troops/dragon-rider/dragon-rider-icon.png"
+    "icon": "/home-base/troops/dragon-rider/dragon-rider-character.png"
   },
   "4000095": {
     "name": "Electro Titan",
     "nameAPI": "Electro Titan",
     "type": "troops",
-    "icon": "/home-base/troops/electro-titan/electro-titan-icon.png"
+    "icon": "/home-base/troops/electro-titan/electro-titan-character.png"
   },
   "4000110": {
     "name": "Root Rider",
     "nameAPI": "Root Rider",
     "type": "troops",
-    "icon": "/home-base/troops/root-rider/root-rider-icon.png"
+    "icon": "/home-base/troops/root-rider/root-rider-character.png"
   },
   "4000132": {
     "name": "Thrower",
     "nameAPI": "Thrower",
     "type": "troops",
-    "icon": "/home-base/troops/thrower/thrower-icon.png"
+    "icon": "/home-base/troops/thrower/thrower-character.png"
   },
   "4000177": {
     "name": "Meteor Golem",
     "nameAPI": "Meteor Golem",
     "type": "troops",
-    "icon": "/home-base/troops/meteor-golem/meteor-golem-icon.png"
+    "icon": "/home-base/troops/meteor-golem/meteor-golem-character.png"
   },
   "4000010": {
     "name": "Minion",
     "nameAPI": "Minion",
     "type": "troops",
-    "icon": "/home-base/troops/minion/minion-icon.png"
+    "icon": "/home-base/troops/minion/minion-character.png"
   },
   "4000011": {
     "name": "Hog Rider",
     "nameAPI": "Hog Rider",
     "type": "troops",
-    "icon": "/home-base/troops/hog-rider/hog-rider-icon.png"
+    "icon": "/home-base/troops/hog-rider/hog-rider-character.png"
   },
   "4000012": {
     "name": "Valkyrie",
     "nameAPI": "Valkyrie",
     "type": "troops",
-    "icon": "/home-base/troops/valkyrie/valkyrie-icon.png"
+    "icon": "/home-base/troops/valkyrie/valkyrie-character.png"
   },
   "4000013": {
     "name": "Golem",
     "nameAPI": "Golem",
     "type": "troops",
-    "icon": "/home-base/troops/golem/golem-icon.png"
+    "icon": "/home-base/troops/golem/golem-character.png"
   },
   "4000015": {
     "name": "Witch",
     "nameAPI": "Witch",
     "type": "troops",
-    "icon": "/home-base/troops/witch/witch-icon.png"
+    "icon": "/home-base/troops/witch/witch-character.png"
   },
   "4000017": {
     "name": "Lava Hound",
     "nameAPI": "Lava Hound",
     "type": "troops",
-    "icon": "/home-base/troops/lava-hound/lava-hound-icon.png"
+    "icon": "/home-base/troops/lava-hound/lava-hound-character.png"
   },
   "4000022": {
     "name": "Bowler",
     "nameAPI": "Bowler",
     "type": "troops",
-    "icon": "/home-base/troops/bowler/bowler-icon.png"
+    "icon": "/home-base/troops/bowler/bowler-character.png"
   },
   "4000058": {
     "name": "Ice Golem",
     "nameAPI": "Ice Golem",
     "type": "troops",
-    "icon": "/home-base/troops/ice-golem/ice-golem-icon.png"
+    "icon": "/home-base/troops/ice-golem/ice-golem-character.png"
   },
   "4000082": {
     "name": "Headhunter",
     "nameAPI": "Headhunter",
     "type": "troops",
-    "icon": "/home-base/troops/headhunter/headhunter-icon.png"
+    "icon": "/home-base/troops/headhunter/headhunter-character.png"
   },
   "4000097": {
     "name": "Apprentice Warden",
     "nameAPI": "Apprentice Warden",
     "type": "troops",
-    "icon": "/home-base/troops/apprentice-warden/apprentice-warden-icon.png"
+    "icon": "/home-base/troops/apprentice-warden/apprentice-warden-character.png"
   },
   "4000123": {
     "name": "Druid",
     "nameAPI": "Druid",
     "type": "troops",
-    "icon": "/home-base/troops/druid/druid-icon.png"
+    "icon": "/home-base/troops/druid/druid-character.png"
   },
   "4000150": {
     "name": "Furnace",
     "nameAPI": "Furnace",
     "type": "troops",
-    "icon": "/home-base/troops/furnace/furnace-icon.png"
+    "icon": "/home-base/troops/furnace/furnace-character.png"
+  },
+  "4000109": {
+    "name": "Ruin Witch",
+    "nameAPI": "Ruin Witch",
+    "type": "troops",
+    "icon": "/home-base/troops/ruin-witch/ruin-witch-character.png"
   },
   "4000026": {
     "name": "Super Barbarian",
     "nameAPI": "Super Barbarian",
     "type": "troops",
-    "icon": "/home-base/troops/super-barbarian/super-barbarian-icon.png"
+    "icon": "/home-base/troops/super-barbarian/super-barbarian-character.png"
   },
   "4000027": {
     "name": "Super Archer",
     "nameAPI": "Super Archer",
     "type": "troops",
-    "icon": "/home-base/troops/super-archer/super-archer-icon.png"
+    "icon": "/home-base/troops/super-archer/super-archer-character.png"
   },
   "4000055": {
     "name": "Sneaky Goblin",
     "nameAPI": "Sneaky Goblin",
     "type": "troops",
-    "icon": "/home-base/troops/sneaky-goblin/sneaky-goblin-icon.png"
+    "icon": "/home-base/troops/sneaky-goblin/sneaky-goblin-character.png"
   },
   "4000028": {
     "name": "Super Wall Breaker",
     "nameAPI": "Super Wall Breaker",
     "type": "troops",
-    "icon": "/home-base/troops/super-wall-breaker/super-wall-breaker-icon.png"
+    "icon": "/home-base/troops/super-wall-breaker/super-wall-breaker-character.png"
   },
   "4000029": {
     "name": "Super Giant",
     "nameAPI": "Super Giant",
     "type": "troops",
-    "icon": "/home-base/troops/super-giant/super-giant-icon.png"
+    "icon": "/home-base/troops/super-giant/super-giant-character.png"
   },
   "4000057": {
     "name": "Rocket Balloon",
     "nameAPI": "Rocket Balloon",
     "type": "troops",
-    "icon": "/home-base/troops/rocket-balloon/rocket-balloon-icon.png"
+    "icon": "/home-base/troops/rocket-balloon/rocket-balloon-character.png"
   },
   "4000083": {
     "name": "Super Wizard",
     "nameAPI": "Super Wizard",
     "type": "troops",
-    "icon": "/home-base/troops/super-wizard/super-wizard-icon.png"
+    "icon": "/home-base/troops/super-wizard/super-wizard-character.png"
   },
   "4000081": {
     "name": "Super Dragon",
     "nameAPI": "Super Dragon",
     "type": "troops",
-    "icon": "/home-base/troops/super-dragon/super-dragon-icon.png"
+    "icon": "/home-base/troops/super-dragon/super-dragon-character.png"
   },
   "4000063": {
     "name": "Inferno Dragon",
     "nameAPI": "Inferno Dragon",
     "type": "troops",
-    "icon": "/home-base/troops/inferno-dragon/inferno-dragon-icon.png"
+    "icon": "/home-base/troops/inferno-dragon/inferno-dragon-character.png"
   },
   "4000084": {
     "name": "Super Minion",
     "nameAPI": "Super Minion",
     "type": "troops",
-    "icon": "/home-base/troops/super-minion/super-minion-icon.png"
+    "icon": "/home-base/troops/super-minion/super-minion-character.png"
   },
   "4000064": {
     "name": "Super Valkyrie",
     "nameAPI": "Super Valkyrie",
     "type": "troops",
-    "icon": "/home-base/troops/super-valkyrie/super-valkyrie-icon.png"
+    "icon": "/home-base/troops/super-valkyrie/super-valkyrie-character.png"
   },
   "4000066": {
     "name": "Super Witch",
     "nameAPI": "Super Witch",
     "type": "troops",
-    "icon": "/home-base/troops/super-witch/super-witch-icon.png"
+    "icon": "/home-base/troops/super-witch/super-witch-character.png"
   },
   "4000076": {
     "name": "Ice Hound",
     "nameAPI": "Ice Hound",
     "type": "troops",
-    "icon": "/home-base/troops/ice-hound/ice-hound-icon.png"
+    "icon": "/home-base/troops/ice-hound/ice-hound-character.png"
   },
   "4000080": {
     "name": "Super Bowler",
     "nameAPI": "Super Bowler",
     "type": "troops",
-    "icon": "/home-base/troops/super-bowler/super-bowler-icon.png"
+    "icon": "/home-base/troops/super-bowler/super-bowler-character.png"
   },
   "4000056": {
     "name": "Super Miner",
     "nameAPI": "Super Miner",
     "type": "troops",
-    "icon": "/home-base/troops/super-miner/super-miner-icon.png"
+    "icon": "/home-base/troops/super-miner/super-miner-character.png"
   },
   "4000147": {
     "name": "Super Yeti",
     "nameAPI": "Super Yeti",
     "type": "troops",
-    "icon": "/home-base/troops/super-yeti/super-yeti-icon.png"
+    "icon": "/home-base/troops/super-yeti/super-yeti-character.png"
   },
   "4000098": {
     "name": "Super Hog Rider",
     "nameAPI": "Super Hog Rider",
     "type": "troops",
-    "icon": "/home-base/troops/super-hog-rider/super-hog-rider-icon.png"
+    "icon": "/home-base/troops/super-hog-rider/super-hog-rider-character.png"
   },
   "4000051": {
     "name": "Wall Wrecker",
     "nameAPI": "Wall Wrecker",
     "type": "troops",
-    "icon": "/home-base/troops/wall-wrecker/wall-wrecker-icon.png"
+    "icon": "/home-base/troops/wall-wrecker/wall-wrecker-character.png"
   },
   "4000052": {
     "name": "Battle Blimp",
     "nameAPI": "Battle Blimp",
     "type": "troops",
-    "icon": "/home-base/troops/battle-blimp/battle-blimp-icon.png"
+    "icon": "/home-base/troops/battle-blimp/battle-blimp-character.png"
   },
   "4000062": {
     "name": "Stone Slammer",
     "nameAPI": "Stone Slammer",
     "type": "troops",
-    "icon": "/home-base/troops/stone-slammer/stone-slammer-icon.png"
+    "icon": "/home-base/troops/stone-slammer/stone-slammer-character.png"
   },
   "4000075": {
     "name": "Siege Barracks",
     "nameAPI": "Siege Barracks",
     "type": "troops",
-    "icon": "/home-base/troops/siege-barracks/siege-barracks-icon.png"
+    "icon": "/home-base/troops/siege-barracks/siege-barracks-character.png"
   },
   "4000087": {
     "name": "Log Launcher",
     "nameAPI": "Log Launcher",
     "type": "troops",
-    "icon": "/home-base/troops/log-launcher/log-launcher-icon.png"
+    "icon": "/home-base/troops/log-launcher/log-launcher-character.png"
   },
   "4000091": {
     "name": "Flame Flinger",
     "nameAPI": "Flame Flinger",
     "type": "troops",
-    "icon": "/home-base/troops/flame-flinger/flame-flinger-icon.png"
+    "icon": "/home-base/troops/flame-flinger/flame-flinger-character.png"
   },
   "4000092": {
     "name": "Battle Drill",
     "nameAPI": "Battle Drill",
     "type": "troops",
-    "icon": "/home-base/troops/battle-drill/battle-drill-icon.png"
+    "icon": "/home-base/troops/battle-drill/battle-drill-character.png"
   },
   "4000135": {
     "name": "Troop Launcher",
     "nameAPI": "Troop Launcher",
     "type": "troops",
-    "icon": "/home-base/troops/troop-launcher/troop-launcher-icon.png"
+    "icon": "/home-base/troops/troop-launcher/troop-launcher-character.png"
+  },
+  "4000188": {
+    "name": "Sky Wagon",
+    "nameAPI": "Sky Wagon",
+    "type": "troops",
+    "icon": "/home-base/troops/sky-wagon/sky-wagon-character.png"
   },
   "28000000": {
     "name": "Barbarian King",
     "nameAPI": "Barbarian King",
     "type": "heroes",
-    "icon": "/home-base/heroes/barbarian-king-icon.png"
+    "icon": "/home-base/heroes/barbarian-king-character.png"
   },
   "28000001": {
     "name": "Archer Queen",
     "nameAPI": "Archer Queen",
     "type": "heroes",
-    "icon": "/home-base/heroes/archer-queen-icon.png"
+    "icon": "/home-base/heroes/archer-queen-character.png"
   },
   "28000002": {
     "name": "Grand Warden",
     "nameAPI": "Grand Warden",
     "type": "heroes",
-    "icon": "/home-base/heroes/grand-warden-icon.png"
+    "icon": "/home-base/heroes/grand-warden-character.png"
   },
   "28000004": {
     "name": "Royal Champion",
     "nameAPI": "Royal Champion",
     "type": "heroes",
-    "icon": "/home-base/heroes/royal-champion-icon.png"
+    "icon": "/home-base/heroes/royal-champion-character.png"
   },
   "28000006": {
     "name": "Minion Prince",
     "nameAPI": "Minion Prince",
     "type": "heroes",
-    "icon": "/home-base/heroes/minion-prince-icon.png"
+    "icon": "/home-base/heroes/minion-prince-character.png"
+  },
+  "28000007": {
+    "name": "Dragon Duke",
+    "nameAPI": "Dragon Duke",
+    "type": "heroes",
+    "icon": "/home-base/heroes/dragon-duke-character.png"
   },
   "73000000": {
     "name": "L.A.S.S.I",
     "nameAPI": "L.A.S.S.I",
     "type": "troops",
-    "icon": "/home-base/pets/lassi-icon.png"
+    "icon": "/home-base/pets/lassi-character.png"
   },
   "73000001": {
     "name": "Mighty Yak",
     "nameAPI": "Mighty Yak",
     "type": "troops",
-    "icon": "/home-base/pets/yak-icon.png"
+    "icon": "/home-base/pets/yak-character.png"
   },
   "73000002": {
     "name": "Electro Owl",
     "nameAPI": "Electro Owl",
     "type": "troops",
-    "icon": "/home-base/pets/owl-icon.png"
+    "icon": "/home-base/pets/owl-character.png"
   },
   "73000003": {
     "name": "Unicorn",
     "nameAPI": "Unicorn",
     "type": "troops",
-    "icon": "/home-base/pets/unicorn-icon.png"
+    "icon": "/home-base/pets/unicorn-character.png"
   },
   "73000004": {
     "name": "Phoenix",
     "nameAPI": "Phoenix",
     "type": "troops",
-    "icon": "/home-base/pets/phoenix-icon.png"
+    "icon": "/home-base/pets/phoenix-character.png"
   },
   "73000007": {
     "name": "Poison Lizard",
     "nameAPI": "Poison Lizard",
     "type": "troops",
-    "icon": "/home-base/pets/lizard-icon.png"
+    "icon": "/home-base/pets/lizard-character.png"
   },
   "73000008": {
     "name": "Diggy",
     "nameAPI": "Diggy",
     "type": "troops",
-    "icon": "/home-base/pets/diggy-icon.png"
+    "icon": "/home-base/pets/diggy-character.png"
   },
   "73000009": {
     "name": "Frosty",
     "nameAPI": "Frosty",
     "type": "troops",
-    "icon": "/home-base/pets/frosty-icon.png"
+    "icon": "/home-base/pets/frosty-character.png"
   },
   "73000010": {
     "name": "Spirit Fox",
     "nameAPI": "Spirit Fox",
     "type": "troops",
-    "icon": "/home-base/pets/fox-icon.png"
+    "icon": "/home-base/pets/fox-character.png"
   },
   "73000011": {
     "name": "Angry Jelly",
     "nameAPI": "Angry Jelly",
     "type": "troops",
-    "icon": "/home-base/pets/jelly-icon.png"
+    "icon": "/home-base/pets/jelly-character.png"
   },
   "73000016": {
     "name": "Sneezy",
     "nameAPI": "Sneezy",
     "type": "troops",
-    "icon": "/home-base/pets/sneezy-icon.png"
+    "icon": "/home-base/pets/sneezy-character.png"
+  },
+  "73000017": {
+    "name": "Greedy Raven",
+    "nameAPI": "Greedy Raven",
+    "type": "troops",
+    "icon": "/home-base/pets/greedy-raven-character.png"
   },
   "90000000": {
     "name": "Barbarian Puppet",
@@ -641,89 +665,131 @@
     "type": "heroEquipment",
     "icon": "/home-base/equipments/51.png"
   },
+  "90000052": {
+    "name": "Fire Heart",
+    "nameAPI": "Fire Heart",
+    "type": "heroEquipment",
+    "icon": "/home-base/equipments/52.png"
+  },
+  "90000053": {
+    "name": "Rocket Backpack",
+    "nameAPI": "Rocket Backpack",
+    "type": "heroEquipment",
+    "icon": "/home-base/equipments/53.png"
+  },
+  "90000056": {
+    "name": "Stun Blaster",
+    "nameAPI": "Stun Blaster",
+    "type": "heroEquipment",
+    "icon": "/home-base/equipments/56.png"
+  },
+  "90000057": {
+    "name": "Flame Blower",
+    "nameAPI": "Flame Blower",
+    "type": "heroEquipment",
+    "icon": "/home-base/equipments/57.png"
+  },
+  "90000059": {
+    "name": "Electro Fangs",
+    "nameAPI": "Electro Fangs",
+    "type": "heroEquipment",
+    "icon": "/home-base/equipments/59.png"
+  },
+  "90000060": {
+    "name": "Revenge Deck",
+    "nameAPI": "Revenge Deck",
+    "type": "heroEquipment",
+    "icon": "/home-base/equipments/60.png"
+  },
+  "90000061": {
+    "name": "Portal Pendant",
+    "nameAPI": "Portal Pendant",
+    "type": "heroEquipment",
+    "icon": "/home-base/equipments/61.png"
+  },
   "4000031": {
     "name": "Raged Barbarian",
     "nameAPI": "Raged Barbarian",
     "type": "troops",
-    "icon": "/builder-base/troops/raged-barbarian/raged-barbarian-icon.png"
+    "icon": "/builder-base/troops/raged-barbarian/raged-barbarian-character.png"
   },
   "4000032": {
     "name": "Sneaky Archer",
     "nameAPI": "Sneaky Archer",
     "type": "troops",
-    "icon": "/builder-base/troops/sneaky-archer/sneaky-archer-icon.png"
+    "icon": "/builder-base/troops/sneaky-archer/sneaky-archer-character.png"
   },
   "4000034": {
     "name": "Boxer Giant",
     "nameAPI": "Boxer Giant",
     "type": "troops",
-    "icon": "/builder-base/troops/boxer-giant/boxer-giant-icon.png"
+    "icon": "/builder-base/troops/boxer-giant/boxer-giant-character.png"
   },
   "4000033": {
     "name": "Beta Minion",
     "nameAPI": "Beta Minion",
     "type": "troops",
-    "icon": "/builder-base/troops/beta-minion/beta-minion-icon.png"
+    "icon": "/builder-base/troops/beta-minion/beta-minion-character.png"
   },
   "4000035": {
     "name": "Bomber",
     "nameAPI": "Bomber",
     "type": "troops",
-    "icon": "/builder-base/troops/bomber/bomber-icon.png"
+    "icon": "/builder-base/troops/bomber/bomber-character.png"
   },
   "4000041": {
     "name": "Baby Dragon",
     "nameAPI": "Baby Dragon",
     "type": "troops",
-    "icon": "/builder-base/troops/baby-dragon/baby-dragon-icon.png"
+    "icon": "/builder-base/troops/baby-dragon/baby-dragon-character.png"
   },
   "4000037": {
     "name": "Cannon Cart",
     "nameAPI": "Cannon Cart",
     "type": "troops",
-    "icon": "/builder-base/troops/cannon-cart/cannon-cart-icon.png"
+    "icon": "/builder-base/troops/cannon-cart/cannon-cart-character.png"
   },
   "4000042": {
     "name": "Night Witch",
     "nameAPI": "Night Witch",
     "type": "troops",
-    "icon": "/builder-base/troops/night-witch/night-witch-icon.png"
+    "icon": "/builder-base/troops/night-witch/night-witch-character.png"
   },
   "4000038": {
     "name": "Drop Ship",
     "nameAPI": "Drop Ship",
     "type": "troops",
-    "icon": "/builder-base/troops/drop-ship/drop-ship-icon.png"
+    "icon": "/builder-base/troops/drop-ship/drop-ship-character.png"
   },
   "4000036": {
     "name": "Power P.E.K.K.A",
     "nameAPI": "Power P.E.K.K.A",
     "type": "troops",
-    "icon": "/builder-base/troops/power-pekka/power-pekka-icon.png"
+    "icon": "/builder-base/troops/power-pekka/power-pekka-character.png"
   },
   "4000070": {
     "name": "Hog Glider",
     "nameAPI": "Hog Glider",
     "type": "troops",
-    "icon": "/builder-base/troops/hog-glider/hog-glider-icon.png"
+    "icon": "/builder-base/troops/hog-glider/hog-glider-character.png"
   },
   "4000106": {
     "name": "Electrofire Wizard",
     "nameAPI": "Electrofire Wizard",
     "type": "troops",
-    "icon": "/builder-base/troops/electrofire-wizard/electrofire-wizard-icon.png"
+    "icon": "/builder-base/troops/electrofire-wizard/electrofire-wizard-character.png"
   },
   "28000003": {
     "name": "Battle Machine",
     "nameAPI": "Battle Machine",
     "type": "heroes",
-    "icon": "/builder-base/heroes/battle-machine-icon.png"
+    "icon": "/builder-base/heroes/battle-machine-character.png"
   },
   "28000005": {
     "name": "Battle Copter",
     "nameAPI": "Battle Copter",
     "type": "heroes",
-    "icon": "/builder-base/heroes/battle-copter-icon.png"
+    "icon": "/builder-base/heroes/battle-copter-character.png"
   },
   "26000000": {
     "name": "Lightning Spell",
@@ -826,5 +892,11 @@
     "nameAPI": "Totem Spell",
     "type": "spells",
     "icon": "/home-base/spells/120.png"
+  },
+  "26000123": {
+    "name": "Angry Spell",
+    "nameAPI": "Angry Spell",
+    "type": "spells",
+    "icon": "/home-base/spells/123.png"
   }
 }
