@@ -12,7 +12,6 @@ This document provides comprehensive documentation for all Discord slash command
 - [reactionsrole](#reactionsrole) - Give roles based on reactions
 - [checkreacts](#checkreacts) - Check reactions by role
 - [teamcheck](#teamcheck) - Check team distribution
-- [lmagent](#lmagent) - AI assistant
 
 ### Player Linking
 - [verify](#verify) - Self-service account linking
@@ -212,41 +211,6 @@ https://discord.com/channels/{guild_id}/{channel_id}/{message_id}
 - CWL team assignment verification
 - Tournament team distribution
 - Ensuring balanced teams
-
----
-
-### lmagent
-
-**Purpose**: AI assistant powered by Google Gemini. Can answer questions about the bot or general Clash of Clans topics.
-
-**Permissions**: Anyone can use
-
-**Parameters**:
-- `prompt` (string, required): Your question or request
-
-**Implementation**: `commands/discord/util/lmagent.java`
-
-**Usage**:
-```
-/lmagent prompt:How do I add kickpoints to a player?
-/lmagent prompt:Explain CWL roster requirements
-```
-
-**Process**:
-1. Loads system instructions from `lost_manager/context.txt`
-2. Sends prompt with context to Google Gemini API
-3. Returns AI response to channel
-
-**Context**: The AI has knowledge about:
-- Bot commands and usage
-- Kickpoints system
-- Clash of Clans rules and mechanics
-- General bot administration
-
-**Notes**:
-- Requires `GOOGLE_GENAI_API_KEY` environment variable
-- Response time depends on API
-- May have rate limits from Google
 
 ---
 

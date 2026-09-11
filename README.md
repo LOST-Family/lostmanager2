@@ -205,7 +205,6 @@ Full setup guide: [Automated Events](documentation/USER_GUIDE_AUTOMATED_EVENTS.m
 - **Database:** PostgreSQL 42.7.7
 - **CoC API:** Clash of Clans Official API
 - **REST API:** Built-in HTTP Server (Port 8070)
-- **AI:** Google Gemini API
 - **Build Tool:** Maven
 
 ---

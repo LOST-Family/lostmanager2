@@ -170,12 +170,10 @@ LOST_MANAGER_DB_PASSWORD=pass
 
 # APIs
 LOST_MANAGER_API_KEY=xxx              # CoC API
-GOOGLE_GENAI_API_KEY=xxx              # Gemini AI
 ```
 
 ### Files
 ```
-lost_manager/context.txt               # AI assistant context
 achievement_data_schema.sql            # Achievement tracking
 cw_fillers_table.sql                   # War fillers
 cwdonator_lists_table.sql              # Donor rotation
@@ -472,7 +470,6 @@ lostmanager2/
 - PostgreSQL: 42.7.7 (Database)
 - org.json: 20230227 (JSON parsing)
 - Jackson: 2.15.2 (JSON serialization)
-- google-genai: 1.22.0 (AI integration)
 
 **Build Tool**: Maven
 

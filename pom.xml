@@ -37,10 +37,16 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.15.2</version>
 		</dependency>
+		<!--
+			javax.annotation.Nonnull wird in ApiCommand, F2PCwlCommand, giveaway und
+			RosterCommand benutzt und kam bisher nur als Beifang ueber google-genai
+			herein. Mit dessen Ausbau am 11.09.2026 fehlte es ploetzlich, deshalb
+			steht es jetzt da, wo es hingehoert: ausdruecklich deklariert.
+		-->
 		<dependency>
-			<groupId>com.google.genai</groupId>
-			<artifactId>google-genai</artifactId>
-			<version>1.22.0</version>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>3.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>net.coobird</groupId>
