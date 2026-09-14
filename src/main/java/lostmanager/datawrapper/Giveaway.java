@@ -14,7 +14,7 @@ public class Giveaway {
 
     private final long id;
     private final String prize;
-    private final int winnerCount;
+    private int winnerCount;
     private final String hostDiscordId;
     private final String channelId;
     private String messageId;
@@ -160,6 +160,25 @@ public class Giveaway {
     }
 
     // --- Instance mutators ---
+
+    /**
+     * Aendert die Gewinneranzahl. Deshalb ist {@code winnerCount} als einziges der
+     * Anlege-Felder nicht final: waehrend ein Giveaway laeuft, kommt es vor, dass ein
+     * Sponsor nachlegt oder der Host sich beim Anlegen vertan hat. Der Wert wirkt erst
+     * beim Auslosen, ein spaeterer Eingriff ist also unkritisch.
+     *
+     * @return true, wenn die Datenbank die Aenderung uebernommen hat
+     */
+    public boolean setWinnerCount(int winnerCount) {
+        var result = DBUtil.executeUpdate(
+            "UPDATE giveaways SET winner_count = ? WHERE id = ?", winnerCount, id);
+        if (result == null || result.getSecond() == null || result.getSecond() < 1) {
+            System.err.println("Giveaway.setWinnerCount: Update fuer Giveaway " + id + " fehlgeschlagen.");
+            return false;
+        }
+        this.winnerCount = winnerCount;
+        return true;
+    }
 
     public void setMessageId(String messageId) {
         this.messageId = messageId;

@@ -727,6 +727,9 @@ public class Bot extends ListenerAdapter {
 													.addOption(OptionType.STRING, "prize", "Preis / Titel des Giveaways", true),
 											new SubcommandData("end", "Beende ein Giveaway")
 													.addOption(OptionType.INTEGER, "giveaway_id", "Die ID des Giveaways", true),
+											new SubcommandData("setwinners", "Aendert die Gewinneranzahl eines laufenden Giveaways")
+													.addOption(OptionType.INTEGER, "giveaway_id", "Die ID des Giveaways", true)
+													.addOption(OptionType.INTEGER, "winners", "Neue Anzahl der Gewinner", true),
 											new SubcommandData("participants", "Zeige die Teilnehmer eines Giveaways")
 													.addOption(OptionType.INTEGER, "giveaway_id", "Die ID des Giveaways", true),
 											new SubcommandData("list", "Liste alle Giveaways auf")

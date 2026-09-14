@@ -47,6 +47,17 @@ public class giveaway extends ListenerAdapter {
                 .anyMatch(r -> r.getId().equals(GIVEAWAY_ROLE_ID));
     }
 
+    /**
+     * Wer darf ein laufendes Giveaway veraendern? Der Host seines eigenen Giveaways
+     * plus die, die ohnehin Giveaways anlegen duerfen (Admin oder Giveaway-Rolle).
+     * Ausdruecklich nicht: Teilnehmer — sonst koennte sich jeder selbst die Chancen
+     * hochsetzen.
+     */
+    private boolean darfGiveawayAendern(SlashCommandInteractionEvent event, Giveaway giveaway) {
+        if (event.getUser().getId().equals(giveaway.getHostDiscordId())) return true;
+        return hasGiveawayPermission(event);
+    }
+
     // ─── Auto Complete Handler ───────────────────────────────────────
 
     @Override
@@ -150,6 +161,7 @@ public class giveaway extends ListenerAdapter {
         switch (subcmd) {
             case "create" -> handleCreate(event);
             case "end" -> handleEnd(event);
+            case "setwinners" -> handleSetWinners(event);
             case "participants" -> handleParticipants(event);
             case "list" -> handleList(event);
             case "reroll" -> handleReroll(event);
@@ -236,6 +248,56 @@ public class giveaway extends ListenerAdapter {
                         Button.danger("giveaway_endclose_" + giveawayId, "Ohne Gewinner schließen")
                 )
                 .queue();
+    }
+
+    private void handleSetWinners(SlashCommandInteractionEvent event) {
+        long giveawayId = event.getOption("giveaway_id").getAsLong();
+        Giveaway giveaway = Giveaway.getById(giveawayId);
+
+        if (giveaway == null) {
+            event.reply("❌ Giveaway mit ID `" + giveawayId + "` nicht gefunden.").setEphemeral(true).queue();
+            return;
+        }
+
+        if (!darfGiveawayAendern(event, giveaway)) {
+            event.reply("❌ Keine Berechtigung! Das kann nur der Host dieses Giveaways oder ein Admin.")
+                    .setEphemeral(true).queue();
+            return;
+        }
+
+        if (giveaway.isEnded()) {
+            event.reply("❌ Dieses Giveaway ist bereits beendet. Die Gewinner stehen fest — "
+                    + "nutze `/giveaway reroll`, wenn du neu auslosen willst.").setEphemeral(true).queue();
+            return;
+        }
+
+        int neu = event.getOption("winners").getAsInt();
+        if (neu < 1) {
+            event.reply("❌ Es muss mindestens 1 Gewinner geben.").setEphemeral(true).queue();
+            return;
+        }
+
+        int alt = giveaway.getWinnerCount();
+        if (neu == alt) {
+            event.reply("Die Gewinneranzahl steht bereits auf **" + alt + "**.").setEphemeral(true).queue();
+            return;
+        }
+
+        if (!giveaway.setWinnerCount(neu)) {
+            event.reply("❌ Fehler beim Speichern der neuen Gewinneranzahl.").setEphemeral(true).queue();
+            return;
+        }
+
+        // Die Nachricht im Kanal traegt die Anzahl im Feld "Gewinner" — sonst stuende dort
+        // bis zum Auslosen weiter der alte Wert.
+        editGiveawayMessage(giveaway, event.getJDA(), null);
+
+        String antwort = "✅ Gewinneranzahl von **" + alt + "** auf **" + neu + "** geaendert.";
+        int teilnehmer = giveaway.getEntryCount();
+        if (neu > teilnehmer) {
+            antwort += "\n⚠️ Es nehmen derzeit nur " + teilnehmer + " teil — ausgelost wird dann entsprechend weniger.";
+        }
+        event.reply(antwort).setEphemeral(true).queue();
     }
 
     private void handleReroll(SlashCommandInteractionEvent event) {
