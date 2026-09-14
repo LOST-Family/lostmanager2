@@ -12470,9 +12470,9 @@
     "icon": "/home-base/skins/4.png",
     "index": 2
   },
-  "52000154": {
+  "52000164": {
     "name": "Steampunk Copter (Jul. 2024)",
-    "icon": "/builder-base/skins/154.png",
+    "icon": "/builder-base/skins/164.png",
     "index": 2
   },
   "52000013": {
@@ -13755,9 +13755,9 @@
     "icon": "/home-base/skins/303.png",
     "index": 256
   },
-  "52000302": {
+  "52000379": {
     "name": "Tempest Champion (Aug. 2026 GP)",
-    "icon": "/home-base/skins/302.png",
+    "icon": "/home-base/skins/379.png",
     "index": 257
   },
   "52000294": {
@@ -13776,7 +13776,7 @@
     "index": 260
   },
   "52000301": {
-    "name": "Royal Enchantress (Aug. 2026)",
+    "name": "Royal Enchantress (Aug. 2026 (F2P Store Event))",
     "icon": "/home-base/skins/301.png",
     "index": 261
   },
@@ -13810,9 +13810,9 @@
     "icon": "/home-base/skins/229.png",
     "index": 267
   },
-  "52000379": {
+  "52000302": {
     "name": "Sky Champion (Sep. 2026 (WWE2 exclusive!))",
-    "icon": "/home-base/skins/379.png",
+    "icon": "/home-base/skins/302.png",
     "index": 268
   },
   "52000347": {
@@ -13820,19 +13820,19 @@
     "icon": "/home-base/skins/347.png",
     "index": 269
   },
-  "52000329": {
-    "name": "American Badass Undertaker Warden (Sep. 2026 (WWE2 exclusive!))",
-    "icon": "/home-base/skins/329.png",
+  "52000335": {
+    "name": "Undertaker Warden (Sep. 2026 (WWE2 exclusive!))",
+    "icon": "/home-base/skins/335.png",
     "index": 270
   },
   "52000354": {
-    "name": "CWL League Prince (Aug. 2026)",
+    "name": "CWL League Prince (Nov. 2026)",
     "icon": "/home-base/skins/354.png",
     "index": 271
   },
-  "52000332": {
+  "52000329": {
     "name": "Spider Warden (Oct. 2026)",
-    "icon": "/home-base/skins/332.png",
+    "icon": "/home-base/skins/329.png",
     "index": 271
   },
   "52000368": {
@@ -13860,9 +13860,9 @@
     "icon": "/home-base/skins/380.png",
     "index": 276
   },
-  "52000335": {
+  "52000332": {
     "name": "? Warden (Nov. 2026)",
-    "icon": "/home-base/skins/335.png",
+    "icon": "/home-base/skins/332.png",
     "index": 277
   },
   "52000369": {
