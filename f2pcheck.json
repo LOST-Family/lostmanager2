@@ -1026,10 +1026,10 @@
                     },
                     "ThenForbidden":{
                         "CasesStrict":[{
-                            "name": "Hat 'Crossover SC-ID Scenery' und mindestens eine SC-ID Deco: 'Brawl's Star Deco', 'Gargantuan Gauntlet Deco', 'Sleepy King Deco'",
+                            "name": "Hat 'Crossover SC-ID Scenery' und mindestens zwei dieser SC-ID Decos: 'Brawl's Star Deco', 'Gargantuan Gauntlet Deco', 'Sleepy King Deco'",
                             "IfMoreThan": {
                                 "type": "quantity",
-                                "allowed": 0,
+                                "allowed": 1,
                                 "elements": [{
                                     "type": "element",
                                     "name": "Brawl's Star",
