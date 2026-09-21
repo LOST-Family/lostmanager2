@@ -15,6 +15,9 @@ import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
 import lostmanager.dbutil.DBUtil;
+import lostmanager.util.ListeningEventService;
+import lostmanager.util.ListeningEventService.FireInfo;
+import lostmanager.util.ListeningEventService.FireState;
 import lostmanager.util.MessageUtil;
 import lostmanager.util.Tuple;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -187,7 +190,7 @@ public class listeningevent extends ListenerAdapter {
 				}
 				duration = -1; // Special marker for start trigger
 			} else {
-				duration = parseDuration(durationStr);
+				duration = ListeningEventService.parseDuration(durationStr);
 			}
 		} catch (final IllegalArgumentException e) {
 			event.replyEmbeds(MessageUtil.buildEmbed(title,
@@ -504,54 +507,7 @@ public class listeningevent extends ListenerAdapter {
 				customMessage, thresholdOrAttacks, null, null, null, null);
 	}
 
-	/**
-	 * @return the name of the kickpoint reason stored on the event, or null if it
-	 *         has none configured and therefore hands out no kickpoints
-	 */
-	private static String configuredKickpointReason(ListeningEvent le) {
-		ArrayList<ActionValue> actionValues = le.getActionValues();
-		if (actionValues == null) {
-			return null;
-		}
-		for (final ActionValue av : actionValues) {
-			if (av.getSaved() == ActionValue.kind.reason && av.getReason() != null) {
-				return av.getReason().getName();
-			}
-		}
-		return null;
-	}
 
-	/**
-	 * Plain wording for the violation an event hands out kickpoints for. The reason
-	 * is picked from the clan's free-form list, so nothing stops a raid event from
-	 * being wired to the reason of a different raid violation - which is exactly
-	 * how the district reason and the missing-attacks reason ended up swapped once.
-	 * Spelling out what the event actually punishes makes that visible right away.
-	 *
-	 * @return the description, or null if the action type hands out no kickpoints
-	 */
-	private static String describePunishedViolation(String type, String actionTypeStr) {
-		if (actionTypeStr.equals("raidfails") || actionTypeStr.equals("raidfails_kickpoint")) {
-			return "zu viele Angriffe auf denselben Distrikt";
-		}
-		if (actionTypeStr.equals("starfails") || actionTypeStr.equals("starfails_kickpoint")) {
-			return "Angriffe mit zu wenig Sternen";
-		}
-		if (actionTypeStr.equals("cwcount_kickpoint")) {
-			return "zu wenige Clankriege in der Season";
-		}
-		if (actionTypeStr.equals("kickpoint")) {
-			return switch (type) {
-				case "raid" -> "fehlende oder nicht beendete Raid-Angriffe";
-				case "cw" -> "nicht gemachte CW-Angriffe";
-				case "cwlday" -> "nicht gemachte CWL-Angriffe";
-				case "cs" -> "zu wenige Clan-Games-Punkte";
-				case "seasonend" -> "zu wenige Season-Wins";
-				default -> null;
-			};
-		}
-		return null;
-	}
 
 	/**
 	 * @param namedSettings optional settings stored by key instead of by position,
@@ -565,103 +521,36 @@ public class listeningevent extends ListenerAdapter {
 			java.util.Map<String, Integer> raidDistrictThresholds,
 			java.util.Map<String, Long> namedSettings) {
 
-		// Convert raidfails_kickpoint to raidfails (it's a UI-only distinction)
-		if (actionTypeStr.equals("raidfails_kickpoint")) {
-			actionTypeStr = "raidfails";
-		}
+		// Anlegen, prüfen und in den Scheduler bringen macht der Service - hier
+		// bleibt nur noch, das Ergebnis als Embed zu erzählen. Die Website geht
+		// durch dieselbe Methode, damit beide Wege dieselben Regeln haben.
+		ListeningEventService.Spec spec = new ListeningEventService.Spec();
+		spec.clanTag = clantag;
+		spec.type = type;
+		spec.duration = duration;
+		spec.actionType = actionTypeStr;
+		spec.channelId = channelId;
+		spec.kickpointReasonName = kickpointReasonName;
+		spec.customMessage = customMessage;
+		spec.thresholdOrAttacks = thresholdOrAttacks;
+		spec.starCount = starCount;
+		spec.punishmentMode = punishmentMode;
+		spec.raidDistrictThresholds = raidDistrictThresholds;
+		spec.namedSettings = namedSettings;
 
-		// Build action values
-		ArrayList<ActionValue> actionValues = new ArrayList<>();
-		if (actionTypeStr.equals("cwdonator") || actionTypeStr.equals("filler")) {
-			actionValues.add(new ActionValue(ActionValue.ACTIONVALUETYPE.FILLER));
-		} else if (actionTypeStr.equals("kickpoint") && kickpointReasonName != null) {
-			// Create KickpointReason with name and clan tag
-			KickpointReason kpReason = new KickpointReason(kickpointReasonName, clantag);
-			actionValues.add(new ActionValue(kpReason));
-		} else if (actionTypeStr.equals("raidfails") && kickpointReasonName != null) {
-			// raidfails with kickpoint reason - will add kickpoints
-			KickpointReason kpReason = new KickpointReason(kickpointReasonName, clantag);
-			actionValues.add(new ActionValue(kpReason));
-		} else if (actionTypeStr.equals("starfails_kickpoint") && kickpointReasonName != null) {
-			KickpointReason kpReason = new KickpointReason(kickpointReasonName, clantag);
-			actionValues.add(new ActionValue(kpReason));
-		} else if (actionTypeStr.equals("cwcount_kickpoint") && kickpointReasonName != null) {
-			KickpointReason kpReason = new KickpointReason(kickpointReasonName, clantag);
-			actionValues.add(new ActionValue(kpReason));
-		}
-
-		// Add threshold or required attacks if provided
-		if (thresholdOrAttacks != null) {
-			ActionValue valueAV = new ActionValue(thresholdOrAttacks.longValue());
-			actionValues.add(valueAV);
-		}
-
-		// Add star count and punishment mode for starfails events
-		if (starCount != null) {
-			actionValues.add(new ActionValue(starCount.longValue()));
-		}
-		if (punishmentMode != null) {
-			actionValues.add(new ActionValue(punishmentMode.longValue()));
-		}
-
-		// Add raid district thresholds if provided
-		if (raidDistrictThresholds != null && !raidDistrictThresholds.isEmpty()) {
-			ActionValue capitalPeakAV = new ActionValue(
-					raidDistrictThresholds.get("capital_peak_max").longValue());
-			actionValues.add(capitalPeakAV);
-
-			ActionValue otherDistrictsAV = new ActionValue(
-					raidDistrictThresholds.get("other_districts_max").longValue());
-			actionValues.add(otherDistrictsAV);
-
-			ActionValue penalizeBothAV = new ActionValue(raidDistrictThresholds.get("penalize_both").longValue());
-			actionValues.add(penalizeBothAV);
-		}
-
-		// Add named settings last - they are read by key, so their position in the
-		// list does not matter and they never shift the positional values above
-		if (namedSettings != null) {
-			for (java.util.Map.Entry<String, Long> setting : namedSettings.entrySet()) {
-				if (setting.getValue() != null) {
-					actionValues.add(new ActionValue(setting.getKey(), setting.getValue()));
-				}
-			}
-		}
-
-		// Convert action values to JSON
-		String actionValuesJson = "[]";
-		if (!actionValues.isEmpty()) {
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				actionValuesJson = mapper.writeValueAsString(actionValues);
-			} catch (final JsonProcessingException e) {
-			}
-		}
-
-		// For custom message, store it in actionvalues as a value type
-		if (customMessage != null && !customMessage.isEmpty()) {
-			// Store custom message text
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				actionValuesJson = mapper
-						.writeValueAsString(java.util.Collections.singletonMap("message", customMessage));
-			} catch (final JsonProcessingException e) {
-			}
-		}
-
-		// Insert into database and get generated ID
-		Tuple<Long, Integer> result = DBUtil.executeUpdate(
-				"INSERT INTO listening_events (clan_tag, listeningtype, listeningvalue, actiontype, channel_id, actionvalues) VALUES (?, ?, ?, ?, ?, ?::jsonb)",
-				clantag, type, duration, actionTypeStr, channelId, actionValuesJson);
-
-		if (result == null) {
-			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-					"Fehler beim Hinzufügen des Listening Events. Bitte versuche es erneut.",
-					MessageUtil.EmbedType.ERROR)).queue();
+		ListeningEventService.Result ergebnis = ListeningEventService.create(spec);
+		if (!ergebnis.ok()) {
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, ergebnis.error(), MessageUtil.EmbedType.ERROR))
+					.queue();
 			return;
 		}
 
-		Long id = result.getFirst();
+		Long id = ergebnis.id();
+		// Wie gespeichert, nicht wie eingegeben - raidfails_kickpoint wird zu
+		// raidfails, und das soll die Rückmeldung auch sagen.
+		if (actionTypeStr.equals("raidfails_kickpoint")) {
+			actionTypeStr = "raidfails";
+		}
 
 		String desc = "### Listening Event wurde hinzugefügt.\n";
 		if (id != null) {
@@ -674,7 +563,7 @@ public class listeningevent extends ListenerAdapter {
 		desc += "**Channel:** <#" + channelId + ">\n";
 		if (kickpointReasonName != null) {
 			desc += "**Kickpoint-Grund:** " + kickpointReasonName + "\n";
-			String punished = describePunishedViolation(type, actionTypeStr);
+			String punished = ListeningEventService.describePunishedViolation(type, actionTypeStr);
 			if (punished != null) {
 				desc += "**Vergeben für:** " + punished + "\n";
 			}
@@ -737,46 +626,12 @@ public class listeningevent extends ListenerAdapter {
 		}
 
 		hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
-
-		// Restart all events to include the new one
-		Bot.restartAllEvents();
 	}
 
 	/** Leaves room for the last entry under the 4096 character embed description limit. */
 	private static final int EMBED_DESCRIPTION_BUDGET = 3600;
 
-	/**
-	 * Where an event stands relative to its next firing. It is derived from the
-	 * fire timestamp the list has always shown, so the status filter can never
-	 * disagree with the "Feuert in" line printed next to it.
-	 */
-	private enum FireState {
-		/** Has a fire time in the future. */
-		SCHEDULED("Geplant"),
-		/**
-		 * Its fire time has passed. Says nothing about whether the event actually ran -
-		 * the "Zuletzt gelaufen" line below it does.
-		 */
-		FIRED("Feuerzeit vorbei"),
-		/** Fire time passed without the event running, and it is too late to catch up. */
-		MISSED("Verpasst"),
-		/** Has no fire time because the clan event it listens for is not running. */
-		WAITING("Wartet auf Event");
 
-		private final String label;
-
-		FireState(String label) {
-			this.label = label;
-		}
-
-		String getLabel() {
-			return label;
-		}
-	}
-
-	/** The "Feuert in" line of an event together with the state it was derived from. */
-	private record FireInfo(FireState state, String text) {
-	}
 
 	private void handleList(SlashCommandInteractionEvent event, String title) {
 		event.deferReply().queue();
@@ -862,7 +717,7 @@ public class listeningevent extends ListenerAdapter {
 				continue;
 			}
 
-			FireInfo fire = describeFire(le, listeningType);
+			FireInfo fire = ListeningEventService.describeFire(le, listeningType);
 			if (statusFilter != null && fire.state() != statusFilter) {
 				continue;
 			}
@@ -889,16 +744,16 @@ public class listeningevent extends ListenerAdapter {
 				entry.append("**Typ:** ").append(listeningType).append("\n");
 			}
 
-			entry.append("**Dauer:** ").append(formatDuration(le.getDurationUntilEnd())).append("\n");
+			entry.append("**Dauer:** ").append(ListeningEventService.formatDuration(le.getDurationUntilEnd())).append("\n");
 			entry.append("**Action:** ").append(actionType).append("\n");
 
 			// Without the reason the list gives no way to spot an event wired to the
 			// wrong one, which is only visible once kickpoints have been handed out
-			String reasonName = configuredKickpointReason(le);
+			String reasonName = ListeningEventService.configuredKickpointReason(le);
 			if (reasonName != null) {
 				entry.append("**Kickpoint-Grund:** ").append(reasonName).append("\n");
 				String punished = listeningType != null && actionType != null
-						? describePunishedViolation(listeningType.name().toLowerCase(),
+						? ListeningEventService.describePunishedViolation(listeningType.name().toLowerCase(),
 								actionType.name().toLowerCase())
 						: null;
 				if (punished != null) {
@@ -909,7 +764,7 @@ public class listeningevent extends ListenerAdapter {
 			entry.append("**Channel:** <#").append(le.getChannelID()).append(">\n");
 			entry.append("**Status:** ").append(fire.state().getLabel()).append("\n");
 			entry.append("**Feuert in:** ").append(fire.text()).append("\n");
-			entry.append("**Zuletzt gelaufen:** ").append(describeLastRun(le)).append("\n\n");
+			entry.append("**Zuletzt gelaufen:** ").append(ListeningEventService.describeLastRun(le)).append("\n\n");
 			entries.add(entry.toString());
 		}
 
@@ -957,106 +812,8 @@ public class listeningevent extends ListenerAdapter {
 				.queue();
 	}
 
-	/** Day and time in the format the rest of the bot's embeds use. */
-	private static final java.time.format.DateTimeFormatter RUN_TIME_FORMAT = java.time.format.DateTimeFormatter
-			.ofPattern("dd.MM.yyyy, HH:mm").withZone(java.time.ZoneId.of("Europe/Berlin"));
 
-	/**
-	 * What actually became of the last firing.
-	 *
-	 * The list used to derive everything from the calculated fire time alone, so an
-	 * event the poller had quietly dropped was indistinguishable from one that had
-	 * delivered - the question "it says it fired, so why is the channel empty?" had
-	 * no answer anywhere in the bot. The poller now records every decision and the
-	 * send helpers record every delivery, and this turns the two into one line.
-	 */
-	private String describeLastRun(ListeningEvent le) {
-		Long firedAt = le.getLastFiredAt();
-		if (firedAt == null) {
-			return "noch nie";
-		}
 
-		String when = RUN_TIME_FORMAT.format(java.time.Instant.ofEpochMilli(firedAt));
-		String result = le.getLastFireResult();
-
-		if (ListeningEvent.RESULT_LATE_SKIPPED.equals(result)) {
-			return when + " - **ausgelassen**, Feuerzeit war zu lange her";
-		}
-		if (ListeningEvent.RESULT_CONDITION_GONE.equals(result)) {
-			return when + " - nicht ausgeführt, das Clan-Event lief nicht mehr";
-		}
-		if (ListeningEvent.RESULT_ERROR.equals(result)) {
-			return when + " - **fehlgeschlagen**, siehe Bot-Log";
-		}
-		if (ListeningEvent.RESULT_RUNNING.equals(result)) {
-			return when + " - läuft gerade";
-		}
-		if (ListeningEvent.RESULT_PRE_DEPLOY.equals(result)) {
-			return "vor der Umstellung - kein Protokoll, ab dem nächsten Mal wird mitgeschrieben";
-		}
-
-		// Ran normally: did anything actually reach the channel? A reminder with
-		// nothing to remind about sends nothing, and that is a legitimate outcome
-		// worth telling apart from a failure.
-		// last_fired_at stays at the moment the run was claimed, so anything posted at
-		// or after it belongs to that run.
-		Long messageAt = le.getLastMessageAt();
-		if (messageAt != null && messageAt >= firedAt) {
-			return when + " - Nachricht gesendet";
-		}
-		return when + " - gelaufen, aber nichts zu melden (keine Nachricht gesendet)";
-	}
-
-	/**
-	 * Builds the "Feuert in" line of an event together with the state it is in.
-	 *
-	 * A clan war event whose war has ended counts as waiting rather than as fired:
-	 * the timestamp it missed belonged to a war that no longer exists, and the next
-	 * war has not started yet.
-	 */
-	private FireInfo describeFire(ListeningEvent le, ListeningEvent.LISTENINGTYPE listeningType) {
-		Long timestamp = le.getTimestamp();
-
-		// Events without a valid timestamp are waiting for their clan event
-		if (timestamp == null || timestamp == Long.MAX_VALUE) {
-			return new FireInfo(FireState.WAITING, getFireDescriptionForEvent(le));
-		}
-
-		long minutesUntilFire = (timestamp - System.currentTimeMillis()) / 1000 / 60;
-		if (minutesUntilFire >= 0) {
-			return new FireInfo(FireState.SCHEDULED, minutesUntilFire + " Minuten");
-		}
-
-		long minutesSinceFire = Math.abs(minutesUntilFire);
-		if (listeningType == ListeningEvent.LISTENINGTYPE.CW) {
-			// Check if war is actually ended
-			try {
-				Clan leclan = new Clan(le.getClanTag());
-				if (!leclan.isCWActive()) {
-					long hours = minutesSinceFire / 60;
-					long days = hours / 24;
-					String ago = days > 0 ? days + " Tagen"
-							: hours > 0 ? hours + " Stunden" : minutesSinceFire + " Minuten";
-					return new FireInfo(FireState.WAITING,
-							"Letzter CW ist vor " + ago + " geendet und es wurde bisher keiner gestartet");
-				}
-			} catch (final Exception e) {
-				// Fallback if we can't check war status
-			}
-		}
-
-		// The poller writes down when it gives up on a fire time it can no longer
-		// usefully catch up on. Wide tolerance on the comparison because the CoC API
-		// nudges war end times by minutes while a war runs.
-		String lastResult = le.getLastFireResult();
-		Long lastTarget = le.getLastFireTarget();
-		if (ListeningEvent.RESULT_LATE_SKIPPED.equals(lastResult) && lastTarget != null
-				&& Math.abs(lastTarget - timestamp) < 6 * 60 * 60 * 1000L) {
-			return new FireInfo(FireState.MISSED, "Feuerzeit vor " + minutesSinceFire + " Minuten verpasst");
-		}
-
-		return new FireInfo(FireState.FIRED, "Feuerzeit war vor " + minutesSinceFire + " Minuten");
-	}
 
 	private void handleRemove(SlashCommandInteractionEvent event, String title) {
 		event.deferReply().queue();
@@ -1073,25 +830,16 @@ public class listeningevent extends ListenerAdapter {
 
 		long id = idOption.getAsLong();
 
-		// Check if event exists
-		String checkSql = "SELECT 1 FROM listening_events WHERE id = ?";
-		Integer exists = DBUtil.getValueFromSQL(checkSql, Integer.class, id);
-
-		if (exists == null) {
-			event.getHook().editOriginalEmbeds(
-					MessageUtil.buildEmbed(title, "Event mit dieser ID existiert nicht.", MessageUtil.EmbedType.ERROR))
+		ListeningEventService.Result ergebnis = ListeningEventService.delete(id);
+		if (!ergebnis.ok()) {
+			event.getHook()
+					.editOriginalEmbeds(MessageUtil.buildEmbed(title, ergebnis.error(), MessageUtil.EmbedType.ERROR))
 					.queue();
 			return;
 		}
 
-		// Delete event
-		DBUtil.executeUpdate("DELETE FROM listening_events WHERE id = ?", id);
-
 		event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
 				"Event mit ID " + id + " wurde erfolgreich gelöscht.", MessageUtil.EmbedType.SUCCESS)).queue();
-
-		// Restart all events to remove the deleted one from scheduler
-		Bot.restartAllEvents();
 	}
 
 	@SuppressWarnings("null")
@@ -1463,49 +1211,25 @@ public class listeningevent extends ListenerAdapter {
 			String title, String clantag, String type, long duration, String actionTypeStr, String channelId,
 			java.util.Map<String, Integer> cwdonatorParams) {
 
-		// Build action values with cwdonator parameters
-		ArrayList<ActionValue> actionValues = new ArrayList<>();
-		actionValues.add(new ActionValue(ActionValue.ACTIONVALUETYPE.FILLER));
+		ListeningEventService.Spec spec = new ListeningEventService.Spec();
+		spec.clanTag = clantag;
+		spec.type = type;
+		spec.duration = duration;
+		spec.actionType = actionTypeStr;
+		spec.channelId = channelId;
+		spec.useLists = cwdonatorParams.get("use_lists");
+		spec.excludeLeaders = cwdonatorParams.get("exclude_leaders");
 
-		// Add use_lists parameter if enabled
-		if (cwdonatorParams.get("use_lists") == 1) {
-			ActionValue useListsAV = new ActionValue(1L);
-			actionValues.add(useListsAV);
-		}
-
-		// Add exclude_leaders parameter if enabled
-		if (cwdonatorParams.get("exclude_leaders") == 1) {
-			ActionValue excludeLeadersAV = new ActionValue(2L);
-			actionValues.add(excludeLeadersAV);
-		}
-
-		// Convert action values to JSON
-		String actionValuesJson = "[]";
-		if (!actionValues.isEmpty()) {
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				actionValuesJson = mapper.writeValueAsString(actionValues);
-			} catch (final JsonProcessingException e) {
-			}
-		}
-
-		// Insert into database and get generated ID
-		Tuple<Long, Integer> result = DBUtil.executeUpdate(
-				"INSERT INTO listening_events (clan_tag, listeningtype, listeningvalue, actiontype, channel_id, actionvalues) VALUES (?, ?, ?, ?, ?, ?::jsonb)",
-				clantag, type, duration, actionTypeStr, channelId, actionValuesJson);
-
-		if (result == null) {
-			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-					"Fehler beim Hinzufügen des Listening Events. Bitte versuche es erneut.",
-					MessageUtil.EmbedType.ERROR)).queue();
+		ListeningEventService.Result ergebnis = ListeningEventService.create(spec);
+		if (!ergebnis.ok()) {
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, ergebnis.error(), MessageUtil.EmbedType.ERROR))
+					.queue();
 			return;
 		}
 
-		Long id = result.getFirst();
-
 		String desc = "### Listening Event wurde hinzugefügt.\n";
-		if (id != null) {
-			desc += "**ID:** " + id + "\n";
+		if (ergebnis.id() != null) {
+			desc += "**ID:** " + ergebnis.id() + "\n";
 		}
 		desc += "**Clan:** " + clantag + "\n";
 		desc += "**Typ:** " + type + "\n";
@@ -1516,9 +1240,6 @@ public class listeningevent extends ListenerAdapter {
 		desc += "**Leader ausschließen:** " + (cwdonatorParams.get("exclude_leaders") == 1 ? "Ja" : "Nein") + "\n";
 
 		hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
-
-		// Restart all events to include the new one
-		Bot.restartAllEvents();
 	}
 
 	@SuppressWarnings("null")
@@ -1646,7 +1367,7 @@ public class listeningevent extends ListenerAdapter {
                                     } else {
                                         // Try to validate as a regular duration
                                         try {
-                                            parseDuration(input);
+                                            ListeningEventService.parseDuration(input);
                                             isValidInput = true;
                                         } catch (final IllegalArgumentException e) {
                                             // Input is not a valid duration, isValidInput remains false
@@ -1742,121 +1463,7 @@ public class listeningevent extends ListenerAdapter {
             };
 	}
 
-	/**
-	 * Parses a duration string into milliseconds. Supports: 0, plain numbers (ms),
-	 * h (hours), d (days), m (minutes), s (seconds) Examples: 0, 1h, 24h, 2d, 30m,
-	 * 3600000
-	 */
-	private long parseDuration(String durationStr) throws IllegalArgumentException {
-		durationStr = durationStr.trim().toLowerCase();
 
-		// Handle 0 or empty
-		if (durationStr.equals("0") || durationStr.isEmpty()) {
-			return 0;
-		}
 
-		// Try to parse as plain number (milliseconds)
-		try {
-			return Long.parseLong(durationStr);
-		} catch (final NumberFormatException e) {
-			// Not a plain number, try parsing with units
-		}
-
-		// Parse with units
-		long multiplier = 1;
-		String numPart = durationStr;
-
-		if (durationStr.endsWith("ms")) {
-			multiplier = 1;
-			numPart = durationStr.substring(0, durationStr.length() - 2);
-		} else if (durationStr.endsWith("s")) {
-			multiplier = 1000;
-			numPart = durationStr.substring(0, durationStr.length() - 1);
-		} else if (durationStr.endsWith("m")) {
-			multiplier = 60 * 1000;
-			numPart = durationStr.substring(0, durationStr.length() - 1);
-		} else if (durationStr.endsWith("h")) {
-			multiplier = 60 * 60 * 1000;
-			numPart = durationStr.substring(0, durationStr.length() - 1);
-		} else if (durationStr.endsWith("d")) {
-			multiplier = 24 * 60 * 60 * 1000;
-			numPart = durationStr.substring(0, durationStr.length() - 1);
-		} else {
-			throw new IllegalArgumentException("Unbekannte Einheit. Verwende: ms, s, m, h, d");
-		}
-
-		try {
-			long num = Long.parseLong(numPart.trim());
-			return num * multiplier;
-		} catch (final NumberFormatException e) {
-			throw new IllegalArgumentException("Ungültige Zahl: " + numPart);
-		}
-	}
-
-	/**
-	 * Get a user-friendly description for when an event will fire when no valid
-	 * timestamp is available
-	 */
-	private String getFireDescriptionForEvent(ListeningEvent le) {
-		ListeningEvent.LISTENINGTYPE type = le.getListeningType();
-
-		// Handle null type
-		if (type == null) {
-			return "Fehler: Unbekannter Event-Typ";
-		}
-
-		long duration = le.getDurationUntilEnd();
-
-		// Check if this is a "start" trigger
-		if (duration == -1) {
-                    return switch (type) {
-                        case CW -> "Feuert, wenn neuer CW startet";
-                        default -> "Feuert bei Event-Start";
-                    };
-		}
-
-            // Otherwise, it's waiting for an active event
-            return switch (type) {
-                case CW -> "Wartet auf aktiven CW";
-                case RAID -> "Wartet auf aktives Raid Weekend";
-                case CWLDAY -> "Wartet auf aktive CWL";
-                case CS -> "Wartet auf aktive Clan Games";
-                case FIXTIMEINTERVAL -> "Zeitbasiertes Event";
-                case CWLEND -> "Wartet auf CWL Ende";
-                case SEASONEND -> "Wartet auf Season-Ende";
-                default -> "Wartet auf Event";
-            };
-	}
-
-	/**
-	 * Formats a duration in milliseconds into a human-readable string.
-	 * 0 -> "0 (Sofort)"
-	 * -1 -> "start"
-	 * Others -> e.g. "1h", "2d", "30m"
-	 */
-	private String formatDuration(long duration) {
-		if (duration == 0) {
-			return "0 (Sofort)";
-		}
-		if (duration == -1) {
-			return "start";
-		}
-
-		long absDuration = Math.abs(duration);
-		if (absDuration % (24 * 60 * 60 * 1000) == 0) {
-			return (duration / (24 * 60 * 60 * 1000)) + "d";
-		}
-		if (absDuration % (60 * 60 * 1000) == 0) {
-			return (duration / (60 * 60 * 1000)) + "h";
-		}
-		if (absDuration % (60 * 1000) == 0) {
-			return (duration / (60 * 1000)) + "m";
-		}
-		if (absDuration % 1000 == 0) {
-			return (duration / 1000) + "s";
-		}
-
-		return duration + "ms";
-	}
 }
 

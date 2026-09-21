@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,9 +23,12 @@ import com.sun.net.httpserver.HttpServer;
 import lostmanager.Bot;
 import lostmanager.datawrapper.Clan;
 import lostmanager.datawrapper.KickpointReason;
+import lostmanager.datawrapper.ListeningEvent;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
+import lostmanager.dbutil.DBUtil;
+import lostmanager.util.ListeningEventService;
 import lostmanager.webserver.api.dto.ClanDTO;
 import lostmanager.webserver.api.dto.KickpointReasonDTO;
 import lostmanager.webserver.api.dto.PlayerDTO;
@@ -246,6 +250,7 @@ public class RestApiServer {
                         case "war-members" -> handleWarMembers(exchange, clan);
                         case "raid-members" -> handleRaidMembers(exchange, clan);
                         case "cwl-members" -> handleCWLMembers(exchange, clan);
+                        case "listeningevents" -> handleListeningEvents(exchange, clan);
                         default -> sendResponse(exchange, 404, "{\"error\":\"Unknown endpoint\"}");
                     }
                 } else {
@@ -284,6 +289,99 @@ public class RestApiServer {
             // Serialize to JSON
             String json = objectMapper.writeValueAsString(playerDTOs);
             sendJsonResponse(exchange, 200, json);
+        }
+
+        /**
+         * Die Listening Events eines Clans - samt denen seiner Nebenclans.
+         *
+         * Die CWL-Erinnerungen haengen an den CWL-Ablegern ("LOST 4 CWL 2"), nicht am
+         * Hauptclan. Wer auf der Website den Hauptclan aufmacht, sucht sie trotzdem
+         * dort, und ein Nebenclan hat auf der Seite keine eigene Ansicht.
+         */
+        private void handleListeningEvents(HttpExchange exchange, Clan clan) throws Exception {
+            String clanTag = clan.getTag();
+            ArrayList<Long> ids = DBUtil.getArrayListFromSQL(
+                    "SELECT id FROM listening_events WHERE clan_tag = ? OR clan_tag IN "
+                            + "(SELECT clan_tag FROM sideclans WHERE belongs_to = ? OR belongs_to_2 = ?) "
+                            + "ORDER BY clan_tag, listeningtype, id",
+                    Long.class, clanTag, clanTag, clanTag);
+
+            if (ids == null || ids.isEmpty()) {
+                sendJsonResponse(exchange, 200, "[]");
+                return;
+            }
+
+            // Eine Clan-Instanz je Tag fuer den ganzen Aufruf. getTimestamp() fragt die
+            // CoC-API nach Krieg und CWL; ohne das Teilen waeren das pro Event eigene
+            // Anfragen und die Antwort braeuchte Minuten statt Sekunden. Genau so macht
+            // es der Poller auch.
+            java.util.Map<String, Clan> clanCache = new java.util.HashMap<>();
+            JSONArray aus = new JSONArray();
+
+            for (Long id : ids) {
+                try {
+                    ListeningEvent le = new ListeningEvent(id);
+                    String eventClanTag = le.getClanTag();
+                    le.withCachedClan(clanCache.computeIfAbsent(eventClanTag, Clan::new));
+
+                    ListeningEvent.LISTENINGTYPE typ = le.getListeningType();
+                    ListeningEvent.ACTIONTYPE aktion = le.getActionType();
+                    ListeningEventService.FireInfo feuer = ListeningEventService.describeFire(le, typ);
+
+                    JSONObject o = new JSONObject();
+                    o.put("id", id);
+                    o.put("clanTag", eventClanTag);
+                    o.put("clanName", clanCache.get(eventClanTag).getDisplayName());
+                    o.put("clanTagValid", lostmanager.util.ClanTag.isValid(eventClanTag));
+                    o.put("type", typ == null ? JSONObject.NULL : typ.name().toLowerCase());
+                    o.put("duration", le.getDurationUntilEnd());
+                    o.put("durationText", ListeningEventService.formatDuration(le.getDurationUntilEnd()));
+                    o.put("actionType", aktion == null ? JSONObject.NULL : aktion.name().toLowerCase());
+                    o.put("channelId", le.getChannelID());
+
+                    // Ueber GuildMessageChannel statt TextChannel: die meisten Events
+                    // posten in Threads, und die findet getTextChannelById nie.
+                    String kanalName = null;
+                    if (Bot.getJda() != null && le.getChannelID() != null) {
+                        net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel kanal = Bot.getJda()
+                                .getChannelById(
+                                        net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel.class,
+                                        le.getChannelID());
+                        if (kanal != null) {
+                            kanalName = kanal.getName();
+                        }
+                    }
+                    o.put("channelName", kanalName == null ? JSONObject.NULL : kanalName);
+
+                    String grund = ListeningEventService.configuredKickpointReason(le);
+                    o.put("kickpointReason", grund == null ? JSONObject.NULL : grund);
+                    String bestraft = (typ != null && aktion != null)
+                            ? ListeningEventService.describePunishedViolation(typ.name().toLowerCase(),
+                                    aktion.name().toLowerCase())
+                            : null;
+                    o.put("punishedViolation", bestraft == null ? JSONObject.NULL : bestraft);
+
+                    String nachricht = ListeningEventService.customMessage(le);
+                    o.put("customMessage", nachricht == null ? JSONObject.NULL : nachricht);
+
+                    o.put("status", feuer.state().name());
+                    o.put("statusLabel", feuer.state().getLabel());
+                    o.put("fireText", feuer.text());
+                    o.put("lastRun", ListeningEventService.describeLastRun(le));
+
+                    JSONObject werte = new JSONObject();
+                    for (java.util.Map.Entry<String, Long> e : ListeningEventService.decodeValues(le).entrySet()) {
+                        werte.put(e.getKey(), e.getValue());
+                    }
+                    o.put("values", werte);
+
+                    aus.put(o);
+                } catch (Exception e) {
+                    System.err.println("Error processing listening event " + id + ": " + e.getMessage());
+                }
+            }
+
+            sendJsonResponse(exchange, 200, aus.toString());
         }
 
         private void handleKickpointReasons(HttpExchange exchange, Clan clan) throws Exception {

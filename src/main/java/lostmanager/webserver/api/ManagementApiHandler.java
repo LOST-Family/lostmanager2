@@ -27,10 +27,12 @@ import lostmanager.datawrapper.AchievementData;
 import lostmanager.datawrapper.Clan;
 import lostmanager.datawrapper.Kickpoint;
 import lostmanager.datawrapper.KickpointReason;
+import lostmanager.datawrapper.ListeningEvent;
 import lostmanager.datawrapper.MemberSignoff;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBUtil;
+import lostmanager.util.ListeningEventService;
 import lostmanager.util.Tuple;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -116,6 +118,15 @@ public class ManagementApiHandler implements HttpHandler {
 					break;
 				case "links/unlink":
 					response = handleUnlink(json);
+					break;
+				case "listeningevents/add":
+					response = handleListeningEventAdd(json);
+					break;
+				case "listeningevents/edit":
+					response = handleListeningEventEdit(json);
+					break;
+				case "listeningevents/remove":
+					response = handleListeningEventRemove(json);
 					break;
 				case "restart":
 					response = handleRestart(json);
@@ -923,6 +934,265 @@ public class ManagementApiHandler implements HttpHandler {
 	}
 
 	// ==================== Utility Methods ====================
+
+	// ==================== Listening Events ====================
+
+	/**
+	 * Builds a {@link ListeningEventService.Spec} from the request body.
+	 *
+	 * Deliberately lenient about where a number comes from: the browser sends the
+	 * duration as the string the user typed ("2h", "start"), while a script is
+	 * more likely to send milliseconds. Both end up in the same long.
+	 */
+	private ListeningEventService.Spec specAusJson(JSONObject json) {
+		ListeningEventService.Spec spec = new ListeningEventService.Spec();
+		spec.clanTag = lostmanager.util.ClanTag.parse(json.optString("clanTag", null));
+		spec.type = leerAlsNull(json.optString("type", null));
+		spec.actionType = leerAlsNull(json.optString("actionType", null));
+		spec.channelId = leerAlsNull(json.optString("channelId", null));
+		spec.kickpointReasonName = leerAlsNull(json.optString("kickpointReason", null));
+		spec.customMessage = leerAlsNull(json.optString("customMessage", null));
+		spec.thresholdOrAttacks = optInteger(json, "thresholdOrAttacks");
+		spec.starCount = optInteger(json, "starCount");
+		spec.punishmentMode = optInteger(json, "punishmentMode");
+		spec.useLists = optInteger(json, "useLists");
+		spec.excludeLeaders = optInteger(json, "excludeLeaders");
+
+		if (json.has("capitalPeakMax") || json.has("otherDistrictsMax")) {
+			java.util.Map<String, Integer> schwellen = new java.util.HashMap<>();
+			schwellen.put("capital_peak_max", optInteger(json, "capitalPeakMax"));
+			schwellen.put("other_districts_max", optInteger(json, "otherDistrictsMax"));
+			// Ohne Kickpunktgrund fragt auch das Modal nicht danach; 1 ist dort der
+			// Vorgabewert und bleibt es hier.
+			Integer beide = optInteger(json, "penalizeBoth");
+			schwellen.put("penalize_both", beide != null ? beide : 1);
+			spec.raidDistrictThresholds = schwellen;
+		}
+
+		java.util.Map<String, Long> einstellungen = new java.util.HashMap<>();
+		setzeWennDa(einstellungen, ListeningEvent.SETTING_IGNORE_PERFECT_WAR, json, "ignorePerfectWar");
+		setzeWennDa(einstellungen, ListeningEvent.SETTING_RAID_FORCE_KICKPOINTS, json, "raidForceKickpoints");
+		setzeWennDa(einstellungen, ListeningEvent.SETTING_WINS_THRESHOLD, json, "winsThreshold");
+		setzeWennDa(einstellungen, ListeningEvent.SETTING_STARFAILS_FREE_HITS, json, "starfailsFreeHits");
+		setzeWennDa(einstellungen, ListeningEvent.SETTING_CW_MIN_COUNT, json, "cwMinCount");
+		if (!einstellungen.isEmpty()) {
+			spec.namedSettings = einstellungen;
+		}
+
+		return spec;
+	}
+
+	private static String leerAlsNull(String wert) {
+		return (wert == null || wert.isBlank()) ? null : wert;
+	}
+
+	private static Integer optInteger(JSONObject json, String schluessel) {
+		if (!json.has(schluessel) || json.isNull(schluessel)) {
+			return null;
+		}
+		try {
+			return json.getInt(schluessel);
+		} catch (org.json.JSONException e) {
+			return null;
+		}
+	}
+
+	private static void setzeWennDa(java.util.Map<String, Long> ziel, String schluessel, JSONObject json,
+			String feld) {
+		Integer wert = optInteger(json, feld);
+		if (wert != null) {
+			ziel.put(schluessel, wert.longValue());
+		}
+	}
+
+	/**
+	 * The duration arrives either as a plain number of milliseconds or as the
+	 * shorthand the slash command accepts. "start" is a marker, not a duration.
+	 *
+	 * @return null if it could not be read
+	 */
+	private static Long dauerAusJson(JSONObject json) {
+		if (!json.has("duration") || json.isNull("duration")) {
+			return null;
+		}
+		Object roh = json.get("duration");
+		if (roh instanceof Number zahl) {
+			return zahl.longValue();
+		}
+		String text = roh.toString().trim();
+		if (text.equalsIgnoreCase("start") || text.equalsIgnoreCase("cwstart")) {
+			return -1L;
+		}
+		try {
+			return ListeningEventService.parseDuration(text);
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Whether this user may manage the events of that clan.
+	 *
+	 * Unlike {@code /listeningevent}, which only asks whether somebody is a vice
+	 * leader <em>anywhere</em>, this asks about the clan the event belongs to -
+	 * the same rule kickpoints and member changes already follow. Side clans have
+	 * no leadership of their own, so their main clan is what counts.
+	 */
+	private JSONObject pruefeRecht(String discordUserId, String clanTag) {
+		if (discordUserId == null || clanTag == null) {
+			return error("Missing required fields: discordUserId, clanTag", 400);
+		}
+		Clan c = new Clan(clanTag);
+		String zustaendig = ListeningEventService.effectiveClanTag(clanTag);
+		if (!c.ExistsDB() && zustaendig.equals(clanTag)) {
+			return error("Clan not found", 404);
+		}
+		if (!new User(discordUserId).isColeaderOrHigherInClan(zustaendig)) {
+			return error("Insufficient permissions - must be coleader or higher in the clan", 403);
+		}
+		return null;
+	}
+
+	/**
+	 * Prüft, ob der Bot in den Zielkanal schreiben kann.
+	 *
+	 * **Absichtlich weich.** Die meisten Listening Events posten in *Threads*
+	 * ("Kickpunkte Failpunkte Notizen", "CW Auffüllen") und nicht in normale
+	 * Textkanäle - eine Prüfung über {@code getTextChannelById} hat am 21.09.2026
+	 * prompt jeden zweiten echten Kanal abgelehnt. Threads verschwinden zudem aus
+	 * dem Cache, sobald sie archiviert werden, obwohl der Bot dorthin weiterhin
+	 * senden kann. Ein unbekannter Kanal wird deshalb nicht abgewiesen, sondern
+	 * nur gemeldet: eine berechtigte Änderung zu blockieren wäre schlimmer als ein
+	 * Tippfehler, den man danach wieder löschen kann.
+	 *
+	 * @return eine Warnung für die Antwort, oder null wenn alles in Ordnung ist
+	 */
+	private String kanalWarnung(String channelId) {
+		if (Bot.getJda() == null) {
+			return null;
+		}
+		net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel kanal = Bot.getJda()
+				.getChannelById(net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel.class, channelId);
+		if (kanal == null) {
+			return "Der Bot kennt diesen Kanal nicht (gelöscht, aus einem anderen Server "
+					+ "oder ein archivierter Thread). Das Event wurde trotzdem gespeichert — bitte prüfen.";
+		}
+		if (!kanal.getGuild().getId().equals(Bot.guild_id)) {
+			return "Dieser Kanal liegt auf einem anderen Server. Das Event wurde trotzdem gespeichert.";
+		}
+		// canTalk() gibt es nur am Textkanal; für einen Thread hängt das Recht am
+		// Elternkanal und ist hier nicht verlässlich zu beantworten.
+		if (kanal instanceof net.dv8tion.jda.api.entities.channel.concrete.TextChannel textKanal
+				&& !textKanal.canTalk()) {
+			return "Der Bot darf in diesem Kanal nicht schreiben. Das Event wurde trotzdem gespeichert.";
+		}
+		return null;
+	}
+
+	private JSONObject handleListeningEventAdd(JSONObject json) {
+		String discordUserId = json.optString("discordUserId", null);
+		ListeningEventService.Spec spec = specAusJson(json);
+		Long dauer = dauerAusJson(json);
+		if (dauer == null) {
+			return error("Invalid or missing duration - use milliseconds, 2h/30m/1d or 'start'", 400);
+		}
+		spec.duration = dauer;
+
+		JSONObject verweigert = pruefeRecht(discordUserId, spec.clanTag);
+		if (verweigert != null) {
+			return verweigert;
+		}
+		ListeningEventService.Result ergebnis = ListeningEventService.create(spec);
+		if (!ergebnis.ok()) {
+			return error(ergebnis.error(), ergebnis.statusCode());
+		}
+
+		JSONObject response = new JSONObject();
+		response.put("success", true);
+		response.put("message", "Listening Event angelegt");
+		response.put("id", ergebnis.id());
+		String warnung = spec.channelId == null ? null : kanalWarnung(spec.channelId);
+		if (warnung != null) {
+			response.put("warning", warnung);
+		}
+		return response;
+	}
+
+	private JSONObject handleListeningEventEdit(JSONObject json) {
+		String discordUserId = json.optString("discordUserId", null);
+		if (!json.has("id")) {
+			return error("Missing required field: id", 400);
+		}
+		long id = json.getLong("id");
+
+		if (!ListeningEventService.exists(id)) {
+			return error("Listening event not found", 404);
+		}
+
+		// Auf beiden Seiten prüfen, wenn das Event den Clan wechselt: sonst könnte
+		// ein Vize ein fremdes Event zu sich holen oder eines von sich wegschieben.
+		String bisherigerClan = new ListeningEvent(id).getClanTag();
+		JSONObject verweigert = pruefeRecht(discordUserId, bisherigerClan);
+		if (verweigert != null) {
+			return verweigert;
+		}
+
+		ListeningEventService.Spec spec = specAusJson(json);
+		Long dauer = dauerAusJson(json);
+		if (dauer == null) {
+			return error("Invalid or missing duration - use milliseconds, 2h/30m/1d or 'start'", 400);
+		}
+		spec.duration = dauer;
+
+		if (spec.clanTag != null && !spec.clanTag.equals(bisherigerClan)) {
+			verweigert = pruefeRecht(discordUserId, spec.clanTag);
+			if (verweigert != null) {
+				return verweigert;
+			}
+		}
+		ListeningEventService.Result ergebnis = ListeningEventService.update(id, spec);
+		if (!ergebnis.ok()) {
+			return error(ergebnis.error(), ergebnis.statusCode());
+		}
+
+		JSONObject response = new JSONObject();
+		response.put("success", true);
+		response.put("message", "Listening Event geändert");
+		response.put("id", id);
+		String warnung = spec.channelId == null ? null : kanalWarnung(spec.channelId);
+		if (warnung != null) {
+			response.put("warning", warnung);
+		}
+		return response;
+	}
+
+	private JSONObject handleListeningEventRemove(JSONObject json) {
+		String discordUserId = json.optString("discordUserId", null);
+		if (!json.has("id")) {
+			return error("Missing required field: id", 400);
+		}
+		long id = json.getLong("id");
+
+		if (!ListeningEventService.exists(id)) {
+			return error("Listening event not found", 404);
+		}
+
+		JSONObject verweigert = pruefeRecht(discordUserId, new ListeningEvent(id).getClanTag());
+		if (verweigert != null) {
+			return verweigert;
+		}
+
+		ListeningEventService.Result ergebnis = ListeningEventService.delete(id);
+		if (!ergebnis.ok()) {
+			return error(ergebnis.error(), ergebnis.statusCode());
+		}
+
+		JSONObject response = new JSONObject();
+		response.put("success", true);
+		response.put("message", "Listening Event gelöscht");
+		response.put("id", id);
+		return response;
+	}
 
 	private JSONObject error(String message, int statusCode) {
 		JSONObject response = new JSONObject();
