@@ -78,6 +78,7 @@ public class RestApiServer {
         server.createContext("/api/sideclans", new SideclansHandler());
         server.createContext("/api/players/", new PlayerHandler());
         server.createContext("/api/users/", new UserHandler());
+        server.createContext("/api/guild/channels", new GuildChannelsHandler());
         server.createContext("/api/guild", new GuildHandler());
 
         server.setExecutor(Executors.newFixedThreadPool(10));
@@ -618,6 +619,77 @@ public class RestApiServer {
 
             } catch (IOException | JSONException e) {
                 handleException(exchange, "GuildHandler", e);
+            }
+        }
+    }
+
+    /**
+     * Die Kanaele, in die der Bot schreiben kann - Textkanaele und offene Threads.
+     *
+     * Gebraucht fuer die Kanalauswahl der Listening Events auf der Website. Ohne
+     * das muesste ein Vize die Kanal-ID von Hand aus Discord kopieren, wofuer erst
+     * der Entwicklermodus an muss; damit waere die Oberflaeche nur fuer Leute
+     * bedienbar, die den Umweg schon kennen.
+     *
+     * Archivierte Threads fehlen hier zwangslaeufig - die haelt JDA nicht im
+     * Cache, obwohl der Bot dorthin senden kann. Die Website ergaenzt deshalb die
+     * Kanaele, die die vorhandenen Events ohnehin schon benutzen.
+     */
+    private class GuildChannelsHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                addCorsHeaders(exchange);
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+            if (!"GET".equals(exchange.getRequestMethod())) {
+                sendResponse(exchange, 405, "{\"error\":\"Method Not Allowed\"}");
+                return;
+            }
+            if (!validateApiToken(exchange)) {
+                sendResponse(exchange, 401, "{\"error\":\"Unauthorized - Invalid or missing API token\"}");
+                return;
+            }
+
+            try {
+                JSONArray aus = new JSONArray();
+                net.dv8tion.jda.api.entities.Guild gilde = Bot.getJda() == null ? null
+                        : Bot.getJda().getGuildById(Bot.guild_id);
+                if (gilde == null) {
+                    sendJsonResponse(exchange, 200, "[]");
+                    return;
+                }
+
+                for (net.dv8tion.jda.api.entities.channel.concrete.TextChannel k : gilde.getTextChannels()) {
+                    if (!k.canTalk()) {
+                        continue;
+                    }
+                    JSONObject o = new JSONObject();
+                    o.put("id", k.getId());
+                    o.put("name", k.getName());
+                    o.put("category", k.getParentCategory() == null ? JSONObject.NULL
+                            : k.getParentCategory().getName());
+                    o.put("thread", false);
+                    aus.put(o);
+                }
+
+                for (net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel t : gilde.getThreadChannels()) {
+                    if (t.isArchived() || t.isLocked()) {
+                        continue;
+                    }
+                    JSONObject o = new JSONObject();
+                    o.put("id", t.getId());
+                    o.put("name", t.getName());
+                    o.put("category", t.getParentChannel() == null ? JSONObject.NULL
+                            : t.getParentChannel().getName());
+                    o.put("thread", true);
+                    aus.put(o);
+                }
+
+                sendJsonResponse(exchange, 200, aus.toString());
+            } catch (Exception e) {
+                handleException(exchange, "GuildChannelsHandler", e);
             }
         }
     }
