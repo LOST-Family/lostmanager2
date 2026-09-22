@@ -840,13 +840,62 @@ public class Bot extends ListenerAdapter {
 		return jda;
 	}
 
+	/** Serialisiert die Neustarts. Siehe {@link #restartAllEvents()}. */
+	private static final Object NEUSTART_SPERRE = new Object();
+
+	/**
+	 * Steht auf true, solange ein Neustart angefordert, aber noch nicht begonnen
+	 * hat. Fasst mehrere Anforderungen kurz hintereinander zu einer zusammen.
+	 */
+	private static final java.util.concurrent.atomic.AtomicBoolean NEUSTART_ANGEFORDERT =
+			new java.util.concurrent.atomic.AtomicBoolean();
+
+	/**
+	 * Baut Scheduler und Einplanungen neu auf.
+	 *
+	 * **Laeuft nie zweimal gleichzeitig, und das ist der Kern.** Bis zum
+	 * 22.09.2026 startete jeder Aufruf einfach einen Thread, der
+	 * {@code schedulertasks} herunterfuhr und neu zuwies. Zwei ueberlappende
+	 * Laeufe ergaben dabei zuverlaessig ein Leck:
+	 *
+	 * <pre>
+	 * A: liest pool1, faehrt pool1 herunter, setzt pool2, startet Poller auf pool2
+	 * B: liest pool1 (schon herunter), faehrt pool1 herunter (wirkungslos),
+	 *    setzt pool3, startet Poller auf pool3
+	 * </pre>
+	 *
+	 * pool2 wurde nie heruntergefahren - seine Poller liefen weiter, obwohl das
+	 * Feld laengst auf pool3 zeigte. Und ueberlappen ist hier der Normalfall, nicht
+	 * die Ausnahme: {@code initializeCWLastStates()} fragt fuer jeden Clan mit
+	 * CW-Events die CoC-API, ein Durchlauf dauert also viele Sekunden.
+	 *
+	 * Die Folge war sichtbar: Keksi bekam am 22.09.2026 dieselbe
+	 * Trophaeen-Aenderung vierfach als DM, im Abstand von je zwei bis vier
+	 * Sekunden - vier ueberlebende Player-Event-Poller aus vier verwaisten Pools.
+	 * Bei einem CW-Kickpunkt-Event waere daraus eine vierfache Bestrafung geworden.
+	 *
+	 * Zusaetzlich werden mehrere Anforderungen kurz hintereinander zu einer
+	 * zusammengefasst: wer ueber die Website drei Events anlegt und wieder
+	 * loescht, braucht keine sechs vollstaendigen Neuaufbauten mit je einer Runde
+	 * CoC-API. Der wartende Lauf liest die Tabelle ohnehin frisch.
+	 */
 	public static void restartAllEvents() {
+		// Ist schon einer angefordert und noch nicht gestartet, nimmt der unsere
+		// Aenderung mit - er liest die Tabelle erst, wenn er drankommt.
+		if (!NEUSTART_ANGEFORDERT.compareAndSet(false, true)) {
+			return;
+		}
 		// Run in a separate thread to avoid crashing the bot if there are errors
 		new Thread(() -> {
-			try {
-				restartAllEventsInternal();
-			} catch (final Exception e) {
-				System.err.println("Error in restartAllEvents: " + e.getMessage());
+			synchronized (NEUSTART_SPERRE) {
+				// Ab hier zaehlt eine neue Anforderung wieder, denn ab hier wird
+				// gelesen: was jetzt noch dazukommt, braucht einen eigenen Lauf.
+				NEUSTART_ANGEFORDERT.set(false);
+				try {
+					restartAllEventsInternal();
+				} catch (final Exception e) {
+					System.err.println("Error in restartAllEvents: " + e.getMessage());
+				}
 			}
 		}, "RestartAllEventsThread").start();
 	}
@@ -960,14 +1009,26 @@ public class Bot extends ListenerAdapter {
 	 * @param fireTarget the calculated fire time this run belongs to
 	 */
 	private static void runAndRecord(ListeningEvent le, long fireTarget) {
-		// Claim the fire time before doing the work. A CWL day handler takes the better
-		// part of a minute, and the claim is what stops a poll cycle that starts in the
-		// meantime from scheduling the same firing a second time - which for a kickpoint
-		// event would mean punishing people twice.
+		// Die Feuerzeit beanspruchen, bevor gearbeitet wird. Ein CWL-Tag-Handler
+		// braucht knapp eine Minute, und der Anspruch ist das, was einen
+		// dazwischen startenden Poll-Durchlauf daran hindert, dieselbe Feuerung
+		// ein zweites Mal einzuplanen - bei einem Kickpunkt-Event hiesse das,
+		// Leute doppelt zu bestrafen.
+		//
+		// Seit dem 22.09.2026 ist der Anspruch ein bedingtes UPDATE statt eines
+		// blossen Schreibens. Vorher war er nur eine Notiz: zwei Laeufe konnten
+		// beide die Bedingung pruefen, beide schreiben und beide arbeiten. Genau
+		// das ist an dem Tag passiert, als verwaiste Scheduler mehrere Poller
+		// gleichzeitig laufen liessen.
 		try {
-			le.markFired(fireTarget, ListeningEvent.RESULT_RUNNING);
+			if (!le.claimFiring(fireTarget, SAME_OCCASION_TOLERANCE)) {
+				System.out.println("Event " + le.getId() + " ist fuer diese Feuerzeit bereits beansprucht, "
+						+ "dieser Lauf tut nichts.");
+				return;
+			}
 		} catch (final Exception e) {
 			System.err.println("Could not claim event " + le.getId() + ": " + e.getMessage());
+			return;
 		}
 
 		String result = ListeningEvent.RESULT_ERROR;

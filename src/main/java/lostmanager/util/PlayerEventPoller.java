@@ -143,9 +143,17 @@ public class PlayerEventPoller {
 			return;
 		}
 
-		// Store before sending: a DM that bounces (owner closed their DMs) must not
-		// make the same change fire again on every following tick.
-		event.storeObservation(current);
+		// Erst den Wert beanspruchen, dann melden. Zweierlei haengt daran:
+		// Ein DM, das nicht zustellbar ist (der Besitzer hat DMs zu), darf die
+		// Aenderung nicht bei jedem naechsten Tick erneut ausloesen - deshalb wird
+		// vor dem Senden geschrieben. Und laeuft wider Erwarten ein zweiter Poller,
+		// bekommt nur einer die Zeile; der andere schweigt, statt dieselbe
+		// Aenderung ein zweites Mal zu melden.
+		if (!event.claimObservation(last, current)) {
+			System.out.println("Player event " + event.getId()
+					+ ": Aenderung wurde bereits von einem anderen Lauf gemeldet.");
+			return;
+		}
 		event.fireEvent(last, current, player);
 	}
 }

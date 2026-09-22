@@ -391,6 +391,32 @@ public class ListeningEvent {
 	 * @param fireTarget the calculated fire time this decision belongs to
 	 * @param result     one of the {@code RESULT_*} constants
 	 */
+	/**
+	 * Beansprucht diese Feuerzeit - genau einmal.
+	 *
+	 * Das bedingte UPDATE traegt dieselbe Bedingung, nach der der Poller
+	 * entscheidet, ob ein Event fuer diesen Anlass schon erledigt ist: liegt
+	 * {@code last_fire_target} naeher als die Toleranz an der neuen Feuerzeit,
+	 * war schon jemand da. Weil Pruefen und Schreiben hier ein einziger Schritt
+	 * sind, kann kein zweiter Lauf dazwischenrutschen.
+	 *
+	 * Vorher war das ein blosses Schreiben, und der Schutz bestand allein darin,
+	 * dass es normalerweise nur einen Poller gibt. Am 22.09.2026 gab es durch
+	 * verwaiste Scheduler mehrere gleichzeitig.
+	 *
+	 * @param fireTarget die berechnete Feuerzeit, zu der dieser Lauf gehoert
+	 * @param toleranz   Abstand in ms, innerhalb dessen zwei Feuerzeiten
+	 *                   denselben Anlass meinen
+	 * @return true, wenn dieser Lauf den Anlass bekommen hat
+	 */
+	public boolean claimFiring(long fireTarget, long toleranz) {
+		Tuple<Long, Integer> ergebnis = DBUtil.executeUpdate(
+				"UPDATE listening_events SET last_fire_target = ?, last_fired_at = ?, last_fire_result = ? "
+						+ "WHERE id = ? AND (last_fire_target IS NULL OR abs(last_fire_target - ?) >= ?)",
+				fireTarget, System.currentTimeMillis(), RESULT_RUNNING, id, fireTarget, toleranz);
+		return ergebnis != null && ergebnis.getSecond() != null && ergebnis.getSecond() == 1;
+	}
+
 	public void markFired(long fireTarget, String result) {
 		DBUtil.executeUpdate(
 				"UPDATE listening_events SET last_fire_target = ?, last_fired_at = ?, last_fire_result = ? WHERE id = ?",

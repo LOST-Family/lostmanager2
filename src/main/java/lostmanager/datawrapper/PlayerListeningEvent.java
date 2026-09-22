@@ -344,6 +344,31 @@ public class PlayerListeningEvent {
 	 * also when nothing changed, so {@code last_checked} shows whether the watcher
 	 * is actually running.
 	 */
+	/**
+	 * Uebernimmt einen neuen Wert nur dann, wenn der alte noch der ist, den
+	 * dieser Lauf gelesen hat - und meldet, ob er zum Zug kam.
+	 *
+	 * Nur wer hier true bekommt, darf die Aenderung melden. Ohne das kann
+	 * dieselbe Aenderung mehrfach in der DM landen: Am 22.09.2026 liefen durch
+	 * verwaiste Scheduler vier Poller gleichzeitig, alle vier lasen denselben
+	 * alten Wert, alle vier schrieben den neuen und alle vier schickten Keksi
+	 * dieselbe Trophaeen-Meldung.
+	 *
+	 * {@code IS NOT DISTINCT FROM} statt {@code =}, weil der alte Wert NULL sein
+	 * darf - die erste Sichtung eines Beobachters.
+	 *
+	 * @param erwartet der Wert, den dieser Lauf vorgefunden hat (darf null sein)
+	 * @param value    der neue Wert
+	 * @return true, wenn dieser Lauf die Zeile fortgeschrieben hat
+	 */
+	public boolean claimObservation(Long erwartet, long value) {
+		Tuple<Long, Integer> result = DBUtil.executeUpdate(
+				"UPDATE player_listening_events SET last_value = ?, last_checked = ? "
+						+ "WHERE id = ? AND last_value IS NOT DISTINCT FROM ?",
+				value, new Timestamp(System.currentTimeMillis()), id, erwartet);
+		return result != null && result.getSecond() != null && result.getSecond() == 1;
+	}
+
 	public boolean storeObservation(long value) {
 		Tuple<Long, Integer> result = DBUtil.executeUpdate(
 				"UPDATE player_listening_events SET last_value = ?, last_checked = ? WHERE id = ?",
