@@ -657,11 +657,21 @@ public class giveaway extends ListenerAdapter {
         Giveaway giveaway = Giveaway.getById(giveawayId);
         if (giveaway == null || giveaway.isEnded()) return;
 
+        // Die Zeile beanspruchen, **bevor** gezogen wird. Das isEnded() oben ist
+        // nur die billige Vorabsage; verlassen darf man sich allein auf das
+        // bedingte UPDATE, weil zwischen Lesen und Schreiben ein zweiter
+        // Aufruf liegen kann. Am 22.09.2026 lagen dort neunzehn: dieselbe
+        // Verlosung wurde neunzehnmal ausgelost und jedes Mal wurden andere
+        // Gewinner angepingt.
+        if (!giveaway.claimEnding()) {
+            System.out.println("Giveaway " + giveawayId + " wurde bereits beendet, dieser Lauf zieht nicht.");
+            return;
+        }
+
         List<String> entries = new ArrayList<>(giveaway.getEntryDiscordIds());
 
         if (entries.isEmpty()) {
             // No participants — close without winners
-            giveaway.end(null);
             editGiveawayMessage(giveaway, jda, null);
             return;
         }
@@ -670,9 +680,8 @@ public class giveaway extends ListenerAdapter {
         Collections.shuffle(entries);
         int winnersToPick = Math.min(giveaway.getWinnerCount(), entries.size());
         List<String> winnerIds = entries.subList(0, winnersToPick);
-        String winnersCSV = String.join(",", winnerIds);
 
-        giveaway.end(winnersCSV);
+        giveaway.setWinners(String.join(",", winnerIds));
 
         // Edit the giveaway embed
         editGiveawayMessage(giveaway, jda, winnerIds);

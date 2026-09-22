@@ -852,6 +852,31 @@ public class Bot extends ListenerAdapter {
 	}
 
 	private static void restartAllEventsInternal() {
+		// Erst die Politik aendern, dann herunterfahren. Ohne das ist
+		// shutdown() beim ScheduledThreadPoolExecutor **kein** Abbruch:
+		// executeExistingDelayedTasksAfterShutdown steht standardmaessig auf
+		// true, bereits eingeplante Aufgaben feuern also zu ihrer Zeit auch
+		// aus dem heruntergefahrenen Pool heraus.
+		//
+		// Das war nicht theoretisch. Am 22.09.2026 hat ein Giveaway im Kanal
+		// "F2P Giveaway" neunzehnmal hintereinander ausgelost und jedes Mal
+		// andere Gewinner angepingt. Grund: jeder Aufruf von restartAllEvents
+		// plant unten ueber scheduleAllActiveGiveaways alle laufenden
+		// Giveaways erneut ein, die Einplanungen der vorigen Durchlaeufe
+		// ueberlebten das shutdown() aber. Vierundzwanzig Neustarts des
+		// Schedulers am Vorabend - Tests des neuen Schreibwegs fuer Listening
+		// Events, die jeder restartAllEvents ausloesen - ergaben
+		// vierundzwanzig Auslosungen derselben Verlosung.
+		//
+		// Dass die Aufgaben wirklich verschwinden, ist ausserdem genau die
+		// Eigenschaft, auf der das Loeschen eines Listening Events beruht: ein
+		// Event, dessen Feuerzeit unter fuenf Minuten entfernt ist, liegt
+		// bereits als Aufgabe im Pool und wuerde sonst trotz geloeschter Zeile
+		// feuern.
+		if (schedulertasks instanceof java.util.concurrent.ScheduledThreadPoolExecutor pool) {
+			pool.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+			pool.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
+		}
 		schedulertasks.shutdown();
 		// Use a multi-threaded pool (matching the initial field size) so a single
 		// blocked/long-running event cannot stall the polling loop or other due events.

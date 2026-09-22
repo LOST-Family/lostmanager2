@@ -9,6 +9,7 @@ import java.util.List;
 
 import lostmanager.dbutil.Connection;
 import lostmanager.dbutil.DBUtil;
+import lostmanager.util.Tuple;
 
 public class Giveaway {
 
@@ -189,6 +190,42 @@ public class Giveaway {
         this.isEnded = true;
         this.winners = winnersCSV;
         DBUtil.executeUpdate("UPDATE giveaways SET is_ended = TRUE, winners = ? WHERE id = ?", winnersCSV, id);
+    }
+
+    /**
+     * Beansprucht dieses Giveaway zum Beenden - genau einmal.
+     *
+     * Die Pruefung "ist es schon beendet?" und das Beenden selbst waren zwei
+     * getrennte Schritte, und dazwischen passt beliebig viel. Am 22.09.2026
+     * liefen neunzehn Auslosungen derselben Verlosung binnen fuenfzehn
+     * Sekunden nebeneinander: alle lasen die Zeile, sahen is_ended = false und
+     * zogen jede fuer sich Gewinner. Neunzehn Glueckwunschnachrichten mit
+     * verschiedenen Namen, alle mit Ping.
+     *
+     * Ein bedingtes UPDATE macht daraus einen einzigen, unteilbaren Schritt:
+     * Die Datenbank entscheidet, wer zuerst da war, und nur der bekommt eine
+     * getroffene Zeile zurueck. Die Gewinner werden erst danach nachgetragen -
+     * wer die Zeile nicht bekommen hat, zieht gar nicht erst.
+     *
+     * @return true, wenn dieser Aufruf das Giveaway beendet hat
+     */
+    public boolean claimEnding() {
+        Tuple<Long, Integer> ergebnis = DBUtil.executeUpdate(
+            "UPDATE giveaways SET is_ended = TRUE WHERE id = ? AND is_ended = FALSE", id);
+        boolean beansprucht = ergebnis != null && ergebnis.getSecond() != null && ergebnis.getSecond() == 1;
+        if (beansprucht) {
+            this.isEnded = true;
+        }
+        return beansprucht;
+    }
+
+    /**
+     * Traegt die Gewinner nach, nachdem {@link #claimEnding()} zugeschlagen hat.
+     * Getrennt vom Beanspruchen, weil sie erst danach feststehen.
+     */
+    public void setWinners(String winnersCSV) {
+        this.winners = winnersCSV;
+        DBUtil.executeUpdate("UPDATE giveaways SET winners = ? WHERE id = ?", winnersCSV, id);
     }
 
     /**
