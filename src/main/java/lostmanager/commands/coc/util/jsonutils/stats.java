@@ -619,7 +619,7 @@ public class stats extends ListenerAdapter {
 				Object dataToDisplay = fieldData;
 
 				if (MODE_MISSING.equals(normalizedMode)) {
-					dataToDisplay = buildMissingData(statType, fieldData);
+					dataToDisplay = buildMissingData(statType, fieldData, getTownHallLevel(json));
 					if (dataToDisplay instanceof JSONArray missingArr && missingArr.length() == 0) {
 						hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 								"Für **" + statType + "** fehlen keine Einträge.", MessageUtil.EmbedType.INFO)).queue();
@@ -2144,7 +2144,22 @@ public class stats extends ListenerAdapter {
 		return MODE_MISSING.equals(mode) ? MODE_MISSING : MODE_OWNED;
 	}
 
-	private JSONArray buildMissingData(String statType, Object fieldData) {
+	/**
+	 * The player's town hall level, read the same way
+	 * {@link #addBuildingExtras} reads it: walk the buildings field for the
+	 * town hall's own data ID and take its level.
+	 *
+	 * @return the level, or 0 if the upload has no buildings field or no town
+	 *         hall entry
+	 */
+	private int getTownHallLevel(JSONObject json) {
+		Map<String, Integer> counts = new HashMap<>();
+		Map<String, Integer> levels = new HashMap<>();
+		collectCountsAndLevels(json.opt(FIELD_BUILDINGS), counts, levels);
+		return levels.getOrDefault(DATA_TOWN_HALL, 0);
+	}
+
+	private JSONArray buildMissingData(String statType, Object fieldData, int townHallLevel) {
 		JSONObject imageMapCache = null;
 		try {
 			imageMapCache = lostmanager.util.ImageMapCache.fetchFullMapOnce();
@@ -2166,7 +2181,8 @@ public class stats extends ListenerAdapter {
 
 		List<String> missingIds = new ArrayList<>();
 		for (String id : fullMapIds) {
-			if (!ownedIds.contains(id) && !FilteredIdsCache.isFiltered(id)) {
+			if (!ownedIds.contains(id) && !FilteredIdsCache.isFiltered(id)
+					&& lostmanager.util.MinMaxTownHallCache.isAvailableAt(id, townHallLevel)) {
 				missingIds.add(id);
 			}
 		}
