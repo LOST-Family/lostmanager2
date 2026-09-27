@@ -22,14 +22,6 @@ public class ClanGamesWindow {
 
 	private static final ZoneId ZONE = ZoneId.of("Europe/Berlin");
 
-	/**
-	 * How far before the window start a snapshot still counts as a baseline. No
-	 * clan games points can be earned before the games begin, so a slightly older
-	 * snapshot holds the same value and is a valid - and safe - baseline. The
-	 * margin absorbs daylight saving shifts and jobs that ran a little early.
-	 */
-	private static final long BASELINE_LOOKBACK_MS = 12 * 60 * 60 * 1000L;
-
 	private final long startMillis;
 	private final long endMillis;
 	private final String key;
@@ -100,10 +92,31 @@ public class ClanGamesWindow {
 	}
 
 	/**
-	 * Earliest timestamp that still counts as a baseline snapshot for this window.
+	 * Earliest timestamp that still counts as a baseline snapshot for this window:
+	 * the end of the previous window.
+	 *
+	 * "Games Champion" only grows while clan games are running, so every snapshot
+	 * taken between the end of the previous games and the start of these ones
+	 * holds exactly the starting value. The end snapshot of the previous window is
+	 * therefore a valid baseline on its own - and it is what saves the window when
+	 * the start job fails.
+	 *
+	 * This used to be a 12 hour lookback. On 2026-09-22 the start job ran 19 times
+	 * in parallel (leaked scheduler pools, see Bot.restartAllEvents), the CoC API
+	 * answered with HTTP 429, and only 209 of about 1800 players got a baseline on
+	 * time. The rest was backfilled two hours later and counted as "taken too
+	 * late" - unrated, so about 1600 members dropped out of the clan games check
+	 * while the few with a punctual baseline could still be punished. For all 209
+	 * punctual players the previous end snapshot was identical to the start value,
+	 * which is the evidence this rule rests on.
 	 */
 	public Timestamp getBaselineLookupStart() {
-		return new Timestamp(startMillis - BASELINE_LOOKBACK_MS);
+		return new Timestamp(previous().endMillis);
+	}
+
+	/** The window of the month before this one. */
+	private ClanGamesWindow previous() {
+		return forMonth(YearMonth.parse(key).minusMonths(1));
 	}
 
 	/**
