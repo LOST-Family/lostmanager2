@@ -606,6 +606,12 @@ public class F2PCwlCommand extends ListenerAdapter {
 		int ohneDiscord = 0;
 		List<String> unbekannt = new ArrayList<>();
 
+		// Erst je Discord-Nutzer sammeln, welche Teams er hat, dann vergeben.
+		// Wer mit mehreren Accounts in mehreren Teams spielt, braucht alle diese
+		// Rollen. Bis 30.09.2026 lief die Schleife je Account und nahm dabei die
+		// Rollen der anderen Accounts wieder weg - es gewann der zuletzt
+		// bearbeitete Account.
+		java.util.Map<String, java.util.Set<Integer>> teamsJeNutzer = new java.util.LinkedHashMap<>();
 		for (lostmanager.datawrapper.F2PCwlRoster eintrag : aufstellung) {
 			lostmanager.datawrapper.Player p = new lostmanager.datawrapper.Player(eintrag.getPlayerTag());
 			User u = p.getUser();
@@ -615,34 +621,39 @@ public class F2PCwlCommand extends ListenerAdapter {
 				unbekannt.add(eintrag.getName());
 				continue;
 			}
+			teamsJeNutzer.computeIfAbsent(discordId, _ -> new java.util.HashSet<>()).add(eintrag.getTeamNo());
+		}
+
+		for (java.util.Map.Entry<String, java.util.Set<Integer>> nutzer : teamsJeNutzer.entrySet()) {
+			String discordId = nutzer.getKey();
 			net.dv8tion.jda.api.entities.Member member;
 			try {
 				member = guild.retrieveMemberById(discordId).complete();
 			} catch (final Exception e) {
 				ohneDiscord++;
-				unbekannt.add(eintrag.getName());
+				unbekannt.add("<@" + discordId + ">");
 				continue;
 			}
-			net.dv8tion.jda.api.entities.Role soll = rollen.get(eintrag.getTeamNo());
 			for (java.util.Map.Entry<Integer, net.dv8tion.jda.api.entities.Role> e : rollen.entrySet()) {
 				boolean hat = member.getRoles().contains(e.getValue());
-				boolean sollHaben = e.getValue().equals(soll);
+				boolean sollHaben = nutzer.getValue().contains(e.getKey());
 				if (hat == sollHaben) {
 					continue;
 				}
+				String was = (sollHaben ? "setzen " : "entfernen ") + e.getValue().getName() + " bei " + discordId;
 				if (sollHaben) {
 					gesetzt++;
 					if (!trocken) {
 						guild.addRoleToMember(member, e.getValue()).queue(_ -> {
-						}, _ -> {
-						});
+						}, fehler -> System.err.println("f2pcwl uebernehmen: " + was + " fehlgeschlagen: "
+								+ fehler.getMessage()));
 					}
 				} else {
 					entfernt++;
 					if (!trocken) {
 						guild.removeRoleFromMember(member, e.getValue()).queue(_ -> {
-						}, _ -> {
-						});
+						}, fehler -> System.err.println("f2pcwl uebernehmen: " + was + " fehlgeschlagen: "
+								+ fehler.getMessage()));
 					}
 				}
 			}
