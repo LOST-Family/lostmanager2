@@ -59,6 +59,7 @@ import lostmanager.commands.discord.admin.restart;
 import lostmanager.commands.discord.util.checkpoll;
 import lostmanager.commands.discord.util.checkreacts;
 import lostmanager.commands.discord.util.giveaway;
+import lostmanager.commands.discord.util.roleusers;
 import lostmanager.commands.discord.util.teamcheck;
 import lostmanager.datawrapper.AchievementData.Type;
 import lostmanager.datawrapper.Clan;
@@ -480,6 +481,10 @@ public class Bot extends ListenerAdapter {
 									.addOption(OptionType.ROLE, "team_role_5", "Die fünfte Teamrolle (optional)",
 											false),
 
+							Commands.slash("role-users", "Zählt alle Mitglieder einer Rolle auf.")
+									.addOption(OptionType.ROLE, "role", "Die Rolle, deren Mitglieder angezeigt werden sollen",
+											true),
+
 							Commands.slash("checkroles",
 									"Überprüfe, ob Clan-Mitglieder die korrekten Discord-Rollen haben.")
 									.addOptions(new OptionData(
@@ -789,6 +794,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new listeningevent());
 		classes.add(new playerevent());
 		classes.add(new teamcheck());
+		classes.add(new roleusers());
 		classes.add(new checkroles());
 		classes.add(new wins());
 		classes.add(new missinghits());
