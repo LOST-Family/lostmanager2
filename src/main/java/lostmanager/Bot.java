@@ -806,6 +806,7 @@ public class Bot extends ListenerAdapter {
 		classes.add(new giveaway());
 		classes.add(new ApiCommand());
 		classes.add(new PhishTrap());
+		classes.add(new lostmanager.util.Betreuungsruf());
 
 		return classes.toArray();
 	}
