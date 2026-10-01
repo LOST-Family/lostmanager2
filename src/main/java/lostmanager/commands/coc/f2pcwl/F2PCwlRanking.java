@@ -51,7 +51,7 @@ public class F2PCwlRanking {
 	/** So viele Saisons zählen, die jüngste am stärksten. */
 	private static final int SAISON_FENSTER = 6;
 
-	/** Abzug je Fehltag. Fehltage zählen in halben Schritten, siehe Excel-Spalte "raus". */
+	/** Abzug je Fehltag (ein Aufstellungstag ohne Stern = 0,5). Banktage zählen seit 01.10.2026 nicht. */
 	private static final double FEHLTAG_ABZUG = 0.15;
 
 	/**

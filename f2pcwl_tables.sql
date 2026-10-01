@@ -101,13 +101,18 @@ CREATE TABLE IF NOT EXISTS f2pcwl_player_season (
     attacks        SMALLINT NOT NULL DEFAULT 0,
     stars          SMALLINT NOT NULL DEFAULT 0,
     hitrate        NUMERIC(4,3),                 -- Sterne je Angriff
-    days_missed    NUMERIC(3,1),                 -- 1,0 = nicht angegriffen, 0,5 = Angriff ohne Stern
+    days_missed    NUMERIC(3,1),                 -- 0,5 je Aufstellungstag ohne Stern
+    bank_days      NUMERIC(3,1) NOT NULL DEFAULT 0, -- im Kader, nicht aufgestellt; kein Fehltag (seit 01.10.2026)
     bonus_eligible BOOLEAN  NOT NULL DEFAULT FALSE,
     bonus_awarded  BOOLEAN  NOT NULL DEFAULT FALSE,
     PRIMARY KEY (player_tag, season)
 );
 
-COMMENT ON COLUMN f2pcwl_player_season.days_missed IS 'Halbe Schritte wie in der Excel-Spalte raus: ein ausgelassener Angriff zählt 1,0, ein Angriff ohne Stern 0,5.';
+COMMENT ON COLUMN f2pcwl_player_season.days_missed IS 'Fehltage in halben Schritten: ein Aufstellungstag ohne Stern zählt 0,5. Banktage stehen seit 01.10.2026 getrennt in bank_days und zählen nicht mehr.';
+
+-- Nachrüsten bestehender Datenbanken (01.10.2026); die Excel-Monate wurden dabei
+-- per bank_days = 7 - attacks, days_missed = days_missed - bank_days aufgeteilt.
+ALTER TABLE f2pcwl_player_season ADD COLUMN IF NOT EXISTS bank_days NUMERIC(3,1) NOT NULL DEFAULT 0;
 
 -- Lebenszeichen des Recorders je Team.
 --

@@ -27,10 +27,11 @@ import lostmanager.dbutil.DBUtil;
  * dieselbe Leistung eine höhere Quote als in jedem Monat davor.
  *
  * Aus demselben Grund zählt ein Tag ohne Stern <b>immer halb</b>, egal ob jemand
- * gar nicht angriff oder ohne Erfolg. Der ganze Fehltag der Excel galt nur, wenn
- * jemand an dem Tag überhaupt nicht aufgestellt war - solche Zeilen liefert die
- * API nicht, weil sie nur die 15 Aufgestellten kennt. Erst mit einer gespeicherten
- * Aufstellung ließe sich das unterscheiden.
+ * gar nicht angriff oder ohne Erfolg. Der ganze Fehltag der Excel galt, wenn
+ * jemand an dem Tag überhaupt nicht aufgestellt war (Bank). Das zählt seit dem
+ * 01.10.2026 nicht mehr als Fehltag (Jonas); Banktage stehen getrennt in
+ * {@code bank_days}. Die Excel-Monate wurden dafür aufgeteilt: dort war die
+ * Bank immer genau 7 minus Aufstellungstage, bei allen 1624 Zeilen.
  */
 public class F2PCwlSeasonEnd {
 
@@ -62,9 +63,10 @@ public class F2PCwlSeasonEnd {
 				   WHERE season = ? GROUP BY team_no
 				),
 				-- Banktage: wer zum Kader gehoerte, an einem Tag aber nicht aufgestellt
-				-- war. Zaehlt wie in der Excel voll. Sichtbar wird das nur mit einer
-				-- gespeicherten Aufstellung - die API kennt immer nur die 15, die
-				-- gespielt haben.
+				-- war. Seit 01.10.2026 kein Fehltag mehr (Jonas: wer von den Vize auf
+				-- die Bank gesetzt wird, kann nichts dafuer), nur noch in bank_days
+				-- vermerkt. Sichtbar wird das nur mit einer gespeicherten Aufstellung -
+				-- die API kennt immer nur die 15, die gespielt haben.
 				bank AS (
 				  SELECT r.player_tag, GREATEST(0, t.tage - COALESCE(g.tage, 0)) AS banktage
 				  FROM f2pcwl_roster r
@@ -73,16 +75,17 @@ public class F2PCwlSeasonEnd {
 				  WHERE r.season = ?
 				)
 				INSERT INTO f2pcwl_player_season
-				  (player_tag, season, team_no, attacks, stars, hitrate, days_missed, bonus_eligible)
+				  (player_tag, season, team_no, attacks, stars, hitrate, days_missed, bank_days, bonus_eligible)
 				SELECT g.player_tag, g.season, g.team_no, g.tage, g.sterne,
 				       round(g.sterne::numeric / g.tage, 3),
-				       g.ohne_stern * 0.5 + COALESCE(b.banktage, 0) * 1.0,
+				       g.ohne_stern * 0.5,
+				       COALESCE(b.banktage, 0),
 				       g.sterne >= ?
 				FROM gespielt g
 				LEFT JOIN bank b ON b.player_tag = g.player_tag
 				ON CONFLICT (player_tag, season) DO UPDATE SET
 				  team_no = EXCLUDED.team_no, attacks = EXCLUDED.attacks, stars = EXCLUDED.stars,
-				  hitrate = EXCLUDED.hitrate, days_missed = EXCLUDED.days_missed,
+				  hitrate = EXCLUDED.hitrate, days_missed = EXCLUDED.days_missed, bank_days = EXCLUDED.bank_days,
 				  bonus_eligible = EXCLUDED.bonus_eligible
 				""";
 		return DBUtil.executeUpdate(sql, season, season, season, STERNE_FUER_VOLLEN_BONUS).getSecond();
