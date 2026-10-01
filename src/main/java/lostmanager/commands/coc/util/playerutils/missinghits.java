@@ -231,7 +231,7 @@ public class missinghits extends ListenerAdapter {
     }
 
     private String checkCW(Player player, Clan clan, Map<String, JSONObject> cwCache) {
-        JSONObject cwJson = cwCache.computeIfAbsent(clan.getTag(), t -> clan.getCWJson());
+        JSONObject cwJson = ausCache(cwCache, clan.getTag(), clan::getCWJson);
         if (cwJson != null && cwJson.has("state")) {
             String state = cwJson.getString("state");
             if (state.equals("inWar")) {
@@ -278,7 +278,7 @@ public class missinghits extends ListenerAdapter {
                         if (warTag.equals("#0"))
                             continue;
 
-                        JSONObject warData = cwlWarCache.computeIfAbsent(warTag, Clan::getCWLDayJson);
+                        JSONObject warData = ausCache(cwlWarCache, warTag, () -> Clan.getCWLDayJson(warTag));
                         if (warData == null || !warData.has("state") || !warData.has("clan")
                                 || !warData.has("opponent"))
                             continue;
@@ -325,7 +325,7 @@ public class missinghits extends ListenerAdapter {
     }
 
     private String checkRaid(Player player, Clan clan, Map<String, JSONObject> raidCache) {
-        JSONObject raidJson = raidCache.computeIfAbsent(clan.getTag(), t -> clan.getRaidJsonFull());
+        JSONObject raidJson = ausCache(raidCache, clan.getTag(), clan::getRaidJsonFull);
         if (raidJson != null && raidJson.has("items")) {
             JSONArray items = raidJson.getJSONArray("items");
             if (items.length() > 0) {
@@ -433,5 +433,21 @@ public class missinghits extends ListenerAdapter {
         } else {
             return minutes + "m";
         }
+    }
+
+    // Nicht computeIfAbsent: die Funktion macht einen HTTP-Aufruf, und waehrend
+    // HttpClient.send wartet, fuehrt der ForkJoin-Thread andere Aufgaben aus, die
+    // in dieselbe Map schreiben -> IllegalStateException "Recursive update"
+    // (Issue #133). Doppelte Abrufe im Wettlauf sind harmlos.
+    private static JSONObject ausCache(Map<String, JSONObject> cache, String schluessel,
+            java.util.function.Supplier<JSONObject> abruf) {
+        JSONObject wert = cache.get(schluessel);
+        if (wert != null)
+            return wert;
+        wert = abruf.get();
+        if (wert == null)
+            return null;
+        JSONObject vorher = cache.putIfAbsent(schluessel, wert);
+        return vorher != null ? vorher : wert;
     }
 }
