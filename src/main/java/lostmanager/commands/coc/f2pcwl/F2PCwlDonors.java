@@ -36,7 +36,8 @@ public class F2PCwlDonors {
 	/**
 	 * Benennt die Spender für einen Kampftag, falls das noch nicht geschehen ist.
 	 *
-	 * Wird aus dem Recorder aufgerufen, sobald ein Tag in den Kampf geht. Ein
+	 * Wird aus dem Recorder aufgerufen, sobald die Vorbereitung eines Tages läuft
+	 * (dort werden die Kriegs-Clanburgen gefüllt). Ein
 	 * erneuter Aufruf ändert nichts - die Einteilung eines Tages steht einmal.
 	 */
 	public static void assignForDay(String season, F2PCwlTeam team, int day) {

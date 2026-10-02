@@ -178,8 +178,10 @@ public class F2PCwlRecorder {
 			return true;
 		}
 
+		java.util.List<String> aufgestellt = new java.util.ArrayList<>();
 		for (int i = 0; i < members.length(); i++) {
 			JSONObject member = members.getJSONObject(i);
+			aufgestellt.add(normalizeTag(member.getString("tag")));
 			JSONArray attacks = member.optJSONArray("attacks");
 			boolean attacked = attacks != null && attacks.length() > 0;
 
@@ -201,10 +203,22 @@ public class F2PCwlRecorder {
 					destruction);
 		}
 
-		// Erst wenn der Kampftag läuft, steht die Aufstellung endgültig - vorher
-		// könnte der Anführer noch tauschen und wir würden jemanden einteilen,
-		// der gar nicht spielt.
-		if (warState.equals("inWar")) {
+		// Wer in der Vorbereitung wieder ausgetauscht wurde, steht nicht mehr in der
+		// Aufstellung. Ohne das bliebe seine Zeile auf in_lineup = TRUE stehen: er
+		// könnte als Spender ausgelost werden und zählte nicht als Banktag.
+		if (!aufgestellt.isEmpty()) {
+			DBUtil.executeUpdate("UPDATE f2pcwl_day_results SET in_lineup = FALSE "
+					+ "WHERE season = ? AND team_no = ? AND day = ? AND in_lineup "
+					+ "AND NOT (player_tag = ANY (string_to_array(?, ',')))",
+					season, team.getTeamNo(), day, String.join(",", aufgestellt));
+		}
+
+		// Schon am Vorbereitungstag einteilen: die Kriegs-Clanburgen werden in der
+		// Vorbereitung gefüllt, zu Kampfbeginn wäre es einen Tag zu spät (Jonas,
+		// 02.10.2026: "Spender müssen ja am Vorbereitungstag spenden"). Dass ein
+		// Vize danach noch tauscht und ein Eingeteilter gar nicht spielt, nehmen
+		// wir in Kauf - die Vize sehen den Post und können nachbessern.
+		if (warState.equals("preparation") || warState.equals("inWar")) {
 			try {
 				lostmanager.commands.coc.f2pcwl.F2PCwlDonors.assignForDay(season, team, day);
 			} catch (final Exception e) {
