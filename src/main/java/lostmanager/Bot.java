@@ -86,6 +86,15 @@ public class Bot extends ListenerAdapter {
 
 	private static final ScheduledExecutorService schedulernames = Executors.newSingleThreadScheduledExecutor();
 	public static ScheduledExecutorService schedulertasks = Executors.newScheduledThreadPool(10);
+	/**
+	 * Feste Takte, die nur beim Start eingeplant werden (CWL-Meldungen,
+	 * Stats-Kanäle). Bewusst **nicht** auf {@link #schedulertasks}: den baut
+	 * {@code restartAllEvents} bei jedem angelegten oder gelöschten Event neu
+	 * auf und wirft dabei alle periodischen Aufgaben weg. Am 03.10.2026 sind so
+	 * die CWL-Meldungen drei Tage lang still ausgefallen - keine Tagesberichte,
+	 * keine Erinnerungen an offene Angriffe -, bis der Bot neu gestartet wurde.
+	 */
+	private static final ScheduledExecutorService schedulerfest = Executors.newScheduledThreadPool(2);
 	public static AtomicInteger activeVerificationTasks = new AtomicInteger(0);
 	public static final java.net.http.HttpClient httpClient = java.net.http.HttpClient.newBuilder()
 			.connectTimeout(java.time.Duration.ofSeconds(10))
@@ -1847,7 +1856,7 @@ public class Bot extends ListenerAdapter {
 				System.err.println("Unerwarteter Fehler bei den CWL-Meldungen: " + t.getMessage());
 			}
 		};
-		schedulertasks.scheduleAtFixedRate(cwlMeldungen, 1, 5, TimeUnit.MINUTES);
+		schedulerfest.scheduleAtFixedRate(cwlMeldungen, 1, 5, TimeUnit.MINUTES);
 
 		// Zähler-Kanäle in STATS, früher ClashKing (siehe util.StatsKanaele).
 		Runnable statsKanaele = () -> {
@@ -1857,11 +1866,12 @@ public class Bot extends ListenerAdapter {
 				System.err.println("Unerwarteter Fehler bei den Stats-Kanälen: " + t.getMessage());
 			}
 		};
-		schedulertasks.scheduleAtFixedRate(statsKanaele, 1, 15, TimeUnit.MINUTES);
+		schedulerfest.scheduleAtFixedRate(statsKanaele, 1, 15, TimeUnit.MINUTES);
 	}
 
 	public void stopScheduler() {
 		schedulernames.shutdown();
+		schedulerfest.shutdown();
 		schedulertasks.shutdown();
 	}
 
