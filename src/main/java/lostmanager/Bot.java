@@ -1848,6 +1848,16 @@ public class Bot extends ListenerAdapter {
 			}
 		};
 		schedulertasks.scheduleAtFixedRate(cwlMeldungen, 1, 5, TimeUnit.MINUTES);
+
+		// Zähler-Kanäle in STATS, früher ClashKing (siehe util.StatsKanaele).
+		Runnable statsKanaele = () -> {
+			try {
+				lostmanager.util.StatsKanaele.aktualisiere();
+			} catch (final Throwable t) {
+				System.err.println("Unerwarteter Fehler bei den Stats-Kanälen: " + t.getMessage());
+			}
+		};
+		schedulertasks.scheduleAtFixedRate(statsKanaele, 1, 15, TimeUnit.MINUTES);
 	}
 
 	public void stopScheduler() {
