@@ -11765,39 +11765,39 @@
     "icon": "/home-base/decorations/238.png",
     "index": 165
   },
-  "18000244": {
-    "name": "Amber Hot Streak (Sep. 2026)",
-    "icon": "/home-base/decorations/244.png",
-    "index": 166
-  },
-  "18000242": {
-    "name": "Emerald Hot Streak (Oct. 2026)",
-    "icon": "/home-base/decorations/242.png",
-    "index": 167
-  },
-  "18000245": {
-    "name": "Violet Hot Streak (Oct. 2026)",
-    "icon": "/home-base/decorations/245.png",
-    "index": 168
-  },
-  "18000243": {
-    "name": "Ultimate Hot Streak (Oct. 2026)",
-    "icon": "/home-base/decorations/243.png",
-    "index": 169
-  },
   "18000250": {
     "name": "Portal Staff (Oct. 2026)",
     "icon": "/home-base/decorations/250.png",
-    "index": 170
+    "index": 166
   },
   "18000247": {
     "name": "Coin Collector (Oct. 2026)",
     "icon": "/home-base/decorations/247.png",
-    "index": 171
+    "index": 167
   },
   "18000248": {
     "name": "Sour Elixir Fountain (Oct. 2026)",
     "icon": "/home-base/decorations/248.png",
+    "index": 168
+  },
+  "18000244": {
+    "name": "Amber Hot Streak (Oct. 2026)",
+    "icon": "/home-base/decorations/244.png",
+    "index": 169
+  },
+  "18000242": {
+    "name": "Emerald Hot Streak (Oct. 2026)",
+    "icon": "/home-base/decorations/242.png",
+    "index": 170
+  },
+  "18000245": {
+    "name": "Violet Hot Streak (Oct. 2026)",
+    "icon": "/home-base/decorations/245.png",
+    "index": 171
+  },
+  "18000243": {
+    "name": "Ultimate Hot Streak (Oct. 2026)",
+    "icon": "/home-base/decorations/243.png",
     "index": 172
   },
   "8000015": {
@@ -12071,7 +12071,7 @@
     "index": 53
   },
   "8000139": {
-    "name": "2026 Anniversary Cake",
+    "name": "2026 Curious Stump",
     "icon": "/home-base/obstacles/139.png",
     "index": 54
   },
@@ -12443,6 +12443,11 @@
   "60000094": {
     "name": "WWE2 Money in the Bank Scenery (Sep. 2026, XL (WWE2 exclusive!))",
     "icon": "/home-base/sceneries/94.png",
+    "index": 73
+  },
+  "60000096": {
+    "name": "Cosmic Portals Scenery (Oct. 2026, XL)",
+    "icon": "/home-base/sceneries/96.png",
     "index": 73
   },
   "52000001": {
@@ -13825,100 +13830,100 @@
     "icon": "/home-base/skins/335.png",
     "index": 270
   },
-  "52000354": {
-    "name": "CWL League Prince (Nov. 2026)",
-    "icon": "/home-base/skins/354.png",
+  "52000324": {
+    "name": "Shroud Queen (Oct. 2026 GP)",
+    "icon": "/home-base/skins/324.png",
     "index": 271
-  },
-  "52000329": {
-    "name": "Spider Warden (Oct. 2026)",
-    "icon": "/home-base/skins/329.png",
-    "index": 271
-  },
+  },  
   "52000369": {
-    "name": "FireSkull King (Oct. 2026)",
+    "name": "Savage King (Oct. 2026)",
     "icon": "/home-base/skins/369.png",
     "index": 272
-  },
-  "52000229": {
-    "name": "Creepy Queen (Oct. 2026)",
-    "icon": "/home-base/skins/229.png",
+  },  
+  "52000356": {
+    "name": "Nasty Prince (Oct. 2026)",
+    "icon": "/home-base/skins/356.png",
     "index": 273
-  },
-  "52000352": {
-    "name": "Juggernaugt Duke (Oct. 2026)",
-    "icon": "/home-base/skins/352.png",
+  },  
+  "52000381": {
+    "name": "Terror Champion (Oct. 2026)",
+    "icon": "/home-base/skins/381.png",
     "index": 274
   },
-  "52000356": {
-    "name": "Collector Prince (Oct. 2026)",
-    "icon": "/home-base/skins/356.png",
+  "52000352": {
+    "name": "Behemoth Duke (Oct. 2026)",
+    "icon": "/home-base/skins/352.png",
     "index": 275
   },
-  "52000381": {
-    "name": "Lich Champion (Oct. 2026)",
-    "icon": "/home-base/skins/381.png",
+  "52000336": {
+    "name": "Spider Warden (Oct. 2026)",
+    "icon": "/home-base/skins/336.png",
     "index": 276
+  },
+  "52000354": {
+    "name": "CWL League Prince (Oct. 2026)",
+    "icon": "/home-base/skins/354.png",
+    "index": 277
   },
   "52000332": {
     "name": "? Warden (Nov. 2026)",
     "icon": "/home-base/skins/332.png",
-    "index": 277
+    "index": 278
   },
   "52000370": {
     "name": "? King (Nov. 2026)",
     "icon": "/home-base/skins/370.png",
-    "index": 278
-  },
-  "52000324": {
-    "name": "? Queen (Nov. 2026)",
-    "icon": "/home-base/skins/324.png",
     "index": 279
+  },
+  "52000229": {
+    "name": "? Queen (Nov. 2026)",
+    "icon": "/home-base/skins/229.png",
+    "index": 280
   },
   "52000388": {
     "name": "? Duke (Nov. 2026)",
     "icon": "/home-base/skins/388.png",
-    "index": 280
+    "index": 281
   },
   "52000357": {
     "name": "? Prince (Nov. 2026)",
     "icon": "/home-base/skins/357.png",
-    "index": 281
+    "index": 282
   },
   "52000382": {
     "name": "? Champion (Nov. 2026)",
     "icon": "/home-base/skins/382.png",
-    "index": 282
-  },
-  "52000336": {
-    "name": "? Warden (Dec. 2026)",
-    "icon": "/home-base/skins/336.png",
     "index": 283
+  },
+  "52000329": {
+    "name": "? Warden (Dec. 2026)",
+    "icon": "/home-base/skins/329.png",
+    "index": 284
   },
   "52000371": {
     "name": "? King (Dec. 2026)",
     "icon": "/home-base/skins/371.png",
-    "index": 284
+    "index": 285
   },
   "52000325": {
     "name": "? Queen (Dec. 2026)",
     "icon": "/home-base/skins/325.png",
-    "index": 285
+    "index": 286
   },
   "52000389": {
     "name": "? Duke (Dec. 2026)",
     "icon": "/home-base/skins/389.png",
-    "index": 286
+    "index": 287
   },
   "52000358": {
     "name": "? Prince (Dec. 2026)",
     "icon": "/home-base/skins/358.png",
-    "index": 287
+    "index": 288
   },
   "52000383": {
     "name": "? Champion (Dec. 2026)",
     "icon": "/home-base/skins/383.png",
-    "index": 288
+    "index": 289
   },
   "82000000": {
     "name": "Brown Fence",
@@ -14611,12 +14616,12 @@
     "index": 137
   },
   "82000165": {
-    "name": "Cosmic Roof",
+    "name": "Portal Panic Roof",
     "icon": "/home-base/clancapital/165.png",
     "index": 138
   },
   "82000162": {
-    "name": "Cosmic Deco",
+    "name": "Portal Panic Deco",
     "icon": "/home-base/clancapital/162.png",
     "index": 139
   },
