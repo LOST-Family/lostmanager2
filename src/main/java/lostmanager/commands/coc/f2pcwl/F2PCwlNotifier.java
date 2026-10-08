@@ -166,6 +166,10 @@ public class F2PCwlNotifier {
 			return;
 		}
 
+		// Vorher frisch abrufen, sonst stammen die Angriffe aus dem letzten
+		// Zwei-Stunden-Lauf des Recorders. Höchstens sechs Abrufe je Team und Tag.
+		lostmanager.commands.coc.util.automation.F2PCwlRecorder.aktualisiereTag(season, team, day);
+
 		List<String> offen = offeneAngriffe(season, team.getTeamNo(), day);
 		if (offen.isEmpty()) {
 			return;
