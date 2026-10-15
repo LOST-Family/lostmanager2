@@ -11785,14 +11785,14 @@
     "icon": "/home-base/decorations/244.png",
     "index": 169
   },
-  "18000242": {
-    "name": "Emerald Hot Streak (Oct. 2026)",
-    "icon": "/home-base/decorations/242.png",
-    "index": 170
-  },
   "18000245": {
     "name": "Violet Hot Streak (Oct. 2026)",
     "icon": "/home-base/decorations/245.png",
+    "index": 170
+  },
+  "18000242": {
+    "name": "Emerald Hot Streak (Oct. 2026)",
+    "icon": "/home-base/decorations/242.png",
     "index": 171
   },
   "18000243": {
