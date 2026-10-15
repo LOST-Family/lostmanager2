@@ -816,6 +816,8 @@ public class Bot extends ListenerAdapter {
 		classes.add(new ApiCommand());
 		classes.add(new PhishTrap());
 		classes.add(new lostmanager.util.Betreuungsruf());
+		// Tuerklingel fuer Keksi, standardmaessig aus (KLINGEL_AN=1 schaltet ein)
+		classes.add(new lostmanager.util.Klingel());
 
 		return classes.toArray();
 	}

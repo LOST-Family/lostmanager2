@@ -1768,8 +1768,9 @@ public class ListeningEvent {
 			boolean isEndOfWarEvent = getDurationUntilEnd() <= 0;
 
 			if (isEndOfWarEvent && result.hasMissedAttacks) {
-				// At end of war: send initial message, then schedule 5-minute verification
-				Message sentMessage = sendMessageToChannelAndReturn(result.message);
+				// At end of war: send initial message, then verify once the API reports warEnded
+				final long frist = System.currentTimeMillis() + CWL_PRUEFFRIST_MS;
+				Message sentMessage = sendMessageToChannelAndReturn(result.message + cwlPruefHinweis(frist));
 
 				if (sentMessage != null) {
 					final String clanTag = clan.getTag();
@@ -1781,17 +1782,9 @@ public class ListeningEvent {
 					final String originalMessage = result.message;
 
 					lostmanager.Bot.activeVerificationTasks.incrementAndGet();
-					ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-					scheduler.schedule(() -> {
-						try {
-							handleCWLDayMissedAttacksDelayedVerification(clanTag, finalCompletedRound,
-									finalWarTag, messageId, channelId, thisEvent, originalMessage);
-						} catch (Exception e) {
-							System.err.println("Error in delayed CWL day verification: " + e.getMessage());						} finally {
-							lostmanager.Bot.activeVerificationTasks.decrementAndGet();
-							scheduler.shutdown();
-						}
-					}, 5, TimeUnit.MINUTES);
+					cwlNachpruefen(Executors.newSingleThreadScheduledExecutor(), 300,
+							() -> handleCWLDayMissedAttacksDelayedVerification(clanTag, finalCompletedRound,
+									finalWarTag, messageId, channelId, thisEvent, originalMessage, frist));
 				}
 			} else {
 				// It's a reminder (inWar or warEnded but not duration 0)
@@ -1950,11 +1943,11 @@ public class ListeningEvent {
 	 * Fetches fresh data, updates the message, and processes kickpoints if
 	 * appropriate.
 	 */
-	private void handleCWLDayMissedAttacksDelayedVerification(String clanTag, int roundNumber, String warTag,
-			long messageId, String channelId, ListeningEvent event, String originalMessage) {
+	private boolean handleCWLDayMissedAttacksDelayedVerification(String clanTag, int roundNumber, String warTag,
+			long messageId, String channelId, ListeningEvent event, String originalMessage, long frist) {
 
 		System.out
-				.println("Starting 5-minute CWL day verification for clan " + clanTag + " round " + (roundNumber + 1));
+				.println("Starting CWL day verification for clan " + clanTag + " round " + (roundNumber + 1));
 
 		try {
 			// Fetch fresh CWL war data
@@ -1963,6 +1956,12 @@ public class ListeningEvent {
 
 			// Check if war data is still available (state is warEnded)
 			boolean dataIsReliable = currentState.equals("warEnded");
+			if (!dataIsReliable && System.currentTimeMillis() < frist) {
+				// Der Hinweis "Vorläufig ... spätestens" steht schon seit dem Versand in der Meldung
+				System.out.println("CWL day verification for clan " + clanTag + ": state=" + currentState
+						+ ", neuer Versuch in " + CWL_PRUEF_ABSTAND_S + "s");
+				return false;
+			}
 
 			String updatedMessage;
 			boolean shouldProcessKickpoints;
@@ -1985,10 +1984,10 @@ public class ListeningEvent {
 				boolean ignorePerfectWar = event.getFlag(SETTING_IGNORE_PERFECT_WAR, false);
 
 				if (isPerfectWar && !ignorePerfectWar) {
-					updatedMessage = result.message + "\n*Daten nach 5min überprüft*\n**Perfekter Krieg erreicht! Keine Kickpunkte verteilt.**";
+					updatedMessage = result.message + "\n*Daten nach Kriegsende überprüft*\n**Perfekter Krieg erreicht! Keine Kickpunkte verteilt.**";
 					shouldProcessKickpoints = false;
 				} else {
-					updatedMessage = result.message + "\n*Daten nach 5min überprüft*";
+					updatedMessage = result.message + "\n*Daten nach Kriegsende überprüft*";
 					if (isPerfectWar) {
 						updatedMessage += "\n**Perfekter Krieg – Kickpunkte werden dennoch vergeben (Einstellung).**";
 					}
@@ -2011,19 +2010,55 @@ public class ListeningEvent {
 				}
 			}
 
-			System.out.println("Completed 5-minute CWL day verification for clan " + clanTag + " (dataReliable="
+			System.out.println("Completed CWL day verification for clan " + clanTag + " (dataReliable="
 					+ dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
+			return true;
 
 		} catch (JSONException e) {
 			System.err.println("Error in CWL day delayed verification for clan " + clanTag + ": " + e.getMessage());
 			// On error, try to update the message with an error note appended to original
 			try {
 				editMessageInChannel(channelId, messageId, originalMessage
-						+ "\n\n*Fehler bei der 5-Minuten-Überprüfung. Daten möglicherweise nicht aktuell.*");
+						+ "\n\n*Fehler bei der Überprüfung. Daten möglicherweise nicht aktuell.*");
 			} catch (Exception e2) {
 				System.err.println("Failed to update message with error: " + e2.getMessage());
 			}
+			return true;
 		}
+	}
+
+	/**
+	 * Wie lange nach Kriegsende auf "warEnded" gewartet wird. Supercell liefert laufende
+	 * CWL-Kriege bis zu zehn Minuten aus dem Cache (Cache-Control max-age=600). Am
+	 * 07.10.2026 kam die feste 5-Minuten-Prüfung deshalb noch mit "inWar" zurück, und die
+	 * Meldung blieb "möglicherweise nicht zuverlässig". Jonas: höchstens 30 Minuten.
+	 */
+	private static final long CWL_PRUEFFRIST_MS = TimeUnit.MINUTES.toMillis(30);
+	private static final long CWL_PRUEF_ABSTAND_S = 150;
+
+	private static String cwlPruefHinweis(long frist) {
+		return "\n\n*Vorläufig – Prüfung läuft noch, bis die Clash-API den Krieg als beendet meldet (spätestens <t:"
+				+ (frist / 1000) + ":t>).*";
+	}
+
+	/** Wiederholt die Prüfung, bis sie true liefert; dann Zähler runter und Scheduler aus. */
+	private static void cwlNachpruefen(ScheduledExecutorService scheduler, long verzoegerungSek,
+			java.util.function.BooleanSupplier pruefung) {
+		scheduler.schedule(() -> {
+			boolean fertig = true;
+			try {
+				fertig = pruefung.getAsBoolean();
+			} catch (Exception e) {
+				System.err.println("Error in delayed CWL verification: " + e.getMessage());
+			} finally {
+				if (fertig) {
+					Bot.activeVerificationTasks.decrementAndGet();
+					scheduler.shutdown();
+				} else {
+					cwlNachpruefen(scheduler, CWL_PRUEF_ABSTAND_S, pruefung);
+				}
+			}
+		}, verzoegerungSek, TimeUnit.SECONDS);
 	}
 
 	private void handleRaidEvent(Clan clan) {
@@ -3745,7 +3780,8 @@ public class ListeningEvent {
 		boolean isEndOfWarEvent = getDurationUntilEnd() <= 0;
 
 		if (isEndOfWarEvent) {
-			Message sentMessage = sendMessageToChannelAndReturn(result.message);
+			final long frist = System.currentTimeMillis() + CWL_PRUEFFRIST_MS;
+			Message sentMessage = sendMessageToChannelAndReturn(result.message + cwlPruefHinweis(frist));
 			if (sentMessage != null) {
 				final String clanTag = clan.getTag();
 				final long messageId = sentMessage.getIdLong();
@@ -3756,33 +3792,31 @@ public class ListeningEvent {
 				final String finalWarTag = warTag;
 
 				Bot.activeVerificationTasks.incrementAndGet();
-				ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-				scheduler.schedule(() -> {
-					try {
-						handleCWLDayBadAttacksDelayedVerification(clanTag, finalRound, finalWarTag,
-								messageId, channelId, thisEvent, originalMessage);
-					} catch (Exception e) {
-						System.err.println("Error in delayed CWL bad attacks verification: " + e.getMessage());					} finally {
-						Bot.activeVerificationTasks.decrementAndGet();
-						scheduler.shutdown();
-					}
-				}, 5, TimeUnit.MINUTES);
+				cwlNachpruefen(Executors.newSingleThreadScheduledExecutor(), 300,
+						() -> handleCWLDayBadAttacksDelayedVerification(clanTag, finalRound, finalWarTag,
+								messageId, channelId, thisEvent, originalMessage, frist));
 			}
 		} else {
 			sendMessageInChunks(result.message);
 		}
 	}
 
-	private void handleCWLDayBadAttacksDelayedVerification(String clanTag, int roundNumber, String warTag,
-			long messageId, String channelId, ListeningEvent event, String originalMessage) {
+	private boolean handleCWLDayBadAttacksDelayedVerification(String clanTag, int roundNumber, String warTag,
+			long messageId, String channelId, ListeningEvent event, String originalMessage, long frist) {
 
-		System.out.println("Starting 5-minute CWL bad attacks verification for clan " + clanTag
+		System.out.println("Starting CWL bad attacks verification for clan " + clanTag
 				+ " round " + (roundNumber + 1));
 
 		try {
 			org.json.JSONObject warData = Clan.getCWLDayJson(warTag);
 			String currentState = warData.getString("state");
 			boolean dataIsReliable = currentState.equals("warEnded");
+			if (!dataIsReliable && System.currentTimeMillis() < frist) {
+				// Der Hinweis "Vorläufig ... spätestens" steht schon seit dem Versand in der Meldung
+				System.out.println("CWL bad attacks verification for clan " + clanTag + ": state=" + currentState
+						+ ", neuer Versuch in " + CWL_PRUEF_ABSTAND_S + "s");
+				return false;
+			}
 
 			int targetStars = event.getConfiguredStarCount();
 
@@ -3797,7 +3831,7 @@ public class ListeningEvent {
 				org.json.JSONObject ourClanData = clanData.getString("tag").equals(clanTag) ? clanData : opponentData;
 
 				result = buildCWLDayBadAttacksResult(clan, ourClanData, warData, roundNumber, true, targetStars);
-				updatedMessage = result.message + "\n*Daten nach 5min überprüft*";
+				updatedMessage = result.message + "\n*Daten nach Kriegsende überprüft*";
 				shouldProcessKickpoints = result.hasBadAttacks
 						&& event.getActionType() == ACTIONTYPE.STARFAILS_KICKPOINT;
 			} else {
@@ -3813,16 +3847,18 @@ public class ListeningEvent {
 				}
 			}
 
-			System.out.println("Completed 5-minute CWL bad attacks verification for clan " + clanTag
+			System.out.println("Completed CWL bad attacks verification for clan " + clanTag
 					+ " (dataReliable=" + dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
+			return true;
 
 		} catch (JSONException e) {
 			System.err.println("Error in CWL bad attacks delayed verification for clan " + clanTag + ": " + e.getMessage());			try {
 				editMessageInChannel(channelId, messageId,
-						originalMessage + "\n\n*Fehler bei der 5-Minuten-Überprüfung.*");
+						originalMessage + "\n\n*Fehler bei der Überprüfung.*");
 			} catch (Exception e2) {
 				System.err.println("Failed to update message with error: " + e2.getMessage());
 			}
+			return true;
 		}
 	}
 

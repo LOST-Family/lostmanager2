@@ -145,6 +145,22 @@ public class F2PCwlRecorder {
 	}
 
 	/**
+	 * Holt einen bereits bekannten Kampftag frisch von der API.
+	 *
+	 * Für die Erinnerung an offene Angriffe: recordAll läuft nur alle zwei Stunden,
+	 * und am 08.10.2026 nannte die Erinnerung 26 Minuten vor Schluss Leute, die
+	 * längst angegriffen hatten (Jonas: "bullshit, hab schon angegriffen").
+	 */
+	public static void aktualisiereTag(String season, F2PCwlTeam team, int day) {
+		String warTag = F2PCwlSeason.getWarTag(season, team.getTeamNo(), day);
+		String hostTag = normalizeTag(team.getHostClanTag());
+		if (warTag == null || hostTag == null) {
+			return;
+		}
+		recordDay(season, team, day, warTag, hostTag);
+	}
+
+	/**
 	 * Wertet einen Krieg aus, sofern es der des Teams ist.
 	 *
 	 * @return true, wenn der Krieg zu diesem Team gehörte und verarbeitet wurde
