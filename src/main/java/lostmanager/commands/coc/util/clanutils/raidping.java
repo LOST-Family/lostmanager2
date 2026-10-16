@@ -46,19 +46,12 @@ public class raidping extends ListenerAdapter {
 			String clantag = clanOption.getAsString();
 
 			User userexecuted = new User(event.getUser().getId());
-			boolean bp = false;
-			for (String clantags : DBManager.getAllClans()) {
-				if (userexecuted.getClanRoles().get(clantags) == Player.RoleType.ADMIN
-						|| userexecuted.getClanRoles().get(clantags) == Player.RoleType.LEADER
-						|| userexecuted.getClanRoles().get(clantags) == Player.RoleType.COLEADER) {
-					bp = true;
-					break;
-				}
-			}
-			if (bp == false) {
+			// Vize+ im angegebenen Clan, nicht in irgendeinem: sonst pingte ein Vize
+			// aus Anthrazit LOST 6 an, wo er nur Ältester ist (16.10.2026).
+			if (!userexecuted.isColeaderOrHigherInClan(clantag)) {
 				event.getHook()
 						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-								"Du musst mindestens Vize-Anführer eines Clans sein, um diesen Befehl ausführen zu können.",
+								"Du musst mindestens Vize-Anführer dieses Clans sein, um diesen Befehl ausführen zu können.",
 								MessageUtil.EmbedType.ERROR))
 						.queue();
 				return;
