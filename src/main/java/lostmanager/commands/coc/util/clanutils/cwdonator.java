@@ -69,13 +69,21 @@ public class cwdonator extends ListenerAdapter {
 			}
 
 			User userexecuted = new User(event.getUser().getId());
-			HashMap<String, Player.RoleType> clanroles = userexecuted.getClanRoles();
-			boolean ping = false;
-			for (String key : clanroles.keySet()) {
-				if (clanroles.get(key) == Player.RoleType.ADMIN || clanroles.get(key) == Player.RoleType.LEADER
-						|| clanroles.get(key) == Player.RoleType.COLEADER) {
-					ping = true;
-					break;
+			// Gepingt wird nur, wenn der Ausführende Vize+ im angegebenen Clan ist (16.10.2026,
+			// wie bei raidping). Für nicht registrierte Clans kennt der Bot keine Rollen;
+			// dort reicht weiterhin Vize+ in irgendeinem LOST-Clan.
+			boolean ping;
+			if (allclantags.contains(clantag)) {
+				ping = userexecuted.isColeaderOrHigherInClan(clantag);
+			} else {
+				HashMap<String, Player.RoleType> clanroles = userexecuted.getClanRoles();
+				ping = false;
+				for (String key : clanroles.keySet()) {
+					if (clanroles.get(key) == Player.RoleType.ADMIN || clanroles.get(key) == Player.RoleType.LEADER
+							|| clanroles.get(key) == Player.RoleType.COLEADER) {
+						ping = true;
+						break;
+					}
 				}
 			}
 
