@@ -408,10 +408,10 @@
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 6000000
+        "upgrade-price1": 2500000
       },
       "2": {
-        "upgrade-price1": 3000000
+        "upgrade-price1": 1250000
       }
     }
   },
@@ -635,10 +635,10 @@
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 12000000
+        "upgrade-price1": 4750000
       },
       "2": {
-        "upgrade-price1": 8000000
+        "upgrade-price1": 3250000
       }
     }
   },
@@ -791,10 +791,10 @@
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 9000000
+        "upgrade-price1": 5500000
       },
       "2": {
-        "upgrade-price1": 7000000
+        "upgrade-price1": 3500000
       }
     }
   },
@@ -1004,10 +1004,10 @@
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 10000000
+        "upgrade-price1": 4000000
       },
       "2": {
-        "upgrade-price1": 8000000
+        "upgrade-price1": 3250000
       }
     }
   },
@@ -1100,10 +1100,10 @@
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 12000000
+        "upgrade-price1": 4750000
       },
       "2": {
-        "upgrade-price1": 10000000
+        "upgrade-price1": 4000000
       }
     }
   },
@@ -1133,10 +1133,10 @@
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 12000000
+        "upgrade-price1": 4750000
       },
       "2": {
-        "upgrade-price1": 10000000
+        "upgrade-price1": 4000000
       }
     }
   },
@@ -1161,10 +1161,10 @@
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 12000000
+        "upgrade-price1": 4750000
       },
       "2": {
-        "upgrade-price1": 10000000
+        "upgrade-price1": 4000000
       }
     }
   },
@@ -2433,15 +2433,15 @@
     },
     "supercharge":{
       "1": {
-        "upgrade-price2": 1700000,
+        "upgrade-price2": 250000,
         "upgrade-price-old2": 1700000
       },
       "2": {
-        "upgrade-price2": 1500000,
+        "upgrade-price2": 250000,
         "upgrade-price-old2": 1500000
       },
       "3": {
-        "upgrade-price2": 1300000,
+        "upgrade-price2": 250000,
         "upgrade-price-old2": 1300000
       }
     }
@@ -2537,15 +2537,15 @@
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 1700000,
+        "upgrade-price1": 250000,
         "upgrade-price-old1": 1700000
       },
       "2": {
-        "upgrade-price1": 1500000,
+        "upgrade-price1": 250000,
         "upgrade-price-old1": 1500000
       },
       "3": {
-        "upgrade-price1": 1300000,
+        "upgrade-price1": 250000,
         "upgrade-price-old1": 1300000
       }
     }
@@ -2611,15 +2611,15 @@
     },
     "supercharge":{
       "1": {
-        "upgrade-price2": 5100000,
+        "upgrade-price2": 750000,
         "upgrade-price-old2": 5100000
       },
       "2": {
-        "upgrade-price2": 4500000,
+        "upgrade-price2": 750000,
         "upgrade-price-old2": 4500000
       },
       "3": {
-        "upgrade-price2": 3900000,
+        "upgrade-price2": 500000,
         "upgrade-price-old2": 3900000
       }
     }
