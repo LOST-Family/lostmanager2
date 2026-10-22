@@ -346,27 +346,48 @@ public class RosterCommand extends ListenerAdapter {
         signedUp.sort(comp);
         signedOff.sort(comp);
 
-        StringBuilder upStr = new StringBuilder();
-        for (RosterParticipant rp : signedUp) {
-            String emojiStr = getThEmoji(rp.getThLevel());
-            upStr.append(emojiStr).append(" ").append(rp.getAccountName()).append("\n");
+        // Ein Embed-Feld fasst höchstens 1024 Zeichen, eine Zeile mit TH-Emoji rund 40. Ab gut
+        // 20 Anmeldungen warf addField eine IllegalArgumentException, und jede Aktualisierung der
+        // geposteten Nachricht scheiterte still (CWL 2026-11, Oktober 2026: 54 angemeldet, ~18
+        // sichtbar). Deshalb auf mehrere Felder verteilen; wird das ganze Embed zu lang (6000),
+        // ohne Emojis.
+        for (boolean mitEmoji : new boolean[] { true, false }) {
+            eb.clearFields();
+            addListe(eb, "Dabei (" + signedUp.size() + ")", zeilen(signedUp, mitEmoji), true);
+            addListe(eb, "Abgemeldet (" + signedOff.size() + ")", zeilen(signedOff, mitEmoji), false);
+            if (eb.length() <= 5800) break;
         }
-        if (upStr.length() == 0) upStr.append("Niemand.\n");
-
-        StringBuilder offStr = new StringBuilder();
-        for (RosterParticipant rp : signedOff) {
-            String emojiStr = getThEmoji(rp.getThLevel());
-            offStr.append(emojiStr).append(" ").append(rp.getAccountName()).append("\n");
-        }
-        if (offStr.length() == 0) offStr.append("Niemand.\n");
-
-        eb.addField("Dabei (" + signedUp.size() + ")", upStr.toString(), true);
-        eb.addField("Abgemeldet (" + signedOff.size() + ")", offStr.toString(), true);
 
         List<String> clans = Roster.getClans(r.getName());
         String clanLabel = clans.size() > 1 ? String.join(", ", clans) : r.getClan();
         eb.setFooter("Clan: " + clanLabel + " | Min TH: " + r.getMinTh());
         return eb;
+    }
+
+    private static List<String> zeilen(List<RosterParticipant> liste, boolean mitEmoji) {
+        List<String> z = new ArrayList<>();
+        for (RosterParticipant rp : liste) {
+            String th = mitEmoji ? getThEmoji(rp.getThLevel()) : "TH" + rp.getThLevel();
+            z.add(th + " " + rp.getAccountName());
+        }
+        if (z.isEmpty()) z.add("Niemand.");
+        return z;
+    }
+
+    /** Verteilt Zeilen auf so viele Felder wie nötig (je ≤ 1024 Zeichen); Folgefelder ohne Titel. */
+    private static void addListe(EmbedBuilder eb, String titel, List<String> zeilen, boolean inline) {
+        StringBuilder teil = new StringBuilder();
+        boolean erstes = true;
+        for (String zeile : zeilen) {
+            if (zeile.length() > 1000) zeile = zeile.substring(0, 1000);
+            if (teil.length() + zeile.length() + 1 > 1024) {
+                eb.addField(erstes ? titel : "\u200B", teil.toString(), inline);
+                erstes = false;
+                teil.setLength(0);
+            }
+            teil.append(zeile).append("\n");
+        }
+        eb.addField(erstes ? titel : "\u200B", teil.toString(), inline);
     }
 
     private static String getThEmoji(int level) {
