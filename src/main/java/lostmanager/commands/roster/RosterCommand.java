@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import lostmanager.datawrapper.Player;
+import lostmanager.datawrapper.MemberSignoff;
 import lostmanager.datawrapper.Roster;
 import lostmanager.datawrapper.RosterParticipant;
 import lostmanager.datawrapper.User;
@@ -234,8 +235,9 @@ public class RosterCommand extends ListenerAdapter {
             return;
         }
         try {
+            // Versteckte Vize stehen nur der Rechte wegen in clan_members und spielen nicht mit.
             List<String> allClanMemberTags = new java.util.ArrayList<>();
-            String sql = "SELECT player_tag FROM clan_members WHERE clan_tag = ?";
+            String sql = "SELECT player_tag FROM clan_members WHERE clan_tag = ? AND clan_role <> 'hiddencoleader'";
             for (String clanTag : clanTags) {
                 for (String pTag : DBUtil.getArrayListFromSQL(sql, String.class, clanTag)) {
                     if (!allClanMemberTags.contains(pTag)) {
@@ -245,24 +247,28 @@ public class RosterCommand extends ListenerAdapter {
             }
 
             List<RosterParticipant> participants = RosterParticipant.getParticipants(name);
-            List<String> signedUpAccounts = participants.stream()
+            java.util.Set<String> eingetragen = participants.stream()
                 .map(RosterParticipant::getAccountTag)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
-            // Get discord ids for those NOT signed up
-            List<String> pingIds = new ArrayList<>();
+            // Gepingt wird je Discord-Nutzer, nicht je Account: wer mit einem Account
+            // eingetragen (an- oder abgemeldet) ist, bekommt keinen Ping für seinen Zweitaccount
+            // im selben Clanverbund. Wer per /signoff abgemeldet ist (ohne „Pings erhalten“),
+            // bekommt auch keinen. (~A, 22.10.2026)
+            java.util.Map<String, Boolean> ohnePing = new java.util.LinkedHashMap<>();
             for (String pTag : allClanMemberTags) {
-                if (!signedUpAccounts.contains(pTag)) {
-                    Player p = new Player(pTag);
-                    User pUser = p.getUser();
-                    if (pUser != null && pUser.getUserID() != null) {
-                        String v = pUser.getUserID();
-                        if (!pingIds.contains(v)) {
-                            pingIds.add(v);
-                        }
-                    }
+                User pUser = new Player(pTag).getUser();
+                if (pUser == null || pUser.getUserID() == null) continue;
+                String v = pUser.getUserID();
+                boolean ausnehmen = eingetragen.contains(pTag);
+                if (!ausnehmen) {
+                    MemberSignoff signoff = new MemberSignoff(pTag);
+                    ausnehmen = signoff.isActive() && !signoff.isReceivePings();
                 }
+                ohnePing.merge(v, ausnehmen, Boolean::logicalOr);
             }
+            List<String> pingIds = new ArrayList<>();
+            ohnePing.forEach((id, aus) -> { if (!aus) pingIds.add(id); });
 
             if (pingIds.isEmpty()) {
                 event.reply("Alle Mitglieder in diesem Clan haben sich bereits eingetragen/abgemeldet!").setEphemeral(true).queue();
