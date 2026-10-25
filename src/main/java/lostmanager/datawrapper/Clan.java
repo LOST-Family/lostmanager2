@@ -667,7 +667,7 @@ public class Clan {
 	private HttpResponse<String> performHttpRequestWithRetry(String url, int maxRetries) {
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
 				.timeout(java.time.Duration.ofSeconds(15))
-				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
+				.header("Authorization", "Bearer " + ApiUtil.apiKey()).header("Accept", "application/json").GET().build();
 
 		// Assume failure until we actually receive a real HTTP response. This lets callers
 		// (e.g. event validation) distinguish "the API answered" from "the call failed",
@@ -742,7 +742,7 @@ public class Clan {
 			}
 
 			String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-			String url = ApiUtil.BASIS_URL + "/clans/" + encodedTag + "/currentwar";
+			String url = ApiUtil.basisUrl() + "/clans/" + encodedTag + "/currentwar";
 
 			// Use retry logic with up to 3 attempts
 			HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
@@ -830,7 +830,7 @@ public class Clan {
 		}
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-		String url = ApiUtil.BASIS_URL + "/clans/" + encodedTag + "/currentwar/leaguegroup";
+		String url = ApiUtil.basisUrl() + "/clans/" + encodedTag + "/currentwar/leaguegroup";
 
 		// Use retry logic with up to 3 attempts
 		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
@@ -870,7 +870,7 @@ public class Clan {
 		}
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-		String url = ApiUtil.BASIS_URL + "/clans/" + encodedTag + "/currentwar";
+		String url = ApiUtil.basisUrl() + "/clans/" + encodedTag + "/currentwar";
 
 		// Use retry logic with up to 3 attempts
 		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
@@ -915,7 +915,7 @@ public class Clan {
 		}
 
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-		String url = ApiUtil.BASIS_URL + "/clans/" + encodedTag + "/capitalraidseasons?limit=1";
+		String url = ApiUtil.basisUrl() + "/clans/" + encodedTag + "/capitalraidseasons?limit=1";
 
 		// Use retry logic with up to 3 attempts
 		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
@@ -963,11 +963,11 @@ public class Clan {
 		String json;
 
 		String encodedTag = java.net.URLEncoder.encode(warTag, java.nio.charset.StandardCharsets.UTF_8);
-		String url = ApiUtil.BASIS_URL + "/clanwarleagues/wars/" + encodedTag;
+		String url = ApiUtil.basisUrl() + "/clanwarleagues/wars/" + encodedTag;
 
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
 				.timeout(java.time.Duration.ofSeconds(15))
-				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
+				.header("Authorization", "Bearer " + ApiUtil.apiKey()).header("Accept", "application/json").GET().build();
 
 		HttpResponse<String> response = null;
 		// Exactly one retry. The poll cycle walks a lot of these in a row, so the cost
@@ -1034,7 +1034,7 @@ public class Clan {
 
 		// URL-kodieren des Spieler-Tags (# -> %23)
 		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
-		String url = ApiUtil.BASIS_URL + "/clans/" + encodedTag;
+		String url = ApiUtil.basisUrl() + "/clans/" + encodedTag;
 
 		// Use retry logic with up to 3 attempts
 		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
