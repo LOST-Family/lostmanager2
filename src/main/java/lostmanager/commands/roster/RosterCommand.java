@@ -550,14 +550,26 @@ public class RosterCommand extends ListenerAdapter {
         }
 
         Player p = new Player(pTag);
-        
-        boolean set = RosterParticipant.setParticipantStatus(rName, event.getUser().getId(), pTag, logicAction, p.getThLevelAPI());
+
+        // Faellt die CoC-API aus (25.10.2026: Proxy liefert reihenweise 5xx), soll die
+        // Anmeldung trotzdem klappen: Rathaus und Name dann aus der Datenbank.
+        int th;
+        String pName;
+        try {
+            th = p.getThLevelAPI();
+            pName = p.getNameAPI();
+        } catch (Exception e) {
+            th = p.getThLevelDB();
+            pName = p.getNameDB() != null ? p.getNameDB() : pTag;
+        }
+
+        boolean set = RosterParticipant.setParticipantStatus(rName, event.getUser().getId(), pTag, logicAction, th);
 
         if (set) {
-            event.getHook().editOriginal("Erfolgreich " + (logicAction.equals("signup") ? "angemeldet" : "abgemeldet") + " für " + p.getNameAPI() + "!")
+            event.getHook().editOriginal("Erfolgreich " + (logicAction.equals("signup") ? "angemeldet" : "abgemeldet") + " für " + pName + "!")
                 .setComponents().queue();
         } else {
-            event.getHook().editOriginal("Erfolgreich aus dem Roster entfernt für " + p.getNameAPI() + "!")
+            event.getHook().editOriginal("Erfolgreich aus dem Roster entfernt für " + pName + "!")
                 .setComponents().queue();
         }
 
