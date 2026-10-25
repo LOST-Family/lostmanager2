@@ -303,21 +303,21 @@ public class RosterCommand extends ListenerAdapter {
         }
 
         Player p = new Player(pTag);
-        if (p.getNameAPI() == null && p.getNameDB() == null) {
+        if (p.getNameDB() == null) {
             event.reply("Der ausgewählte Spieler wurde nicht gefunden.").setEphemeral(true).queue();
             return;
         }
         
-        if (action.equals("signup") && p.getThLevelAPI() < r.getMinTh()) {
+        if (action.equals("signup") && p.getThLevelDB() < r.getMinTh()) {
             event.reply("Der Spieler erfüllt nicht die minimale Rathaus-Anforderung (" + r.getMinTh() + ")!").setEphemeral(true).queue();
             return;
         }
 
         String linkedUserId = p.getUser() != null ? p.getUser().getUserID() : event.getUser().getId();
 
-        boolean set = RosterParticipant.setParticipantStatus(rosterName, linkedUserId, pTag, action, p.getThLevelAPI());
+        boolean set = RosterParticipant.setParticipantStatus(rosterName, linkedUserId, pTag, action, p.getThLevelDB());
 
-        String pName = p.getNameAPI() != null ? p.getNameAPI() : p.getNameDB();
+        String pName = p.getNameDB(); // DB statt API: Handler laeuft auf JDAs Lesethread (siehe Auswahlmenue)
         if (set) {
             event.reply("Erfolgreich " + (action.equals("signup") ? "angemeldet" : "abgemeldet") + " für " + pName + "!").queue();
         } else {
@@ -551,17 +551,12 @@ public class RosterCommand extends ListenerAdapter {
 
         Player p = new Player(pTag);
 
-        // Faellt die CoC-API aus (25.10.2026: Proxy liefert reihenweise 5xx), soll die
-        // Anmeldung trotzdem klappen: Rathaus und Name dann aus der Datenbank.
-        int th;
-        String pName;
-        try {
-            th = p.getThLevelAPI();
-            pName = p.getNameAPI();
-        } catch (Exception e) {
-            th = p.getThLevelDB();
-            pName = p.getNameDB() != null ? p.getNameDB() : pTag;
-        }
+        // Rathaus und Name aus der Datenbank, nicht live von der CoC-API: dieser Handler
+        // laeuft auf JDAs Lesethread, und am 25.10.2026 hing der Proxy mit Timeouts und
+        // Wiederholungen - der Thread stand, und kein Knopf des Bots reagierte mehr.
+        // Die DB wird ohnehin laufend nachgezogen; die Auswahl selbst nutzt dieselben Werte.
+        int th = p.getThLevelDB();
+        String pName = p.getNameDB() != null ? p.getNameDB() : pTag;
 
         boolean set = RosterParticipant.setParticipantStatus(rName, event.getUser().getId(), pTag, logicAction, th);
 
