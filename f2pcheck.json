@@ -1878,32 +1878,13 @@
                         "allowed": 0,
                         "elements": [{
                                 "type": "element",
-                                "name": "Portal Pendant Equipment",
-                                "id": "90000061"
-                            },{
-                                "type": "element",
                                 "name": "Coin Collector Deco",
                                 "id": "18000247"
                             }]
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Portal Pendant Equipment' und 'Coin Collector Deco'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 1,
-                                "elements": [{
-                                    "type": "element",
-                                    "name": "Portal Pendant Equipment",
-                                    "id": "90000061"
-                                },{
-                                    "type": "element",
-                                    "name": "Coin Collector Deco",
-                                    "id": "18000247"
-                                }]
-                            }
-                        },{
-                            "name": "Hat 'Portal Pendant Equipment' oder 'Coin Collector Deco' und mindestens ein 'Portal Panic Clan House'",
+                            "name": "Hat 'Coin Collector Deco' und mindestens ein 'Portal Panic Clan House'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
