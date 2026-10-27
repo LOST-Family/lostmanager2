@@ -26,8 +26,66 @@ public class ApiUtil {
 	public static final String BASIS_URL = System.getenv()
 			.getOrDefault("COC_API_BASE_URL", "https://api.clashofclans.com/v1");
 
+	/**
+	 * Umschalter fuer Basisadresse und Key, ohne Neustart.
+	 *
+	 * Steht in API_UMSCHALTER der Pfad einer Datei, wird sie gelesen (hoechstens
+	 * alle zehn Sekunden auf eine Aenderung geprueft). Zeilen "url=..." und
+	 * "key=..." ueberschreiben die Werte aus der Umgebung; fehlt die Datei oder
+	 * eine Zeile, gilt die Umgebung. Anlass: am 25.10.2026 fiel der RoyaleAPI-Proxy
+	 * aus, und der Wechsel auf einen direkten Supercell-Key haette sonst einen
+	 * Neustart gebraucht. Umgeschaltet wird mit ~/lost/api-umschalten.sh.
+	 */
+	private static final String UMSCHALTER = System.getenv("API_UMSCHALTER");
+	private static volatile String[] umschalterWerte = { null, null };
+	private static volatile long umschalterStand = Long.MIN_VALUE;
+	private static volatile long umschalterGeprueft = 0;
+
+	private static String[] umschalter() {
+		if (UMSCHALTER == null || UMSCHALTER.isBlank()) return umschalterWerte;
+		long jetzt = System.currentTimeMillis();
+		if (jetzt - umschalterGeprueft < 10_000) return umschalterWerte;
+		synchronized (ApiUtil.class) {
+			if (jetzt - umschalterGeprueft < 10_000) return umschalterWerte;
+			umschalterGeprueft = jetzt;
+			java.nio.file.Path datei = java.nio.file.Path.of(UMSCHALTER);
+			try {
+				long stand = java.nio.file.Files.exists(datei)
+						? java.nio.file.Files.getLastModifiedTime(datei).toMillis() : -1;
+				if (stand == umschalterStand) return umschalterWerte;
+				String url = null, key = null;
+				if (stand >= 0) {
+					for (String zeile : java.nio.file.Files.readAllLines(datei)) {
+						zeile = zeile.strip();
+						if (zeile.startsWith("url=") && zeile.length() > 4) url = zeile.substring(4).strip();
+						if (zeile.startsWith("key=") && zeile.length() > 4) key = zeile.substring(4).strip();
+					}
+				}
+				umschalterWerte = new String[] { url, key };
+				umschalterStand = stand;
+				System.out.println("API-Umschalter: " + (url != null ? url : "Adresse aus Umgebung")
+						+ ", " + (key != null ? "Key aus Datei" : "Key aus Umgebung"));
+			} catch (Exception e) {
+				System.err.println("API-Umschalter nicht lesbar, bleibe beim letzten Stand: " + e.getMessage());
+			}
+		}
+		return umschalterWerte;
+	}
+
+	/** Aktuelle Basisadresse der API. */
+	public static String basisUrl() {
+		String url = umschalter()[0];
+		return url != null ? url : BASIS_URL;
+	}
+
+	/** Aktueller API-Key. */
+	public static String apiKey() {
+		String key = umschalter()[1];
+		return key != null ? key : Bot.api_key;
+	}
+
     public static ApiResponse raw(String method, String path, Map<String, String> query, String jsonBody) {
-        StringBuilder urlBuilder = new StringBuilder(BASIS_URL);
+        StringBuilder urlBuilder = new StringBuilder(basisUrl());
         urlBuilder.append(path);
         if (!query.isEmpty()) {
             urlBuilder.append("?");
@@ -46,7 +104,7 @@ public class ApiUtil {
         HttpClient client = Bot.httpClient;
         HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
             .uri(URI.create(urlBuilder.toString()))
-            .header("Authorization", "Bearer " + Bot.api_key)
+            .header("Authorization", "Bearer " + apiKey())
             .header("Accept", "application/json");
 
         if ("POST".equals(method) && jsonBody != null) {

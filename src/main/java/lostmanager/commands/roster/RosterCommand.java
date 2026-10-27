@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import lostmanager.datawrapper.Player;
+import lostmanager.datawrapper.MemberSignoff;
 import lostmanager.datawrapper.Roster;
 import lostmanager.datawrapper.RosterParticipant;
 import lostmanager.datawrapper.User;
@@ -234,8 +235,9 @@ public class RosterCommand extends ListenerAdapter {
             return;
         }
         try {
+            // Versteckte Vize stehen nur der Rechte wegen in clan_members und spielen nicht mit.
             List<String> allClanMemberTags = new java.util.ArrayList<>();
-            String sql = "SELECT player_tag FROM clan_members WHERE clan_tag = ?";
+            String sql = "SELECT player_tag FROM clan_members WHERE clan_tag = ? AND clan_role <> 'hiddencoleader'";
             for (String clanTag : clanTags) {
                 for (String pTag : DBUtil.getArrayListFromSQL(sql, String.class, clanTag)) {
                     if (!allClanMemberTags.contains(pTag)) {
@@ -245,24 +247,28 @@ public class RosterCommand extends ListenerAdapter {
             }
 
             List<RosterParticipant> participants = RosterParticipant.getParticipants(name);
-            List<String> signedUpAccounts = participants.stream()
+            java.util.Set<String> eingetragen = participants.stream()
                 .map(RosterParticipant::getAccountTag)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
-            // Get discord ids for those NOT signed up
-            List<String> pingIds = new ArrayList<>();
+            // Gepingt wird je Discord-Nutzer, nicht je Account: wer mit einem Account
+            // eingetragen (an- oder abgemeldet) ist, bekommt keinen Ping für seinen Zweitaccount
+            // im selben Clanverbund. Wer per /signoff abgemeldet ist (ohne „Pings erhalten“),
+            // bekommt auch keinen. (~A, 22.10.2026)
+            java.util.Map<String, Boolean> ohnePing = new java.util.LinkedHashMap<>();
             for (String pTag : allClanMemberTags) {
-                if (!signedUpAccounts.contains(pTag)) {
-                    Player p = new Player(pTag);
-                    User pUser = p.getUser();
-                    if (pUser != null && pUser.getUserID() != null) {
-                        String v = pUser.getUserID();
-                        if (!pingIds.contains(v)) {
-                            pingIds.add(v);
-                        }
-                    }
+                User pUser = new Player(pTag).getUser();
+                if (pUser == null || pUser.getUserID() == null) continue;
+                String v = pUser.getUserID();
+                boolean ausnehmen = eingetragen.contains(pTag);
+                if (!ausnehmen) {
+                    MemberSignoff signoff = new MemberSignoff(pTag);
+                    ausnehmen = signoff.isActive() && !signoff.isReceivePings();
                 }
+                ohnePing.merge(v, ausnehmen, Boolean::logicalOr);
             }
+            List<String> pingIds = new ArrayList<>();
+            ohnePing.forEach((id, aus) -> { if (!aus) pingIds.add(id); });
 
             if (pingIds.isEmpty()) {
                 event.reply("Alle Mitglieder in diesem Clan haben sich bereits eingetragen/abgemeldet!").setEphemeral(true).queue();
@@ -297,21 +303,21 @@ public class RosterCommand extends ListenerAdapter {
         }
 
         Player p = new Player(pTag);
-        if (p.getNameAPI() == null && p.getNameDB() == null) {
+        if (p.getNameDB() == null) {
             event.reply("Der ausgewählte Spieler wurde nicht gefunden.").setEphemeral(true).queue();
             return;
         }
         
-        if (action.equals("signup") && p.getThLevelAPI() < r.getMinTh()) {
+        if (action.equals("signup") && p.getThLevelDB() < r.getMinTh()) {
             event.reply("Der Spieler erfüllt nicht die minimale Rathaus-Anforderung (" + r.getMinTh() + ")!").setEphemeral(true).queue();
             return;
         }
 
         String linkedUserId = p.getUser() != null ? p.getUser().getUserID() : event.getUser().getId();
 
-        boolean set = RosterParticipant.setParticipantStatus(rosterName, linkedUserId, pTag, action, p.getThLevelAPI());
+        boolean set = RosterParticipant.setParticipantStatus(rosterName, linkedUserId, pTag, action, p.getThLevelDB());
 
-        String pName = p.getNameAPI() != null ? p.getNameAPI() : p.getNameDB();
+        String pName = p.getNameDB(); // DB statt API: Handler laeuft auf JDAs Lesethread (siehe Auswahlmenue)
         if (set) {
             event.reply("Erfolgreich " + (action.equals("signup") ? "angemeldet" : "abgemeldet") + " für " + pName + "!").queue();
         } else {
@@ -346,27 +352,48 @@ public class RosterCommand extends ListenerAdapter {
         signedUp.sort(comp);
         signedOff.sort(comp);
 
-        StringBuilder upStr = new StringBuilder();
-        for (RosterParticipant rp : signedUp) {
-            String emojiStr = getThEmoji(rp.getThLevel());
-            upStr.append(emojiStr).append(" ").append(rp.getAccountName()).append("\n");
+        // Ein Embed-Feld fasst höchstens 1024 Zeichen, eine Zeile mit TH-Emoji rund 40. Ab gut
+        // 20 Anmeldungen warf addField eine IllegalArgumentException, und jede Aktualisierung der
+        // geposteten Nachricht scheiterte still (CWL 2026-11, Oktober 2026: 54 angemeldet, ~18
+        // sichtbar). Deshalb auf mehrere Felder verteilen; wird das ganze Embed zu lang (6000),
+        // ohne Emojis.
+        for (boolean mitEmoji : new boolean[] { true, false }) {
+            eb.clearFields();
+            addListe(eb, "Dabei (" + signedUp.size() + ")", zeilen(signedUp, mitEmoji), true);
+            addListe(eb, "Abgemeldet (" + signedOff.size() + ")", zeilen(signedOff, mitEmoji), false);
+            if (eb.length() <= 5800) break;
         }
-        if (upStr.length() == 0) upStr.append("Niemand.\n");
-
-        StringBuilder offStr = new StringBuilder();
-        for (RosterParticipant rp : signedOff) {
-            String emojiStr = getThEmoji(rp.getThLevel());
-            offStr.append(emojiStr).append(" ").append(rp.getAccountName()).append("\n");
-        }
-        if (offStr.length() == 0) offStr.append("Niemand.\n");
-
-        eb.addField("Dabei (" + signedUp.size() + ")", upStr.toString(), true);
-        eb.addField("Abgemeldet (" + signedOff.size() + ")", offStr.toString(), true);
 
         List<String> clans = Roster.getClans(r.getName());
         String clanLabel = clans.size() > 1 ? String.join(", ", clans) : r.getClan();
         eb.setFooter("Clan: " + clanLabel + " | Min TH: " + r.getMinTh());
         return eb;
+    }
+
+    private static List<String> zeilen(List<RosterParticipant> liste, boolean mitEmoji) {
+        List<String> z = new ArrayList<>();
+        for (RosterParticipant rp : liste) {
+            String th = mitEmoji ? getThEmoji(rp.getThLevel()) : "TH" + rp.getThLevel();
+            z.add(th + " " + rp.getAccountName());
+        }
+        if (z.isEmpty()) z.add("Niemand.");
+        return z;
+    }
+
+    /** Verteilt Zeilen auf so viele Felder wie nötig (je ≤ 1024 Zeichen); Folgefelder ohne Titel. */
+    private static void addListe(EmbedBuilder eb, String titel, List<String> zeilen, boolean inline) {
+        StringBuilder teil = new StringBuilder();
+        boolean erstes = true;
+        for (String zeile : zeilen) {
+            if (zeile.length() > 1000) zeile = zeile.substring(0, 1000);
+            if (teil.length() + zeile.length() + 1 > 1024) {
+                eb.addField(erstes ? titel : "\u200B", teil.toString(), inline);
+                erstes = false;
+                teil.setLength(0);
+            }
+            teil.append(zeile).append("\n");
+        }
+        eb.addField(erstes ? titel : "\u200B", teil.toString(), inline);
     }
 
     private static String getThEmoji(int level) {
@@ -523,14 +550,21 @@ public class RosterCommand extends ListenerAdapter {
         }
 
         Player p = new Player(pTag);
-        
-        boolean set = RosterParticipant.setParticipantStatus(rName, event.getUser().getId(), pTag, logicAction, p.getThLevelAPI());
+
+        // Rathaus und Name aus der Datenbank, nicht live von der CoC-API: dieser Handler
+        // laeuft auf JDAs Lesethread, und am 25.10.2026 hing der Proxy mit Timeouts und
+        // Wiederholungen - der Thread stand, und kein Knopf des Bots reagierte mehr.
+        // Die DB wird ohnehin laufend nachgezogen; die Auswahl selbst nutzt dieselben Werte.
+        int th = p.getThLevelDB();
+        String pName = p.getNameDB() != null ? p.getNameDB() : pTag;
+
+        boolean set = RosterParticipant.setParticipantStatus(rName, event.getUser().getId(), pTag, logicAction, th);
 
         if (set) {
-            event.getHook().editOriginal("Erfolgreich " + (logicAction.equals("signup") ? "angemeldet" : "abgemeldet") + " für " + p.getNameAPI() + "!")
+            event.getHook().editOriginal("Erfolgreich " + (logicAction.equals("signup") ? "angemeldet" : "abgemeldet") + " für " + pName + "!")
                 .setComponents().queue();
         } else {
-            event.getHook().editOriginal("Erfolgreich aus dem Roster entfernt für " + p.getNameAPI() + "!")
+            event.getHook().editOriginal("Erfolgreich aus dem Roster entfernt für " + pName + "!")
                 .setComponents().queue();
         }
 

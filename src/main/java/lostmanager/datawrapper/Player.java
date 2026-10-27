@@ -264,11 +264,11 @@ public class Player {
 		try {
 			String encodedTag = URLEncoder.encode(tag, "UTF-8");
 			// Clash of Clans API-Endpunkt
-			URL url = new URI(ApiUtil.BASIS_URL + "/players/" + encodedTag).toURL();
+			URL url = new URI(ApiUtil.basisUrl() + "/players/" + encodedTag).toURL();
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("GET");
-			connection.setRequestProperty("Authorization", "Bearer " + Bot.api_key);
+			connection.setRequestProperty("Authorization", "Bearer " + ApiUtil.apiKey());
 			connection.setRequestProperty("Accept", "application/json");
 
 			int responseCode = connection.getResponseCode();
@@ -295,11 +295,11 @@ public class Player {
 	public boolean verifyCocTokenAPI(String playerApiToken) {
 		try {
 			String encodedTag = URLEncoder.encode(tag, "UTF-8");
-			URL url = new URI(ApiUtil.BASIS_URL + "/players/" + encodedTag + "/verifytoken").toURL();
+			URL url = new URI(ApiUtil.basisUrl() + "/players/" + encodedTag + "/verifytoken").toURL();
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Authorization", "Bearer " + Bot.api_key);
+			connection.setRequestProperty("Authorization", "Bearer " + ApiUtil.apiKey());
 			connection.setRequestProperty("Accept", "application/json");
 			connection.setRequestProperty("Content-Type", "application/json");
 			connection.setDoOutput(true);
@@ -633,7 +633,7 @@ public class Player {
 	private HttpResponse<String> performHttpRequestWithRetry(String url, int maxRetries) {
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
 				.timeout(java.time.Duration.ofSeconds(15))
-				.header("Authorization", "Bearer " + Bot.api_key).header("Accept", "application/json").GET().build();
+				.header("Authorization", "Bearer " + ApiUtil.apiKey()).header("Accept", "application/json").GET().build();
 
 		int attempt = 0;
 		while (attempt <= maxRetries) {
@@ -688,7 +688,7 @@ public class Player {
 
 		// URL-kodieren des Spieler-Tags (# -> %23)
 		String encodedTag = java.net.URLEncoder.encode(tag, java.nio.charset.StandardCharsets.UTF_8);
-		String url = ApiUtil.BASIS_URL + "/players/" + encodedTag;
+		String url = ApiUtil.basisUrl() + "/players/" + encodedTag;
 
 		// Use retry logic with up to 3 attempts
 		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
