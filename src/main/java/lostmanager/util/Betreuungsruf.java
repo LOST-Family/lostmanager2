@@ -13,16 +13,17 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 /**
- * Ruft Claude auf dem Homeserver in einen Kanal, wenn Jonas den Bot erwaehnt.
+ * Ruft Claude auf dem Homeserver in einen Kanal, wenn jemand den Bot erwaehnt.
  *
  * Nur eine Zeile JSON an eine Datei - alles Weitere (Verlauf lesen, antworten,
  * die Betreuung beenden) macht ~/lost/betreuung/betreuer.py, angestossen von
- * einer systemd-Path-Unit. Erwaehnungen von allen anderen werden ignoriert: wer
- * den Bot pingt, bekommt damit keinen Zugriff auf den Server.
+ * einer systemd-Path-Unit. Seit 29.10.2026 auch fuer Vize (Jonas: "jeder Vize
+ * kann den Lost Manager pingen"): die Zeile traegt Autor und Rollen-IDs, und
+ * betreuer.py entscheidet, wer was darf - Jonas voll, Vize/Anfuehrer eng auf
+ * Haiku, alle anderen gar nicht. Nachrichten von Bots werden nie geschrieben.
  */
 public class Betreuungsruf extends ListenerAdapter {
 
-	private static final String JONAS = env("BETREUUNG_NUTZER", "326398089298444290");
 	private static final Path DATEI = Path.of(env("BETREUUNG_RUFE_DATEI",
 			System.getProperty("user.home") + "/lost/betreuung/rufe.jsonl"));
 
@@ -33,7 +34,7 @@ public class Betreuungsruf extends ListenerAdapter {
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-		if (!event.isFromGuild() || !event.getAuthor().getId().equals(JONAS))
+		if (!event.isFromGuild() || event.getAuthor().isBot())
 			return;
 		Message m = event.getMessage();
 		if (!m.getMentions().isMentioned(event.getJDA().getSelfUser(), Message.MentionType.USER))
@@ -45,6 +46,10 @@ public class Betreuungsruf extends ListenerAdapter {
 				.put("kanalname", event.getChannel().getName())
 				.put("nachricht", m.getId())
 				.put("text", m.getContentRaw())
+				.put("autor", event.getAuthor().getId())
+				.put("autorname", event.getMember() != null ? event.getMember().getEffectiveName() : event.getAuthor().getName())
+				.put("rollen", event.getMember() == null ? new org.json.JSONArray()
+						: new org.json.JSONArray(event.getMember().getRoles().stream().map(r -> r.getId()).toList()))
 				.put("zeit", m.getTimeCreated().toString());
 		try {
 			Files.createDirectories(DATEI.getParent());
