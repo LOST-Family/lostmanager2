@@ -12450,6 +12450,11 @@
     "icon": "/home-base/sceneries/96.png",
     "index": 73
   },
+  "60000097": {
+    "name": "Cosmic Portals Scenery (Oct. 2026, XL)",
+    "icon": "/home-base/sceneries/97.png",
+    "index": 74
+  },
   "52000001": {
     "name": "Gladiator King (Apr. 2019 GP)",
     "icon": "/home-base/skins/1.png",
@@ -13865,34 +13870,34 @@
     "icon": "/home-base/skins/354.png",
     "index": 277
   },
-  "52000332": {
-    "name": "? Warden (Nov. 2026)",
-    "icon": "/home-base/skins/332.png",
+  "52000337": {
+    "name": "Grand Titan (Nov. 2026)",
+    "icon": "/home-base/skins/337.png",
     "index": 278
   },
   "52000370": {
-    "name": "? King (Nov. 2026)",
+    "name": "Titan King (Nov. 2026)",
     "icon": "/home-base/skins/370.png",
     "index": 279
   },
-  "52000229": {
-    "name": "? Queen (Nov. 2026)",
-    "icon": "/home-base/skins/229.png",
+  "52000325": {
+    "name": "Titan Queen (Nov. 2026)",
+    "icon": "/home-base/skins/325.png",
     "index": 280
   },
   "52000388": {
-    "name": "? Duke (Nov. 2026)",
+    "name": "Titan Duke (Nov. 2026)",
     "icon": "/home-base/skins/388.png",
     "index": 281
   },
   "52000357": {
-    "name": "? Prince (Nov. 2026)",
+    "name": "Titan Prince (Nov. 2026)",
     "icon": "/home-base/skins/357.png",
     "index": 282
   },
-  "52000382": {
-    "name": "? Champion (Nov. 2026)",
-    "icon": "/home-base/skins/382.png",
+  "52000383": {
+    "name": "Titan Champion (Nov. 2026)",
+    "icon": "/home-base/skins/383.png",
     "index": 283
   },
   "52000329": {
@@ -13905,9 +13910,9 @@
     "icon": "/home-base/skins/371.png",
     "index": 285
   },
-  "52000325": {
+  "52000326": {
     "name": "? Queen (Dec. 2026)",
-    "icon": "/home-base/skins/325.png",
+    "icon": "/home-base/skins/326.png",
     "index": 286
   },
   "52000389": {
@@ -13920,9 +13925,9 @@
     "icon": "/home-base/skins/358.png",
     "index": 288
   },
-  "52000383": {
+  "52000384": {
     "name": "? Champion (Dec. 2026)",
-    "icon": "/home-base/skins/383.png",
+    "icon": "/home-base/skins/384.png",
     "index": 289
   },
   "82000000": {
