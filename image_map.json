@@ -12455,6 +12455,16 @@
     "icon": "/home-base/sceneries/97.png",
     "index": 74
   },
+  "60000098": {
+    "name": "Titan Foundry Scenery (Nov. 2026, XL)",
+    "icon": "/home-base/sceneries/98.png",
+    "index": 75
+  },
+  "60000099": {
+    "name": "Tarnished Titans War Scenery (Nov. 2026, XL)",
+    "icon": "/home-base/sceneries/99.png",
+    "index": 76
+  },
   "52000001": {
     "name": "Gladiator King (Apr. 2019 GP)",
     "icon": "/home-base/skins/1.png",
@@ -13880,26 +13890,26 @@
     "icon": "/home-base/skins/370.png",
     "index": 279
   },
-  "52000325": {
-    "name": "Titan Queen (Nov. 2026)",
-    "icon": "/home-base/skins/325.png",
-    "index": 280
-  },
-  "52000388": {
-    "name": "Titan Duke (Nov. 2026)",
-    "icon": "/home-base/skins/388.png",
-    "index": 281
-  },
   "52000357": {
     "name": "Titan Prince (Nov. 2026)",
     "icon": "/home-base/skins/357.png",
-    "index": 282
+    "index": 280
   },
   "52000383": {
     "name": "Titan Champion (Nov. 2026)",
     "icon": "/home-base/skins/383.png",
-    "index": 283
+    "index": 281
   },
+  "52000325": {
+    "name": "Titan Queen (Nov. 2026)",
+    "icon": "/home-base/skins/325.png",
+    "index": 282
+  },
+  "52000388": {
+    "name": "Titan Duke (Nov. 2026)",
+    "icon": "/home-base/skins/388.png",
+    "index": 283
+  },  
   "52000329": {
     "name": "? Warden (Dec. 2026)",
     "icon": "/home-base/skins/329.png",
