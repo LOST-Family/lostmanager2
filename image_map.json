@@ -2429,6 +2429,11 @@
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-17.png",
         "upgrade-price2": 8000000,
         "upgrade-price-old2": 8000000
+      },
+      "18": {
+        "level-icon": "/home-base/buildings/gold-mine/gold-mine-18.png",
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     },
     "supercharge":{
@@ -2533,6 +2538,11 @@
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-17.png",
         "upgrade-price1": 8000000,
         "upgrade-price-old1": 8000000
+      },
+      "18": {
+        "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-18.png",
+        "upgrade-price1": 0,
+        "upgrade-price-old1": 0
       }
     },
     "supercharge":{
@@ -2607,6 +2617,11 @@
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-11.png",
         "upgrade-price2": 12000000,
         "upgrade-price-old2": 12000000
+      },
+      "12": {
+        "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-12.png",
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     },
     "supercharge":{
@@ -3707,7 +3722,12 @@
       "13": {
         "upgrade-price2": 24000000,
         "upgrade-price-old2": 24000000
+      },
+      "14": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
+      
     }
   },
   "4000001": {
@@ -3768,6 +3788,10 @@
       "14": {
         "upgrade-price2": 25000000,
         "upgrade-price-old2": 25000000
+      },
+      "15": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -3935,6 +3959,10 @@
       "14": {
         "upgrade-price2": 26000000,
         "upgrade-price-old2": 26000000
+      },
+      "15": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -3992,6 +4020,10 @@
       "13": {
         "upgrade-price2": 28000000,
         "upgrade-price-old2": 28000000
+      },
+      "14": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -4053,6 +4085,10 @@
       "14": {
         "upgrade-price2": 27000000,
         "upgrade-price-old2": 27000000
+      },
+      "15": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -4102,6 +4138,10 @@
       "11": {
         "upgrade-price2": 28500000,
         "upgrade-price-old2": 28500000
+      },
+      "12": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -4159,6 +4199,10 @@
       "13": {
         "upgrade-price2": 28500000,
         "upgrade-price-old2": 28500000
+      },
+      "14": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -4269,6 +4313,10 @@
       "12": {
         "upgrade-price2": 29000000,
         "upgrade-price-old2": 29000000
+      },
+      "13": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -4322,6 +4370,10 @@
       "12": {
         "upgrade-price2": 28000000,
         "upgrade-price-old2": 28000000
+      },
+      "13": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -4363,6 +4415,10 @@
       "9": {
         "upgrade-price2": 30000000,
         "upgrade-price-old2": 30000000
+      },
+      "10": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -4429,6 +4485,10 @@
       "6": {
         "upgrade-price2": 29500000,
         "upgrade-price-old2": 29500000
+      },
+      "7": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -4496,6 +4556,10 @@
       "4": {
         "upgrade-price2": 27000000,
         "upgrade-price-old2": 27000000
+      },
+      "5": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -4574,6 +4638,10 @@
       "14": {
         "upgrade-price3": 335000,
         "upgrade-price-old3": 335000
+      },
+      "15": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
       }
     }
   },
@@ -4794,6 +4862,10 @@
       "8": {
         "upgrade-price3": 355000,
         "upgrade-price-old3": 355000
+      },
+      "9": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
       }
     }
   },
@@ -4831,6 +4903,10 @@
       "8": {
         "upgrade-price3": 345000,
         "upgrade-price-old3": 345000
+      },
+      "9": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
       }
     }
   },
@@ -4938,6 +5014,10 @@
       "4": {
         "upgrade-price3": 370000,
         "upgrade-price-old3": 370000
+      },
+      "5": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
       }
     }
   },
@@ -5030,6 +5110,10 @@
       "4": {
         "upgrade-price3": 380000,
         "upgrade-price-old3": 380000
+      },
+      "5": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
       }
     }
   },
@@ -5376,6 +5460,10 @@
       "4": {
         "upgrade-price2": 23000000,
         "upgrade-price-old2": 23000000
+      },
+      "5": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -5429,6 +5517,10 @@
       "12": {
         "upgrade-price3": 350000,
         "upgrade-price-old3": 350000
+      },
+      "13": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
       }
     }
   },
@@ -5818,6 +5910,10 @@
       "5": {
         "upgrade-price2": 18000000,
         "upgrade-price-old2": 19000000
+      },
+      "6": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -6335,6 +6431,26 @@
       "110": {
         "upgrade-price3": 490000,
         "upgrade-price-old3": 29000000
+      },
+      "111": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "112": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "113": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "114": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "115": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
       }
     }
   },
@@ -6781,6 +6897,26 @@
       "110": {
         "upgrade-price3": 490000,
         "upgrade-price-old3": 490000
+      },
+      "111": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "112": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "113": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "114": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "115": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
       }
     }
   },
@@ -7127,6 +7263,26 @@
       "85": {
         "upgrade-price2": 30500000,
         "upgrade-price-old2": 30500000
+      },
+      "86": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
+      },
+      "87": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
+      },
+      "88": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
+      },
+      "89": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
+      },
+      "90": {
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -7353,6 +7509,26 @@
       "55": {
         "upgrade-price3": 450000,
         "upgrade-price-old3": 450000
+      },
+      "56": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "57": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "58": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "59": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "60": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
       }
     }
   },
@@ -7739,6 +7915,26 @@
       "95": {
         "upgrade-price3": 450000,
         "upgrade-price-old3": 450000
+      },
+      "96": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "97": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "98": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "99": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "100": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
       }
     }
   },
@@ -7844,6 +8040,26 @@
       "25": {
         "upgrade-price3": 480000,
         "upgrade-price-old3": 480000
+      },
+      "26": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "27": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "28": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "29": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
+      },
+      "30": {
+        "upgrade-price3": 0,
+        "upgrade-price-old3": 0
       }
     }
   },
@@ -14639,6 +14855,106 @@
     "name": "Portal Panic Deco",
     "icon": "/home-base/clancapital/162.png",
     "index": 139
+  },
+  "70000001": {
+    "name": "Awesome Roof",
+    "icon": "/home-base/emotes/1.png",
+    "index": 1
+  },
+  "70000002": {
+    "name": "WWE 2026 Walls",
+    "icon": "/home-base/emotes/2.png",
+    "index": 2
+  },
+  "70000003": {
+    "name": "WWE 2026 Ground",
+    "icon": "/home-base/emotes/3.png",
+    "index": 3
+  },
+  "70000004": {
+    "name": "Portal Panic Roof",
+    "icon": "/home-base/emotes/4.png",
+    "index": 4
+  },
+  "70000005": {
+    "name": "Portal Panic Deco",
+    "icon": "/home-base/emotes/5.png",
+    "index": 5
+  },
+  "70000006": {
+    "name": "Awesome Roof",
+    "icon": "/home-base/emotes/6.png",
+    "index": 6
+  },
+  "70000007": {
+    "name": "WWE 2026 Walls",
+    "icon": "/home-base/emotes/7.png",
+    "index": 7
+  },
+  "70000008": {
+    "name": "WWE 2026 Ground",
+    "icon": "/home-base/emotes/8.png",
+    "index": 8
+  },
+  "70000009": {
+    "name": "Portal Panic Roof",
+    "icon": "/home-base/emotes/9.png",
+    "index": 9
+  },
+  "70000010": {
+    "name": "Portal Panic Deco",
+    "icon": "/home-base/emotes/10.png",
+    "index": 10
+  },
+  "70000011": {
+    "name": "Awesome Roof",
+    "icon": "/home-base/emotes/11.png",
+    "index": 11
+  },
+  "70000012": {
+    "name": "WWE 2026 Walls",
+    "icon": "/home-base/emotes/12.png",
+    "index": 12
+  },
+  "70000013": {
+    "name": "WWE 2026 Ground",
+    "icon": "/home-base/emotes/13.png",
+    "index": 13
+  },
+  "70000014": {
+    "name": "Portal Panic Roof",
+    "icon": "/home-base/emotes/14.png",
+    "index": 14
+  },
+  "70000015": {
+    "name": "Portal Panic Deco",
+    "icon": "/home-base/emotes/15.png",
+    "index": 15
+  },
+  "70000016": {
+    "name": "Awesome Roof",
+    "icon": "/home-base/emotes/16.png",
+    "index": 16
+  },
+  "70000017": {
+    "name": "WWE 2026 Walls",
+    "icon": "/home-base/emotes/17.png",
+    "index": 17
+  },
+  "70000018": {
+    "name": "WWE 2026 Ground",
+    "icon": "/home-base/emotes/18.png",
+    "index": 18
+  },
+  "70000019": {
+    "name": "Portal Panic Roof",
+    "icon": "/home-base/emotes/19.png",
+    "index": 19
+  },
+  "70000020": {
+    "name": "Portal Panic Deco",
+    "icon": "/home-base/emotes/20.png",
+    "index": 20
   },
   "4000026": {
     "name": "Super Barbarian",
