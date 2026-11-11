@@ -78,6 +78,7 @@ public class stats extends ListenerAdapter {
 		STAT_TO_FIELD.put("Buildings (BB)", "buildings2");
 		STAT_TO_FIELD.put("Decos", "decos");
 		STAT_TO_FIELD.put("Decos (BB)", "decos2");
+		STAT_TO_FIELD.put("Emotes", "emotes");
 		STAT_TO_FIELD.put("Equips", "equipment");
 		STAT_TO_FIELD.put("Helpers", "helpers");
 		STAT_TO_FIELD.put("Guardians", "guardians");
@@ -1436,6 +1437,7 @@ public class stats extends ListenerAdapter {
 		PRICE_LABELS.put(3, "Dunkles Elixier");
 		PRICE_LABELS.put(4, "Bauarbeiter-Elixier");
 		PRICE_LABELS.put(5, "Bauarbeiter-Gold");
+		PRICE_LABELS.put(6, "Ranked Medals");
 	}
 
 	private static final String PRICE_KEY_PREFIX = "upgrade-price";
@@ -2279,6 +2281,9 @@ public class stats extends ListenerAdapter {
 			}
 			case "Decos" -> {
 				return path.contains("/decorations/") && !isBuilderVariant;
+			}
+			case "Emotes" -> {
+				return path.contains("/emotes/");
 			}
 			case "Equips" -> {
 				return path.contains("/equipment/");
