@@ -820,6 +820,8 @@ public class Bot extends ListenerAdapter {
 		classes.add(new lostmanager.util.Betreuungsruf());
 		// Tuerklingel fuer Keksi, standardmaessig aus (KLINGEL_AN=1 schaltet ein)
 		classes.add(new lostmanager.util.Klingel());
+		// Jonas' DMs als zweiter Chatweg neben WhatsApp (JONAS_DM_AUS=1 schaltet ab)
+		classes.add(new lostmanager.util.JonasDm());
 
 		return classes.toArray();
 	}
