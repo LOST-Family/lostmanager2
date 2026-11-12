@@ -14857,104 +14857,124 @@
     "index": 139
   },
   "70000001": {
-    "name": "Awesome Roof",
+    "name": "Good Job! (free)",
     "icon": "/home-base/emotes/1.png",
-    "index": 1
+    "index": 1,
+    "price": "Free"
   },
   "70000002": {
-    "name": "WWE 2026 Walls",
+    "name": "Angry Barbarian (free)",
     "icon": "/home-base/emotes/2.png",
-    "index": 2
+    "index": 2,
+    "price": "Free"
   },
   "70000003": {
-    "name": "WWE 2026 Ground",
+    "name": "Not Fair (free)",
     "icon": "/home-base/emotes/3.png",
-    "index": 3
+    "index": 3,
+    "price": "Free"
   },
   "70000004": {
-    "name": "Portal Panic Roof",
+    "name": "The Giggler (free)",
     "icon": "/home-base/emotes/4.png",
-    "index": 4
+    "index": 4,
+    "price": "Free"
   },
   "70000005": {
-    "name": "Portal Panic Deco",
+    "name": "Huh? (free)",
     "icon": "/home-base/emotes/5.png",
-    "index": 5
+    "index": 5,
+    "price": "Free"
   },
   "70000006": {
-    "name": "Awesome Roof",
+    "name": "No Sweat (Common Skeleton 1)",
     "icon": "/home-base/emotes/6.png",
-    "index": 6
+    "index": 6,
+    "price": "500 Ranked Medals"
   },
   "70000007": {
-    "name": "WWE 2026 Walls",
+    "name": "Muscle Up (Common Barbarian 4)",
     "icon": "/home-base/emotes/7.png",
-    "index": 7
+    "index": 7,
+    "price": "1000 Ranked Medals"
   },
   "70000008": {
-    "name": "WWE 2026 Ground",
+    "name": "Too Easy (Common Archer 7)",
     "icon": "/home-base/emotes/8.png",
-    "index": 8
+    "index": 8,
+    "price": "1500 Ranked Medals"
   },
   "70000009": {
-    "name": "Portal Panic Roof",
+    "name": "Flame Fanatic (Common Wizard 10)",
     "icon": "/home-base/emotes/9.png",
-    "index": 9
+    "index": 9,
+    "price": "2000 Ranked Medals"
   },
   "70000010": {
-    "name": "Test1",
+    "name": "Ooh, Shiny! (Wizard Prestige)",
     "icon": "/home-base/emotes/10.png",
-    "index": 10
+    "index": 10,
+    "price": "Prestige"
   },
   "70000011": {
-    "name": "Test2",
+    "name": "Sneaky Wink (Common Valkyrie 13)",
     "icon": "/home-base/emotes/11.png",
-    "index": 11
+    "index": 11,
+    "price": "2500 Ranked Medals"
   },
   "70000012": {
-    "name": "Test3",
+    "name": "Evil Plans (Common Witch 16)",
     "icon": "/home-base/emotes/12.png",
-    "index": 12
+    "index": 12,
+    "price": "3000 Ranked Medals"
   },
   "70000013": {
-    "name": "WWE 2026 Ground",
+    "name": "Rumble Time (Common Golem 19)",
     "icon": "/home-base/emotes/13.png",
-    "index": 13
+    "index": 13,
+    "price": "3500 Ranked Medals"
   },
   "70000014": {
-    "name": "Portal Panic Roof",
+    "name": "N.I.C.E. (Common P.E.K.K.A. 22)",
     "icon": "/home-base/emotes/14.png",
-    "index": 14
+    "index": 14,
+    "price": "4000 Ranked Medals"
   },
   "70000015": {
-    "name": "Portal Panic Deco",
+    "name": "Show-Off (P.E.K.K.A. Prestige)",
     "icon": "/home-base/emotes/15.png",
-    "index": 15
+    "index": 15,
+    "price": "Prestige"
   },
   "70000016": {
-    "name": "Awesome Roof",
+    "name": "High Voltage (Common Titan 25)",
     "icon": "/home-base/emotes/16.png",
-    "index": 16
+    "index": 16,
+    "price": "4500 Ranked Medals"
   },
   "70000017": {
-    "name": "WWE 2026 Walls",
+    "name": "Fireproof (Common Dragon 28)",
     "icon": "/home-base/emotes/17.png",
-    "index": 17
+    "index": 17,
+    "price": "5000 Ranked Medals"
   },
   "70000018": {
-    "name": "WWE 2026 Ground",
+    "name": "Self-Promotion (Common Electro 31)",
     "icon": "/home-base/emotes/18.png",
-    "index": 18
+    "index": 18,
+    "price": "10000 Ranked Medals"
   },
   "70000019": {
-    "name": "Portal Panic Roof",
+    "name": "Fire of Legend (Common Legend 3)",
     "icon": "/home-base/emotes/19.png",
-    "index": 19
+    "index": 19,
+    "price": "15000 Ranked Medals"
   },
   "70000020": {
-    "name": "Portal Panic Deco",
+    "name": "Ultimate Glory (Legend Prestige)",
     "icon": "/home-base/emotes/20.png",
-    "index": 20
+    "index": 20,
+    "price": "Prestige"
   },
   "4000026": {
     "name": "Super Barbarian",
