@@ -71,33 +71,83 @@ public class stats extends ListenerAdapter {
 	private static final String FIELD_BUILDINGS = "buildings";
 	private static final String FIELD_OBSTACLES = "obstacles";
 
-	private static final Map<String, String> STAT_TO_FIELD = new HashMap<>();
+	/**
+	 * Stat-Typ -> JSON-Felder. Discord erlaubt höchstens 25 Choices je Option,
+	 * deshalb fassen einige Typen mehrere Felder zusammen (#134): Ihre Einträge
+	 * werden zu einer Liste vereint und wie gewohnt nach dem Index der Image Map
+	 * sortiert.
+	 */
+	private static final Map<String, List<String>> STAT_TO_FIELD = new LinkedHashMap<>();
+
+	/**
+	 * Alte Stat-Namen, die noch in Knöpfen und Auswahlmenüs bereits geposteter
+	 * Nachrichten stecken können - sie zeigen auf den zusammengelegten Typ.
+	 */
+	private static final Map<String, String> ALTE_STAT_NAMEN = Map.of(
+			"Buildings (BB)", "Defensive (BB)",
+			"Decos (BB)", "Decorative (BB)",
+			"Obstacles (BB)", "Decorative (BB)",
+			"Traps (BB)", "Defensive (BB)");
 
 	static {
-		STAT_TO_FIELD.put(CATEGORY_BUILDINGS, FIELD_BUILDINGS);
-		STAT_TO_FIELD.put("Buildings (BB)", "buildings2");
-		STAT_TO_FIELD.put("Decos", "decos");
-		STAT_TO_FIELD.put("Decos (BB)", "decos2");
-		STAT_TO_FIELD.put("Emotes", "emotes");
-		STAT_TO_FIELD.put("Equips", "equipment");
-		STAT_TO_FIELD.put("Helpers", "helpers");
-		STAT_TO_FIELD.put("Guardians", "guardians");
-		STAT_TO_FIELD.put("Heroes (BB)", "heroes2");
-		STAT_TO_FIELD.put("Heroes", "heroes");
-		STAT_TO_FIELD.put("House Parts", "house_parts");
-		STAT_TO_FIELD.put("Obstacles", FIELD_OBSTACLES);
-		STAT_TO_FIELD.put("Obstacles (BB)", "obstacles2");
-		STAT_TO_FIELD.put("Pets", "pets");
-		STAT_TO_FIELD.put("Sceneries", "sceneries");
-		STAT_TO_FIELD.put("Sceneries (BB)", "sceneries2");
-		STAT_TO_FIELD.put("Sieges", "siege_machines");
-		STAT_TO_FIELD.put("Skins", "skins");
-		STAT_TO_FIELD.put("Skins (BB)", "skins2");
-		STAT_TO_FIELD.put("Spells", "spells");
-		STAT_TO_FIELD.put("Traps", "traps");
-		STAT_TO_FIELD.put("Traps (BB)", "traps2");
-		STAT_TO_FIELD.put("Units", "units");
-		STAT_TO_FIELD.put("Units (BB)", "units2");
+		STAT_TO_FIELD.put(CATEGORY_BUILDINGS, List.of(FIELD_BUILDINGS));
+		STAT_TO_FIELD.put("Decorative (BB)", List.of("decos2", "obstacles2"));
+		STAT_TO_FIELD.put("Decos", List.of("decos"));
+		STAT_TO_FIELD.put("Defensive (BB)", List.of("buildings2", "traps2"));
+		STAT_TO_FIELD.put("Emotes", List.of("emotes"));
+		STAT_TO_FIELD.put("Equips", List.of("equipment"));
+		STAT_TO_FIELD.put("Guardians", List.of("guardians"));
+		STAT_TO_FIELD.put("Helpers", List.of("helpers"));
+		STAT_TO_FIELD.put("Heroes", List.of("heroes"));
+		STAT_TO_FIELD.put("Heroes (BB)", List.of("heroes2"));
+		STAT_TO_FIELD.put("House Parts", List.of("house_parts"));
+		STAT_TO_FIELD.put("Obstacles", List.of(FIELD_OBSTACLES));
+		STAT_TO_FIELD.put("Pets", List.of("pets"));
+		STAT_TO_FIELD.put("Sceneries", List.of("sceneries"));
+		STAT_TO_FIELD.put("Sceneries (BB)", List.of("sceneries2"));
+		STAT_TO_FIELD.put("Sieges", List.of("siege_machines"));
+		STAT_TO_FIELD.put("Skins", List.of("skins"));
+		STAT_TO_FIELD.put("Skins (BB)", List.of("skins2"));
+		STAT_TO_FIELD.put("Spells", List.of("spells"));
+		STAT_TO_FIELD.put("Squads", List.of("squads"));
+		STAT_TO_FIELD.put("Traps", List.of("traps"));
+		STAT_TO_FIELD.put("Units", List.of("units"));
+		STAT_TO_FIELD.put("Units (BB)", List.of("units2"));
+	}
+
+	/**
+	 * Die Daten eines Stat-Typs aus dem Upload: bei einem Feld dieses selbst, bei
+	 * zusammengelegten Typen die Einträge aller vorhandenen Felder in einer Liste.
+	 *
+	 * @return null, wenn keines der Felder im Upload steht
+	 */
+	private Object collectStatData(JSONObject json, List<String> fields) {
+		List<String> present = new ArrayList<>();
+		for (String field : fields) {
+			if (json.has(field)) {
+				present.add(field);
+			}
+		}
+
+		if (present.isEmpty()) {
+			return null;
+		}
+		if (present.size() == 1) {
+			return json.get(present.get(0));
+		}
+
+		JSONArray combined = new JSONArray();
+		for (String field : present) {
+			Object value = json.get(field);
+			if (value instanceof JSONArray arr) {
+				for (int i = 0; i < arr.length(); i++) {
+					combined.put(arr.get(i));
+				}
+			} else if (value != JSONObject.NULL) {
+				combined.put(value);
+			}
+		}
+		return combined;
 	}
 
 	// German translations for attributes
@@ -601,22 +651,23 @@ public class stats extends ListenerAdapter {
 
 				JSONObject json = new JSONObject(jsonStr);
 
-				// Get the field name for this stat
-				String fieldName = STAT_TO_FIELD.get(statType);
-				if (fieldName == null) {
+				// Get the field names for this stat
+				statType = ALTE_STAT_NAMEN.getOrDefault(statType, statType);
+				List<String> fieldNames = STAT_TO_FIELD.get(statType);
+				if (fieldNames == null) {
 					hook.editOriginalEmbeds(
 							MessageUtil.buildEmbed(title, "Ungültiger Stat-Typ.", MessageUtil.EmbedType.ERROR)).queue();
 					return;
 				}
 
 				// Check if field exists in JSON
-				if (!json.has(fieldName)) {
+				Object fieldData = collectStatData(json, fieldNames);
+				if (fieldData == null) {
 					hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 							"Keine Daten für **" + statType + "** gefunden.", MessageUtil.EmbedType.INFO)).queue();
 					return;
 				}
 
-				Object fieldData = json.get(fieldName);
 				Object dataToDisplay = fieldData;
 
 				if (MODE_MISSING.equals(normalizedMode)) {
@@ -1639,24 +1690,25 @@ public class stats extends ListenerAdapter {
 		// listed in under every currency.
 		Map<String, Map<Integer, Long>> byCategory = new TreeMap<>();
 
-		for (Map.Entry<String, String> category : STAT_TO_FIELD.entrySet()) {
-			String field = category.getValue();
-			if (!json.has(field)) {
-				continue;
-			}
-
+		for (Map.Entry<String, List<String>> category : STAT_TO_FIELD.entrySet()) {
 			// Every item asks for its own pot, which is its field's unless the
 			// breakdown lists the item apart from it.
 			String fieldCategory = category.getKey();
 			PriceTarget target = dataId -> byCategory.computeIfAbsent(
 					priceCategoryFor(dataId, imageMap, fieldCategory), _ -> new TreeMap<>());
 
-			// A count-based building belongs to exactly one field, so its running
-			// total is still read exactly once.
-			Map<String, Integer> countBasedOwned = new HashMap<>();
-			collectUpgradePrices(json.get(field), imageMap, false, target, countBasedOwned, scheme);
-			if (scheme.countBased()) {
-				addCountBasedPrices(countBasedOwned, false, target);
+			for (String field : category.getValue()) {
+				if (!json.has(field)) {
+					continue;
+				}
+
+				// A count-based building belongs to exactly one field, so its running
+				// total is still read exactly once.
+				Map<String, Integer> countBasedOwned = new HashMap<>();
+				collectUpgradePrices(json.get(field), imageMap, false, target, countBasedOwned, scheme);
+				if (scheme.countBased()) {
+					addCountBasedPrices(countBasedOwned, false, target);
+				}
 			}
 		}
 
@@ -2325,26 +2377,23 @@ public class stats extends ListenerAdapter {
 			case "Units" -> {
 				return path.contains("/troops/") && isHome && !isSiegeMachine(name);
 			}
-			case "Buildings (BB)" -> {
-				return path.contains("/buildings/") && isBuilder;
+			case "Squads" -> {
+				return path.contains("/squads/") && isHome;
 			}
-			case "Decos (BB)" -> {
-				return path.contains("/decorations/") && isBuilderVariant;
+			case "Decorative (BB)" -> {
+				return (path.contains("/decorations/") || path.contains("/obstacles/")) && isBuilderVariant;
+			}
+			case "Defensive (BB)" -> {
+				return (path.contains("/buildings/") || path.contains("/traps/")) && isBuilder;
 			}
 			case "Heroes (BB)" -> {
 				return path.contains("/heroes/") && isBuilder;
-			}
-			case "Obstacles (BB)" -> {
-				return path.contains("/obstacles/") && isBuilderVariant;
 			}
 			case "Sceneries (BB)" -> {
 				return path.contains("/builder-base/sceneries/") || (path.contains("/sceneries/") && isBuilderVariant);
 			}
 			case "Skins (BB)" -> {
 				return path.contains("/skins/") && isBuilder;
-			}
-			case "Traps (BB)" -> {
-				return path.contains("/traps/") && isBuilder;
 			}
 			case "Units (BB)" -> {
 				return path.contains("/troops/") && isBuilder;
