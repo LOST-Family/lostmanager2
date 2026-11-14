@@ -455,7 +455,38 @@ public class Bot extends ListenerAdapter {
 											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("remove",
 													"Lösche ein Listening Event")
 													.addOptions(new OptionData(OptionType.INTEGER, "id",
-															"Die ID des zu löschenden Events", true))),
+															"Die ID des zu löschenden Events", true)
+															.setAutoComplete(true)),
+											// Nur was angegeben wird, ändert sich. Fehlen der neuen
+											// Kombination Werte, kommt das Formular von add,
+											// vorausgefüllt (listeningevent.handleEdit).
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("edit",
+													"Ändere ein Listening Event - nur angegebene Optionen ändern sich")
+													.addOptions(new OptionData(OptionType.INTEGER, "id",
+															"Das Event, das geändert werden soll", true)
+															.setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.STRING, "clan",
+															"Neuer Clan (optional)", false).setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.STRING, "type",
+															"Neuer Event-Typ (optional)", false)
+															.addChoices(new Command.Choice("Clan Games", "cs"),
+																	new Command.Choice("Clan War", "cw"),
+																	new Command.Choice("CWL Day", "cwlday"),
+																	new Command.Choice("Raid", "raid"),
+																	new Command.Choice("Season Ende", "seasonend")))
+													.addOptions(new OptionData(OptionType.STRING, "duration",
+															"Neue Dauer/Zeitpunkt, z.B. 1h, 24h, start, 0 (optional)",
+															false).setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.STRING, "actiontype",
+															"Neuer Aktionstyp (optional)", false).setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.CHANNEL, "channel",
+															"Neuer Channel für Nachrichten (optional)", false))
+													.addOptions(new OptionData(OptionType.STRING, "kickpoint_reason",
+															"Neuer Kickpoint-Grund (optional)", false)
+															.setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.BOOLEAN, "werte",
+															"Zusatzwerte (Schwellen, Angriffe, Nachricht ...) im Formular ändern",
+															false))),
 
 							Commands.slash("playerevent",
 									"Verwalte deine Spieler-Benachrichtigungen (per DM).")
@@ -947,6 +978,9 @@ public class Bot extends ListenerAdapter {
 			pool.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
 		}
 		schedulertasks.shutdown();
+		// Die ausstehenden Aufgaben des alten Pools laufen ab hier nicht mehr, ihre
+		// Einträge in der Einplanung wären nur noch Altlast.
+		lostmanager.util.EventEinplanung.BOT.allesVergessen();
 		// Use a multi-threaded pool (matching the initial field size) so a single
 		// blocked/long-running event cannot stall the polling loop or other due events.
 		schedulertasks = Executors.newScheduledThreadPool(10);
@@ -1071,7 +1105,7 @@ public class Bot extends ListenerAdapter {
 	 * one event are a CWL day, a war or a raid weekend apart, so six hours separates
 	 * the two cases with room to spare.
 	 */
-	private static final long SAME_OCCASION_TOLERANCE = 6 * 60 * 60 * 1000L;
+	public static final long SAME_OCCASION_TOLERANCE = 6 * 60 * 60 * 1000L;
 
 	/**
 	 * How late an event may be and still be worth firing. A reminder is bounded by
@@ -1082,7 +1116,7 @@ public class Bot extends ListenerAdapter {
 	 * handled once it fell past that, so a single slow or API-throttled poll cycle
 	 * dropped the reminder for good without printing anything.
 	 */
-	private static long latenessToleranceFor(ListeningEvent le) {
+	public static long latenessToleranceFor(ListeningEvent le) {
 		long cap = 30 * 60 * 1000L;
 		long duration = le.getDurationUntilEnd();
 		return duration > 0 ? Math.min(cap, duration) : cap;
@@ -1279,8 +1313,14 @@ public class Bot extends ListenerAdapter {
 									"Scheduling event " + id + " to fire in " + (timeUntilFire / 1000) + " seconds");
 							scheduledEvents.add(id);
 							scheduledEventTimestamps.put(id, timestamp);
-							schedulertasks.schedule(() -> runAndRecord(le, timestamp), timeUntilFire,
-									TimeUnit.MILLISECONDS);
+							// Über die Einplanung, damit /listeningevent edit diese Aufgabe
+							// verlässlich verwerfen kann - siehe EventEinplanung.
+							lostmanager.util.EventEinplanung.Eintrag eintrag = lostmanager.util.EventEinplanung.BOT
+									.einplanen(id, timestamp);
+							eintrag.setFuture(schedulertasks.schedule(
+									lostmanager.util.EventEinplanung.BOT.aufgabe(eintrag,
+											() -> runAndRecord(le, timestamp)),
+									timeUntilFire, TimeUnit.MILLISECONDS));
 						} else {
 							long lateBy = -timeUntilFire;
 							long tolerance = latenessToleranceFor(le);
@@ -1289,7 +1329,10 @@ public class Bot extends ListenerAdapter {
 										+ (lateBy / 1000 / 60) + " min late)");
 								scheduledEvents.add(id);
 								scheduledEventTimestamps.put(id, timestamp);
-								schedulertasks.execute(() -> runAndRecord(le, timestamp));
+								lostmanager.util.EventEinplanung.Eintrag eintrag = lostmanager.util.EventEinplanung.BOT
+										.einplanen(id, timestamp);
+								eintrag.setFuture(schedulertasks.submit(lostmanager.util.EventEinplanung.BOT
+										.aufgabe(eintrag, () -> runAndRecord(le, timestamp))));
 							} else {
 								// This is the case that used to disappear without a trace: too
 								// late to be useful, so still not fired - but now said out loud
@@ -1354,6 +1397,9 @@ public class Bot extends ListenerAdapter {
 
 									// Create a final reference for use in lambda
 									final Long finalEventId = eventId;
+									// Start-Auslöser laufen sofort und bewusst nicht über die
+									// Einplanung: verworfen wäre der Kriegsbeginn für diesen Krieg
+									// verpasst, er wird nach einem Neuaufbau nicht erneut erkannt.
 									schedulertasks.execute(() -> {
 										try {
 											ListeningEvent le = new ListeningEvent(finalEventId);

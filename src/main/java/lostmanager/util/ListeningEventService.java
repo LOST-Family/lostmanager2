@@ -200,6 +200,30 @@ public final class ListeningEventService {
 	 * @return null if the spec is fine, otherwise the error to show
 	 */
 	public static Result validate(Spec s) {
+		Result kern = validateKern(s);
+		if (kern != null) {
+			return kern;
+		}
+		return validateWerte(s);
+	}
+
+	/**
+	 * Die Regeln über Clan, Typ, Dauer, Aktion, Kanal und Kickpoint-Grund - alles,
+	 * was vor einem Formular feststeht. {@code /listeningevent edit} prüft das,
+	 * bevor es ein Formular öffnet, damit niemand Werte eintippt, die danach an
+	 * einer falschen Typ-Aktion-Kombination scheitern.
+	 *
+	 * @return null wenn in Ordnung, sonst der Fehler
+	 */
+	public static Result validateKern(Spec s) {
+		return validateKern(s, (grund, clan) -> new KickpointReason(grund, clan).Exists());
+	}
+
+	/**
+	 * @param grundExistiert (Grund, Clan) → gibt es den Grund dort; für Tests
+	 *                       austauschbar, die echte Prüfung fragt die Datenbank
+	 */
+	public static Result validateKern(Spec s, java.util.function.BiPredicate<String, String> grundExistiert) {
 		if (s.clanTag == null || s.type == null || s.actionType == null || s.channelId == null) {
 			return Result.fehler("clanTag, type, actionType und channelId sind erforderlich.", 400);
 		}
@@ -260,11 +284,16 @@ public final class ListeningEventService {
 		// over the clan's own reasons. Typed in freely, a reason that does not exist
 		// produces an event that fires and books nothing.
 		if (s.kickpointReasonName != null && !s.kickpointReasonName.isBlank()
-				&& !new KickpointReason(s.kickpointReasonName, s.clanTag).Exists()) {
+				&& !grundExistiert.test(s.kickpointReasonName, s.clanTag)) {
 			return Result.fehler("Den Kickpoint-Grund '" + s.kickpointReasonName + "' gibt es in diesem Clan nicht.",
 					400);
 		}
 
+		return null;
+	}
+
+	/** Die Zusatzwerte aus dem Formular. Setzt einen gültigen Kern voraus; fragt keine Datenbank. */
+	public static Result validateWerte(Spec s) {
 		if (s.actionType.equals("custommessage") && (s.customMessage == null || s.customMessage.isBlank())) {
 			return Result.fehler("Für eine benutzerdefinierte Nachricht wird ein Text gebraucht.", 400);
 		}
@@ -324,7 +353,7 @@ public final class ListeningEventService {
 	 * because they are read by key and can therefore be added without shifting
 	 * anything above them.
 	 */
-	private static String buildActionValues(Spec s, String gespeicherterActionType) {
+	static String buildActionValues(Spec s, String gespeicherterActionType) {
 		ArrayList<ActionValue> actionValues = new ArrayList<>();
 
 		if (gespeicherterActionType.equals("cwdonator") || gespeicherterActionType.equals("filler")) {
@@ -395,7 +424,7 @@ public final class ListeningEventService {
 	 * does not: both are stored as {@code raidfails}, and whether kickpoints are
 	 * handed out follows from whether a reason is attached.
 	 */
-	private static String gespeicherterActionType(String actionType) {
+	static String gespeicherterActionType(String actionType) {
 		return actionType.equals("raidfails_kickpoint") ? "raidfails" : actionType;
 	}
 
@@ -435,12 +464,42 @@ public final class ListeningEventService {
 	 * event fires at its new time anyway.
 	 */
 	public static Result update(long id, Spec s) {
+		return bearbeite(id, s).result();
+	}
+
+	/**
+	 * @param result      wie bei {@link #update}
+	 * @param einplanung  was mit einer schon eingeplanten Ausführung geschah;
+	 *                    null, wenn es gar nicht bis dahin kam
+	 */
+	public record Bearbeitung(Result result, EventEinplanung.Ergebnis einplanung) {
+	}
+
+	/**
+	 * Wie {@link #update}, sagt aber zusätzlich, ob das Event schon im
+	 * Speicher-Scheduler lag.
+	 *
+	 * Reihenfolge mit Absicht: erst prüfen, dann die alte Einplanung verwerfen,
+	 * dann schreiben, dann neu aufbauen. Nach dem Verwerfen ist sicher, dass der
+	 * alte Durchgang nicht mehr losgeht (siehe {@link EventEinplanung}); der Poller
+	 * des laufenden Schedulers plant es bis zum Neuaufbau auch nicht wieder ein,
+	 * weil er es als erledigt vermerkt hat. Der Neuaufbau liest dann die neue Zeile.
+	 * Läuft das Event gerade, wird nichts geändert - lieber ablehnen, als einem
+	 * laufenden Kickpunkt-Durchgang die Werte unter den Füßen wegzuziehen.
+	 */
+	public static Bearbeitung bearbeite(long id, Spec s) {
 		if (!exists(id)) {
-			return Result.fehler("Event mit dieser ID existiert nicht.", 404);
+			return new Bearbeitung(Result.fehler("Event mit dieser ID existiert nicht.", 404), null);
 		}
 		Result fehler = validate(s);
 		if (fehler != null) {
-			return fehler;
+			return new Bearbeitung(fehler, null);
+		}
+
+		EventEinplanung.Ergebnis einplanung = EventEinplanung.BOT.verwerfen(id);
+		if (einplanung.zustand() == EventEinplanung.Zustand.LAEUFT) {
+			return new Bearbeitung(Result.fehler("Event " + id + " wird gerade ausgeführt. Der laufende Durchgang "
+					+ "wird nicht unterbrochen - bitte in ein paar Minuten noch einmal ändern.", 409), einplanung);
 		}
 
 		String actionType = gespeicherterActionType(s.actionType);
@@ -449,12 +508,13 @@ public final class ListeningEventService {
 						+ "channel_id = ?, actionvalues = ?::jsonb WHERE id = ?",
 				s.clanTag, s.type, s.duration, actionType, s.channelId, buildActionValues(s, actionType), id);
 
-		if (result == null) {
-			return Result.fehler("Fehler beim Ändern des Listening Events.", 500);
-		}
-
+		// Auch beim Fehlschlag neu aufbauen: die Einplanung ist dann schon verworfen,
+		// und der Neuaufbau plant die unveränderte Zeile wieder ein.
 		Bot.restartAllEvents();
-		return Result.erfolg(id);
+		if (result == null) {
+			return new Bearbeitung(Result.fehler("Fehler beim Ändern des Listening Events.", 500), einplanung);
+		}
+		return new Bearbeitung(Result.erfolg(id), einplanung);
 	}
 
 	/** Deletes an event and takes it out of the running scheduler. */
@@ -463,6 +523,9 @@ public final class ListeningEventService {
 			return Result.fehler("Event mit dieser ID existiert nicht.", 404);
 		}
 
+		// Erst aus dem Scheduler nehmen, dann löschen - sonst bleibt bis zum Neuaufbau
+		// ein Fenster, in dem die alte Aufgabe noch feuert.
+		EventEinplanung.BOT.verwerfen(id);
 		DBUtil.executeUpdate("DELETE FROM listening_events WHERE id = ?", id);
 		Bot.restartAllEvents();
 		return Result.erfolg(id);
@@ -559,6 +622,214 @@ public final class ListeningEventService {
 		} catch (final Exception e) {
 			return null;
 		}
+	}
+
+	// ==================== Bearbeiten ====================
+
+	/** Die Aktionstypen, die einen Kickpoint-Grund verwenden. */
+	public static boolean nutztGrund(String actionType) {
+		return actionType != null && (actionType.equals("kickpoint") || actionType.equals("raidfails_kickpoint")
+				|| actionType.equals("starfails_kickpoint") || actionType.equals("cwcount_kickpoint"));
+	}
+
+	/**
+	 * Liest ein gespeichertes Event zurück in einen {@link Spec}, so wie es
+	 * {@code add} angelegt hätte. Ein Raid-Distrikt-Check mit Grund heißt dabei
+	 * wieder {@code raidfails_kickpoint} - gespeichert wird beides als
+	 * {@code raidfails}, unterschieden nur am Grund.
+	 *
+	 * @return null, wenn es das Event nicht gibt
+	 */
+	public static Spec specAusEvent(long id) {
+		if (!exists(id)) {
+			return null;
+		}
+		ListeningEvent le = new ListeningEvent(id);
+		Spec s = new Spec();
+		s.clanTag = le.getClanTag();
+		ListeningEvent.LISTENINGTYPE typ = le.getListeningType();
+		s.type = typ != null ? typ.name().toLowerCase()
+				: DBUtil.getValueFromSQL("SELECT listeningtype FROM listening_events WHERE id = ?", String.class, id);
+		s.duration = le.getDurationUntilEnd();
+		ListeningEvent.ACTIONTYPE aktion = le.getActionType();
+		s.actionType = aktion != null ? aktion.name().toLowerCase()
+				: DBUtil.getValueFromSQL("SELECT actiontype FROM listening_events WHERE id = ?", String.class, id);
+		s.channelId = le.getChannelID();
+		s.kickpointReasonName = configuredKickpointReason(le);
+		if ("raidfails".equals(s.actionType) && s.kickpointReasonName != null) {
+			s.actionType = "raidfails_kickpoint";
+		}
+		s.customMessage = customMessage(le);
+		wendeWerteAn(s, decodeValues(le));
+		return s;
+	}
+
+	/** Die Schlüssel, die {@link #decodeValues} für Positionswerte vergibt. */
+	private static final java.util.Set<String> POSITIONS_SCHLUESSEL = java.util.Set.of("thresholdOrAttacks",
+			"starCount", "punishmentMode", "capitalPeakMax", "otherDistrictsMax", "penalizeBoth", "useLists",
+			"excludeLeaders");
+
+	/** Verteilt das Ergebnis von {@link #decodeValues} auf die Felder des Spec. */
+	static void wendeWerteAn(Spec s, Map<String, Long> d) {
+		s.thresholdOrAttacks = alsInt(d.get("thresholdOrAttacks"));
+		s.starCount = alsInt(d.get("starCount"));
+		s.punishmentMode = alsInt(d.get("punishmentMode"));
+		if (d.containsKey("capitalPeakMax") || d.containsKey("otherDistrictsMax")) {
+			Map<String, Integer> raid = new java.util.HashMap<>();
+			raid.put("capital_peak_max", alsInt(d.get("capitalPeakMax")));
+			raid.put("other_districts_max", alsInt(d.get("otherDistrictsMax")));
+			Integer beide = alsInt(d.get("penalizeBoth"));
+			raid.put("penalize_both", beide != null ? beide : 1);
+			s.raidDistrictThresholds = raid;
+		}
+		if ("cwdonator".equals(s.actionType)) {
+			s.useLists = alsInt(d.get("useLists"));
+			s.excludeLeaders = alsInt(d.get("excludeLeaders"));
+		}
+		Map<String, Long> einstellungen = new java.util.HashMap<>();
+		for (final Map.Entry<String, Long> e : d.entrySet()) {
+			if (!POSITIONS_SCHLUESSEL.contains(e.getKey()) && e.getValue() != null) {
+				einstellungen.put(e.getKey(), e.getValue());
+			}
+		}
+		s.namedSettings = einstellungen.isEmpty() ? null : einstellungen;
+	}
+
+	private static Integer alsInt(Long wert) {
+		return wert == null ? null : wert.intValue();
+	}
+
+	/** Tiefe Kopie, damit Zusammenführen das Original nicht anfasst. */
+	public static Spec kopie(Spec s) {
+		Spec k = new Spec();
+		k.clanTag = s.clanTag;
+		k.type = s.type;
+		k.duration = s.duration;
+		k.actionType = s.actionType;
+		k.channelId = s.channelId;
+		k.kickpointReasonName = s.kickpointReasonName;
+		k.customMessage = s.customMessage;
+		k.thresholdOrAttacks = s.thresholdOrAttacks;
+		k.starCount = s.starCount;
+		k.punishmentMode = s.punishmentMode;
+		k.raidDistrictThresholds = s.raidDistrictThresholds == null ? null
+				: new java.util.HashMap<>(s.raidDistrictThresholds);
+		k.namedSettings = s.namedSettings == null ? null : new java.util.HashMap<>(s.namedSettings);
+		k.useLists = s.useLists;
+		k.excludeLeaders = s.excludeLeaders;
+		return k;
+	}
+
+	/**
+	 * Fingerabdruck der gespeicherten Zeile ohne die Feuer-Buchführung. Wer ein
+	 * Formular öffnet und es zehn Minuten später abschickt, soll nicht still
+	 * überschreiben, was jemand anderes (oder die Website) inzwischen geändert hat.
+	 */
+	public static String zeilenStand(long id) {
+		return DBUtil.getValueFromSQL(
+				"SELECT concat_ws(chr(31), clan_tag, listeningtype, listeningvalue::text, actiontype, channel_id, "
+						+ "actionvalues::text) FROM listening_events WHERE id = ?",
+				String.class, id);
+	}
+
+	/**
+	 * Alles, was an einem Event einstellbar ist, als lesbare Zeilen - Beschriftung
+	 * auf Wert, in fester Reihenfolge. Leere Werte fehlen. Zwei Events mit gleicher
+	 * Beschreibung verhalten sich gleich; darauf beruht "nichts geändert".
+	 */
+	public static Map<String, String> beschreibe(Spec s) {
+		Map<String, String> b = new java.util.LinkedHashMap<>();
+		b.put("Clan", s.clanTag);
+		b.put("Typ", s.type);
+		b.put("Dauer", formatDuration(s.duration));
+		b.put("Aktion", s.actionType);
+		b.put("Kanal", s.channelId == null ? null : "<#" + s.channelId + ">");
+		b.put("Kickpoint-Grund", s.kickpointReasonName);
+		if (s.thresholdOrAttacks != null) {
+			b.put("cs".equals(s.type) ? "Threshold (Punkte)" : "Benötigte Angriffe",
+					String.valueOf(s.thresholdOrAttacks));
+		}
+		if (s.starCount != null) {
+			b.put("Schlechte Angriffe bei", s.starCount + " ★");
+		}
+		if (s.punishmentMode != null && !"cwlday".equals(s.type)) {
+			b.put("Modus", switch (s.punishmentMode) {
+				case 1 -> "Einmal pro Spieler";
+				case 2 -> "Pro schlechtem Angriff";
+				case 3 -> "Nur wenn alle Angriffe schlecht";
+				default -> String.valueOf(s.punishmentMode);
+			});
+		}
+		if (s.raidDistrictThresholds != null && !s.raidDistrictThresholds.isEmpty()) {
+			b.put("Max. Angriffe Capital Peak", String.valueOf(s.raidDistrictThresholds.get("capital_peak_max")));
+			b.put("Max. Angriffe restliche Distrikte",
+					String.valueOf(s.raidDistrictThresholds.get("other_districts_max")));
+			if (s.kickpointReasonName != null) {
+				Integer beide = s.raidDistrictThresholds.get("penalize_both");
+				b.put("Beide bestrafen bei Gleichstand", beide != null && beide == 1 ? "Ja" : "Nein");
+			}
+		}
+		Map<String, Long> n = s.namedSettings != null ? s.namedSettings : Map.of();
+		jaNein(b, "Kickpunkte bei perfektem Krieg", n.get(ListeningEvent.SETTING_IGNORE_PERFECT_WAR));
+		jaNein(b, "Kickpunkte trotz unbestätigter Daten", n.get(ListeningEvent.SETTING_RAID_FORCE_KICKPOINTS));
+		Long frei = n.get(ListeningEvent.SETTING_STARFAILS_FREE_HITS);
+		if (frei != null) {
+			b.put("Freie Fehlversuche", frei == 0L ? "keine" : String.valueOf(frei));
+		}
+		if ("seasonend".equals(s.type) && s.actionType != null && !s.actionType.startsWith("cwcount")) {
+			Long wins = n.get(ListeningEvent.SETTING_WINS_THRESHOLD);
+			b.put("Minimum Wins", wins != null ? String.valueOf(wins) : "Clan-Einstellung");
+		}
+		Long minCw = n.get(ListeningEvent.SETTING_CW_MIN_COUNT);
+		if (minCw != null) {
+			b.put("Minimum CWs", String.valueOf(minCw));
+		}
+		// Einstellungen, die keine eigene Zeile haben (etwa von der Website), dürfen
+		// beim Vergleich nicht unter den Tisch fallen.
+		for (final Map.Entry<String, Long> e : new java.util.TreeMap<>(n).entrySet()) {
+			if (!BEKANNTE_EINSTELLUNGEN.contains(e.getKey())) {
+				b.put("Einstellung " + e.getKey(), String.valueOf(e.getValue()));
+			}
+		}
+		if (s.useLists != null) {
+			b.put("Listen-basierte Verteilung", s.useLists == 1 ? "Ja" : "Nein");
+		}
+		if (s.excludeLeaders != null) {
+			b.put("Leader ausschließen", s.excludeLeaders == 1 ? "Ja" : "Nein");
+		}
+		b.put("Nachricht", s.customMessage);
+		b.values().removeIf(java.util.Objects::isNull);
+		return b;
+	}
+
+	private static final java.util.Set<String> BEKANNTE_EINSTELLUNGEN = java.util.Set.of(
+			ListeningEvent.SETTING_IGNORE_PERFECT_WAR, ListeningEvent.SETTING_RAID_FORCE_KICKPOINTS,
+			ListeningEvent.SETTING_STARFAILS_FREE_HITS, ListeningEvent.SETTING_WINS_THRESHOLD,
+			ListeningEvent.SETTING_CW_MIN_COUNT);
+
+	private static void jaNein(Map<String, String> b, String label, Long wert) {
+		if (wert != null) {
+			b.put(label, wert == 1L ? "Ja" : "Nein");
+		}
+	}
+
+	/** Eine Zeile Vorher → Nachher. */
+	public record Unterschied(String feld, String vorher, String nachher) {
+	}
+
+	/** Die Felder, in denen sich zwei Beschreibungen unterscheiden, in Reihenfolge von {@code nachher}. */
+	public static java.util.List<Unterschied> unterschiede(Map<String, String> vorher, Map<String, String> nachher) {
+		java.util.LinkedHashSet<String> felder = new java.util.LinkedHashSet<>(nachher.keySet());
+		felder.addAll(vorher.keySet());
+		java.util.List<Unterschied> aus = new ArrayList<>();
+		for (final String f : felder) {
+			String a = vorher.get(f);
+			String n = nachher.get(f);
+			if (!java.util.Objects.equals(a, n)) {
+				aus.add(new Unterschied(f, a, n));
+			}
+		}
+		return aus;
 	}
 
 	// ==================== Description ====================

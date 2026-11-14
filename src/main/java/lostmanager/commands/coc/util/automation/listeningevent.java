@@ -15,6 +15,9 @@ import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
 import lostmanager.dbutil.DBUtil;
+import lostmanager.util.EventEinplanung;
+import lostmanager.util.ListeningEventBearbeitung;
+import lostmanager.util.ListeningEventFormular;
 import lostmanager.util.ListeningEventService;
 import lostmanager.util.ListeningEventService.FireInfo;
 import lostmanager.util.ListeningEventService.FireState;
@@ -133,6 +136,7 @@ public class listeningevent extends ListenerAdapter {
 				case "add" -> handleAdd(event, title);
 				case "list" -> handleList(event, title);
 				case "remove" -> handleRemove(event, title);
+				case "edit" -> handleEdit(event, title);
 				default -> event.replyEmbeds(
 							MessageUtil.buildEmbed(title, "Unbekannter Unterbefehl.", MessageUtil.EmbedType.ERROR))
 							.queue();
@@ -285,187 +289,17 @@ public class listeningevent extends ListenerAdapter {
 			return;
 		}
 
-		// Determine if we need a modal based on event type and action type.
-		// The modal id only carries a token - see PendingEventCreation for why.
-		boolean needsModal = false;
-		String modalId;
-		Modal modal = null;
-		String pendingToken = newPendingToken();
-		PendingEventCreation pendingCreation = new PendingEventCreation(clantag, type, duration, actionTypeStr,
-				channelId, kickpointReasonName);
-
-		// CS + (infomessage or kickpoint) => ask for threshold
-		if (type.equals("cs") && (actionTypeStr.equals("infomessage") || actionTypeStr.equals("kickpoint"))) {
-			needsModal = true;
-			modalId = "listeningevent_cs_threshold_" + pendingToken;
-
-			TextInput thresholdInput = TextInput.create("threshold", "Threshold (Punkte)", TextInputStyle.SHORT)
-					.setPlaceholder("z.B. 4000").setRequired(true).setMinLength(1).setMaxLength(10).setValue("4000")
-					.build();
-
-			modal = Modal.create(modalId, "Clan Games Threshold eingeben").addComponents(ActionRow.of(thresholdInput))
-					.build();
-		}
-		// CW + (infomessage or kickpoint) => ask for required attacks
-		else if (type.equals("cw") && (actionTypeStr.equals("infomessage") || actionTypeStr.equals("kickpoint"))) {
-			needsModal = true;
-			modalId = "listeningevent_cw_attacks_" + pendingToken;
-
-			TextInput attacksInput = TextInput.create("required_attacks", "Benötigte Angriffe", TextInputStyle.SHORT)
-					.setPlaceholder("1 oder 2 eingeben").setRequired(true).setMaxLength(1).build();
-
-			// Only kickpoint events can be affected by the perfect-war exemption
-			if (actionTypeStr.equals("kickpoint")) {
-				modal = Modal.create(modalId, "Benötigte Angriffe eingeben")
-						.addComponents(ActionRow.of(attacksInput), ActionRow.of(buildPerfectWarInput())).build();
-			} else {
-				modal = Modal.create(modalId, "Benötigte Angriffe eingeben").addComponents(ActionRow.of(attacksInput))
-						.build();
-			}
-		}
-		// SEASONEND + (infomessage or kickpoint) => ask for the wins threshold
-		else if (type.equals("seasonend")
-				&& (actionTypeStr.equals("infomessage") || actionTypeStr.equals("kickpoint"))) {
-			needsModal = true;
-			modalId = "listeningevent_seasonwins_" + pendingToken;
-
-			TextInput winsInput = TextInput
-					.create("wins_threshold", "Minimum Wins (leer = Clan-Einstellung)", TextInputStyle.SHORT)
-					.setPlaceholder("z.B. 70").setRequired(false).setMaxLength(5).build();
-
-			modal = Modal.create(modalId, "Season Wins Einstellungen").addComponents(ActionRow.of(winsInput)).build();
-		}
-		// SEASONEND + cwcount => ask for the minimum number of clan wars
-		else if (actionTypeStr.equals("cwcount") || actionTypeStr.equals("cwcount_kickpoint")) {
-			needsModal = true;
-			modalId = "listeningevent_cwcount_" + pendingToken;
-
-			TextInput minCwInput = TextInput
-					.create("cw_min_count", "Minimum CWs pro Season", TextInputStyle.SHORT)
-					.setPlaceholder("z.B. 8 - gezählt wird die Teilnahme an der Aufstellung")
-					.setRequired(true).setMinLength(1).setMaxLength(3).build();
-
-			modal = Modal.create(modalId, "CW-Teilnahme konfigurieren").addComponents(ActionRow.of(minCwInput))
-					.build();
-		}
-		// CWL day + kickpoint => ask whether a perfect war exempts everyone
-		else if (type.equals("cwlday") && actionTypeStr.equals("kickpoint")) {
-			needsModal = true;
-			modalId = "listeningevent_cwldaykp_" + pendingToken;
-
-			modal = Modal.create(modalId, "CWL Kickpoint Einstellungen")
-					.addComponents(ActionRow.of(buildPerfectWarInput())).build();
-		}
-		// RAID + raidfails or raidfails_kickpoint => ask for district attack thresholds
-		else if (type.equals("raid")
-				&& (actionTypeStr.equals("raidfails") || actionTypeStr.equals("raidfails_kickpoint"))) {
-			needsModal = true;
-			modalId = "listeningevent_raidfails_" + pendingToken;
-
-			TextInput capitalPeakInput = TextInput
-					.create("capital_peak_max", "Maximale Angriffe auf Capital Peak", TextInputStyle.SHORT)
-					.setPlaceholder("z.B. 10").setRequired(true).setMinLength(1).setMaxLength(3).setValue("10").build();
-
-			TextInput otherDistrictsInput = TextInput
-					.create("other_districts_max", "Maximale Angriffe auf restliche Distrikte", TextInputStyle.SHORT)
-					.setPlaceholder("z.B. 6").setRequired(true).setMinLength(1).setMaxLength(3).setValue("6").build();
-
-			// Only ask for penalize_both if kickpoint_reason is provided (kickpoint mode)
-			if (kickpointReasonName != null) {
-				TextInput penalizeBothInput = TextInput
-						.create("penalize_both", "Beide Spieler bestrafen? 1->Ja; 2->Nein", TextInputStyle.SHORT)
-						.setPlaceholder("1 oder 2").setRequired(true).setMinLength(1).setMaxLength(1).setValue("1")
-						.build();
-
-				TextInput forceKickpointsInput = TextInput
-						.create("raid_force_kickpoints",
-								"Kickpunkte trotz unbestätigter Daten?", TextInputStyle.SHORT)
-						.setPlaceholder("1 = Ja, 2 = Nein (Standard)").setRequired(true).setMinLength(1)
-						.setMaxLength(1).setValue("2").build();
-
-				modal = Modal.create(modalId, "Raidfails Distrikt Einstellungen")
-						.addComponents(ActionRow.of(capitalPeakInput), ActionRow.of(otherDistrictsInput),
-								ActionRow.of(penalizeBothInput), ActionRow.of(forceKickpointsInput))
-						.build();
-			} else {
-				// Info mode - only ask for thresholds
-				modal = Modal.create(modalId, "Raidfails Distrikt Einstellungen")
-						.addComponents(ActionRow.of(capitalPeakInput), ActionRow.of(otherDistrictsInput)).build();
-			}
-		}
-		// custommessage => ask for custom message
-		else if (actionTypeStr.equals("custommessage")) {
-			needsModal = true;
-			modalId = "listeningevent_custommessage_" + pendingToken;
-
-			TextInput messageInput = TextInput
-					.create("custommessage", "Benutzerdefinierte Nachricht", TextInputStyle.PARAGRAPH)
-					.setPlaceholder("Gib die Nachricht ein, die gesendet werden soll...").setRequired(true)
-					.setMinLength(1).setMaxLength(2000).build();
-
-			modal = Modal.create(modalId, "Benutzerdefinierte Nachricht eingeben")
-					.addComponents(ActionRow.of(messageInput)).build();
-		}
-		// cwdonator => asks for use_lists and exclude_leaders
-		else if (actionTypeStr.equals("cwdonator")) {
-			needsModal = true;
-			modalId = "listeningevent_cwdonator_params_" + pendingToken;
-
-			TextInput useListsInput = TextInput
-					.create("use_lists", "Listen-basierte Verteilung (1 oder 0)", TextInputStyle.SHORT)
-					.setPlaceholder("1 = aktiviert, 0 = deaktiviert").setRequired(true).setMinLength(1).setMaxLength(1)
-					.setValue("0").build();
-
-			TextInput excludeLeadersInput = TextInput
-					.create("exclude_leaders", "Leader ausschließen (1 oder 0)", TextInputStyle.SHORT)
-					.setPlaceholder("1 = aktiviert, 0 = deaktiviert").setRequired(true).setMinLength(1).setMaxLength(1)
-					.setValue("0").build();
-
-			modal = Modal.create(modalId, "CW Donator Einstellungen")
-					.addComponents(ActionRow.of(useListsInput), ActionRow.of(excludeLeadersInput)).build();
-		}
-		// starfails / starfails_kickpoint => ask for target star count and punishment mode
-		else if (actionTypeStr.equals("starfails") || actionTypeStr.equals("starfails_kickpoint")) {
-			needsModal = true;
-			modalId = "listeningevent_starfails_" + pendingToken;
-
-			TextInput starsInput = TextInput.create("star_count",
-					"Sterne-Anzahl (0, 1 oder 2)", TextInputStyle.SHORT)
-					.setPlaceholder("Angriffe mit genau X Sternen werden gemeldet/bestraft")
-					.setRequired(true).setMinLength(1).setMaxLength(1).build();
-
-			// Free hits: how many bad attacks a player gets before being punished.
-			// 0 keeps the behaviour of every event created before this option existed.
-			TextInput freeHitsInput = TextInput
-					.create("starfails_free_hits", "Freie Fehlversuche pro Spieler", TextInputStyle.SHORT)
-					.setPlaceholder(type.equals("cwlday")
-							? "0 = keine, 1 = der erste in der CWL ist frei"
-							: "0 = keine, 1 = der erste im Krieg ist frei")
-					.setRequired(true).setMinLength(1).setMaxLength(2).setValue("0").build();
-
-			// CWL has exactly one attack per member, so the punishment mode (which only
-			// distinguishes between multiple attacks of the same player) has no effect
-			// there and is not asked for.
-			if (type.equals("cwlday")) {
-				modal = Modal.create(modalId, "Schlechte Angriffe konfigurieren")
-						.addComponents(ActionRow.of(starsInput), ActionRow.of(freeHitsInput)).build();
-			} else {
-				TextInput modeInput = TextInput.create("punishment_mode", "Modus (1, 2 oder 3)",
-						TextInputStyle.SHORT)
-						.setPlaceholder("1=Einmal pro Spieler, 2=Pro Angriff, 3=Nur wenn alle schlecht")
-						.setRequired(true).setMinLength(1).setMaxLength(1).setValue("1").build();
-
-				modal = Modal.create(modalId, "Schlechte Angriffe konfigurieren")
-						.addComponents(ActionRow.of(starsInput), ActionRow.of(modeInput),
-								ActionRow.of(freeHitsInput))
-						.build();
-			}
-		}
-
-		if (needsModal) {
-			// Only park the parameters once a modal is actually shown
-			storePending(pendingToken, pendingCreation);
-			event.replyModal(modal).queue();
+		// Welches Formular diese Kombination braucht, steht seit dem 14.11.2026 in
+		// ListeningEventFormular - dieselben Felder nutzt auch /listeningevent edit.
+		// Die Modal-ID trägt nur ein Token, siehe PendingEventCreation.
+		ListeningEventFormular.Art art = ListeningEventFormular.art(type, actionTypeStr);
+		if (art != null) {
+			String pendingToken = newPendingToken();
+			storePending(pendingToken, new PendingEventCreation(clantag, type, duration, actionTypeStr, channelId,
+					kickpointReasonName));
+			event.replyModal(baueModal(art.praefix + pendingToken, art.titel,
+					ListeningEventFormular.felder(art, type, actionTypeStr, kickpointReasonName != null), null))
+					.queue();
 			return;
 		}
 
@@ -476,28 +310,27 @@ public class listeningevent extends ListenerAdapter {
 	}
 
 	/**
-	 * Shared input for the optional per-event override of the perfect-war
-	 * exemption. Defaults to 2 (no), which is the behaviour of all events created
-	 * before this option existed.
-	 */
-	private TextInput buildPerfectWarInput() {
-		return TextInput.create("ignore_perfect_war", "Kickpunkte auch bei perfektem Krieg?",
-				TextInputStyle.SHORT).setPlaceholder("1 = Ja, 2 = Nein (Standard)").setRequired(true).setMinLength(1)
-				.setMaxLength(1).setValue("2").build();
-	}
-
-	/**
-	 * Reads a "1 = yes / 2 = no" modal field into a named setting value.
+	 * Baut ein Modal aus den Feldern von {@link ListeningEventFormular}.
 	 *
-	 * @return 1 or 2, or null when the field was not part of the modal
+	 * @param vorbelegung vorhandene Werte (beim Bearbeiten), sonst null für die Vorgaben
 	 */
-	@SuppressWarnings("null")
-	private Long readYesNoField(ModalInteractionEvent event, String fieldId) {
-		net.dv8tion.jda.api.interactions.modals.ModalMapping mapping = event.getValue(fieldId);
-		if (mapping == null) {
-			return null;
+	static Modal baueModal(String modalId, String titel, List<ListeningEventFormular.Feld> felder,
+			java.util.Map<String, String> vorbelegung) {
+		List<ActionRow> zeilen = new ArrayList<>();
+		for (final ListeningEventFormular.Feld f : felder) {
+			TextInput.Builder b = TextInput
+					.create(f.id(), f.label(), f.absatz() ? TextInputStyle.PARAGRAPH : TextInputStyle.SHORT)
+					.setPlaceholder(f.platzhalter()).setRequired(f.pflicht()).setMaxLength(f.maxLaenge());
+			if (f.minLaenge() > 0) {
+				b.setMinLength(f.minLaenge());
+			}
+			String start = ListeningEventFormular.startwert(f, vorbelegung);
+			if (start != null) {
+				b.setValue(start);
+			}
+			zeilen.add(ActionRow.of(b.build()));
 		}
-		return "1".equals(mapping.getAsString().trim()) ? 1L : 2L;
+		return Modal.create(modalId, titel).addComponents(zeilen).build();
 	}
 
 	private void processEventCreation(net.dv8tion.jda.api.interactions.InteractionHook hook, String title,
@@ -626,6 +459,367 @@ public class listeningevent extends ListenerAdapter {
 		}
 
 		hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
+	}
+
+
+	// ==================== Bearbeiten ====================
+
+	private static final String EDIT_PRAEFIX = "listeningevent_edit_";
+
+	/** Ein Bearbeiten, das auf sein Formular wartet. */
+	private record PendingEdit(long id, ListeningEventBearbeitung.Plan plan, String stand, String nutzer,
+			long createdAt) {
+	}
+
+	private static final java.util.Map<String, PendingEdit> PENDING_EDITS = new java.util.concurrent.ConcurrentHashMap<>();
+
+	/**
+	 * {@code /listeningevent edit}: nur was angegeben ist, ändert sich.
+	 *
+	 * Zusammengeführt wird in {@link ListeningEventBearbeitung}, geprüft mit
+	 * denselben Regeln wie beim Anlegen ({@link ListeningEventService#validate}),
+	 * gespeichert über {@link ListeningEventService#bearbeite}, das auch eine schon
+	 * eingeplante Ausführung sauber verwirft. Braucht die neue Kombination Werte,
+	 * die es noch nicht gibt, kommt dasselbe Formular wie bei {@code add} -
+	 * vorausgefüllt mit dem, was das Event schon hat.
+	 */
+	@SuppressWarnings("null")
+	private void handleEdit(SlashCommandInteractionEvent event, String title) {
+		OptionMapping idOption = event.getOption("id");
+		if (idOption == null) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title, "Die ID ist erforderlich!", MessageUtil.EmbedType.ERROR))
+					.queue();
+			return;
+		}
+		long id = idOption.getAsLong();
+
+		// Vor dem Lesen festhalten: was danach jemand anderes ändert, merkt
+		// abschliessen() und überschreibt es nicht still.
+		String stand = ListeningEventService.zeilenStand(id);
+		ListeningEventService.Spec alt = stand == null ? null : ListeningEventService.specAusEvent(id);
+		if (alt == null) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title, "Event mit ID " + id + " existiert nicht.",
+					MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+
+		ListeningEventBearbeitung.Aenderung a = new ListeningEventBearbeitung.Aenderung();
+		OptionMapping o;
+		if ((o = event.getOption("clan")) != null) {
+			a.clanTag = lostmanager.util.ClanTag.parse(o.getAsString());
+			if (a.clanTag == null) {
+				event.replyEmbeds(MessageUtil.buildEmbed(title, "'" + o.getAsString()
+						+ "' ist kein gültiger Clan-Tag.\nWähle den Clan aus der Autocomplete-Liste aus oder gib den Tag direkt an, z.B. `#2LU2V2LPU`.",
+						MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+		}
+		if ((o = event.getOption("type")) != null) {
+			a.type = o.getAsString();
+		}
+		if ((o = event.getOption("duration")) != null) {
+			String roh = o.getAsString().trim();
+			if (roh.equalsIgnoreCase("start") || roh.equalsIgnoreCase("cwstart")) {
+				a.duration = -1L;
+			} else {
+				try {
+					a.duration = ListeningEventService.parseDuration(roh);
+				} catch (final IllegalArgumentException e) {
+					event.replyEmbeds(MessageUtil.buildEmbed(title,
+							"Ungültiges Dauer-Format: " + e.getMessage() + "\nBeispiele: 0, 1h, 2d, 24h, start",
+							MessageUtil.EmbedType.ERROR)).queue();
+					return;
+				}
+			}
+		}
+		if ((o = event.getOption("actiontype")) != null) {
+			a.actionType = o.getAsString().trim();
+		}
+		if ((o = event.getOption("channel")) != null) {
+			a.channelId = o.getAsChannel().getId();
+		}
+		if ((o = event.getOption("kickpoint_reason")) != null) {
+			a.kickpointReasonName = o.getAsString();
+		}
+		if ((o = event.getOption("werte")) != null) {
+			a.werteBearbeiten = o.getAsBoolean();
+		}
+
+		ListeningEventBearbeitung.Plan plan = ListeningEventBearbeitung.planen(alt, a);
+		if (plan.fehler() != null) {
+			event.replyEmbeds(MessageUtil.buildEmbed(title, plan.fehler(), MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+
+		if (plan.formular()) {
+			String token = newPendingToken();
+			long jetzt = System.currentTimeMillis();
+			PENDING_EDITS.values().removeIf(p -> jetzt - p.createdAt() > PENDING_TTL_MS);
+			PENDING_EDITS.put(token, new PendingEdit(id, plan, stand, event.getUser().getId(), jetzt));
+			event.replyModal(baueModal(EDIT_PRAEFIX + token, plan.art().titel, plan.felder(), plan.vorbelegung()))
+					.queue();
+			return;
+		}
+
+		event.deferReply().queue();
+		abschliessen(event.getHook(), title, id, alt, plan.neu(), stand, event.getUser());
+	}
+
+	@SuppressWarnings("null")
+	private void handleEditModal(ModalInteractionEvent event) {
+		String title = "Listening Event";
+		event.deferReply().queue();
+		PendingEdit pending = PENDING_EDITS.remove(event.getModalId().substring(EDIT_PRAEFIX.length()));
+		if (pending == null) {
+			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+					"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.", MessageUtil.EmbedType.ERROR))
+					.queue();
+			return;
+		}
+		ListeningEventBearbeitung.Plan plan = pending.plan();
+		ListeningEventFormular.Lesung lesung = ListeningEventFormular.lies(plan.art(), plan.neu().type,
+				plan.neu().kickpointReasonName != null, feld -> modalWert(event, feld));
+		if (lesung.fehler() != null) {
+			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, lesung.fehler(),
+					MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+		ListeningEventService.Spec neu = ListeningEventBearbeitung.mitFormular(plan, lesung.werte());
+		// Fragt die CoC-API nach der neuen Feuerzeit - nicht im JDA-Thread
+		new Thread(() -> abschliessen(event.getHook(), title, pending.id(), plan.alt(), neu, pending.stand(),
+				event.getUser()), "ListeningeventEdit-" + pending.id()).start();
+	}
+
+	/** Längere Werte (eigene Nachrichten) in der Gegenüberstellung kürzen. */
+	private static String kurz(String wert, int max) {
+		if (wert == null) {
+			return "–";
+		}
+		String einzeilig = wert.replace("\n", " ⏎ ");
+		return einzeilig.length() > max ? einzeilig.substring(0, max) + "…" : einzeilig;
+	}
+
+	/** Speichert, wenn sich etwas ändert, und erzählt Vorher → Nachher. */
+	private void abschliessen(net.dv8tion.jda.api.interactions.InteractionHook hook, String title, long id,
+			ListeningEventService.Spec alt, ListeningEventService.Spec neu, String stand,
+			net.dv8tion.jda.api.entities.User nutzer) {
+		try {
+			if (!java.util.Objects.equals(ListeningEventService.zeilenStand(id), stand)) {
+				hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, "Event " + id
+						+ " wurde inzwischen anderweitig geändert oder gelöscht. Es wurde nichts gespeichert - "
+						+ "bitte `/listeningevent edit` erneut ausführen.", MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+
+			List<ListeningEventService.Unterschied> unterschiede = ListeningEventService
+					.unterschiede(ListeningEventService.beschreibe(alt), ListeningEventService.beschreibe(neu));
+			if (unterschiede.isEmpty()) {
+				hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, "Keine Änderung - Event " + id
+						+ " hat diese Werte schon. Es wurde nichts gespeichert.", MessageUtil.EmbedType.INFO)).queue();
+				return;
+			}
+
+			ListeningEventService.Bearbeitung b = ListeningEventService.bearbeite(id, neu);
+			if (!b.result().ok()) {
+				hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, b.result().error(),
+						MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+
+			// Kein eigener Log-Kanal für Listening Events - das Journal ist das Protokoll
+			StringBuilder log = new StringBuilder("Listening Event " + id + " geändert von " + nutzer.getName()
+					+ " (" + nutzer.getId() + "):");
+			for (final ListeningEventService.Unterschied u : unterschiede) {
+				log.append(" ").append(u.feld()).append(": ").append(kurz(u.vorher(), 60)).append(" -> ")
+						.append(kurz(u.nachher(), 60)).append(";");
+			}
+			System.out.println(log);
+
+			String clanName = new Clan(neu.clanTag).getDisplayName();
+			StringBuilder desc = new StringBuilder("### Listening Event " + id + " geändert\n");
+			desc.append("*").append(clanName != null ? clanName + " (" + neu.clanTag + ")" : neu.clanTag)
+					.append(" · ").append(neu.type).append(" · ").append(neu.actionType).append("*\n\n");
+			for (final ListeningEventService.Unterschied u : unterschiede) {
+				desc.append("**").append(u.feld()).append(":** ").append(kurz(u.vorher(), 300)).append(" → ")
+						.append(kurz(u.nachher(), 300)).append("\n");
+			}
+
+			EventEinplanung.Ergebnis e = b.einplanung();
+			if (e != null && e.zustand() == EventEinplanung.Zustand.VERWORFEN && e.feuerzeit() != null) {
+				desc.append("\n⏱️ Das Event war schon eingeplant (hätte <t:").append(e.feuerzeit() / 1000)
+						.append(":R> gefeuert). Diese Einplanung ist verworfen, es wird mit den neuen Werten neu eingeplant.");
+			}
+			String hinweis = feuerHinweis(id);
+			if (hinweis != null) {
+				desc.append("\n").append(hinweis);
+			}
+
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc.toString(), MessageUtil.EmbedType.SUCCESS))
+					.queue();
+		} catch (final Exception ex) {
+			System.err.println("Fehler beim Bearbeiten von Listening Event " + id + ": " + ex);
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, "Unerwarteter Fehler beim Bearbeiten: "
+					+ ex.getMessage(), MessageUtil.EmbedType.ERROR)).queue();
+		}
+	}
+
+	/**
+	 * Wann das geänderte Event als Nächstes feuert - und vor allem, wenn das nicht
+	 * das ist, was man erwarten würde: schon gelaufen für diesen Anlass, oder die
+	 * neue Feuerzeit liegt schon in der Vergangenheit.
+	 */
+	private static String feuerHinweis(long id) {
+		try {
+			ListeningEvent le = new ListeningEvent(id);
+			if (le.getDurationUntilEnd() == -1) {
+				return "▶️ Feuert beim nächsten CW-Start.";
+			}
+			Long ts = le.getTimestamp();
+			if (ts == null || ts == Long.MAX_VALUE) {
+				return "▶️ " + ListeningEventService.getFireDescriptionForEvent(le) + ".";
+			}
+			Long letztesZiel = le.getLastFireTarget();
+			if (letztesZiel != null && Math.abs(letztesZiel - ts) < Bot.SAME_OCCASION_TOLERANCE) {
+				Long am = le.getLastFiredAt();
+				return "▶️ Für den aktuellen Anlass ist das Event schon gelaufen"
+						+ (am != null ? " (<t:" + am / 1000 + ":f>)" : "")
+						+ " - die neuen Werte gelten ab dem nächsten Mal.";
+			}
+			long jetzt = System.currentTimeMillis();
+			if (ts > jetzt) {
+				return "▶️ Nächste Ausführung: <t:" + ts / 1000 + ":f> (<t:" + ts / 1000 + ":R>).";
+			}
+			long minuten = (jetzt - ts) / 60000;
+			if (jetzt - ts <= Bot.latenessToleranceFor(le)) {
+				return "⚠️ Die neue Feuerzeit war vor " + minuten + " Minuten - das Event wird jetzt nachgeholt.";
+			}
+			return "⚠️ Die neue Feuerzeit ist für diesen Anlass schon vorbei (vor " + minuten
+					+ " Minuten) - es wird diesmal ausgelassen und feuert beim nächsten Anlass.";
+		} catch (final Exception e) {
+			System.err.println("Feuerzeit von Event " + id + " nicht ermittelbar: " + e.getMessage());
+			return null;
+		}
+	}
+
+	/** Kurzname eines Event-Typs für die Auswahl. */
+	private static String typLabel(String typ) {
+		return switch (typ == null ? "" : typ.toLowerCase()) {
+			case "cs" -> "Clan Games";
+			case "cw" -> "CW";
+			case "cwl", "cwlday" -> "CWL-Tag";
+			case "raid" -> "Raid";
+			case "seasonend" -> "Season-Ende";
+			case "cwlend" -> "CWL-Ende";
+			case "fixtimeinterval" -> "Fest";
+			default -> String.valueOf(typ);
+		};
+	}
+
+	/** Zeitpunkt eines Events in Worten, für die Auswahl. */
+	private static String zeitpunktLabel(long dauer) {
+		if (dauer == -1) {
+			return "bei CW-Start";
+		}
+		if (dauer == 0) {
+			return "zum Ende";
+		}
+		return ListeningEventService.formatDuration(dauer) + " vor Ende";
+	}
+
+	/**
+	 * Die Events zur Auswahl für {@code edit} und {@code remove}: "#ID · Clan · Typ
+	 * · Zeitpunkt · Aktion". Eine Abfrage für alles - je Event einzeln wären es bei
+	 * 160 Events über 600 Abfragen pro Tastendruck.
+	 */
+	private static List<Command.Choice> eventAuswahl(String input) {
+		ArrayList<String> zeilen = DBUtil.getArrayListFromSQL(
+				"SELECT concat_ws(chr(31), le.id::text, coalesce(le.clan_tag, ''), "
+						+ "coalesce(nullif(c.name, ''), nullif(s.name, ''), coalesce(le.clan_tag, '?')), "
+						+ "coalesce(le.listeningtype, ''), coalesce(le.listeningvalue, 0)::text, coalesce(le.actiontype, '')) "
+						+ "FROM listening_events le LEFT JOIN clans c ON c.tag = le.clan_tag "
+						+ "LEFT JOIN sideclans s ON s.clan_tag = le.clan_tag "
+						+ "ORDER BY 1",
+				String.class);
+		record Zeile(long id, String clanName, String label) {
+		}
+		List<Zeile> liste = new ArrayList<>();
+		java.util.Set<Long> gesehen = new java.util.HashSet<>();
+		for (final String z : zeilen) {
+			String[] t = z.split("\u001f", -1);
+			if (t.length < 6) {
+				continue;
+			}
+			long id;
+			long dauer;
+			try {
+				id = Long.parseLong(t[0]);
+				dauer = Long.parseLong(t[4]);
+			} catch (final NumberFormatException e) {
+				continue;
+			}
+			if (!gesehen.add(id)) {
+				continue;
+			}
+			String label = "#" + id + " · " + t[2] + " · " + typLabel(t[3]) + " · " + zeitpunktLabel(dauer) + " · "
+					+ actionTypeDisplayName(t[5]);
+			liste.add(new Zeile(id, t[2], label.length() > 100 ? label.substring(0, 99) + "…" : label));
+		}
+		liste.sort(java.util.Comparator.comparing(Zeile::clanName, String.CASE_INSENSITIVE_ORDER)
+				.thenComparingLong(Zeile::id));
+
+		String suche = input == null ? "" : input.trim().toLowerCase().replaceFirst("^#", "");
+		List<Command.Choice> auswahl = new ArrayList<>();
+		// Eine eingetippte Nummer zuerst als ID verstehen
+		for (final Zeile z : liste) {
+			if (!suche.isEmpty() && String.valueOf(z.id()).equals(suche)) {
+				auswahl.add(new Command.Choice(z.label(), z.id()));
+			}
+		}
+		for (final Zeile z : liste) {
+			if (auswahl.size() >= 25) {
+				break;
+			}
+			if (String.valueOf(z.id()).equals(suche)) {
+				continue;
+			}
+			if (suche.isEmpty() || z.label().toLowerCase().contains(suche)) {
+				auswahl.add(new Command.Choice(z.label(), z.id()));
+			}
+		}
+		return auswahl;
+	}
+
+	/**
+	 * Beim Bearbeiten fehlen Typ und Clan oft in den Optionen, weil sie sich nicht
+	 * ändern sollen. Die Vorschläge für Aktion, Dauer und Grund richten sich dann
+	 * nach dem gespeicherten Event.
+	 */
+	private static String gespeicherterWert(CommandAutoCompleteInteractionEvent event, String spalte) {
+		if (!"edit".equals(event.getSubcommandName())) {
+			return null;
+		}
+		OptionMapping idOption = event.getOption("id");
+		if (idOption == null) {
+			return null;
+		}
+		try {
+			long id = Long.parseLong(idOption.getAsString().trim());
+			return DBUtil.getValueFromSQL("SELECT " + spalte + " FROM listening_events WHERE id = ?", String.class,
+					id);
+		} catch (final NumberFormatException e) {
+			return null;
+		}
+	}
+
+	private static boolean darfVerwalten(String userId) {
+		User u = new User(userId);
+		for (String clantag : DBManager.getAllClans()) {
+			Player.RoleType role = u.getClanRoles().get(clantag);
+			if (role == Player.RoleType.ADMIN || role == Player.RoleType.LEADER || role == Player.RoleType.COLEADER) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/** Leaves room for the last entry under the 4096 character embed description limit. */
@@ -847,364 +1041,58 @@ public class listeningevent extends ListenerAdapter {
 	public void onModalInteraction(ModalInteractionEvent event) {
 		String modalId = event.getModalId();
 
-		if (modalId.startsWith("listeningevent_custommessage_")) {
-			event.deferReply().queue();
-			String title = "Listening Event";
-
-			PendingEventCreation pending = takePending(modalId, "listeningevent_custommessage_");
-			if (pending == null) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
-						MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			String clantag = pending.clantag;
-			String type = pending.type;
-			long duration = pending.duration;
-			String channelId = pending.channelId;
-			String customMessage = event.getValue("custommessage").getAsString();
-
-			processEventCreation(event.getHook(), title, clantag, type, duration, "custommessage", channelId, null,
-					customMessage, null);
-		} else if (modalId.startsWith("listeningevent_cs_threshold_")) {
-			event.deferReply().queue();
-			String title = "Listening Event";
-
-			PendingEventCreation pending = takePending(modalId, "listeningevent_cs_threshold_");
-			if (pending == null) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
-						MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			String clantag = pending.clantag;
-			long duration = pending.duration;
-			String actionTypeStr = pending.actionType;
-			String channelId = pending.channelId;
-			String kickpointReasonName = pending.kickpointReasonName;
-
-			String thresholdStr = event.getValue("threshold").getAsString();
-			int threshold;
-			try {
-				threshold = Integer.parseInt(thresholdStr);
-			} catch (final NumberFormatException e) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Ungültiger Threshold-Wert: " + thresholdStr, MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			processEventCreation(event.getHook(), title, clantag, "cs", duration, actionTypeStr, channelId,
-					kickpointReasonName, null, threshold);
-		} else if (modalId.startsWith("listeningevent_cw_attacks_")) {
-			event.deferReply().queue();
-			String title = "Listening Event";
-
-			PendingEventCreation pending = takePending(modalId, "listeningevent_cw_attacks_");
-			if (pending == null) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
-						MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			String clantag = pending.clantag;
-			long duration = pending.duration;
-			String actionTypeStr = pending.actionType;
-			String channelId = pending.channelId;
-			String kickpointReasonName = pending.kickpointReasonName;
-
-			String requiredAttacksStr = event.getValue("required_attacks").getAsString().trim();
-
-			// Validate and parse the required attacks value (now required, not optional)
-			if (requiredAttacksStr.isEmpty()) {
-				event.getHook()
-						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-								"Benötigte Angriffe müssen angegeben werden (1 oder 2)", MessageUtil.EmbedType.ERROR))
-						.queue();
-				return;
-			}
-
-			Integer requiredAttacks = null;
-			try {
-				int attacks = Integer.parseInt(requiredAttacksStr);
-				if (attacks < 1 || attacks > 2) {
-					throw new NumberFormatException();
-				}
-				requiredAttacks = attacks;
-			} catch (final NumberFormatException e) {
-				event.getHook()
-						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-								"Ungültiger Wert für Angriffe: " + requiredAttacksStr + " (Erlaubt: 1 oder 2)",
-								MessageUtil.EmbedType.ERROR))
-						.queue();
-				return;
-			}
-
-			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
-			Long ignorePerfectWar = readYesNoField(event, "ignore_perfect_war");
-			if (ignorePerfectWar != null) {
-				namedSettings.put(ListeningEvent.SETTING_IGNORE_PERFECT_WAR, ignorePerfectWar);
-			}
-
-			processEventCreation(event.getHook(), title, clantag, "cw", duration, actionTypeStr, channelId,
-					kickpointReasonName, null, requiredAttacks, null, null, null, namedSettings);
-		} else if (modalId.startsWith("listeningevent_seasonwins_")) {
-			event.deferReply().queue();
-			String title = "Listening Event";
-
-			PendingEventCreation pending = takePending(modalId, "listeningevent_seasonwins_");
-			if (pending == null) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
-						MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			String clantag = pending.clantag;
-			long duration = pending.duration;
-			String actionTypeStr = pending.actionType;
-			String channelId = pending.channelId;
-			String kickpointReasonName = pending.kickpointReasonName;
-
-			// Empty means "use the clan-wide min_season_wins setting"
-			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
-			String winsStr = event.getValue("wins_threshold") != null
-					? event.getValue("wins_threshold").getAsString().trim()
-					: "";
-			if (!winsStr.isEmpty()) {
-				try {
-					long wins = Long.parseLong(winsStr);
-					if (wins < 1) {
-						throw new NumberFormatException("threshold must be at least 1");
-					}
-					namedSettings.put(ListeningEvent.SETTING_WINS_THRESHOLD, wins);
-				} catch (final NumberFormatException e) {
-					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-							"Ungültiger Wert für Minimum Wins: " + winsStr, MessageUtil.EmbedType.ERROR)).queue();
-					return;
-				}
-			}
-
-			processEventCreation(event.getHook(), title, clantag, "seasonend", duration, actionTypeStr, channelId,
-					kickpointReasonName, null, null, null, null, null, namedSettings);
-		} else if (modalId.startsWith("listeningevent_cwcount_")) {
-			event.deferReply().queue();
-			String title = "Listening Event";
-
-			PendingEventCreation pending = takePending(modalId, "listeningevent_cwcount_");
-			if (pending == null) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
-						MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			String clantag = pending.clantag;
-			long duration = pending.duration;
-			String actionTypeStr = pending.actionType;
-			String channelId = pending.channelId;
-			String kickpointReasonName = pending.kickpointReasonName;
-
-			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
-			try {
-				long minCount = Long.parseLong(event.getValue("cw_min_count").getAsString().trim());
-				if (minCount < 1) {
-					throw new NumberFormatException("minimum must be at least 1");
-				}
-				namedSettings.put(ListeningEvent.SETTING_CW_MIN_COUNT, minCount);
-			} catch (final NumberFormatException e) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Ungültiger Wert für Minimum CWs.", MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			processEventCreation(event.getHook(), title, clantag, "seasonend", duration, actionTypeStr, channelId,
-					kickpointReasonName, null, null, null, null, null, namedSettings);
-		} else if (modalId.startsWith("listeningevent_cwldaykp_")) {
-			event.deferReply().queue();
-			String title = "Listening Event";
-
-			PendingEventCreation pending = takePending(modalId, "listeningevent_cwldaykp_");
-			if (pending == null) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
-						MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			String clantag = pending.clantag;
-			long duration = pending.duration;
-			String channelId = pending.channelId;
-			String kickpointReasonName = pending.kickpointReasonName;
-
-			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
-			Long ignorePerfectWar = readYesNoField(event, "ignore_perfect_war");
-			if (ignorePerfectWar != null) {
-				namedSettings.put(ListeningEvent.SETTING_IGNORE_PERFECT_WAR, ignorePerfectWar);
-			}
-
-			processEventCreation(event.getHook(), title, clantag, "cwlday", duration, "kickpoint", channelId,
-					kickpointReasonName, null, null, null, null, null, namedSettings);
-		} else if (modalId.startsWith("listeningevent_raidfails_")) {
-			event.deferReply().queue();
-			String title = "Listening Event";
-
-			PendingEventCreation pending = takePending(modalId, "listeningevent_raidfails_");
-			if (pending == null) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
-						MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			String clantag = pending.clantag;
-			long duration = pending.duration;
-			String channelId = pending.channelId;
-			String kickpointReasonName = pending.kickpointReasonName;
-
-			// Parse the threshold values (penalize_both is only present in kickpoint mode)
-			String capitalPeakMaxStr = event.getValue("capital_peak_max").getAsString();
-			String otherDistrictsMaxStr = event.getValue("other_districts_max").getAsString();
-
-			int capitalPeakMax, otherDistrictsMax, penalizeBoth;
-			try {
-				capitalPeakMax = Integer.parseInt(capitalPeakMaxStr);
-				otherDistrictsMax = Integer.parseInt(otherDistrictsMaxStr);
-
-				// penalize_both is only present when kickpoint_reason is provided
-				if (kickpointReasonName != null && event.getValue("penalize_both") != null) {
-					String penalizeBothStr = event.getValue("penalize_both").getAsString();
-					penalizeBoth = Integer.parseInt(penalizeBothStr);
-
-					if (penalizeBoth != 1 && penalizeBoth != 2) {
-						throw new NumberFormatException("Penalize both must be 1 or 2");
-					}
-				} else {
-					// Info mode - default to 1 (but won't be used since no kickpoints)
-					penalizeBoth = 1;
-				}
-
-				if (capitalPeakMax < 1 || otherDistrictsMax < 1) {
-					throw new NumberFormatException("Thresholds must be at least 1");
-				}
-			} catch (final NumberFormatException e) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Ungültige Werte eingegeben. Capital Peak und Distrikte müssen >= 1 sein, 'beide bestrafen' muss 1 oder 2 sein.",
-						MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			// Create map with thresholds
-			java.util.Map<String, Integer> raidDistrictThresholds = new java.util.HashMap<>();
-			raidDistrictThresholds.put("capital_peak_max", capitalPeakMax);
-			raidDistrictThresholds.put("other_districts_max", otherDistrictsMax);
-			raidDistrictThresholds.put("penalize_both", penalizeBoth);
-
-			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
-			Long forceKickpoints = readYesNoField(event, "raid_force_kickpoints");
-			if (forceKickpoints != null) {
-				namedSettings.put(ListeningEvent.SETTING_RAID_FORCE_KICKPOINTS, forceKickpoints);
-			}
-
-			processEventCreation(event.getHook(), title, clantag, "raid", duration, "raidfails", channelId,
-					kickpointReasonName, null, null, null, null, raidDistrictThresholds, namedSettings);
-		} else if (modalId.startsWith("listeningevent_cwdonator_params_")) {
-			event.deferReply().queue();
-			String title = "Listening Event";
-
-			PendingEventCreation pending = takePending(modalId, "listeningevent_cwdonator_params_");
-			if (pending == null) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
-						MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			String clantag = pending.clantag;
-			String type = pending.type;
-			long duration = pending.duration;
-			String actionTypeStr = pending.actionType;
-			String channelId = pending.channelId;
-
-			String useListsStr = event.getValue("use_lists").getAsString();
-			String excludeLeadersStr = event.getValue("exclude_leaders").getAsString();
-
-			int useLists, excludeLeaders;
-			try {
-				useLists = Integer.parseInt(useListsStr);
-				excludeLeaders = Integer.parseInt(excludeLeadersStr);
-
-				if ((useLists != 0 && useLists != 1) || (excludeLeaders != 0 && excludeLeaders != 1)) {
-					throw new NumberFormatException("Values must be 0 or 1");
-				}
-			} catch (final NumberFormatException e) {
-				event.getHook()
-						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-								"Ungültige Werte eingegeben. Beide Felder müssen entweder 0 oder 1 sein.",
-								MessageUtil.EmbedType.ERROR))
-						.queue();
-				return;
-			}
-
-			// Create map with parameters
-			java.util.Map<String, Integer> cwdonatorParams = new java.util.HashMap<>();
-			cwdonatorParams.put("use_lists", useLists);
-			cwdonatorParams.put("exclude_leaders", excludeLeaders);
-
-			processEventCreationWithCWDonatorParams(event.getHook(), title, clantag, type, duration, actionTypeStr,
-					channelId, cwdonatorParams);
-		} else if (modalId.startsWith("listeningevent_starfails_")) {
-			event.deferReply().queue();
-			String title = "Listening Event";
-
-			PendingEventCreation pending = takePending(modalId, "listeningevent_starfails_");
-			if (pending == null) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
-						MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			String clantag = pending.clantag;
-			long duration = pending.duration;
-			String type = pending.type;
-			String actionTypeStr = pending.actionType;
-			String channelId = pending.channelId;
-			String kickpointReasonName = pending.kickpointReasonName;
-
-			String starCountStr = event.getValue("star_count").getAsString().trim();
-			// Not present for CWL - the mode has no effect with a single attack per member
-			String modeStr = event.getValue("punishment_mode") != null
-					? event.getValue("punishment_mode").getAsString().trim()
-					: "1";
-
-			String freeHitsStr = event.getValue("starfails_free_hits") != null
-					? event.getValue("starfails_free_hits").getAsString().trim()
-					: "0";
-
-			int starCount, punishmentMode, freeHits;
-			try {
-				starCount = Integer.parseInt(starCountStr);
-				if (starCount < 0 || starCount > 2) throw new NumberFormatException("star_count must be 0-2");
-				punishmentMode = Integer.parseInt(modeStr);
-				if (punishmentMode < 1 || punishmentMode > 3) throw new NumberFormatException("mode must be 1-3");
-				freeHits = freeHitsStr.isEmpty() ? 0 : Integer.parseInt(freeHitsStr);
-				if (freeHits < 0 || freeHits > 20) throw new NumberFormatException("free hits must be 0-20");
-			} catch (NumberFormatException e) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Ungültige Eingabe: Sterne-Anzahl muss 0-2 sein, Modus 1-3, freie Fehlversuche 0-20.",
-						MessageUtil.EmbedType.ERROR)).queue();
-				return;
-			}
-
-			java.util.Map<String, Long> namedSettings = new java.util.HashMap<>();
-			namedSettings.put(ListeningEvent.SETTING_STARFAILS_FREE_HITS, (long) freeHits);
-
-			processEventCreation(event.getHook(), title, clantag, type, duration, actionTypeStr, channelId,
-					kickpointReasonName, null, null, starCount, punishmentMode, null, namedSettings);
+		if (modalId.startsWith(EDIT_PRAEFIX)) {
+			handleEditModal(event);
+			return;
 		}
+
+		ListeningEventFormular.Art art = ListeningEventFormular.Art.ausModalId(modalId);
+		if (art == null) {
+			return;
+		}
+
+		event.deferReply().queue();
+		String title = "Listening Event";
+
+		PendingEventCreation pending = takePending(modalId, art.praefix);
+		if (pending == null) {
+			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+					"Diese Eingabe ist abgelaufen. Bitte den Befehl erneut ausführen.",
+					MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+
+		ListeningEventFormular.Lesung lesung = ListeningEventFormular.lies(art, pending.type,
+				pending.kickpointReasonName != null, feld -> modalWert(event, feld));
+		if (lesung.fehler() != null) {
+			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, lesung.fehler(),
+					MessageUtil.EmbedType.ERROR)).queue();
+			return;
+		}
+		ListeningEventFormular.Werte w = lesung.werte();
+
+		if (art == ListeningEventFormular.Art.CWDONATOR) {
+			java.util.Map<String, Integer> cwdonatorParams = new java.util.HashMap<>();
+			cwdonatorParams.put("use_lists", w.useLists);
+			cwdonatorParams.put("exclude_leaders", w.excludeLeaders);
+			processEventCreationWithCWDonatorParams(event.getHook(), title, pending.clantag, pending.type,
+					pending.duration, pending.actionType, pending.channelId, cwdonatorParams);
+			return;
+		}
+
+		// Eine eigene Nachricht hat nie einen Grund mitgenommen, auch wenn einer
+		// angegeben war - so bleibt es.
+		String grund = art == ListeningEventFormular.Art.CUSTOMMESSAGE ? null : pending.kickpointReasonName;
+		processEventCreation(event.getHook(), title, pending.clantag, pending.type, pending.duration,
+				pending.actionType, pending.channelId, grund, w.customMessage, w.thresholdOrAttacks, w.starCount,
+				w.punishmentMode, w.raidDistrictThresholds, w.namedSettings.isEmpty() ? null : w.namedSettings);
+	}
+
+	/** Inhalt eines Modal-Felds, null wenn es nicht im Modal war. */
+	@SuppressWarnings("null")
+	private static String modalWert(ModalInteractionEvent event, String feld) {
+		net.dv8tion.jda.api.interactions.modals.ModalMapping m = event.getValue(feld);
+		return m == null ? null : m.getAsString();
 	}
 
 	private void processEventCreationWithCWDonatorParams(net.dv8tion.jda.api.interactions.InteractionHook hook,
@@ -1254,6 +1142,15 @@ public class listeningevent extends ListenerAdapter {
 			String input = event.getFocusedOption().getValue();
 
                     switch (focused) {
+                        case "id" -> {
+                            // Wer die Events nicht verwalten darf, bekommt auch keine Liste
+                            List<Command.Choice> choices = darfVerwalten(event.getUser().getId())
+                                    ? eventAuswahl(input)
+                                    : new ArrayList<>();
+                            event.replyChoices(choices).queue(_ -> {
+                            }, _ -> {
+                            });
+                        }
                         case "clan" ->                             {
                                 List<Command.Choice> choices = DBManager.getClansAutocompleteWithSideclans(input);
                                 event.replyChoices(choices).queue(_ -> {
@@ -1272,6 +1169,12 @@ public class listeningevent extends ListenerAdapter {
                                 // Get the event type to filter action types
                                 OptionMapping typeOption = event.getOption("type");
                                 String eventType = typeOption != null ? typeOption.getAsString() : "";
+                                if (typeOption == null) {
+                                    String gespeichert = gespeicherterWert(event, "listeningtype");
+                                    if (gespeichert != null) {
+                                        eventType = gespeichert.equals("cwl") ? "cwlday" : gespeichert;
+                                    }
+                                }
                                 // Provide autocomplete for action types based on listening type
                                 List<Command.Choice> choices = new ArrayList<>();
                                 // Common action types available for all listening types
@@ -1358,6 +1261,12 @@ public class listeningevent extends ListenerAdapter {
                                 // Get the event type to provide contextual suggestions
                                 OptionMapping typeOption = event.getOption("type");
                                 String eventType = typeOption != null ? typeOption.getAsString() : "";
+                                if (typeOption == null) {
+                                    String gespeichert = gespeicherterWert(event, "listeningtype");
+                                    if (gespeichert != null) {
+                                        eventType = gespeichert;
+                                    }
+                                }
                                 // Check if the user's input is a valid duration format
                                 boolean isValidInput = false;
                                 if (!input.isEmpty()) {
@@ -1408,8 +1317,9 @@ public class listeningevent extends ListenerAdapter {
                         case "kickpoint_reason" -> {
                             // Get the clan from the command to filter kickpoint reasons
                             OptionMapping clanOption = event.getOption("clan");
-                            if (clanOption != null) {
-                                String clantag = clanOption.getAsString();
+                            String clantag = clanOption != null ? clanOption.getAsString()
+                                    : gespeicherterWert(event, "clan_tag");
+                            if (clantag != null) {
                                 List<Command.Choice> choices = DBManager.getKPReasonsAutocomplete(input, clantag);
                                 event.replyChoices(choices).queue(_ -> {
                                 }, _ -> {
