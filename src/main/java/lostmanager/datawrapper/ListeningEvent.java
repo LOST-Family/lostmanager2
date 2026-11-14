@@ -1380,20 +1380,20 @@ public class ListeningEvent {
 				final ListeningEvent thisEvent = this;
 				final String originalMessage = result.message; // Store original message for fallback
 
-				// Schedule 5-minute delayed verification using Bot's scheduler
-				// Using a single-use scheduler that shuts down after execution
+				// Bis zur Prüfung den Krieg weiter beobachten und den letzten vollständigen Stand
+				// merken: sucht der Clan direkt neu, liefert die API nach 5 Minuten nur noch
+				// notInWar ohne Mitglieder (12./13.11.2026).
+				CwKriegsendeStand.merke(clanTag, cwJson);
+				CwKriegsendeStand.beobachte(clanTag, endTimeTs.getTime(),
+						System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
+
+				// Prüfung nach 5 Minuten; fehlt der Krieg dann noch im Kriegslog, wird bis
+				// CW_PRUEFFRIST_MS alle CWL_PRUEF_ABSTAND_S Sekunden nachgefasst.
+				final long frist = System.currentTimeMillis() + CW_PRUEFFRIST_MS;
 				lostmanager.Bot.activeVerificationTasks.incrementAndGet();
-				ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-				scheduler.schedule(() -> {
-					try {
-						handleCWMissedAttacksDelayedVerification(clanTag, finalEndTimeTs,
-								finalFillerTags, messageId, channelId, thisEvent, originalMessage);
-					} catch (Exception e) {
-						System.err.println("Error in delayed CW verification: " + e.getMessage());					} finally {
-						lostmanager.Bot.activeVerificationTasks.decrementAndGet();
-						scheduler.shutdown();
-					}
-				}, 5, TimeUnit.MINUTES);
+				cwlNachpruefen(Executors.newSingleThreadScheduledExecutor(), 300,
+						() -> handleCWMissedAttacksDelayedVerification(clanTag, finalEndTimeTs,
+								finalFillerTags, messageId, channelId, thisEvent, originalMessage, frist));
 
 				System.out.println("Scheduled 5-minute CW missed attacks verification for clan " + clanTag);
 			}
@@ -1415,9 +1415,9 @@ public class ListeningEvent {
 	 * Fetches fresh data, updates the message, and processes kickpoints if
 	 * appropriate.
 	 */
-	private void handleCWMissedAttacksDelayedVerification(String clanTag,
+	private boolean handleCWMissedAttacksDelayedVerification(String clanTag,
 			java.sql.Timestamp endTimeTs, ArrayList<String> fillerTags, long messageId, String channelId,
-			ListeningEvent event, String originalMessage) {
+			ListeningEvent event, String originalMessage, long frist) {
 
 		System.out.println("Starting 5-minute CW verification for clan " + clanTag);
 
@@ -1433,7 +1433,7 @@ public class ListeningEvent {
 						+ " could not fetch war data, leaving the original message in place");
 				editMessageInChannel(channelId, messageId, originalMessage
 						+ "\n\n*Daten konnten nach 5min nicht überprüft werden (API nicht erreichbar)*");
-				return;
+				return true;
 			}
 			String currentState = cwJson.getString("state");
 
@@ -1443,37 +1443,87 @@ public class ListeningEvent {
 			// JSONObject["members"] not found (12./13.11.2026). Same rule as the CWL check.
 			boolean dataIsReliable = currentState.equals("warEnded");
 
-			// Re-fetch required attacks from event's action values to ensure the configured
-			// setting is preserved
-			// This prevents the setting from being lost and reverting to the API's
-			// attacksPerMember value
-			int actualRequiredAttacks = event.getRequiredAttacksFromConfig(cwJson);
+			// Daten, nach denen geprüft wird, und der Vermerk dazu
+			org.json.JSONObject pruefDaten = dataIsReliable ? cwJson : null;
+			String vermerk = "\n\n*Daten nach 5min überprüft*";
+			String unzuverlaessigVermerk = null;
+
+			if (!dataIsReliable) {
+				// Sucht der Clan schon neu, den letzten vollständigen Stand vor Kriegsende nehmen
+				// (CwKriegsendeStand) - aber nur, wenn er sicher alle Angriffe enthält.
+				CwKriegsendeStand.Stand stand = CwKriegsendeStand.fuer(clanTag, endTimeTs.getTime());
+				Integer lautLog = null;
+				if (stand != null && !stand.beendet()) {
+					lautLog = CwKriegsendeStand.angriffeLautKriegslog(clan.getWarLogJson(5), endTimeTs.getTime());
+				}
+				CwKriegsendeStand.Urteil urteil = CwKriegsendeStand.beurteile(stand, lautLog);
+				System.out.println("CW verification for clan " + clanTag + ": state=" + currentState
+						+ ", gemerkter Stand " + (stand == null ? "keiner"
+								: stand.state() + " mit " + stand.angriffe() + " Angriffen")
+						+ ", Kriegslog " + lautLog + " -> " + urteil);
+				String standZeit = stand == null ? "" : "<t:" + (stand.abgerufenUm() / 1000) + ":T>";
+				switch (urteil) {
+					case ENDGUELTIG -> {
+						pruefDaten = stand.json();
+						vermerk = "\n\n*Daten nach Kriegsende überprüft (Stand von " + standZeit
+								+ ", bevor der Clan neu gesucht hat)*";
+					}
+					case VOLLSTAENDIG_LAUT_KRIEGSLOG -> {
+						pruefDaten = stand.json();
+						vermerk = "\n\n*Daten aus dem letzten Stand vor Kriegsende (" + standZeit
+								+ "), laut Kriegslog vollständig (" + lautLog + " Angriffe)*";
+					}
+					case KRIEGSLOG_FEHLT -> {
+						if (System.currentTimeMillis() < frist) {
+							System.out.println("CW verification for clan " + clanTag
+									+ ": Krieg noch nicht im Kriegslog, neuer Versuch in " + CWL_PRUEF_ABSTAND_S + "s");
+							return false;
+						}
+						unzuverlaessigVermerk = "\n\n*Der Clan sucht schon den nächsten Krieg. Der letzte Stand vor Kriegsende ("
+								+ standZeit + ") ließ sich nicht mit dem Kriegslog abgleichen – keine Kickpunkte verteilt.*";
+					}
+					case UNVOLLSTAENDIG -> unzuverlaessigVermerk = "\n\n*Der Clan sucht schon den nächsten Krieg. Der letzte Stand vor Kriegsende ("
+							+ standZeit + ") zählt " + stand.angriffe() + " Angriffe, der Kriegslog " + lautLog
+							+ " – wer danach noch angegriffen hat, ist nicht zu sehen. Keine Kickpunkte verteilt.*";
+					case KEIN_STAND -> {
+						// unverändert wie bisher
+					}
+				}
+			}
 
 			String updatedMessage;
 			boolean shouldProcessKickpoints;
 			CWMissedAttacksResult result = null;
+			// Re-fetch required attacks from event's action values to ensure the configured
+			// setting is preserved
+			// This prevents the setting from being lost and reverting to the API's
+			// attacksPerMember value
+			int actualRequiredAttacks = pruefDaten != null ? event.getRequiredAttacksFromConfig(pruefDaten) : 0;
 
-			if (dataIsReliable) {
+			if (pruefDaten != null) {
 				// Data is reliable - build updated message with fresh data
-				result = buildCWMissedAttacksMessage(clan, cwJson, actualRequiredAttacks, fillerTags, true);
+				result = buildCWMissedAttacksMessage(clan, pruefDaten, actualRequiredAttacks, fillerTags, true);
 				
-				org.json.JSONObject clanData = cwJson.getJSONObject("clan");
-				boolean isPerfectWar = clanData.has("stars") && cwJson.has("teamSize") &&
-									   clanData.getInt("stars") == cwJson.getInt("teamSize") * 3;
+				org.json.JSONObject clanData = pruefDaten.getJSONObject("clan");
+				boolean isPerfectWar = clanData.has("stars") && pruefDaten.has("teamSize") &&
+									   clanData.getInt("stars") == pruefDaten.getInt("teamSize") * 3;
 				// Optional per-event override: normally a perfect war exempts everyone,
 				// but a clan can choose to hand out kickpoints for missed attacks anyway.
 				boolean ignorePerfectWar = event.getFlag(SETTING_IGNORE_PERFECT_WAR, false);
 
 				if (isPerfectWar && !ignorePerfectWar) {
-					updatedMessage = result.message + "\n\n*Daten nach 5min überprüft*\n**Perfekter Krieg erreicht! Keine Kickpunkte verteilt.**";
+					updatedMessage = result.message + vermerk + "\n**Perfekter Krieg erreicht! Keine Kickpunkte verteilt.**";
 					shouldProcessKickpoints = false;
 				} else {
-					updatedMessage = result.message + "\n\n*Daten nach 5min überprüft*";
+					updatedMessage = result.message + vermerk;
 					if (isPerfectWar) {
 						updatedMessage += "\n**Perfekter Krieg – Kickpunkte werden dennoch vergeben (Einstellung).**";
 					}
 					shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
 				}
+			} else if (unzuverlaessigVermerk != null) {
+				updatedMessage = originalMessage + unzuverlaessigVermerk;
+				shouldProcessKickpoints = false;
 			} else {
 				// New war has already started - data is not reliable
 				// Use the original message content and just append a warning
@@ -1500,7 +1550,8 @@ public class ListeningEvent {
 			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time > ?::timestamp - INTERVAL '24 hours' AND war_end_time < ?::timestamp + INTERVAL '24 hours'", clanTag, endTimeTs, endTimeTs);
 
 			System.out.println("Completed 5-minute CW verification for clan " + clanTag + " (dataReliable="
-					+ dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
+					+ (pruefDaten != null) + ", kickpoints=" + shouldProcessKickpoints + ")");
+			return true;
 
 		} catch (JSONException e) {
 			System.err.println("Error in CW delayed verification for clan " + clanTag + ": " + e.getMessage());
@@ -1519,8 +1570,15 @@ public class ListeningEvent {
 			} catch (Exception e3) {
 				System.err.println("Failed to delete fillers on error: " + e3.getMessage());
 			}
+			return true;
 		}
 	}
+
+	/**
+	 * Höchstens so lange nach Kriegsende wird auf den Krieg im Kriegslog gewartet, wenn der
+	 * Clan schon neu sucht und nur der letzte inWar-Stand vorliegt (Kriegslog cacht 120 s).
+	 */
+	private static final long CW_PRUEFFRIST_MS = TimeUnit.MINUTES.toMillis(15);
 
 	/**
 	 * Helper class to store missed attacks result
@@ -2046,7 +2104,7 @@ public class ListeningEvent {
 				+ (frist / 1000) + ":t>).*";
 	}
 
-	/** Wiederholt die Prüfung, bis sie true liefert; dann Zähler runter und Scheduler aus. */
+	/** Wiederholt die Prüfung (CWL-Tag wie Clankrieg), bis sie true liefert; dann Zähler runter und Scheduler aus. */
 	private static void cwlNachpruefen(ScheduledExecutorService scheduler, long verzoegerungSek,
 			java.util.function.BooleanSupplier pruefung) {
 		scheduler.schedule(() -> {

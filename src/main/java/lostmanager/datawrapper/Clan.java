@@ -860,6 +860,26 @@ public class Clan {
 		}
 	}
 
+	/**
+	 * Die letzten Einträge des Kriegslogs, oder null (Log privat, API nicht erreichbar).
+	 * Dient der Prüfung nach Kriegsende als Gegenprobe der Angriffszahl.
+	 */
+	public JSONObject getWarLogJson(int limit) {
+		if (clan_tag == null) {
+			return null;
+		}
+		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
+		String url = ApiUtil.basisUrl() + "/clans/" + encodedTag + "/warlog?limit=" + limit;
+		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
+		if (response != null && response.statusCode() == 200) {
+			return new JSONObject(response.body());
+		}
+		if (response != null && response.statusCode() != 403 && response.statusCode() != 404) {
+			System.err.println("Kriegslog " + clan_tag + ": HTTP " + response.statusCode());
+		}
+		return null;
+	}
+
 	public JSONObject getCWJson() {
 		String json;
 
