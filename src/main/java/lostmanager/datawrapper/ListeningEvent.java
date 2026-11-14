@@ -460,6 +460,15 @@ public class ListeningEvent {
 
 			Clan clan = new Clan(getClanTag());
 
+			// Eigene Nachricht: braucht keine Kriegs-/Spieldaten, nur den passenden Kopf.
+			// Raids haben ihren eigenen Zweig (handleRaidEvent), alle anderen Typen
+			// hatten bisher keinen und feuerten ohne Post.
+			if (getActionType() == ACTIONTYPE.CUSTOMMESSAGE && type != LISTENINGTYPE.RAID) {
+				handleCustomMessage(clan, type);
+				System.out.println("Completed fireEvent for event ID " + getId());
+				return;
+			}
+
 			switch (type) {
 				case CS -> handleClanGamesEvent(clan);
 
@@ -2341,55 +2350,99 @@ public class ListeningEvent {
 		}
 	}
 
-	private void handleRaidCustomMessage(boolean isRaidActive) {
-		// Get custom message from action values
-		String customMessageJson = DBUtil.getValueFromSQL("SELECT actionvalues FROM listening_events WHERE id = ?",
-				String.class, getId());
-
-		String customMessage = "";
-		if (customMessageJson != null && !customMessageJson.isEmpty()) {
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				java.util.Map<String, String> messageMap = mapper.readValue(customMessageJson,
-						new TypeReference<java.util.HashMap<String, String>>() {
-						});
-				customMessage = messageMap.getOrDefault("message", "");
-			} catch (JsonProcessingException e) {
-				System.err.println("Error parsing custom message: " + e.getMessage());
-			}
+	/** Liest den Text einer benutzerdefinierten Nachricht aus den gespeicherten Aktionswerten. */
+	static String parseCustomMessage(String customMessageJson) {
+		if (customMessageJson == null || customMessageJson.isEmpty()) {
+			return "";
 		}
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			java.util.Map<String, String> messageMap = mapper.readValue(customMessageJson,
+					new TypeReference<java.util.HashMap<String, String>>() {
+					});
+			return messageMap.getOrDefault("message", "");
+		} catch (JsonProcessingException e) {
+			System.err.println("Error parsing custom message: " + e.getMessage());
+			return "";
+		}
+	}
 
-		// Build message with raid header (like CW format)
+	/**
+	 * Baut die Nachricht: Kopf ("## ... - "), dann Restzeit (bei Dauer &gt; 0) oder der
+	 * Endetext, dann der eigene Text. Ohne Kopf nur der eigene Text.
+	 */
+	static String buildCustomMessage(String kopf, boolean laeuftNoch, long durationUntilEndMs, String endeText,
+			String customMessage) {
 		StringBuilder message = new StringBuilder();
-		message.append("## Raid - ");
+		if (kopf != null) {
+			message.append(kopf);
+			if (laeuftNoch && durationUntilEndMs > 0) {
+				int secondsLeft = (int) (durationUntilEndMs / 1000);
+				int minutesLeft = secondsLeft / 60;
+				int hoursLeft = minutesLeft / 60;
 
-		// Show time remaining if raid is active (same format as CW)
-		if (isRaidActive && getDurationUntilEnd() > 0) {
-			int secondsLeft = (int) (getDurationUntilEnd() / 1000);
-			int minutesLeft = secondsLeft / 60;
-			int hoursLeft = minutesLeft / 60;
+				secondsLeft = secondsLeft % 60;
+				minutesLeft = minutesLeft % 60;
 
-			secondsLeft = secondsLeft % 60;
-			minutesLeft = minutesLeft % 60;
-
-			if (hoursLeft > 0) {
-				message.append("**").append(hoursLeft).append("h** ");
+				if (hoursLeft > 0) {
+					message.append("**").append(hoursLeft).append("h** ");
+				}
+				if (minutesLeft > 0) {
+					message.append("**").append(minutesLeft).append("m** ");
+				}
+				if (secondsLeft > 0) {
+					message.append("**").append(secondsLeft).append("s** ");
+				}
+				message.append("verbleibend\n\n");
+			} else {
+				message.append(endeText).append("\n\n");
 			}
-			if (minutesLeft > 0) {
-				message.append("**").append(minutesLeft).append("m** ");
-			}
-			if (secondsLeft > 0) {
-				message.append("**").append(secondsLeft).append("s** ");
-			}
-			message.append("verbleibend\n\n");
-		} else {
-			message.append("**Raid beendet.**\n\n");
 		}
-
-		// Append custom message
 		message.append(customMessage);
+		return message.toString();
+	}
 
-		sendMessageToChannel(message.toString());
+	private String loadCustomMessage() {
+		return parseCustomMessage(DBUtil.getValueFromSQL("SELECT actionvalues FROM listening_events WHERE id = ?",
+				String.class, getId()));
+	}
+
+	private void handleRaidCustomMessage(boolean isRaidActive) {
+		sendMessageToChannel(buildCustomMessage("## Raid - ", isRaidActive, getDurationUntilEnd(),
+				"**Raid beendet.**", loadCustomMessage()));
+	}
+
+	/**
+	 * Eigene Nachricht für alle Nicht-Raid-Typen. Bei CW/CWL mit Kriegskopf wie die
+	 * anderen Kriegsmeldungen; Dauer 0 heißt: Ereignis am Ende.
+	 */
+	private void handleCustomMessage(Clan clan, LISTENINGTYPE type) {
+		String text = loadCustomMessage();
+		if (text.isBlank()) {
+			System.err.println("Custom message event " + getId() + " has no message text - nothing to post");
+			return;
+		}
+		String kopf;
+		String ende;
+		switch (type) {
+			case CW -> {
+				kopf = "## " + clan.getNameAPI() + " Clankrieg - ";
+				ende = "**Krieg beendet.**";
+			}
+			case CWLDAY -> {
+				kopf = "## " + clan.getNameAPI() + " CWL - ";
+				ende = "**Kriegstag beendet.**";
+			}
+			case CS -> {
+				kopf = "## Clan Games - " + clan.getInfoString() + "\n";
+				ende = "**Clan Games beendet.**";
+			}
+			default -> {
+				kopf = null;
+				ende = "";
+			}
+		}
+		sendMessageToChannel(buildCustomMessage(kopf, true, getDurationUntilEnd(), ende, text));
 	}
 
 	/**
