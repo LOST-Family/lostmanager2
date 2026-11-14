@@ -524,9 +524,9 @@ public class Bot extends ListenerAdapter {
 													.addOptions(new OptionData(OptionType.STRING, "stat",
 															"Die anzuzeigende Statistik", true)
 																	.addChoice("Buildings", "Buildings")
-																	.addChoice("Buildings (BB)", "Buildings (BB)")
+																	.addChoice("Decorative (BB)", "Decorative (BB)")
 																	.addChoice("Decos", "Decos")
-																	.addChoice("Decos (BB)", "Decos (BB)")
+																	.addChoice("Defensive (BB)", "Defensive (BB)")
 																	.addChoice("Emotes", "Emotes")
 																	.addChoice("Equips", "Equips")
 																	.addChoice("Helpers", "Helpers")
@@ -535,7 +535,6 @@ public class Bot extends ListenerAdapter {
 																	.addChoice("Heroes (BB)", "Heroes (BB)")
 																	.addChoice("House Parts", "House Parts")
 																	.addChoice("Obstacles", "Obstacles")
-																	.addChoice("Obstacles (BB)", "Obstacles (BB)")
 																	.addChoice("Pets", "Pets")
 																	.addChoice("Sceneries", "Sceneries")
 																	.addChoice("Sceneries (BB)", "Sceneries (BB)")
@@ -543,8 +542,8 @@ public class Bot extends ListenerAdapter {
 																	.addChoice("Skins", "Skins")
 																	.addChoice("Skins (BB)", "Skins (BB)")
 																	.addChoice("Spells", "Spells")
+																	.addChoice("Squads", "Squads")
 																	.addChoice("Traps", "Traps")
-																	.addChoice("Traps (BB)", "Traps (BB)")
 																	.addChoice("Units", "Units")
 																	.addChoice("Units (BB)", "Units (BB)")),
 											new SubcommandData("missing",
@@ -553,9 +552,9 @@ public class Bot extends ListenerAdapter {
 													.addOptions(new OptionData(OptionType.STRING, "stat",
 															"Die anzuzeigende Statistik", true)
 																	.addChoice("Buildings", "Buildings")
-																	.addChoice("Buildings (BB)", "Buildings (BB)")
+																	.addChoice("Decorative (BB)", "Decorative (BB)")
 																	.addChoice("Decos", "Decos")
-																	.addChoice("Decos (BB)", "Decos (BB)")
+																	.addChoice("Defensive (BB)", "Defensive (BB)")
 																	.addChoice("Emotes", "Emotes")
 																	.addChoice("Equips", "Equips")
 																	.addChoice("Helpers", "Helpers")
@@ -564,7 +563,6 @@ public class Bot extends ListenerAdapter {
 																	.addChoice("Heroes (BB)", "Heroes (BB)")
 																	.addChoice("House Parts", "House Parts")
 																	.addChoice("Obstacles", "Obstacles")
-																	.addChoice("Obstacles (BB)", "Obstacles (BB)")
 																	.addChoice("Pets", "Pets")
 																	.addChoice("Sceneries", "Sceneries")
 																	.addChoice("Sceneries (BB)", "Sceneries (BB)")
@@ -572,8 +570,8 @@ public class Bot extends ListenerAdapter {
 																	.addChoice("Skins", "Skins")
 																	.addChoice("Skins (BB)", "Skins (BB)")
 																	.addChoice("Spells", "Spells")
+																	.addChoice("Squads", "Squads")
 																	.addChoice("Traps", "Traps")
-																	.addChoice("Traps (BB)", "Traps (BB)")
 																	.addChoice("Units", "Units")
 																	.addChoice("Units (BB)", "Units (BB)")),
 											new SubcommandData("prices",
@@ -820,6 +818,8 @@ public class Bot extends ListenerAdapter {
 		classes.add(new lostmanager.util.Betreuungsruf());
 		// Tuerklingel fuer Keksi, standardmaessig aus (KLINGEL_AN=1 schaltet ein)
 		classes.add(new lostmanager.util.Klingel());
+		// Jonas' DMs als zweiter Chatweg neben WhatsApp (JONAS_DM_AUS=1 schaltet ab)
+		classes.add(new lostmanager.util.JonasDm());
 
 		return classes.toArray();
 	}
