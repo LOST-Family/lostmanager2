@@ -1437,8 +1437,11 @@ public class ListeningEvent {
 			}
 			String currentState = cwJson.getString("state");
 
-			// Check if war data is still available (state is notInWar or warEnded)
-			boolean dataIsReliable = currentState.equals("notInWar") || currentState.equals("warEnded");
+			// Only "warEnded" still carries the finished war with its member list.
+			// "notInWar" means the clan is already searching again: the API then returns
+			// no "clan.members", and counting it as reliable threw
+			// JSONObject["members"] not found (12./13.11.2026). Same rule as the CWL check.
+			boolean dataIsReliable = currentState.equals("warEnded");
 
 			// Re-fetch required attacks from event's action values to ensure the configured
 			// setting is preserved
@@ -1476,7 +1479,9 @@ public class ListeningEvent {
 				// Use the original message content and just append a warning
 				// Don't try to build a new message as the API would return data for the new war
 				updatedMessage = originalMessage
-						+ "\n\n*Daten sind nicht zuverlässig, da Krieg direkt wieder gestartet wurde*";
+						+ (currentState.equals("notInWar")
+								? "\n\n*Daten nach 5min nicht mehr abrufbar, da der Clan schon den nächsten Krieg sucht*"
+								: "\n\n*Daten sind nicht zuverlässig, da Krieg direkt wieder gestartet wurde*");
 				shouldProcessKickpoints = false; // Don't process kickpoints with unreliable data
 			}
 
