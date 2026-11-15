@@ -1,5 +1,7 @@
 package lostmanager.webserver;
 
+import lostmanager.webserver.api.RestApiServer;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,7 +56,8 @@ public class JsonUploadServer {
 	}
 
 	public void start() throws IOException {
-		server = HttpServer.create(new InetSocketAddress(port), 0);
+		server = HttpServer.create(new InetSocketAddress(RestApiServer.bindAdresse(), port), 0);
+		System.out.println("Lausche auf " + RestApiServer.bindAdresse().getHostAddress() + ":" + port);
 		server.createContext("/upload", new UploadPageHandler());
 		server.createContext("/submit", new SubmitHandler());
 		server.setExecutor(Executors.newFixedThreadPool(10));
