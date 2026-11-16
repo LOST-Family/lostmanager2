@@ -274,12 +274,12 @@
       },
       "11": {
         "level-icon": "/home-base/buildings/mortar/mortar-11.png",
-        "upgrade-price1": 2300000,
+        "upgrade-price1": 2000000,
         "upgrade-price-old1": 11000000
       },
       "12": {
         "level-icon": "/home-base/buildings/mortar/mortar-12.png",
-        "upgrade-price1": 2400000,
+        "upgrade-price1": 2200000,
         "upgrade-price-old1": 12000000
       },
       "13": {
@@ -289,7 +289,7 @@
       },
       "14": {
         "level-icon": "/home-base/buildings/mortar/mortar-14.png",
-        "upgrade-price1": 4300000,
+        "upgrade-price1": 3400000,
         "upgrade-price-old1": 17500000
       },
       "15": {
@@ -304,12 +304,12 @@
       },
       "17": {
         "level-icon": "/home-base/buildings/mortar/mortar-17.png",
-        "upgrade-price1": 13000000,
+        "upgrade-price1": 8500000,
         "upgrade-price-old1": 19500000
       },
       "18": {
         "level-icon": "/home-base/buildings/mortar/mortar-18.png",
-        "upgrade-price1": 21000000,
+        "upgrade-price1": 18500000,
         "upgrade-price-old1": 21000000
       }
     },
@@ -372,17 +372,17 @@
       },
       "10": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-10.png",
-        "upgrade-price1": 5000000,
+        "upgrade-price1": 3800000,
         "upgrade-price-old1": 10080000
       },
       "11": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-11.png",
-        "upgrade-price1": 5600000,
+        "upgrade-price1": 4000000,
         "upgrade-price-old1": 14000000
       },
       "12": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-12.png",
-        "upgrade-price1": 6500000,
+        "upgrade-price1": 5000000,
         "upgrade-price-old1": 18000000
       },
       "13": {
@@ -392,26 +392,31 @@
       },
       "14": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-14.png",
-        "upgrade-price1": 9000000,
+        "upgrade-price1": 8500000,
         "upgrade-price-old1": 20500000
       },
       "15": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-15.png",
-        "upgrade-price1": 1500000,
+        "upgrade-price1": 13500000,
         "upgrade-price-old1": 21000000
       },
       "16": {
         "level-icon": "/home-base/buildings/air-defense/air-defense-16.png",
-        "upgrade-price1": 2600000,
+        "upgrade-price1": 18500000,
         "upgrade-price-old1": 26000000
+      },
+      "17": {
+        "level-icon": "/home-base/buildings/air-defense/air-defense-17.png",
+        "upgrade-price1": 28500000,
+        "upgrade-price-old1": 28500000
       }
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 2500000
+        "upgrade-price1": 0
       },
       "2": {
-        "upgrade-price1": 1250000
+        "upgrade-price1": 0
       }
     }
   },
@@ -470,7 +475,7 @@
       },
       "11": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-11.png",
-        "upgrade-price1": 2500000,
+        "upgrade-price1": 2100000,
         "upgrade-price-old1": 11200000
       },
       "12": {
@@ -480,12 +485,12 @@
       },
       "13": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-13.png",
-        "upgrade-price1": 3000000,
+        "upgrade-price1": 2800000,
         "upgrade-price-old1": 17200000
       },
       "14": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-14.png",
-        "upgrade-price1": 4500000,
+        "upgrade-price1": 3800000,
         "upgrade-price-old1": 18200000
       },
       "15": {
@@ -500,7 +505,7 @@
       },
       "17": {
         "level-icon": "/home-base/buildings/wizard-tower/wizard-tower-17.png",
-        "upgrade-price1": 14000000,
+        "upgrade-price1": 12000000,
         "upgrade-price-old1": 20000000
       }
     }
@@ -594,22 +599,22 @@
       },
       "10": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-10.png",
-        "upgrade-price1": 3000000,
+        "upgrade-price1": 2500000,
         "upgrade-price-old1": 10000000
       },
       "11": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-11.png",
-        "upgrade-price1": 3100000,
+        "upgrade-price1": 2800000,
         "upgrade-price-old1": 15000000
       },
       "12": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-12.png",
-        "upgrade-price1": 3700000,
+        "upgrade-price1": 3000000,
         "upgrade-price-old1": 16500000
       },
       "13": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-13.png",
-        "upgrade-price1": 5100000,
+        "upgrade-price1": 4400000,
         "upgrade-price-old1": 18000000
       },
       "14": {
@@ -619,26 +624,31 @@
       },
       "15": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-15.png",
-        "upgrade-price1": 8200000,
+        "upgrade-price1": 7000000,
         "upgrade-price-old1": 20000000
       },
       "16": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-16.png",
-        "upgrade-price1": 15000000,
+        "upgrade-price1": 13500000,
         "upgrade-price-old1": 20500000
       },
       "17": {
         "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-17.png",
-        "upgrade-price1": 25000000,
+        "upgrade-price1": 16500000,
         "upgrade-price-old1": 25000000
+      },
+      "18": {
+        "level-icon": "/home-base/buildings/hidden-tesla/hidden-tesla-18.png",
+        "upgrade-price1": 27500000,
+        "upgrade-price-old1": 27500000
       }
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 4750000
+        "upgrade-price1": 0
       },
       "2": {
-        "upgrade-price1": 3250000
+        "upgrade-price1": 0
       }
     }
   },
@@ -677,37 +687,37 @@
       },
       "7": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-7.png",
-        "upgrade-price1": 4000000,
+        "upgrade-price1": 3300000,
         "upgrade-price-old1": 11000000
       },
       "8": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-8.png",
-        "upgrade-price1": 5000000,
+        "upgrade-price1": 3600000,
         "upgrade-price-old1": 13500000
       },
       "9": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-9.png",
-        "upgrade-price1": 6000000,
+        "upgrade-price1": 5000000,
         "upgrade-price-old1": 18500000
       },
       "10": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-10.png",
-        "upgrade-price1": 7000000,
+        "upgrade-price1": 5500000,
         "upgrade-price-old1": 20000000
       },
       "11": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-11.png",
-        "upgrade-price1": 8500000,
+        "upgrade-price1": 7000000,
         "upgrade-price-old1": 20800000
       },
       "12": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-12.png",
-        "upgrade-price1": 14500000,
+        "upgrade-price1": 13500000,
         "upgrade-price-old1": 20000000
       },
       "13": {
         "level-icon": "/home-base/buildings/bomb-tower/bomb-tower-13.png",
-        "upgrade-price1": 25000000,
+        "upgrade-price1": 16500000,
         "upgrade-price-old1": 25000000
       }
     },
@@ -750,51 +760,56 @@
       },
       "6": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-6.png",
-        "upgrade-price1": 5000000,
+        "upgrade-price1": 4300000,
         "upgrade-price-old1": 12000000
       },
       "7": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-7.png",
-        "upgrade-price1": 6000000,
+        "upgrade-price1": 4600000,
         "upgrade-price-old1": 16000000
       },
       "8": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-8.png",
-        "upgrade-price1": 7000000,
+        "upgrade-price1": 5500000,
         "upgrade-price-old1": 17000000
       },
       "9": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-9.png",
-        "upgrade-price1": 9000000,
+        "upgrade-price1": 7000000,
         "upgrade-price-old1": 18500000
       },
       "10": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-10.png",
-        "upgrade-price1": 9500000,
+        "upgrade-price1": 8000000,
         "upgrade-price-old1": 20000000
       },
       "11": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-11.png",
-        "upgrade-price1": 10000000,
+        "upgrade-price1": 8500000,
         "upgrade-price-old1": 21000000
       },
       "12": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-12.png",
-        "upgrade-price1": 16000000,
+        "upgrade-price1": 13000000,
         "upgrade-price-old1": 21500000
       },
       "13": {
         "level-icon": "/home-base/buildings/x-bow/x-bow-13.png",
-        "upgrade-price1": 26000000,
+        "upgrade-price1": 18500000,
         "upgrade-price-old1": 26000000
+      },
+      "14": {
+        "level-icon": "/home-base/buildings/x-bow/x-bow-14.png",
+        "upgrade-price1": 28000000,
+        "upgrade-price-old1": 28000000
       }
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 5500000
+        "upgrade-price1": 0
       },
       "2": {
-        "upgrade-price1": 3500000
+        "upgrade-price1": 0
       }
     }
   },
@@ -828,22 +843,22 @@
       },
       "6": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-6.png",
-        "upgrade-price1": 6000000,
+        "upgrade-price1": 4500000,
         "upgrade-price-old1": 11000000
       },
       "7": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-7.png",
-        "upgrade-price1": 8000000,
+        "upgrade-price1": 5500000,
         "upgrade-price-old1": 17000000
       },
       "8": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-8.png",
-        "upgrade-price1": 9500000,
+        "upgrade-price1": 8000000,
         "upgrade-price-old1": 19000000
       },
       "9": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-9.png",
-        "upgrade-price1": 10000000,
+        "upgrade-price1": 8500000,
         "upgrade-price-old1": 21000000
       },
       "10": {
@@ -853,12 +868,12 @@
       },
       "11": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-11.png",
-        "upgrade-price1": 16000000,
+        "upgrade-price1": 13500000,
         "upgrade-price-old1": 22000000
       },
       "12": {
         "level-icon": "/home-base/buildings/inferno-tower/inferno-tower-12.png",
-        "upgrade-price1": 26500000,
+        "upgrade-price1": 20000000,
         "upgrade-price-old1": 26500000
       }
     },
@@ -941,12 +956,12 @@
       },
       "6": {
         "level-icon": "/home-base/buildings/scattershot/scattershot-6.png",
-        "upgrade-price1": 16500000,
+        "upgrade-price1": 15500000,
         "upgrade-price-old1": 22500000
       },
       "7": {
         "level-icon": "/home-base/buildings/scattershot/scattershot-7.png",
-        "upgrade-price1": 26500000,
+        "upgrade-price1": 19500000,
         "upgrade-price-old1": 26500000
       }
     },
@@ -960,7 +975,7 @@
     }
   },
   "1000015": {
-    "name": "Builder's Hut",
+    "name": "Builders Hut",
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-1.png",
@@ -973,41 +988,46 @@
       },
       "3": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-3.png",
-        "upgrade-price1": 4000000,
+        "upgrade-price1": 3400000,
         "upgrade-price-old1": 12500000
       },
       "4": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-4.png",
-        "upgrade-price1": 6000000,
+        "upgrade-price1": 5000000,
         "upgrade-price-old1": 15500000
       },
       "5": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-5.png",
-        "upgrade-price1": 7000000,
+        "upgrade-price1": 5500000,
         "upgrade-price-old1": 17000000
       },
       "6": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-6.png",
-        "upgrade-price1": 8000000,
+        "upgrade-price1": 7000000,
         "upgrade-price-old1": 20000000
       },
       "7": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-7.png",
-        "upgrade-price1": 15500000,
+        "upgrade-price1": 13500000,
         "upgrade-price-old1": 21000000
       },
       "8": {
         "level-icon": "/home-base/buildings/builders-hut/builders-hut-8.png",
-        "upgrade-price1": 24000000,
+        "upgrade-price1": 20000000,
         "upgrade-price-old1": 24000000
+      },
+      "9": {
+        "level-icon": "/home-base/buildings/builders-hut/builders-hut-9.png",
+        "upgrade-price1": 26000000,
+        "upgrade-price-old1": 26000000
       }
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 4000000
+        "upgrade-price1": 0
       },
       "2": {
-        "upgrade-price1": 3250000
+        "upgrade-price1": 0
       }
     }
   },
@@ -1031,7 +1051,7 @@
       },
       "4": {
         "level-icon": "/home-base/buildings/spell-tower/spell-tower-4.png",
-        "upgrade-price1": 27000000,
+        "upgrade-price1": 17000000,
         "upgrade-price-old1": 27000000
       }
     }
@@ -1061,7 +1081,7 @@
       },
       "5": {
         "level-icon": "/home-base/buildings/monolith/monolith-5.png",
-        "upgrade-price3": 470000,
+        "upgrade-price3": 405000,
         "upgrade-price-old3": 470000
       }
     },
@@ -1094,16 +1114,21 @@
       },
       "4": {
         "level-icon": "/home-base/buildings/multi-archer-tower/multi-archer-tower-4.png",
-        "upgrade-price1": 27000000,
+        "upgrade-price1": 23000000,
         "upgrade-price-old1": 27000000
+      },
+      "5": {
+        "level-icon": "/home-base/buildings/multi-archer-tower/multi-archer-tower-5.png",
+        "upgrade-price1": 29000000,
+        "upgrade-price-old1": 29000000
       }
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 4750000
+        "upgrade-price1": 0
       },
       "2": {
-        "upgrade-price1": 4000000
+        "upgrade-price1": 0
       }
     }
   },
@@ -1127,16 +1152,21 @@
       },
       "4": {
         "level-icon": "/home-base/buildings/ricochet-cannon/ricochet-cannon-4.png",
-        "upgrade-price1": 26500000,
+        "upgrade-price1": 22000000,
         "upgrade-price-old1": 26500000
+      },
+      "5": {
+        "level-icon": "/home-base/buildings/ricochet-cannon/ricochet-cannon-5.png",
+        "upgrade-price1": 28000000,
+        "upgrade-price-old1": 28000000
       }
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 4750000
+        "upgrade-price1": 0
       },
       "2": {
-        "upgrade-price1": 4000000
+        "upgrade-price1": 0
       }
     }
   },
@@ -1155,16 +1185,21 @@
       },
       "3": {
         "level-icon": "/home-base/buildings/multi-gear-tower/multi-gear-tower-3.png",
-        "upgrade-price1": 28000000,
+        "upgrade-price1": 23500000,
         "upgrade-price-old1": 28000000
+      },
+      "4": {
+        "level-icon": "/home-base/buildings/multi-gear-tower/multi-gear-tower-4.png",
+        "upgrade-price1": 30000000,
+        "upgrade-price-old1": 30000000
       }
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 4750000
+        "upgrade-price1": 0
       },
       "2": {
-        "upgrade-price1": 4000000
+        "upgrade-price1": 0
       }
     }
   },
@@ -1173,17 +1208,17 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/firespitter/firespitter-1.png",
-        "upgrade-price1": 17000000,
+        "upgrade-price1": 15500000,
         "upgrade-price-old1": 22500000
       },
       "2": {
         "level-icon": "/home-base/buildings/firespitter/firespitter-2.png",
-        "upgrade-price1": 18000000,
+        "upgrade-price1": 17000000,
         "upgrade-price-old1": 23000000
       },
       "3": {
         "level-icon": "/home-base/buildings/firespitter/firespitter-3.png",
-        "upgrade-price1": 29000000,
+        "upgrade-price1": 22500000,
         "upgrade-price-old1": 29000000
       }
     },
@@ -1201,19 +1236,21 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/revenge-tower/revenge-tower-1.png",
-        "upgrade-price3": 430000
+        "upgrade-price3": 335000,
+        "upgrade-price-old3": 430000
       },
       "2": {
         "level-icon": "/home-base/buildings/revenge-tower/revenge-tower-2.png",
-        "upgrade-price3": 460000
+        "upgrade-price3": 365000,
+        "upgrade-price-old3": 460000
       }
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 220000
+        "upgrade-price3": 220000
       },
       "2": {
-        "upgrade-price1": 200000
+        "upgrade-price3": 200000
       }
     }
   },
@@ -1222,11 +1259,13 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/super-wizard-tower/swt-1.png",
-        "upgrade-price1": 10000
+        "upgrade-price1": 24000000,
+        "upgrade-price-old1": 29000000
       },
       "2": {
         "level-icon": "/home-base/buildings/super-wizard-tower/swt-2.png",
-        "upgrade-price1": 15000
+        "upgrade-price1": 25500000,
+        "upgrade-price-old1": 30000000
       }
     },
     "supercharge":{
@@ -1235,6 +1274,52 @@
       },
       "2": {
         "upgrade-price1": 14000000
+      }
+    }
+  },
+  "1000107": {
+    "name": "Spiky Tower",
+    "levels": {
+      "1": {
+        "level-icon": "/home-base/buildings/spiky-tower/spiky-tower-1.png",
+        "upgrade-price3": 500000,
+        "upgrade-price-old3": 500000
+      },
+      "2": {
+        "level-icon": "/home-base/buildings/spiky-tower/spiky-tower-2.png",
+        "upgrade-price3": 510000,
+        "upgrade-price-old3": 510000
+      }
+    },
+    "supercharge":{
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 0
+      }
+    }
+  },
+  "1000108": {
+    "name": "Firecracker Tower",
+    "levels": {
+      "1": {
+        "level-icon": "/home-base/buildings/firecracker-tower/firecracker-tower-1.png",
+        "upgrade-price1": 31000000,
+        "upgrade-price-old1": 31000000
+      },
+      "2": {
+        "level-icon": "/home-base/buildings/firecracker-tower/firecracker-tower-2.png",
+        "upgrade-price1": 32000000,
+        "upgrade-price-old1": 32000000
+      }
+    },
+    "supercharge":{
+      "1": {
+        "upgrade-price1": 0
+      },
+      "2": {
+        "upgrade-price1": 0
       }
     }
   },
@@ -1328,11 +1413,16 @@
       },
       "18": {
         "level-icon": "/home-base/buildings/wall/wall-18.png",
-        "upgrade-price1": 7000000,
+        "upgrade-price1": 6000000,
         "upgrade-price-old1": 10000000
       },
       "19": {
         "level-icon": "/home-base/buildings/wall/wall-19.png",
+        "upgrade-price1": 8000000,
+        "upgrade-price-old1": 10000000
+      },
+      "20": {
+        "level-icon": "/home-base/buildings/wall/wall-20.png",
         "upgrade-price1": 10000000,
         "upgrade-price-old1": 10000000
       }
@@ -1913,12 +2003,12 @@
       },
       "13": {
         "level-icon": "/home-base/traps/bomb/bomb-13.png",
-        "upgrade-price1": 8500000,
+        "upgrade-price1": 6500000,
         "upgrade-price-old1": 10000000
       },
       "14": {
         "level-icon": "/home-base/traps/bomb/bomb-13.png",
-        "upgrade-price1": 14000000,
+        "upgrade-price1": 9000000,
         "upgrade-price-old1": 14000000
       }
     }
@@ -1983,13 +2073,18 @@
       },
       "12": {
         "level-icon": "/home-base/traps/spring-trap/spring-trap-11.png",
-        "upgrade-price1": 13000000,
+        "upgrade-price1": 7000000,
         "upgrade-price-old1": 13000000
       },
       "13": {
         "level-icon": "/home-base/traps/spring-trap/spring-trap-13.png",
-        "upgrade-price1": 16000000,
+        "upgrade-price1": 9500000,
         "upgrade-price-old1": 16000000
+      },
+      "14": {
+        "level-icon": "/home-base/traps/spring-trap/spring-trap-14.png",
+        "upgrade-price1": 17000000,
+        "upgrade-price-old1": 17000000
       }
     }
   },
@@ -2053,13 +2148,18 @@
       },
       "12": {
         "level-icon": "/home-base/traps/air-bomb/air-bomb-11.png",
-        "upgrade-price1": 9500000,
+        "upgrade-price1": 6500000,
         "upgrade-price-old1": 11000000
       },
       "13": {
         "level-icon": "/home-base/traps/air-bomb/air-bomb-13.png",
-        "upgrade-price1": 15000000,
+        "upgrade-price1": 9000000,
         "upgrade-price-old1": 15000000
+      },
+      "14": {
+        "level-icon": "/home-base/traps/air-bomb/air-bomb-14.png",
+        "upgrade-price1": 17500000,
+        "upgrade-price-old1": 17500000
       }
     }
   },
@@ -2118,12 +2218,12 @@
       },
       "11": {
         "level-icon": "/home-base/traps/giant-bomb/giant-bomb-11.png",
-        "upgrade-price1": 10000000,
+        "upgrade-price1": 7000000,
         "upgrade-price-old1": 12000000
       },
       "12": {
         "level-icon": "/home-base/traps/giant-bomb/giant-bomb-11.png",
-        "upgrade-price1": 17000000,
+        "upgrade-price1": 9000000,
         "upgrade-price-old1": 17000000
       }
     }
@@ -2163,12 +2263,12 @@
       },
       "7": {
         "level-icon": "/home-base/traps/seeking-air-mine/seeking-air-mine-7.png",
-        "upgrade-price1": 12000000,
+        "upgrade-price1": 7500000,
         "upgrade-price-old1": 14000000
       },
       "8": {
         "level-icon": "/home-base/traps/seeking-air-mine/seeking-air-mine-7.png",
-        "upgrade-price1": 19000000,
+        "upgrade-price1": 11500000,
         "upgrade-price-old1": 19000000
       }
     }
@@ -2197,6 +2297,11 @@
         "upgrade-price-old1": 2000000
       },
       "5": {
+        "level-icon": "/home-base/traps/skeleton-trap/skeleton-trap-5.png",
+        "upgrade-price1": 10500000,
+        "upgrade-price-old1": 18000000
+      },
+      "6": {
         "level-icon": "/home-base/traps/skeleton-trap/skeleton-trap-5.png",
         "upgrade-price1": 18000000,
         "upgrade-price-old1": 18000000
@@ -2317,7 +2422,7 @@
       },
       "14": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-14.png",
-        "upgrade-price1": 12000000,
+        "upgrade-price1": 11500000,
         "upgrade-price-old1": 16000000
       },
       "15": {
@@ -2337,8 +2442,13 @@
       },
       "18": {
         "level-icon": "/home-base/buildings/town-hall/town-hall-18.png",
-        "upgrade-price1": 25000000,
+        "upgrade-price1": 20000000,
         "upgrade-price-old1": 25000000
+      },
+      "19": {
+        "level-icon": "/home-base/buildings/town-hall/town-hall-19.png",
+        "upgrade-price1": 27000000,
+        "upgrade-price-old1": 27000000
       }
     }
   },
@@ -2427,27 +2537,24 @@
       },
       "17": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-17.png",
-        "upgrade-price2": 8000000,
+        "upgrade-price2": 4200000,
         "upgrade-price-old2": 8000000
       },
       "18": {
         "level-icon": "/home-base/buildings/gold-mine/gold-mine-18.png",
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 8500000,
+        "upgrade-price-old2": 8500000
       }
     },
     "supercharge":{
       "1": {
-        "upgrade-price2": 250000,
-        "upgrade-price-old2": 1700000
+        "upgrade-price2": 0
       },
       "2": {
-        "upgrade-price2": 250000,
-        "upgrade-price-old2": 1500000
+        "upgrade-price2": 0
       },
       "3": {
-        "upgrade-price2": 250000,
-        "upgrade-price-old2": 1300000
+        "upgrade-price2": 0
       }
     }
   },
@@ -2536,27 +2643,24 @@
       },
       "17": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-17.png",
-        "upgrade-price1": 8000000,
+        "upgrade-price1": 4200000,
         "upgrade-price-old1": 8000000
       },
       "18": {
         "level-icon": "/home-base/buildings/elixir-collector/elixir-collector-18.png",
-        "upgrade-price1": 0,
-        "upgrade-price-old1": 0
+        "upgrade-price1": 8500000,
+        "upgrade-price-old1": 8500000
       }
     },
     "supercharge":{
       "1": {
-        "upgrade-price1": 250000,
-        "upgrade-price-old1": 1700000
+        "upgrade-price1": 0
       },
       "2": {
-        "upgrade-price1": 250000,
-        "upgrade-price-old1": 1500000
+        "upgrade-price1": 0
       },
       "3": {
-        "upgrade-price1": 250000,
-        "upgrade-price-old1": 1300000
+        "upgrade-price1": 0
       }
     }
   },
@@ -2605,37 +2709,34 @@
       },
       "9": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-9.png",
-        "upgrade-price2": 3700000,
+        "upgrade-price2": 3000000,
         "upgrade-price-old2": 4000000
       },
       "10": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-10.png",
-        "upgrade-price2": 5300000,
+        "upgrade-price2": 4400000,
         "upgrade-price-old2": 6000000
       },
       "11": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-11.png",
-        "upgrade-price2": 12000000,
+        "upgrade-price2": 8000000,
         "upgrade-price-old2": 12000000
       },
       "12": {
         "level-icon": "/home-base/buildings/dark-elixir-drill/dark-elixir-drill-12.png",
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 12500000,
+        "upgrade-price-old2": 12500000
       }
     },
     "supercharge":{
       "1": {
-        "upgrade-price2": 750000,
-        "upgrade-price-old2": 5100000
+        "upgrade-price2": 0
       },
       "2": {
-        "upgrade-price2": 750000,
-        "upgrade-price-old2": 4500000
+        "upgrade-price2": 0
       },
       "3": {
-        "upgrade-price2": 500000,
-        "upgrade-price-old2": 3900000
+        "upgrade-price2": 0
       }
     }
   },
@@ -2729,11 +2830,16 @@
       },
       "18": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-18.png",
-        "upgrade-price2": 10000000,
+        "upgrade-price2": 8500000,
         "upgrade-price-old2": 10000000
       },
       "19": {
         "level-icon": "/home-base/buildings/gold-storage/gold-storage-19.png",
+        "upgrade-price2": 12500000,
+        "upgrade-price-old2": 18000000
+      },
+      "20": {
+        "level-icon": "/home-base/buildings/gold-storage/gold-storage-20.png",
         "upgrade-price2": 18000000,
         "upgrade-price-old2": 18000000
       }
@@ -2829,11 +2935,16 @@
       },
       "18": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-18.png",
-        "upgrade-price1": 10000000,
+        "upgrade-price1": 8500000,
         "upgrade-price-old1": 10000000
       },
       "19": {
         "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-19.png",
+        "upgrade-price1": 12500000,
+        "upgrade-price-old1": 18000000
+      },
+      "20": {
+        "level-icon": "/home-base/buildings/elixir-storage/elixir-storage-20.png",
         "upgrade-price1": 18000000,
         "upgrade-price-old1": 18000000
       }
@@ -2874,38 +2985,43 @@
       },
       "7": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-7.png",
-        "upgrade-price2": 3800000,
+        "upgrade-price2": 3200000,
         "upgrade-price-old2": 4200000
       },
       "8": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-8.png",
-        "upgrade-price2": 5400000,
+        "upgrade-price2": 3800000,
         "upgrade-price-old2": 9000000
       },
       "9": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-9.png",
-        "upgrade-price2": 6600000,
+        "upgrade-price2": 4800000,
         "upgrade-price-old2": 12000000
       },
       "10": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-10.png",
-        "upgrade-price2": 8000000,
+        "upgrade-price2": 6000000,
         "upgrade-price-old2": 12500000
       },
       "11": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-11.png",
-        "upgrade-price2": 10000000,
+        "upgrade-price2": 8000000,
         "upgrade-price-old2": 13500000
       },
       "12": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-12.png",
-        "upgrade-price2": 16000000,
+        "upgrade-price2": 15000000,
         "upgrade-price-old2": 16000000
       },
       "13": {
         "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-13.png",
-        "upgrade-price2": 25000000,
+        "upgrade-price2": 20000000,
         "upgrade-price-old2": 25000000
+      },
+      "14": {
+        "level-icon": "/home-base/buildings/dark-elixir-storage/dark-elixir-storage-14.png",
+        "upgrade-price2": 24000000,
+        "upgrade-price-old2": 24000000
       }
     }
   },
@@ -2974,13 +3090,18 @@
       },
       "13": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-13.png",
-        "upgrade-price2": 19000000,
+        "upgrade-price2": 17500000,
         "upgrade-price-old2": 20500000
       },
       "14": {
         "level-icon": "/home-base/buildings/clan-castle/clan-castle-14.png",
-        "upgrade-price2": 28000000,
+        "upgrade-price2": 25500000,
         "upgrade-price-old2": 28000000
+      },
+      "15": {
+        "level-icon": "/home-base/buildings/clan-castle/clan-castle-15.png",
+        "upgrade-price2": 31500000,
+        "upgrade-price-old2": 31500000
       }
     }
   },
@@ -3039,22 +3160,22 @@
       },
       "11": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-11.png",
-        "upgrade-price2": 7500000,
+        "upgrade-price2": 7000000,
         "upgrade-price-old2": 16000000
       },
       "12": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-12.png",
-        "upgrade-price2": 10000000,
+        "upgrade-price2": 8500000,
         "upgrade-price-old2": 19000000
       },
       "13": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-13.png",
-        "upgrade-price2": 17000000,
+        "upgrade-price2": 14500000,
         "upgrade-price-old2": 21000000
       },
       "14": {
         "level-icon": "/home-base/buildings/army-camp/troop-housing-14.png",
-        "upgrade-price2": 26000000,
+        "upgrade-price2": 24000000,
         "upgrade-price-old2": 26000000
       }
     }
@@ -3124,7 +3245,7 @@
       },
       "13": {
         "level-icon": "/home-base/buildings/barracks/barracks-13.png",
-        "upgrade-price2": 6000000,
+        "upgrade-price2": 5500000,
         "upgrade-price-old2": 4000000
       },
       "14": {
@@ -3154,7 +3275,7 @@
       },
       "19": {
         "level-icon": "/home-base/buildings/barracks/barracks-19.png",
-        "upgrade-price2": 2600000,
+        "upgrade-price2": 1800000,
         "upgrade-price-old2": 26000000
       }
     }
@@ -3199,7 +3320,7 @@
       },
       "8": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-8.png",
-        "upgrade-price2": 7000000,
+        "upgrade-price2": 6000000,
         "upgrade-price-old2": 6000000
       },
       "9": {
@@ -3219,12 +3340,12 @@
       },
       "12": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-12.png",
-        "upgrade-price2": 20000000,
+        "upgrade-price2": 14000000,
         "upgrade-price-old2": 20000000
       },
       "13": {
         "level-icon": "/home-base/buildings/dark-barracks/dark-barracks-13.png",
-        "upgrade-price2": 23000000,
+        "upgrade-price2": 15500000,
         "upgrade-price-old2": 23000000
       }
     }
@@ -3304,13 +3425,18 @@
       },
       "15": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-15.png",
-        "upgrade-price2": 1800000,
+        "upgrade-price2": 17000000,
         "upgrade-price-old2": 20000000
       },
       "16": {
         "level-icon": "/home-base/buildings/laboratory/laboratory-16.png",
-        "upgrade-price2": 2700000,
+        "upgrade-price2": 25000000,
         "upgrade-price-old2": 27000000
+      },
+      "17": {
+        "level-icon": "/home-base/buildings/laboratory/laboratory-17.png",
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -3359,8 +3485,13 @@
       },
       "9": {
         "level-icon": "/home-base/buildings/spell-factory/spell-factory-9.png",
-        "upgrade-price2": 24000000,
+        "upgrade-price2": 16000000,
         "upgrade-price-old2": 24000000
+      },
+      "10": {
+        "level-icon": "/home-base/buildings/spell-factory/spell-factory-10.png",
+        "upgrade-price2": 0,
+        "upgrade-price-old2": 0
       }
     }
   },
@@ -3464,13 +3595,18 @@
       },
       "11": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-11.png",
-        "upgrade-price2": 17000000,
+        "upgrade-price2": 15500000,
         "upgrade-price-old2": 21000000
       },
       "12": {
         "level-icon": "/home-base/buildings/hero-hall/hero-hall-12.png",
-        "upgrade-price2": 26000000,
+        "upgrade-price2": 23500000,
         "upgrade-price-old2": 26000000
+      },
+      "13": {
+        "level-icon": "/home-base/buildings/hero-hall/hero-hall-13.png",
+        "upgrade-price2": 30500000,
+        "upgrade-price-old2": 30500000
       }
     }
   },
@@ -3524,7 +3660,7 @@
       },
       "10": {
         "level-icon": "/home-base/buildings/blacksmith/blacksmith-9.png",
-        "upgrade-price2": 18000000,
+        "upgrade-price2": 17000000,
         "upgrade-price-old2": 18000000
       }
     }
@@ -3539,37 +3675,37 @@
       },
       "2": {
         "level-icon": "/home-base/buildings/workshop/workshop-2.png",
-        "upgrade-price2": 3700000,
+        "upgrade-price2": 3100000,
         "upgrade-price-old2": 9000000
       },
       "3": {
         "level-icon": "/home-base/buildings/workshop/workshop-3.png",
-        "upgrade-price2": 5000000,
+        "upgrade-price2": 3600000,
         "upgrade-price-old2": 10500000
       },
       "4": {
         "level-icon": "/home-base/buildings/workshop/workshop-4.png",
-        "upgrade-price2": 8700000,
+        "upgrade-price2": 6500000,
         "upgrade-price-old2": 14500000
       },
       "5": {
         "level-icon": "/home-base/buildings/workshop/workshop-5.png",
-        "upgrade-price2": 9000000,
+        "upgrade-price2": 8000000,
         "upgrade-price-old2": 16000000
       },
       "6": {
         "level-icon": "/home-base/buildings/workshop/workshop-6.png",
-        "upgrade-price2": 10000000,
+        "upgrade-price2": 8500000,
         "upgrade-price-old2": 16500000
       },
       "7": {
         "level-icon": "/home-base/buildings/workshop/workshop-7.png",
-        "upgrade-price2": 11000000,
+        "upgrade-price2": 9500000,
         "upgrade-price-old2": 19000000
       },
       "8": {
         "level-icon": "/home-base/buildings/workshop/workshop-8.png",
-        "upgrade-price2": 13000000,
+        "upgrade-price2": 18500000,
         "upgrade-price-old2": 13000000
       },
       "9": {
@@ -3634,12 +3770,12 @@
       },
       "11": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-11.png",
-        "upgrade-price2": 16500000,
+        "upgrade-price2": 15000000,
         "upgrade-price-old2": 22000000
       },
       "12": {
         "level-icon": "/home-base/buildings/pet-house/pet-house-12.png",
-        "upgrade-price2": 25500000,
+        "upgrade-price2": 23000000,
         "upgrade-price-old2": 25500000
       }
     }
@@ -3657,6 +3793,79 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/buildings/crafting-station/crafting-station-1.png"
+      }
+    }
+  },
+  "1000105": {
+    "name": "Guardian Shrine",
+    "levels": {
+      "1": {
+        "level-icon": "/home-base/buildings/guardian-shrine/guardian-shrine.png"
+      }
+    }
+  },
+  "1000095": {
+    "name": "Squad Barracks",
+    "levels": {
+      "1": {
+        "level-icon": "/home-base/buildings/squad-barracks/squad-barracks-1.png",
+        "upgrade-price2": 1700000,
+        "upgrade-price-old2": 1700000
+      },
+      "2": {
+        "level-icon": "/home-base/buildings/squad-barracks/squad-barracks-2.png",
+        "upgrade-price2": 3000000,
+        "upgrade-price-old2": 3000000
+      },
+      "3": {
+        "level-icon": "/home-base/buildings/squad-barracks/squad-barracks-3.png",
+        "upgrade-price2": 3800000,
+        "upgrade-price-old2": 3800000
+      },
+      "4": {
+        "level-icon": "/home-base/buildings/squad-barracks/squad-barracks-4.png",
+        "upgrade-price2": 6000000,
+        "upgrade-price-old2": 6000000
+      },
+      "5": {
+        "level-icon": "/home-base/buildings/squad-barracks/squad-barracks-5.png",
+        "upgrade-price2": 7500000,
+        "upgrade-price-old2": 7500000
+      },
+      "6": {
+        "level-icon": "/home-base/buildings/squad-barracks/squad-barracks-6.png",
+        "upgrade-price2": 10000000,
+        "upgrade-price-old2": 10000000
+      },
+      "7": {
+        "level-icon": "/home-base/buildings/squad-barracks/squad-barracks-7.png",
+        "upgrade-price2": 12500000,
+        "upgrade-price-old2": 12500000
+      },
+      "8": {
+        "level-icon": "/home-base/buildings/squad-barracks/squad-barracks-8.png",
+        "upgrade-price2": 15000000,
+        "upgrade-price-old2": 15000000
+      },
+      "9": {
+        "level-icon": "/home-base/buildings/squad-barracks/squad-barracks-9.png",
+        "upgrade-price2": 16000000,
+        "upgrade-price-old2": 16000000
+      },
+      "10": {
+        "level-icon": "/home-base/buildings/squad-barracks/squad-barracks-10.png",
+        "upgrade-price2": 20000000,
+        "upgrade-price-old2": 20000000
+      },
+      "11": {
+        "level-icon": "/home-base/buildings/squad-barracks/squad-barracks-11.png",
+        "upgrade-price2": 26000000,
+        "upgrade-price-old2": 26000000
+      },
+      "12": {
+        "level-icon": "/home-base/buildings/squad-barracks/squad-barracks-12.png",
+        "upgrade-price2": 32000000,
+        "upgrade-price-old2": 32000000
       }
     }
   },
@@ -3712,20 +3921,20 @@
         "upgrade-price-old2": 15000000
       },
       "11": {
-        "upgrade-price2": 6000000,
+        "upgrade-price2": 5000000,
         "upgrade-price-old2": 16000000
       },
       "12": {
-        "upgrade-price2": 8000000,
+        "upgrade-price2": 6000000,
         "upgrade-price-old2": 18000000
       },
       "13": {
-        "upgrade-price2": 24000000,
+        "upgrade-price2": 18000000,
         "upgrade-price-old2": 24000000
       },
       "14": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 30000000,
+        "upgrade-price-old2": 30000000
       }
       
     }
@@ -3770,28 +3979,28 @@
         "upgrade-price-old2": 11500000
       },
       "10": {
-        "upgrade-price2": 4500000,
+        "upgrade-price2": 3800000,
         "upgrade-price-old2": 15500000
       },
       "11": {
-        "upgrade-price2": 6500000,
+        "upgrade-price2": 5500000,
         "upgrade-price-old2": 16000000
       },
       "12": {
-        "upgrade-price2": 9000000,
+        "upgrade-price2": 8000000,
         "upgrade-price-old2": 18000000
       },
       "13": {
-        "upgrade-price2": 14000000,
+        "upgrade-price2": 11000000,
         "upgrade-price-old2": 17500000
       },
       "14": {
-        "upgrade-price2": 25000000,
+        "upgrade-price2": 19000000,
         "upgrade-price-old2": 25000000
       },
       "15": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 31000000,
+        "upgrade-price-old2": 31000000
       }
     }
   },
@@ -3835,24 +4044,28 @@
         "upgrade-price-old2": 12000000
       },
       "10": {
-        "upgrade-price2": 5000000,
+        "upgrade-price2": 4600000,
         "upgrade-price-old2": 15000000
       },
       "11": {
-        "upgrade-price2": 7500000,
+        "upgrade-price2": 6500000,
         "upgrade-price-old2": 16500000
       },
       "12": {
-        "upgrade-price2": 10000000,
+        "upgrade-price2": 8000000,
         "upgrade-price-old2": 18500000
       },
       "13": {
-        "upgrade-price2": 15000000,
+        "upgrade-price2": 10500000,
         "upgrade-price-old2": 18500000
       },
       "14": {
-        "upgrade-price2": 25000000,
+        "upgrade-price2": 20000000,
         "upgrade-price-old2": 25000000
+      },
+      "15": {
+        "upgrade-price2": 29500000,
+        "upgrade-price-old2": 29500000
       }
     }
   },
@@ -3888,16 +4101,20 @@
         "upgrade-price-old2": 6750000
       },
       "8": {
-        "upgrade-price2": 3700000,
+        "upgrade-price2": 3300000,
         "upgrade-price-old2": 10500000
       },
       "9": {
-        "upgrade-price2": 8000000,
+        "upgrade-price2": 5500000,
         "upgrade-price-old2": 10000000
       },
       "10": {
-        "upgrade-price2": 26000000,
+        "upgrade-price2": 15000000,
         "upgrade-price-old2": 26000000
+      },
+      "11": {
+        "upgrade-price2": 22000000,
+        "upgrade-price-old2": 22000000
       }
     }
   },
@@ -3933,36 +4150,36 @@
         "upgrade-price-old2": 9000000
       },
       "8": {
-        "upgrade-price2": 3800000,
+        "upgrade-price2": 3200000,
         "upgrade-price-old2": 12000000
       },
       "9": {
-        "upgrade-price2": 5200000,
+        "upgrade-price2": 4300000,
         "upgrade-price-old2": 14000000
       },
       "10": {
-        "upgrade-price2": 6500000,
+        "upgrade-price2": 5000000,
         "upgrade-price-old2": 16000000
       },
       "11": {
-        "upgrade-price2": 9500000,
+        "upgrade-price2": 8000000,
         "upgrade-price-old2": 16500000
       },
       "12": {
-        "upgrade-price2": 11000000,
+        "upgrade-price2": 9000000,
         "upgrade-price-old2": 19000000
       },
       "13": {
-        "upgrade-price2": 15500000,
+        "upgrade-price2": 10000000,
         "upgrade-price-old2": 20000000
       },
       "14": {
-        "upgrade-price2": 26000000,
+        "upgrade-price2": 19000000,
         "upgrade-price-old2": 26000000
       },
       "15": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 29000000,
+        "upgrade-price-old2": 29000000
       }
     }
   },
@@ -4002,7 +4219,7 @@
         "upgrade-price-old2": 12000000
       },
       "9": {
-        "upgrade-price2": 7000000,
+        "upgrade-price2": 6000000,
         "upgrade-price-old2": 14000000
       },
       "10": {
@@ -4010,20 +4227,20 @@
         "upgrade-price-old2": 18000000
       },
       "11": {
-        "upgrade-price2": 14000000,
+        "upgrade-price2": 13000000,
         "upgrade-price-old2": 20000000
       },
       "12": {
-        "upgrade-price2": 17500000,
+        "upgrade-price2": 15500000,
         "upgrade-price-old2": 22500000
       },
       "13": {
-        "upgrade-price2": 28000000,
+        "upgrade-price2": 22500000,
         "upgrade-price-old2": 28000000
       },
       "14": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 28000000,
+        "upgrade-price-old2": 28000000
       }
     }
   },
@@ -4067,28 +4284,28 @@
         "upgrade-price-old2": 11000000
       },
       "10": {
-        "upgrade-price2": 5500000,
+        "upgrade-price2": 4700000,
         "upgrade-price-old2": 15000000
       },
       "11": {
-        "upgrade-price2": 10000000,
+        "upgrade-price2": 7000000,
         "upgrade-price-old2": 17200000
       },
       "12": {
-        "upgrade-price2": 11500000,
+        "upgrade-price2": 9000000,
         "upgrade-price-old2": 19200000
       },
       "13": {
-        "upgrade-price2": 16000000,
+        "upgrade-price2": 11500000,
         "upgrade-price-old2": 21000000
       },
       "14": {
-        "upgrade-price2": 27000000,
+        "upgrade-price2": 21000000,
         "upgrade-price-old2": 27000000
       },
       "15": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 32000000,
+        "upgrade-price-old2": 32000000
       }
     }
   },
@@ -4116,7 +4333,7 @@
         "upgrade-price-old2": 9500000
       },
       "6": {
-        "upgrade-price2": 6000000,
+        "upgrade-price2": 5500000,
         "upgrade-price-old2": 14500000
       },
       "7": {
@@ -4132,16 +4349,16 @@
         "upgrade-price-old2": 21000000
       },
       "10": {
-        "upgrade-price2": 17000000,
+        "upgrade-price2": 15000000,
         "upgrade-price-old2": 22500000
       },
       "11": {
-        "upgrade-price2": 28500000,
+        "upgrade-price2": 20000000,
         "upgrade-price-old2": 28500000
       },
       "12": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 29500000,
+        "upgrade-price-old2": 29500000
       }
     }
   },
@@ -4189,20 +4406,20 @@
         "upgrade-price-old2": 19500000
       },
       "11": {
-        "upgrade-price2": 14000000,
+        "upgrade-price2": 13500000,
         "upgrade-price-old2": 21500000
       },
       "12": {
-        "upgrade-price2": 18500000,
+        "upgrade-price2": 15500000,
         "upgrade-price-old2": 22000000
       },
       "13": {
-        "upgrade-price2": 28500000,
+        "upgrade-price2": 21000000,
         "upgrade-price-old2": 28500000
       },
       "14": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 28500000,
+        "upgrade-price-old2": 28500000
       }
     }
   },
@@ -4246,18 +4463,22 @@
         "upgrade-price-old2": 15500000
       },
       "10": {
-        "upgrade-price2": 10500000,
+        "upgrade-price2": 7500000,
         "upgrade-price-old2": 18000000
       },
       "11": {
-        "upgrade-price2": 12000000,
+        "upgrade-price2": 9500000,
         "upgrade-price-old2": 20500000
       },
       "12": {
-        "upgrade-price2": 16000000,
+        "upgrade-price2": 12000000,
         "upgrade-price-old2": 22000000
       },
       "13": {
+        "upgrade-price2": 21000000,
+        "upgrade-price-old2": 28000000
+      },
+      "14": {
         "upgrade-price2": 28000000,
         "upgrade-price-old2": 28000000
       }
@@ -4291,11 +4512,11 @@
         "upgrade-price-old2": 9000000
       },
       "7": {
-        "upgrade-price2": 6200000,
+        "upgrade-price2": 5500000,
         "upgrade-price-old2": 15000000
       },
       "8": {
-        "upgrade-price2": 9500000,
+        "upgrade-price2": 8500000,
         "upgrade-price-old2": 17000000
       },
       "9": {
@@ -4307,16 +4528,16 @@
         "upgrade-price-old2": 20000000
       },
       "11": {
-        "upgrade-price2": 16500000,
+        "upgrade-price2": 15000000,
         "upgrade-price-old2": 22500000
       },
       "12": {
-        "upgrade-price2": 29000000,
+        "upgrade-price2": 21000000,
         "upgrade-price-old2": 29000000
       },
       "13": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 29000000,
+        "upgrade-price-old2": 29000000
       }
     }
   },
@@ -4348,32 +4569,32 @@
         "upgrade-price-old2": 11000000
       },
       "7": {
-        "upgrade-price2": 6000000,
+        "upgrade-price2": 5500000,
         "upgrade-price-old2": 14000000
       },
       "8": {
-        "upgrade-price2": 8600000,
+        "upgrade-price2": 7000000,
         "upgrade-price-old2": 17500000
       },
       "9": {
-        "upgrade-price2": 10500000,
+        "upgrade-price2": 9000000,
         "upgrade-price-old2": 18500000
       },
       "10": {
-        "upgrade-price2": 12500000,
+        "upgrade-price2": 10500000,
         "upgrade-price-old2": 20500000
       },
       "11": {
-        "upgrade-price2": 16500000,
+        "upgrade-price2": 12000000,
         "upgrade-price-old2": 21500000
       },
       "12": {
-        "upgrade-price2": 28000000,
+        "upgrade-price2": 19000000,
         "upgrade-price-old2": 28000000
       },
       "13": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 28000000,
+        "upgrade-price-old2": 28000000
       }
     }
   },
@@ -4397,28 +4618,28 @@
         "upgrade-price-old2": 16000000
       },
       "5": {
-        "upgrade-price2": 11000000,
+        "upgrade-price2": 10500000,
         "upgrade-price-old2": 19000000
       },
       "6": {
-        "upgrade-price2": 14000000,
+        "upgrade-price2": 13000000,
         "upgrade-price-old2": 20000000
       },
       "7": {
-        "upgrade-price2": 16000000,
+        "upgrade-price2": 15000000,
         "upgrade-price-old2": 22000000
       },
       "8": {
-        "upgrade-price2": 20000000,
+        "upgrade-price2": 18000000,
         "upgrade-price-old2": 23000000
       },
       "9": {
-        "upgrade-price2": 30000000,
+        "upgrade-price2": 22500000,
         "upgrade-price-old2": 30000000
       },
       "10": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 29500000,
+        "upgrade-price-old2": 29500000
       }
     }
   },
@@ -4434,7 +4655,7 @@
         "upgrade-price-old2": 11000000
       },
       "3": {
-        "upgrade-price2": 6500000,
+        "upgrade-price2": 6000000,
         "upgrade-price-old2": 15000000
       },
       "4": {
@@ -4446,16 +4667,20 @@
         "upgrade-price-old2": 19000000
       },
       "6": {
-        "upgrade-price2": 14500000,
+        "upgrade-price2": 14000000,
         "upgrade-price-old2": 21000000
       },
       "7": {
-        "upgrade-price2": 17000000,
+        "upgrade-price2": 15500000,
         "upgrade-price-old2": 22500000
       },
       "8": {
-        "upgrade-price2": 27500000,
+        "upgrade-price2": 19000000,
         "upgrade-price-old2": 27500000
+      },
+      "9": {
+        "upgrade-price2": 25000000,
+        "upgrade-price-old2": 25000000
       }
     }
   },
@@ -4467,28 +4692,28 @@
         "upgrade-price2": 0
       },
       "2": {
-        "upgrade-price2": 7500000,
+        "upgrade-price2": 7000000,
         "upgrade-price-old2": 12000000
       },
       "3": {
-        "upgrade-price2": 12000000,
+        "upgrade-price2": 11000000,
         "upgrade-price-old2": 16500000
       },
       "4": {
-        "upgrade-price2": 14500000,
+        "upgrade-price2": 13500000,
         "upgrade-price-old2": 21500000
       },
       "5": {
-        "upgrade-price2": 19000000,
+        "upgrade-price2": 17500000,
         "upgrade-price-old2": 22500000
       },
       "6": {
-        "upgrade-price2": 29500000,
+        "upgrade-price2": 21000000,
         "upgrade-price-old2": 29500000
       },
       "7": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 28500000,
+        "upgrade-price-old2": 28500000
       }
     }
   },
@@ -4500,20 +4725,24 @@
         "upgrade-price2": 0
       },
       "2": {
-        "upgrade-price2": 14000000,
+        "upgrade-price2": 11500000,
         "upgrade-price-old2": 19500000
       },
       "3": {
-        "upgrade-price2": 16000000,
+        "upgrade-price2": 13500000,
         "upgrade-price-old2": 20500000
       },
       "4": {
-        "upgrade-price2": 18500000,
+        "upgrade-price2": 15500000,
         "upgrade-price-old2": 22000000
       },
       "5": {
-        "upgrade-price2": 30000000,
+        "upgrade-price2": 18000000,
         "upgrade-price-old2": 30000000
+      },
+      "6": {
+        "upgrade-price2": 28000000,
+        "upgrade-price-old2": 28000000
       }
     }
   },
@@ -4525,16 +4754,20 @@
         "upgrade-price2": 0
       },
       "2": {
-        "upgrade-price2": 15000000,
+        "upgrade-price2": 14000000,
         "upgrade-price-old2": 15000000
       },
       "3": {
-        "upgrade-price2": 17600000,
+        "upgrade-price2": 16000000,
         "upgrade-price-old2": 17600000
       },
       "4": {
-        "upgrade-price2": 30000000,
+        "upgrade-price2": 23000000,
         "upgrade-price-old2": 30000000
+      },
+      "5": {
+        "upgrade-price2": 29000000,
+        "upgrade-price-old2": 29000000
       }
     }
   },
@@ -4546,20 +4779,20 @@
         "upgrade-price2": 0
       },
       "2": {
-        "upgrade-price2": 16000000,
+        "upgrade-price2": 15500000,
         "upgrade-price-old2": 21000000
       },
       "3": {
-        "upgrade-price2": 18000000,
+        "upgrade-price2": 16000000,
         "upgrade-price-old2": 23000000
       },
       "4": {
-        "upgrade-price2": 27000000,
+        "upgrade-price2": 20500000,
         "upgrade-price-old2": 27000000
       },
       "5": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 29500000,
+        "upgrade-price-old2": 29500000
       }
     }
   },
@@ -4571,12 +4804,16 @@
         "upgrade-price2": 0
       },
       "2": {
-        "upgrade-price2": 28000000,
+        "upgrade-price2": 20000000,
         "upgrade-price-old2": 28000000
       },
       "3": {
-        "upgrade-price2": 30000000,
+        "upgrade-price2": 22000000,
         "upgrade-price-old2": 30000000
+      },
+      "4": {
+        "upgrade-price2": 28000000,
+        "upgrade-price-old2": 28000000
       }
     }
   },
@@ -4616,32 +4853,32 @@
         "upgrade-price-old3": 180000
       },
       "9": {
-        "upgrade-price3": 75000,
+        "upgrade-price3": 60000,
         "upgrade-price-old3": 250000
       },
       "10": {
-        "upgrade-price3": 100000,
+        "upgrade-price3": 80000,
         "upgrade-price-old3": 300000
       },
       "11": {
-        "upgrade-price3": 115000,
+        "upgrade-price3": 100000,
         "upgrade-price-old3": 310000
       },
       "12": {
-        "upgrade-price3": 160000,
+        "upgrade-price3": 120000,
         "upgrade-price-old3": 320000
       },
       "13": {
-        "upgrade-price3": 220000,
+        "upgrade-price3": 150000,
         "upgrade-price-old3": 255000
       },
       "14": {
-        "upgrade-price3": 335000,
+        "upgrade-price3": 280000,
         "upgrade-price-old3": 335000
       },
       "15": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 430000,
+        "upgrade-price-old3": 430000
       }
     }
   },
@@ -4689,24 +4926,28 @@
         "upgrade-price-old3": 280000
       },
       "11": {
-        "upgrade-price3": 107500,
+        "upgrade-price3": 95000,
         "upgrade-price-old3": 320000
       },
       "12": {
-        "upgrade-price3": 125000,
+        "upgrade-price3": 115000,
         "upgrade-price-old3": 335000
       },
       "13": {
-        "upgrade-price3": 175000,
+        "upgrade-price3": 135000,
         "upgrade-price-old3": 350000
       },
       "14": {
-        "upgrade-price3": 240000,
+        "upgrade-price3": 155000,
         "upgrade-price-old3": 280000
       },
       "15": {
-        "upgrade-price3": 340000,
+        "upgrade-price3": 285000,
         "upgrade-price-old3": 340000
+      },
+      "16": {
+        "upgrade-price3": 440000,
+        "upgrade-price-old3": 440000
       }
     }
   },
@@ -4742,24 +4983,28 @@
         "upgrade-price-old3": 190000
       },
       "8": {
-        "upgrade-price3": 77500,
+        "upgrade-price3": 70000,
         "upgrade-price-old3": 260000
       },
       "9": {
-        "upgrade-price3": 105000,
+        "upgrade-price3": 95000,
         "upgrade-price-old3": 310000
       },
       "10": {
-        "upgrade-price3": 120000,
+        "upgrade-price3": 110000,
         "upgrade-price-old3": 320000
       },
       "11": {
-        "upgrade-price3": 170000,
+        "upgrade-price3": 140000,
         "upgrade-price-old3": 340000
       },
       "12": {
-        "upgrade-price3": 340000,
+        "upgrade-price3": 235000,
         "upgrade-price-old3": 340000
+      },
+      "13": {
+        "upgrade-price3": 370000,
+        "upgrade-price-old3": 370000
       }
     }
   },
@@ -4807,24 +5052,28 @@
         "upgrade-price-old3": 270000
       },
       "11": {
-        "upgrade-price3": 105000,
+        "upgrade-price3": 95000,
         "upgrade-price-old3": 320000
       },
       "12": {
-        "upgrade-price3": 122500,
+        "upgrade-price3": 110000,
         "upgrade-price-old3": 330000
       },
       "13": {
-        "upgrade-price3": 175000,
+        "upgrade-price3": 135000,
         "upgrade-price-old3": 350000
       },
       "14": {
-        "upgrade-price3": 230000,
+        "upgrade-price3": 160000,
         "upgrade-price-old3": 230000
       },
       "15": {
-        "upgrade-price3": 350000,
+        "upgrade-price3": 295000,
         "upgrade-price-old3": 350000
+      },
+      "16": {
+        "upgrade-price3": 455000,
+        "upgrade-price-old3": 455000
       }
     }
   },
@@ -4852,20 +5101,20 @@
         "upgrade-price-old3": 200000
       },
       "6": {
-        "upgrade-price3": 150000,
+        "upgrade-price3": 125000,
         "upgrade-price-old3": 340000
       },
       "7": {
-        "upgrade-price3": 180000,
+        "upgrade-price3": 175000,
         "upgrade-price-old3": 360000
       },
       "8": {
-        "upgrade-price3": 355000,
+        "upgrade-price3": 300000,
         "upgrade-price-old3": 355000
       },
       "9": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 460000,
+        "upgrade-price-old3": 460000
       }
     }
   },
@@ -4889,7 +5138,7 @@
         "upgrade-price-old3": 150000
       },
       "5": {
-        "upgrade-price3": 60000,
+        "upgrade-price3": 50000,
         "upgrade-price-old3": 250000
       },
       "6": {
@@ -4897,16 +5146,16 @@
         "upgrade-price-old3": 270000
       },
       "7": {
-        "upgrade-price3": 200000,
+        "upgrade-price3": 190000,
         "upgrade-price-old3": 200000
       },
       "8": {
-        "upgrade-price3": 345000,
+        "upgrade-price3": 285000,
         "upgrade-price-old3": 345000
       },
       "9": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 375000,
+        "upgrade-price-old3": 375000
       }
     }
   },
@@ -4930,11 +5179,11 @@
         "upgrade-price-old3": 200000
       },
       "5": {
-        "upgrade-price3": 85000,
+        "upgrade-price3": 75000,
         "upgrade-price-old3": 280000
       },
       "6": {
-        "upgrade-price3": 110000,
+        "upgrade-price3": 100000,
         "upgrade-price-old3": 320000
       },
       "7": {
@@ -4946,12 +5195,16 @@
         "upgrade-price-old3": 350000
       },
       "9": {
-        "upgrade-price3": 260000,
+        "upgrade-price3": 205000,
         "upgrade-price-old3": 280000
       },
       "10": {
-        "upgrade-price3": 360000,
+        "upgrade-price3": 245000,
         "upgrade-price-old3": 360000
+      },
+      "11": {
+        "upgrade-price3": 385000,
+        "upgrade-price-old3": 385000
       }
     }
   },
@@ -4975,23 +5228,23 @@
         "upgrade-price-old3": 160000
       },
       "5": {
-        "upgrade-price3": 62500,
+        "upgrade-price3": 55000,
         "upgrade-price-old3": 200000
       },
       "6": {
-        "upgrade-price3": 110000,
+        "upgrade-price3": 100000,
         "upgrade-price-old3": 320000
       },
       "7": {
-        "upgrade-price3": 140000,
+        "upgrade-price3": 130000,
         "upgrade-price-old3": 335000
       },
       "8": {
-        "upgrade-price3": 180000,
+        "upgrade-price3": 170000,
         "upgrade-price-old3": 360000
       },
       "9": {
-        "upgrade-price3": 280000,
+        "upgrade-price3": 225000,
         "upgrade-price-old3": 280000
       }
     }
@@ -5004,7 +5257,7 @@
         "upgrade-price3": 0
       },
       "2": {
-        "upgrade-price3": 57500,
+        "upgrade-price3": 45000,
         "upgrade-price-old3": 180000
       },
       "3": {
@@ -5012,12 +5265,12 @@
         "upgrade-price-old3": 240000
       },
       "4": {
-        "upgrade-price3": 370000,
+        "upgrade-price3": 275000,
         "upgrade-price-old3": 370000
       },
       "5": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 425000,
+        "upgrade-price-old3": 425000
       }
     }
   },
@@ -5029,15 +5282,15 @@
         "upgrade-price3": 0
       },
       "2": {
-        "upgrade-price3": 90000,
+        "upgrade-price3": 75000,
         "upgrade-price-old3": 180000
       },
       "3": {
-        "upgrade-price3": 135000,
+        "upgrade-price3": 125000,
         "upgrade-price-old3": 315000
       },
       "4": {
-        "upgrade-price3": 160000,
+        "upgrade-price3": 150000,
         "upgrade-price-old3": 340000
       }
     }
@@ -5050,24 +5303,24 @@
         "upgrade-price3": 0
       },
       "2": {
-        "upgrade-price3": 150000,
+        "upgrade-price3": 110000,
         "upgrade-price-old3": 250000
       },
       "3": {
-        "upgrade-price3": 175000,
+        "upgrade-price3": 130000,
         "upgrade-price-old3": 350000
       },
       "4": {
-        "upgrade-price3": 187500,
+        "upgrade-price3": 150000,
         "upgrade-price-old3": 375000
       },
       "5": {
-        "upgrade-price3": 300000,
+        "upgrade-price3": 215000,
         "upgrade-price-old3": 320000
       },
       "6": {
-        "upgrade-price3": 360000,
-        "upgrade-price-old3": 360000
+        "upgrade-price3": 415000,
+        "upgrade-price-old3": 415000
       }
     }
   },
@@ -5079,15 +5332,15 @@
         "upgrade-price3": 0
       },
       "2": {
-        "upgrade-price3": 200000,
+        "upgrade-price3": 175000,
         "upgrade-price-old3": 200000
       },
       "3": {
-        "upgrade-price3": 260000,
+        "upgrade-price3": 200000,
         "upgrade-price-old3": 260000
       },
       "4": {
-        "upgrade-price3": 320000,
+        "upgrade-price3": 265000,
         "upgrade-price-old3": 320000
       }
     }
@@ -5108,12 +5361,216 @@
         "upgrade-price-old3": 300000
       },
       "4": {
-        "upgrade-price3": 380000,
+        "upgrade-price3": 355000,
         "upgrade-price-old3": 380000
       },
       "5": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 435000,
+        "upgrade-price-old3": 435000
+      }
+    }
+  },
+  "4000195": {
+    "name": "Barch Squad",
+    "character": "/home-base/squads/barch.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 23500000,
+        "upgrade-price-old2": 23500000
+      },
+      "3": {
+        "upgrade-price2": 32500000,
+        "upgrade-price-old2": 32500000
+      }
+    }
+  },
+  "4000196": {
+    "name": "Giant Wizard Squad",
+    "character": "/home-base/squads/giant-wizard.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 25000000,
+        "upgrade-price-old2": 25000000
+      },
+      "3": {
+        "upgrade-price2": 32500000,
+        "upgrade-price-old2": 32500000
+      }
+    }
+  },
+  "4000197": {
+    "name": "Wall Breaker Squad",
+    "character": "/home-base/squads/wallbreakers.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 23000000,
+        "upgrade-price-old2": 23000000
+      },
+      "3": {
+        "upgrade-price2": 30500000,
+        "upgrade-price-old2": 30500000
+      }
+    }
+  },
+  "4000198": {
+    "name": "Minion Squad",
+    "character": "/home-base/squads/minions.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price3": 370000,
+        "upgrade-price-old3": 370000
+      },
+      "3": {
+        "upgrade-price3": 465000,
+        "upgrade-price-old3": 465000
+      }
+    }
+  },
+  "4000199": {
+    "name": "Balloon Squad",
+    "character": "/home-base/squads/balloons.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 28500000,
+        "upgrade-price-old2": 28500000
+      },
+      "3": {
+        "upgrade-price2": 32000000,
+        "upgrade-price-old2": 32000000
+      }
+    }
+  },
+  "4000200": {
+    "name": "Golem Witch Squad",
+    "character": "/home-base/squads/golem-witch.png",
+    "levels": {
+      "1": {
+        "upgrade-price3": 0
+      },
+      "2": {
+        "upgrade-price3": 420000,
+        "upgrade-price-old3": 420000
+      },
+      "3": {
+        "upgrade-price3": 500000,
+        "upgrade-price-old3": 500000
+      }
+    }
+  },
+  "4000201": {
+    "name": "Hog Rider Squad",
+    "character": "/home-base/squads/hog-rider.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price3": 415000,
+        "upgrade-price-old3": 415000
+      },
+      "3": {
+        "upgrade-price3": 480000,
+        "upgrade-price-old3": 480000
+      }
+    }
+  },
+  "4000202": {
+    "name": "Miner Squad",
+    "character": "/home-base/squads/miners.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 21000000,
+        "upgrade-price-old2": 21000000
+      },
+      "3": {
+        "upgrade-price2": 30500000,
+        "upgrade-price-old2": 30500000
+      }
+    }
+  },
+  "4000203": {
+    "name": "Healer Squad",
+    "character": "/home-base/squads/healers.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 29000000,
+        "upgrade-price-old2": 29000000
+      },
+      "3": {
+        "upgrade-price2": 32000000,
+        "upgrade-price-old2": 32000000
+      }
+    }
+  },
+  "4000204": {
+    "name": "P.E.K.K.A Titan Squad",
+    "character": "/home-base/troops/pekka-titan.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 28000000,
+        "upgrade-price-old2": 28000000
+      },
+      "3": {
+        "upgrade-price2": 32000000,
+        "upgrade-price-old2": 32000000
+      }
+    }
+  },
+  "4000205": {
+    "name": "Dragons Squad",
+    "character": "/home-base/squads/dragons.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 29500000,
+        "upgrade-price-old2": 29500000
+      },
+      "3": {
+        "upgrade-price2": 32000000,
+        "upgrade-price-old2": 32000000
+      }
+    }
+  },
+  "4000206": {
+    "name": "Baby Dragon Squad",
+    "character": "/home-base/squads/baby-dragons.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 27500000,
+        "upgrade-price-old2": 27500000
+      },
+      "3": {
+        "upgrade-price2": 32000000,
+        "upgrade-price-old2": 32000000
       }
     }
   },
@@ -5157,7 +5614,7 @@
         "upgrade-price-old2": 10000000
       },
       "10": {
-        "upgrade-price2": 10000000,
+        "upgrade-price2": 9000000,
         "upgrade-price-old2": 16000000
       },
       "11": {
@@ -5165,12 +5622,16 @@
         "upgrade-price-old2": 18500000
       },
       "12": {
-        "upgrade-price2": 18500000,
+        "upgrade-price2": 17000000,
         "upgrade-price-old2": 18500000
       },
       "13": {
-        "upgrade-price2": 27000000,
+        "upgrade-price2": 20000000,
         "upgrade-price-old2": 27000000
+      },
+      "14": {
+        "upgrade-price2": 31000000,
+        "upgrade-price-old2": 31000000
       }
     }
   },
@@ -5210,7 +5671,7 @@
         "upgrade-price-old2": 14000000
       },
       "9": {
-        "upgrade-price2": 11000000,
+        "upgrade-price2": 10500000,
         "upgrade-price-old2": 17000000
       },
       "10": {
@@ -5218,12 +5679,16 @@
         "upgrade-price-old2": 19000000
       },
       "11": {
-        "upgrade-price2": 19000000,
+        "upgrade-price2": 16000000,
         "upgrade-price-old2": 19000000
       },
       "12": {
-        "upgrade-price2": 29000000,
+        "upgrade-price2": 19500000,
         "upgrade-price-old2": 29000000
+      },
+      "13": {
+        "upgrade-price2": 29500000,
+        "upgrade-price-old2": 29500000
       }
     }
   },
@@ -5255,7 +5720,7 @@
         "upgrade-price-old2": 11000000
       },
       "7": {
-        "upgrade-price2": 26000000,
+        "upgrade-price2": 24000000,
         "upgrade-price-old2": 26000000
       }
     }
@@ -5280,7 +5745,7 @@
         "upgrade-price-old2": 13000000
       },
       "5": {
-        "upgrade-price2": 8000000,
+        "upgrade-price2": 7500000,
         "upgrade-price-old2": 8000000
       }
     }
@@ -5317,7 +5782,7 @@
         "upgrade-price-old2": 11000000
       },
       "8": {
-        "upgrade-price2": 28000000,
+        "upgrade-price2": 21500000,
         "upgrade-price-old2": 28000000
       }
     }
@@ -5350,7 +5815,7 @@
         "upgrade-price-old2": 14000000
       },
       "7": {
-        "upgrade-price2": 8000000,
+        "upgrade-price2": 7000000,
         "upgrade-price-old2": 16500000
       },
       "8": {
@@ -5358,7 +5823,7 @@
         "upgrade-price-old2": 18000000
       },
       "9": {
-        "upgrade-price2": 26000000,
+        "upgrade-price2": 21000000,
         "upgrade-price-old2": 26000000
       }
     }
@@ -5408,11 +5873,11 @@
         "upgrade-price-old2": 19500000
       },
       "6": {
-        "upgrade-price2": 19000000,
+        "upgrade-price2": 17000000,
         "upgrade-price-old2": 21000000
       },
       "7": {
-        "upgrade-price2": 29000000,
+        "upgrade-price2": 19500000,
         "upgrade-price-old2": 29000000
       }
     }
@@ -5429,15 +5894,15 @@
         "upgrade-price-old2": 18000000
       },
       "3": {
-        "upgrade-price2": 19000000,
+        "upgrade-price2": 18500000,
         "upgrade-price-old2": 20000000
       },
       "4": {
-        "upgrade-price2": 20000000,
+        "upgrade-price2": 19000000,
         "upgrade-price-old2": 22000000
       },
       "5": {
-        "upgrade-price2": 29500000,
+        "upgrade-price2": 24000000,
         "upgrade-price-old2": 29500000
       }
     }
@@ -5450,20 +5915,41 @@
         "upgrade-price2": 0
       },
       "2": {
-        "upgrade-price2": 21000000,
+        "upgrade-price2": 18500000,
         "upgrade-price-old2": 22000000
       },
       "3": {
-        "upgrade-price2": 22000000,
+        "upgrade-price2": 19000000,
         "upgrade-price-old2": 22000000
       },
       "4": {
-        "upgrade-price2": 23000000,
+        "upgrade-price2": 22000000,
         "upgrade-price-old2": 23000000
       },
       "5": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 31000000,
+        "upgrade-price-old2": 31000000
+      }
+    }
+  },
+  "26000153": {
+    "name": "Heroic Spell",
+    "character": "/home-base/spells/153.png",
+    "levels": {
+      "1": {
+        "upgrade-price2": 0
+      },
+      "2": {
+        "upgrade-price2": 21000000,
+        "upgrade-price-old2": 21000000
+      },
+      "3": {
+        "upgrade-price2": 25500000,
+        "upgrade-price-old2": 25500000
+      },
+      "4": {
+        "upgrade-price2": 32000000,
+        "upgrade-price-old2": 32000000
       }
     }
   },
@@ -5511,16 +5997,16 @@
         "upgrade-price-old3": 350000
       },
       "11": {
-        "upgrade-price3": 230000,
+        "upgrade-price3": 200000,
         "upgrade-price-old3": 280000
       },
       "12": {
-        "upgrade-price3": 350000,
+        "upgrade-price3": 280000,
         "upgrade-price-old3": 350000
       },
       "13": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 425000,
+        "upgrade-price-old3": 425000
       }
     }
   },
@@ -5548,7 +6034,7 @@
         "upgrade-price-old3": 120000
       },
       "6": {
-        "upgrade-price3": 120000,
+        "upgrade-price3": 110000,
         "upgrade-price-old3": 120000
       },
       "7": {
@@ -5556,7 +6042,7 @@
         "upgrade-price-old3": 200000
       },
       "8": {
-        "upgrade-price3": 330000,
+        "upgrade-price3": 305000,
         "upgrade-price-old3": 330000
       }
     }
@@ -5585,12 +6071,16 @@
         "upgrade-price-old3": 120000
       },
       "6": {
-        "upgrade-price3": 200000,
+        "upgrade-price3": 165000,
         "upgrade-price-old3": 200000
       },
       "7": {
-        "upgrade-price3": 320000,
+        "upgrade-price3": 255000,
         "upgrade-price-old3": 320000
+      },
+      "8": {
+        "upgrade-price3": 415000,
+        "upgrade-price-old3": 415000
       }
     }
   },
@@ -5626,7 +6116,7 @@
         "upgrade-price-old3": 250000
       },
       "8": {
-        "upgrade-price3": 135000,
+        "upgrade-price3": 120000,
         "upgrade-price-old3": 320000
       }
     }
@@ -5659,12 +6149,16 @@
         "upgrade-price-old3": 330000
       },
       "7": {
-        "upgrade-price3": 220000,
+        "upgrade-price3": 190000,
         "upgrade-price-old3": 260000
       },
       "8": {
-        "upgrade-price3": 300000,
+        "upgrade-price3": 245000,
         "upgrade-price-old3": 300000
+      },
+      "9": {
+        "upgrade-price3": 415000,
+        "upgrade-price-old3": 415000
       }
     }
   },
@@ -5680,7 +6174,7 @@
         "upgrade-price-old3": 125000
       },
       "3": {
-        "upgrade-price2": 125000,
+        "upgrade-price2": 110000,
         "upgrade-price-old3": 250000
       },
       "4": {
@@ -5688,7 +6182,7 @@
         "upgrade-price-old3": 350000
       },
       "5": {
-        "upgrade-price2": 360000,
+        "upgrade-price2": 295000,
         "upgrade-price-old3": 360000
       }
     }
@@ -5701,7 +6195,7 @@
         "upgrade-price3": 0
       },
       "2": {
-        "upgrade-price3": 140000,
+        "upgrade-price3": 120000,
         "upgrade-price-old3": 140000
       },
       "3": {
@@ -5709,15 +6203,15 @@
         "upgrade-price-old3": 200000
       },
       "4": {
-        "upgrade-price3": 280000,
+        "upgrade-price3": 230000,
         "upgrade-price-old3": 280000
       },
       "5": {
-        "upgrade-price3": 320000,
+        "upgrade-price3": 250000,
         "upgrade-price-old3": 320000
       },
       "6": {
-        "upgrade-price3": 380000,
+        "upgrade-price3": 290000,
         "upgrade-price-old3": 380000
       }
     }
@@ -5738,7 +6232,7 @@
         "upgrade-price-old3": 250000
       },
       "4": {
-        "upgrade-price3": 400000,
+        "upgrade-price3": 350000,
         "upgrade-price-old3": 400000
       }
     }
@@ -5767,7 +6261,7 @@
         "upgrade-price-old2": 15000000
       },
       "6": {
-        "upgrade-price2": 26000000,
+        "upgrade-price2": 17500000,
         "upgrade-price-old2": 26000000
       }
     }
@@ -5796,7 +6290,7 @@
         "upgrade-price-old2": 10000000
       },
       "6": {
-        "upgrade-price2": 26000000,
+        "upgrade-price2": 18500000,
         "upgrade-price-old2": 26000000
       }
     }
@@ -5825,7 +6319,7 @@
         "upgrade-price-old2": 15000000
       },
       "6": {
-        "upgrade-price2": 26000000,
+        "upgrade-price2": 19500000,
         "upgrade-price-old2": 26000000
       }
     }
@@ -5850,11 +6344,11 @@
         "upgrade-price-old2": 14000000
       },
       "5": {
-        "upgrade-price2": 18000000,
+        "upgrade-price2": 14500000,
         "upgrade-price-old2": 18000000
       },
       "6": {
-        "upgrade-price2": 27000000,
+        "upgrade-price2": 20500000,
         "upgrade-price-old2": 27000000
       }
     }
@@ -5879,11 +6373,11 @@
         "upgrade-price-old2": 14000000
       },
       "5": {
-        "upgrade-price2": 18000000,
+        "upgrade-price2": 14500000,
         "upgrade-price-old2": 18000000
       },
       "6": {
-        "upgrade-price2": 27000000,
+        "upgrade-price2": 21500000,
         "upgrade-price-old2": 27000000
       }
     }
@@ -5908,12 +6402,12 @@
         "upgrade-price-old2": 14000000
       },
       "5": {
-        "upgrade-price2": 18000000,
+        "upgrade-price2": 14500000,
         "upgrade-price-old2": 19000000
       },
       "6": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 31000000,
+        "upgrade-price-old2": 31000000
       }
     }
   },
@@ -5941,7 +6435,7 @@
         "upgrade-price-old2": 19000000
       },
       "6": {
-        "upgrade-price2": 28000000,
+        "upgrade-price2": 24500000,
         "upgrade-price-old2": 28000000
       }
     }
@@ -5979,11 +6473,11 @@
         "upgrade-price-old2": 22000000
       },
       "3": {
-        "upgrade-price2": 26000000,
+        "upgrade-price2": 25000000,
         "upgrade-price-old2": 26000000
       },
       "4": {
-        "upgrade-price2": 29000000,
+        "upgrade-price2": 28000000,
         "upgrade-price-old2": 29000000
       }
     }
@@ -6394,63 +6888,63 @@
       },
       "101": {
         "upgrade-price3": 400000,
-        "upgrade-price-old3": 29000000
+        "upgrade-price-old3": 400000
       },
       "102": {
         "upgrade-price3": 410000,
-        "upgrade-price-old3": 29000000
+        "upgrade-price-old3": 410000
       },
       "103": {
         "upgrade-price3": 420000,
-        "upgrade-price-old3": 29000000
+        "upgrade-price-old3": 420000
       },
       "104": {
         "upgrade-price3": 430000,
-        "upgrade-price-old3": 29000000
+        "upgrade-price-old3": 430000
       },
       "105": {
-        "upgrade-price3": 450000,
-        "upgrade-price-old3": 29000000
+        "upgrade-price3": 440000,
+        "upgrade-price-old3": 440000
       },
       "106": {
-        "upgrade-price3": 460000,
-        "upgrade-price-old3": 29000000
+        "upgrade-price3": 445000,
+        "upgrade-price-old3": 460000
       },
       "107": {
-        "upgrade-price3": 470000,
-        "upgrade-price-old3": 29000000
+        "upgrade-price3": 450000,
+        "upgrade-price-old3": 470000
       },
       "108": {
-        "upgrade-price3": 475000,
-        "upgrade-price-old3": 29000000
+        "upgrade-price3": 455000,
+        "upgrade-price-old3": 475000
       },
       "109": {
-        "upgrade-price3": 485000,
-        "upgrade-price-old3": 29000000
+        "upgrade-price3": 460000,
+        "upgrade-price-old3": 485000
       },
       "110": {
-        "upgrade-price3": 490000,
-        "upgrade-price-old3": 29000000
+        "upgrade-price3": 465000,
+        "upgrade-price-old3": 490000
       },
       "111": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 500000,
+        "upgrade-price-old3": 500000
       },
       "112": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 505000,
+        "upgrade-price-old3": 505000
       },
       "113": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 510000,
+        "upgrade-price-old3": 510000
       },
       "114": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 515000,
+        "upgrade-price-old3": 515000
       },
       "115": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 520000,
+        "upgrade-price-old3": 520000
       }
     }
   },
@@ -6875,48 +7369,48 @@
         "upgrade-price-old3": 430000
       },
       "105": {
-        "upgrade-price3": 450000,
+        "upgrade-price3": 440000,
         "upgrade-price-old3": 450000
       },
       "106": {
-        "upgrade-price3": 460000,
+        "upgrade-price3": 445000,
         "upgrade-price-old3": 460000
       },
       "107": {
-        "upgrade-price3": 470000,
+        "upgrade-price3": 450000,
         "upgrade-price-old3": 470000
       },
       "108": {
-        "upgrade-price3": 475000,
+        "upgrade-price3": 455000,
         "upgrade-price-old3": 475000
       },
       "109": {
-        "upgrade-price3": 485000,
+        "upgrade-price3": 460000,
         "upgrade-price-old3": 485000
       },
       "110": {
-        "upgrade-price3": 490000,
+        "upgrade-price3": 465000,
         "upgrade-price-old3": 490000
       },
       "111": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 500000,
+        "upgrade-price-old3": 500000
       },
       "112": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 505000,
+        "upgrade-price-old3": 505000
       },
       "113": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 510000,
+        "upgrade-price-old3": 510000
       },
       "114": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 515000,
+        "upgrade-price-old3": 515000
       },
       "115": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 520000,
+        "upgrade-price-old3": 520000
       }
     }
   },
@@ -7225,64 +7719,64 @@
         "upgrade-price-old2": 22500000
       },
       "76": {
-        "upgrade-price2": 23500000,
+        "upgrade-price2": 23000000,
         "upgrade-price-old2": 24000000
       },
       "77": {
-        "upgrade-price2": 24500000,
+        "upgrade-price2": 23500000,
         "upgrade-price-old2": 25500000
       },
       "78": {
-        "upgrade-price2": 25500000,
+        "upgrade-price2": 24000000,
         "upgrade-price-old2": 27000000
       },
       "79": {
-        "upgrade-price2": 26500000,
+        "upgrade-price2": 24500000,
         "upgrade-price-old2": 28500000
       },
       "80": {
-        "upgrade-price2": 27500000,
+        "upgrade-price2": 25500000,
         "upgrade-price-old2": 30000000
       },
       "81": {
-        "upgrade-price2": 28500000,
+        "upgrade-price2": 26500000,
         "upgrade-price-old2": 28500000
       },
       "82": {
-        "upgrade-price2": 29000000,
+        "upgrade-price2": 27500000,
         "upgrade-price-old2": 29000000
       },
       "83": {
-        "upgrade-price2": 29500000,
+        "upgrade-price2": 28500000,
         "upgrade-price-old2": 29500000
       },
       "84": {
-        "upgrade-price2": 30000000,
+        "upgrade-price2": 29000000,
         "upgrade-price-old2": 30000000
       },
       "85": {
-        "upgrade-price2": 30500000,
+        "upgrade-price2": 29500000,
         "upgrade-price-old2": 30500000
       },
       "86": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 31000000,
+        "upgrade-price-old2": 31000000
       },
       "87": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 31250000,
+        "upgrade-price-old2": 31250000
       },
       "88": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 31500000,
+        "upgrade-price-old2": 31500000
       },
       "89": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 31750000,
+        "upgrade-price-old2": 31750000
       },
       "90": {
-        "upgrade-price2": 0,
-        "upgrade-price-old2": 0
+        "upgrade-price2": 32000000,
+        "upgrade-price-old2": 32000000
       }
     }
   },
@@ -7511,24 +8005,24 @@
         "upgrade-price-old3": 450000
       },
       "56": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 500000,
+        "upgrade-price-old3": 500000
       },
       "57": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 505000,
+        "upgrade-price-old3": 505000
       },
       "58": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 510000,
+        "upgrade-price-old3": 510000
       },
       "59": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 515000,
+        "upgrade-price-old3": 515000
       },
       "60": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 520000,
+        "upgrade-price-old3": 520000
       }
     }
   },
@@ -7917,24 +8411,24 @@
         "upgrade-price-old3": 450000
       },
       "96": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 500000,
+        "upgrade-price-old3": 500000
       },
       "97": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 505000,
+        "upgrade-price-old3": 505000
       },
       "98": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 510000,
+        "upgrade-price-old3": 510000
       },
       "99": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 515000,
+        "upgrade-price-old3": 515000
       },
       "100": {
-        "upgrade-price3": 0,
-        "upgrade-price-old3": 0
+        "upgrade-price3": 520000,
+        "upgrade-price-old3": 520000
       }
     }
   },
@@ -8026,19 +8520,19 @@
         "upgrade-price-old3": 400000
       },
       "22": {
-        "upgrade-price3": 420000,
+        "upgrade-price3": 415000,
         "upgrade-price-old3": 420000
       },
       "23": {
-        "upgrade-price3": 440000,
+        "upgrade-price3": 430000,
         "upgrade-price-old3": 440000
       },
       "24": {
-        "upgrade-price3": 460000,
+        "upgrade-price3": 445000,
         "upgrade-price-old3": 460000
       },
       "25": {
-        "upgrade-price3": 480000,
+        "upgrade-price3": 460000,
         "upgrade-price-old3": 480000
       },
       "26": {
@@ -8832,6 +9326,26 @@
       "10": {
         "upgrade-price3": 230000,
         "upgrade-price-old3": 315000
+      },
+      "11": {
+        "upgrade-price3": 260000,
+        "upgrade-price-old3": 260000
+      },
+      "12": {
+        "upgrade-price3": 290000,
+        "upgrade-price-old3": 290000
+      },
+      "13": {
+        "upgrade-price3": 320000,
+        "upgrade-price-old3": 320000
+      },
+      "14": {
+        "upgrade-price3": 350000,
+        "upgrade-price-old3": 350000
+      },
+      "15": {
+        "upgrade-price3": 380000,
+        "upgrade-price-old3": 380000
       }
     }
   },
@@ -8962,18 +9476,38 @@
         "upgrade-price-old2": 0
       },
       "2": {
-        "upgrade-price2": 18000000,
+        "upgrade-price2": 13000000,
         "upgrade-price-old2": 18000000
       },
       "3": {
-        "upgrade-price2": 22000000,
+        "upgrade-price2": 16000000,
         "upgrade-price-old2": 22000000
       },
       "4": {
-        "upgrade-price2": 26000000,
+        "upgrade-price2": 19000000,
         "upgrade-price-old2": 26000000
       },
       "5": {
+        "upgrade-price2": 21500000,
+        "upgrade-price-old2": 28000000
+      },
+      "6": {
+        "upgrade-price2": 24000000,
+        "upgrade-price-old2": 24000000
+      },
+      "7": {
+        "upgrade-price2": 25000000,
+        "upgrade-price-old2": 25000000
+      },
+      "8": {
+        "upgrade-price2": 26000000,
+        "upgrade-price-old2": 26000000
+      },
+      "9": {
+        "upgrade-price2": 27000000,
+        "upgrade-price-old2": 27000000
+      },
+      "10": {
         "upgrade-price2": 28000000,
         "upgrade-price-old2": 28000000
       }
@@ -10937,7 +11471,7 @@
     "character": "/builder-base/heroes/battle-machine-character.png",
     "levels": {
       "1": {
-        "upgrade-price4": 900000
+        "upgrade-price4": 0
       },
       "2": {
         "upgrade-price4": 1000000
@@ -11048,7 +11582,7 @@
     "character": "/builder-base/heroes/battle-copter-character.png",
     "levels": {
       "15": {
-        "upgrade-price4": 2500000
+        "upgrade-price4": 0
       },
       "16": {
         "upgrade-price4": 2600000
@@ -12290,6 +12824,16 @@
     "name": "2026 Curious Stump",
     "icon": "/home-base/obstacles/139.png",
     "index": 54
+  },
+  "8000140": {
+    "name": "2026 Clashmas Treep",
+    "icon": "/home-base/obstacles/140.png",
+    "index": 55
+  },
+  "8000141": {
+    "name": "2027 LNY Shield",
+    "icon": "/home-base/obstacles/141.png",
+    "index": 56
   },
   "60000004": {
     "name": "Clashy Constructs Scenery (Jun. 2020)",
@@ -14856,123 +15400,123 @@
     "icon": "/home-base/clancapital/162.png",
     "index": 139
   },
-  "70000001": {
+  "126000000": {
     "name": "Good Job! (free)",
-    "icon": "/home-base/emotes/1.png",
+    "icon": "/home-base/emotes/0.png",
     "index": 1,
     "price": "Free"
   },
-  "70000002": {
+  "126000001": {
     "name": "Angry Barbarian (free)",
-    "icon": "/home-base/emotes/2.png",
+    "icon": "/home-base/emotes/1.png",
     "index": 2,
     "price": "Free"
   },
-  "70000003": {
+  "126000002": {
     "name": "Not Fair (free)",
-    "icon": "/home-base/emotes/3.png",
+    "icon": "/home-base/emotes/2.png",
     "index": 3,
     "price": "Free"
   },
-  "70000004": {
+  "126000003": {
     "name": "The Giggler (free)",
-    "icon": "/home-base/emotes/4.png",
+    "icon": "/home-base/emotes/3.png",
     "index": 4,
     "price": "Free"
   },
-  "70000005": {
+  "126000004": {
     "name": "Huh? (free)",
-    "icon": "/home-base/emotes/5.png",
+    "icon": "/home-base/emotes/4.png",
     "index": 5,
     "price": "Free"
   },
-  "70000006": {
+  "126000020": {
     "name": "No Sweat (Common Skeleton 1)",
-    "icon": "/home-base/emotes/6.png",
+    "icon": "/home-base/emotes/20.png",
     "index": 6,
     "price": "500 Ranked Medals"
   },
-  "70000007": {
+  "126000021": {
     "name": "Muscle Up (Common Barbarian 4)",
-    "icon": "/home-base/emotes/7.png",
+    "icon": "/home-base/emotes/21.png",
     "index": 7,
     "price": "1000 Ranked Medals"
   },
-  "70000008": {
+  "126000022": {
     "name": "Too Easy (Common Archer 7)",
-    "icon": "/home-base/emotes/8.png",
+    "icon": "/home-base/emotes/22.png",
     "index": 8,
     "price": "1500 Ranked Medals"
   },
-  "70000009": {
+  "126000023": {
     "name": "Flame Fanatic (Common Wizard 10)",
-    "icon": "/home-base/emotes/9.png",
+    "icon": "/home-base/emotes/23.png",
     "index": 9,
     "price": "2000 Ranked Medals"
   },
-  "70000010": {
+  "126000024": {
     "name": "Ooh, Shiny! (Wizard Prestige)",
-    "icon": "/home-base/emotes/10.png",
+    "icon": "/home-base/emotes/24.png",
     "index": 10,
     "price": "Prestige"
   },
-  "70000011": {
+  "126000025": {
     "name": "Sneaky Wink (Common Valkyrie 13)",
-    "icon": "/home-base/emotes/11.png",
+    "icon": "/home-base/emotes/25.png",
     "index": 11,
     "price": "2500 Ranked Medals"
   },
-  "70000012": {
+  "126000026": {
     "name": "Evil Plans (Common Witch 16)",
-    "icon": "/home-base/emotes/12.png",
+    "icon": "/home-base/emotes/26.png",
     "index": 12,
     "price": "3000 Ranked Medals"
   },
-  "70000013": {
+  "126000027": {
     "name": "Rumble Time (Common Golem 19)",
-    "icon": "/home-base/emotes/13.png",
+    "icon": "/home-base/emotes/27.png",
     "index": 13,
     "price": "3500 Ranked Medals"
   },
-  "70000014": {
+  "126000028": {
     "name": "N.I.C.E. (Common P.E.K.K.A. 22)",
-    "icon": "/home-base/emotes/14.png",
+    "icon": "/home-base/emotes/28.png",
     "index": 14,
     "price": "4000 Ranked Medals"
   },
-  "70000015": {
+  "126000029": {
     "name": "Show-Off (P.E.K.K.A. Prestige)",
-    "icon": "/home-base/emotes/15.png",
+    "icon": "/home-base/emotes/29.png",
     "index": 15,
     "price": "Prestige"
   },
-  "70000016": {
+  "126000005": {
     "name": "High Voltage (Common Titan 25)",
-    "icon": "/home-base/emotes/16.png",
+    "icon": "/home-base/emotes/5.png",
     "index": 16,
     "price": "4500 Ranked Medals"
   },
-  "70000017": {
+  "126000006": {
     "name": "Fireproof (Common Dragon 28)",
-    "icon": "/home-base/emotes/17.png",
+    "icon": "/home-base/emotes/6.png",
     "index": 17,
     "price": "5000 Ranked Medals"
   },
-  "70000018": {
+  "126000007": {
     "name": "Self-Promotion (Common Electro 31)",
-    "icon": "/home-base/emotes/18.png",
+    "icon": "/home-base/emotes/7.png",
     "index": 18,
     "price": "10000 Ranked Medals"
   },
-  "70000019": {
+  "126000008": {
     "name": "Fire of Legend (Common Legend 3)",
-    "icon": "/home-base/emotes/19.png",
+    "icon": "/home-base/emotes/8.png",
     "index": 19,
     "price": "15000 Ranked Medals"
   },
-  "70000020": {
+  "126000009": {
     "name": "Ultimate Glory (Legend Prestige)",
-    "icon": "/home-base/emotes/20.png",
+    "icon": "/home-base/emotes/9.png",
     "index": 20,
     "price": "Prestige"
   },

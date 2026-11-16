@@ -1668,7 +1668,7 @@
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Stick Horse Equipment' oder 'Stick Horse Deco' sowie beide 'LNY 2026 Clan Houses'",
+                            "name": "Hat 'Stick Horse Deco' sowie beide 'LNY 2026 Clan Houses'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 1,
@@ -1683,7 +1683,7 @@
                                 }]
                             }
                         },{
-                            "name":"Hat 'Stick Horse Equipment' oder 'Stick Horse Deco' sowie 'Lucky Shoe Deco'",
+                            "name":"Hat 'Stick Horse Deco' sowie 'Lucky Shoe Deco'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
@@ -1708,32 +1708,13 @@
                         "allowed": 0,
                         "elements": [{
                                 "type": "element",
-                                "name": "Rocket Backpack Equipment",
-                                "id": "90000053"
-                            },{
-                                "type": "element",
                                 "name": "Barbble Head Deco",
                                 "id": "18000209"
                             }]
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Rocket Backpack Equipment' und 'Barbble Head Deco'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 1,
-                                "elements": [{
-                                    "type": "element",
-                                    "name": "Rocket Backpack Equipment",
-                                    "id": "90000053"
-                                },{
-                                    "type": "element",
-                                    "name": "Barbble Head Deco",
-                                    "id": "18000209"
-                                }]
-                            }
-                        },{
-                            "name": "Hat 'Rocket Backpack Equipment' oder 'Barbble Head Deco' sowie beide 'Sound of Clash Clan Houses'",
+                            "name": "Hat 'Barbble Head Deco' sowie beide 'Sound of Clash Clan Houses'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 1,
@@ -1748,7 +1729,7 @@
                                 }]
                             }
                         },{
-                            "name":"Hat 'Rocket Backpack Equipment' oder 'Barbble Head Deco' sowie 'Face Melter Deco'",
+                            "name":"Hat 'Barbble Head Deco' sowie 'Face Melter Deco'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
@@ -1816,32 +1797,13 @@
                         "allowed": 0,
                         "elements": [{
                                 "type": "element",
-                                "name": "Revenge Deck Equipment",
-                                "id": "90000055"
-                            },{
-                                "type": "element",
                                 "name": "Card Flipper Deco",
                                 "id": "18000233"
                             }]
                     },
                     "ThenForbidden": {
                         "CasesStrict": [{
-                            "name": "Hat 'Revenge Deck Equipment' und 'Card Flipper Deco'",
-                            "IfMoreThan": {
-                                "type": "quantity",
-                                "allowed": 1,
-                                "elements": [{
-                                    "type": "element",
-                                    "name": "Revenge Deck Equipment",
-                                    "id": "90000055"
-                                },{
-                                    "type": "element",
-                                    "name": "Card Flipper Deco",
-                                    "id": "18000233"
-                                }]
-                            }
-                        },{
-                            "name": "Hat 'Revenge Deck Equipment' oder 'Card Flipper Deco' und mindestens ein 'Awesome Clan House'",
+                            "name": "Hat 'Card Flipper Deco' und mindestens ein 'Awesome Clan House'",
                             "IfMoreThan": {
                                 "type": "quantity",
                                 "allowed": 0,
@@ -2338,7 +2300,7 @@
     52000218, 52000203, 52000239, 52000257, 
     52000219, 52000184, 52000240, 52000204, 
     52000259, 52000185, 52000241, 52000205, 
-    52000206, 52000221, 52000260, 52000242, 52000186, 
+    52000221, 52000260, 52000242, 52000186, 
     52000243, 52000207, 52000222, 52000261, 52000187, 
     52000208, 52000223, 52000295, 52000244, 52000262, 
     52000296, 52000209, 52000224, 52000263, 52000245, 
