@@ -116,6 +116,32 @@ public final class LegendRegeln {
 		return false;
 	}
 
+	/**
+	 * Spieler, die in der Perfect-Day-Rangliste dieses einen Legend-Tages nicht
+	 * erscheinen sollen (PERFECTDAY_AUSSCHLUSS, Stefan 16.11.2026: am Starttag nur
+	 * teilweise erfasst, keine Korrektur gewünscht). Format
+	 * {@code 2026-11-16=#TAG1,#TAG2;2026-11-20=#TAG3}. Gilt nur für den Post dieses
+	 * Tages; die Tageswerte bleiben und zählen an den Folgetagen mit.
+	 */
+	public static java.util.Set<String> ausgeschlossen(LocalDate tag, String konfig) {
+		java.util.Set<String> tags = new java.util.HashSet<>();
+		if (konfig == null || konfig.isBlank()) {
+			return tags;
+		}
+		for (String block : konfig.split(";")) {
+			String[] kv = block.split("=", 2);
+			if (kv.length == 2 && kv[0].trim().equals(tag.toString())) {
+				for (String t : kv[1].split(",")) {
+					String n = t.trim().toUpperCase();
+					if (!n.isEmpty()) {
+						tags.add(n.startsWith("#") ? n : "#" + n);
+					}
+				}
+			}
+		}
+		return tags;
+	}
+
 	// ------------------------------------------------------------------
 	// Zuordnung einer Pokaländerung zu Angriffen und Verteidigungen
 	// ------------------------------------------------------------------

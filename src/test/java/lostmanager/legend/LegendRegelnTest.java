@@ -60,6 +60,16 @@ class LegendRegelnTest {
 	}
 
 	@Test
+	void ausschlussGiltNurFuerDenGenanntenTag() {
+		String k = "2026-11-16=#YP2JVC882, l8cu829q ;2026-11-20=#ABC";
+		assertEquals(java.util.Set.of("#YP2JVC882", "#L8CU829Q"), LegendRegeln.ausgeschlossen(LocalDate.of(2026, 11, 16), k));
+		assertEquals(java.util.Set.of("#ABC"), LegendRegeln.ausgeschlossen(LocalDate.of(2026, 11, 20), k));
+		assertTrue(LegendRegeln.ausgeschlossen(LocalDate.of(2026, 11, 17), k).isEmpty());
+		assertTrue(LegendRegeln.ausgeschlossen(LocalDate.of(2026, 11, 16), "").isEmpty());
+		assertTrue(LegendRegeln.ausgeschlossen(LocalDate.of(2026, 11, 16), "kaputt").isEmpty());
+	}
+
+	@Test
 	void ohneBelohnungStandardregelUndKonfiguration() {
 		LocalDate nov = LocalDate.of(2026, 11, 30), dez = LocalDate.of(2026, 12, 28);
 		assertTrue(LegendRegeln.ohneBelohnung(nov, nov.plusDays(28), ""));

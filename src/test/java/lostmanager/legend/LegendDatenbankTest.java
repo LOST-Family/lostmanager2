@@ -106,6 +106,14 @@ class LegendDatenbankTest {
 		z = LegendWertung.perfectDayRangliste(SAISON, T16);
 		assertEquals("Carl", z.get(0).name());
 		assertEquals(new LegendTexte.PdZeile("Bert", 32, 31, false), z.get(1));
+
+		// Ausschluss (PERFECTDAY_AUSSCHLUSS) gilt nur im Post des genannten Tages
+		String raus = "2026-11-16=#A,#C";
+		z = LegendWertung.perfectDayRangliste(SAISON, T16, raus);
+		assertEquals(List.of(new LegendTexte.PdZeile("Bert", 32, 31, false)), z);
+		z = LegendWertung.perfectDayRangliste(SAISON, T17, raus);
+		assertEquals(3, z.size());
+		assertEquals(new LegendTexte.PdZeile("Anna", 62, 32, false), z.get(0));
 	}
 
 	@Test

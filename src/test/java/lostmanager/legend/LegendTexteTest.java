@@ -28,7 +28,8 @@ class LegendTexteTest {
 				+ "Angriffspokale ÷ 10, abgerundet.\n"), s);
 		assertTrue(s.endsWith("━━━━━━━━━━━━━━━━━━━━━━\nWeiter pushen und dranbleiben! ⚔️"));
 		assertTrue(s.contains("Näherung"));
-		assertFalse(s.contains("* Tag"));
+		assertFalse(s.contains("* = Tag"));
+		assertTrue(s.contains("\n-# Automatisch ermittelt (Näherung), bitte Screenshots der Tagesübersicht aufheben.\n"), s);
 	}
 
 	@Test
@@ -39,7 +40,8 @@ class LegendTexteTest {
 		assertTrue(s.contains("ohne Belohnung"));
 		assertTrue(s.contains("– 10 (+3*)"));
 		assertTrue(s.contains("**A\\_b\\*c**"), s);
-		assertTrue(s.contains("* Tag nicht vollständig erfasst"));
+		assertTrue(s.contains("-# Automatisch ermittelt (Näherung), bitte Screenshots der Tagesübersicht aufheben."
+				+ " * = Tag nicht vollständig erfasst, fehlende Angriffe bitte per Screenshot melden."), s);
 	}
 
 	@Test

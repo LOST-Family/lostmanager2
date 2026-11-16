@@ -60,7 +60,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
  * </ol>
  *
  * Umgebung: PERFECTDAY_KANAL, TROPHYHUNT_KANAL, TROPHYHUNT_ROLLE_ID (ohne: kein
- * Abgleich), PERFECTDAY_OHNE_BELOHNUNG, PERFECTDAY_ERSTER_TAG,
+ * Abgleich), PERFECTDAY_OHNE_BELOHNUNG, PERFECTDAY_AUSSCHLUSS (Tag=#A,#B;… nur
+ * im Post dieses Tages weglassen), PERFECTDAY_ERSTER_TAG,
  * TROPHYHUNT_ERSTER_MONAT, LEGEND_TROCKEN=1 (nichts posten, keine Rollen, nur
  * Journal), LEGEND_AUS=1.
  */
@@ -70,6 +71,7 @@ public final class LegendWertung {
 	static final String HUNT_KANAL = env("TROPHYHUNT_KANAL", "1564398226222747810");
 	static final String ROLLE = env("TROPHYHUNT_ROLLE_ID", "");
 	static final String OHNE_BELOHNUNG = env("PERFECTDAY_OHNE_BELOHNUNG", "");
+	static final String AUSSCHLUSS = env("PERFECTDAY_AUSSCHLUSS", "");
 	static final LocalDate ERSTER_TAG = LocalDate.parse(env("PERFECTDAY_ERSTER_TAG", "2026-11-16"));
 	static final YearMonth ERSTER_HUNT = YearMonth.parse(env("TROPHYHUNT_ERSTER_MONAT", "2026-11"));
 	static final boolean TROCKEN = "1".equals(env("LEGEND_TROCKEN", ""));
@@ -656,6 +658,10 @@ public final class LegendWertung {
 	}
 
 	static List<LegendTexte.PdZeile> perfectDayRangliste(long saison, LocalDate tag) {
+		return perfectDayRangliste(saison, tag, AUSSCHLUSS);
+	}
+
+	static List<LegendTexte.PdZeile> perfectDayRangliste(long saison, LocalDate tag, String ausschluss) {
 		record Roh(String tag, String name, int gesamt, int gestern, int perfekt, int pokale, boolean unvoll) {
 		}
 		Map<String, Roh> roh = new LinkedHashMap<>();
@@ -692,7 +698,11 @@ public final class LegendWertung {
 							r.unvoll()));
 		}
 		List<Roh> liste = new ArrayList<>();
+		java.util.Set<String> raus = LegendRegeln.ausgeschlossen(tag, ausschluss);
 		for (Roh r : roh.values()) {
+			if (raus.contains(r.tag())) {
+				continue;
+			}
 			if (r.gesamt() > 0 || r.gestern() > 0) {
 				liste.add(r);
 			}

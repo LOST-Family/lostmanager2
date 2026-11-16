@@ -74,8 +74,8 @@ public final class LegendTexte {
 		List<String> fuss = new ArrayList<>();
 		fuss.add("-# Gesamtpunkte inklusive gestern, in der Klammer die Punkte von gestern. Nur Legend 1, "
 				+ "Angriffspokale ÷ 10, abgerundet.");
-		fuss.add("-# Automatisch aus dem Pokalverlauf ermittelt (Näherung), Screenshots der Tagesübersicht bitte aufheben."
-				+ (stern ? " * Tag nicht vollständig erfasst – fehlende Angriffe bitte per Screenshot melden." : ""));
+		fuss.add("-# Automatisch ermittelt (Näherung), bitte Screenshots der Tagesübersicht aufheben."
+				+ (stern ? " * = Tag nicht vollständig erfasst, fehlende Angriffe bitte per Screenshot melden." : ""));
 		fuss.add(TRENNER);
 		fuss.add("Weiter pushen und dranbleiben! ⚔️");
 		return zerlegen(kopf, liste, fuss);
