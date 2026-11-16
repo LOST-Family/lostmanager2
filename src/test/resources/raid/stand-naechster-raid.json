@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "state": "ongoing",
+      "startTime": "20261120T070000.000Z",
+      "endTime": "20261123T070000.000Z",
+      "capitalTotalLoot": 0,
+      "raidsCompleted": 0,
+      "totalAttacks": 0,
+      "enemyDistrictsDestroyed": 0,
+      "members": []
+    }
+  ]
+}

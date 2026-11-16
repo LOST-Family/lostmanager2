@@ -65,6 +65,26 @@ Removes a listening event.
 **Parameters:**
 - `id` (required): The event ID to remove (from `/listeningevent list`)
 
+### `/listeningevent edit` (seit 14.11.2026)
+Ändert ein bestehendes Event. **Nur was angegeben wird, ändert sich**, der Rest bleibt.
+
+- `id` (Pflicht): das Event – die Auswahl zeigt „#ID · Clan · Typ · Zeitpunkt · Aktion“
+- `clan`, `type`, `duration`, `actiontype`, `channel`, `kickpoint_reason` (alle optional)
+- `werte` (optional): Zusatzwerte (Schwellen, Angriffe, Nachricht …) im Formular ändern
+
+Geprüft wird mit denselben Regeln wie bei `add`, gegen den zusammengeführten neuen Stand.
+Die Zusatzwerte aus dem Formular bleiben, solange die neue Typ/Aktion-Kombination dieselben
+Felder abfragt. Kommt ein Feld dazu (Info → Kickpoint fragt „perfekter Krieg“) oder ändert
+sich die Art (CW → Clan Games), erscheint das Formular von `add`, vorausgefüllt mit allem,
+was sich übernehmen lässt. Ganz ohne Optionen öffnet `edit` direkt das Formular.
+
+Liegt das Event schon im Speicher-Scheduler (fällig binnen fünf Minuten), wird diese
+Einplanung verworfen (`util/EventEinplanung`) und mit den neuen Werten neu eingeplant –
+nie doppelt, nie verloren. Läuft es gerade, lehnt `edit` ab. Ist es für den aktuellen
+Anlass schon gelaufen, gelten die neuen Werte ab dem nächsten Mal; die Antwort sagt das,
+zusammen mit Vorher → Nachher und der nächsten Feuerzeit. Jede Änderung steht im Journal
+(`Listening Event N geändert von …`).
+
 ## Event Types Explained
 
 ### Clan Games (CS)

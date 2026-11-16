@@ -97,7 +97,9 @@ public class PlayerEventPoller {
 		if (json == null) {
 			// The API did not answer. Leaving last_value untouched means the change is
 			// still reported on the next successful tick instead of being swallowed.
-			System.err.println("Player event: no API response for " + playerTag + ", skipping this tick");
+			if (!lostmanager.apiutil.ApiUtil.PAUSE.aktiv()) {
+				System.err.println("Player event: no API response for " + playerTag + ", skipping this tick");
+			}
 			return;
 		}
 

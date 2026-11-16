@@ -2,6 +2,7 @@ package lostmanager.webserver.api;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
@@ -68,7 +69,8 @@ public class RestApiServer {
     }
 
     public void start() throws IOException {
-        server = HttpServer.create(new InetSocketAddress(port), 0);
+        server = HttpServer.create(new InetSocketAddress(bindAdresse(), port), 0);
+        System.out.println("Lausche auf " + bindAdresse().getHostAddress() + ":" + port);
 
         // Register API endpoints
         // Note: More specific paths should be registered before more general paths
@@ -712,6 +714,17 @@ public class RestApiServer {
             // die Verbindung schließen, bevor der Server fertig geantwortet hat.
             // Ignorieren, um Log-Spam zu vermeiden:
             // System.out.println("Client disconnected in " + handlerName + ": " + e.getMessage());
+        } else if (e instanceof lostmanager.apiutil.ApiNichtErreichbarException) {
+            // CoC-API fällt aus (Wartung): 503 statt 500, eine Zeile statt Stacktrace,
+            // und während einer laufenden Pause gar keine Zeile.
+            if (!lostmanager.apiutil.ApiUtil.PAUSE.aktiv()) {
+                System.err.println(handlerName + ": " + e.getMessage());
+            }
+            try {
+                sendResponse(exchange, 503, "{\"error\":\"CoC API unavailable\"}");
+            } catch (IOException ignore) {
+                // Failed to send error response
+            }
         } else {
             String errorMessage = String.valueOf(e);
             System.err.println("Error in " + handlerName + ": " + errorMessage);
@@ -801,5 +814,17 @@ public class RestApiServer {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", allowedOrigin);
         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-API-Token");
+    }
+
+    /**
+     * Adresse, an die die HTTP-Server dieses Bots binden. Vorgabe ist die Schleife
+     * (127.0.0.1): alle Nutzer (Website-Backend, Caddy, Wache, andere Bots) fragen
+     * dort. Ohne Adresse band der Server an alle Schnittstellen und war im Heimnetz
+     * und ueber die globale IPv6-Adresse erreichbar. LOSTMANAGER_API_BIND=0.0.0.0 stellt das
+     * alte Verhalten wieder her.
+     */
+    public static InetAddress bindAdresse() throws java.net.UnknownHostException {
+        final String bind = System.getenv("LOSTMANAGER_API_BIND");
+        return bind == null || bind.isBlank() ? InetAddress.getLoopbackAddress() : InetAddress.getByName(bind.trim());
     }
 }

@@ -460,6 +460,15 @@ public class ListeningEvent {
 
 			Clan clan = new Clan(getClanTag());
 
+			// Eigene Nachricht: braucht keine Kriegs-/Spieldaten, nur den passenden Kopf.
+			// Raids haben ihren eigenen Zweig (handleRaidEvent), alle anderen Typen
+			// hatten bisher keinen und feuerten ohne Post.
+			if (getActionType() == ACTIONTYPE.CUSTOMMESSAGE && type != LISTENINGTYPE.RAID) {
+				handleCustomMessage(clan, type);
+				System.out.println("Completed fireEvent for event ID " + getId());
+				return;
+			}
+
 			switch (type) {
 				case CS -> handleClanGamesEvent(clan);
 
@@ -940,6 +949,26 @@ public class ListeningEvent {
 	}
 
 	/**
+	 * Zählt die Clankriege eines Spielers in einer Season. Verschiebt Supercell die Endzeit eines
+	 * laufenden Kriegs (Wartungspause), stand derselbe Krieg früher unter zwei Endzeiten in
+	 * cw_participation (35 Paare bis 16.11.2026, Verschiebung höchstens 2 h; echte Kriege desselben
+	 * Clans liegen mindestens ~46 h auseinander). Endzeiten desselben Clans, die weniger als
+	 * {@link #CW_GLEICHER_KRIEG} hinter der vorigen liegen, zählen deshalb als ein Krieg.
+	 * Parameter: player_tag, die Clan-Tags, Season-Beginn, Season-Ende.
+	 */
+	static String cwAnzahlSql(String placeholders) {
+		return "SELECT COUNT(*) AS war_count FROM ("
+				+ "SELECT war_end_time, LAG(war_end_time) OVER (PARTITION BY clan_tag ORDER BY war_end_time) AS vorige "
+				+ "FROM (SELECT DISTINCT clan_tag, war_end_time FROM cw_participation "
+				+ "WHERE player_tag = ? AND war_type = 'cw' AND clan_tag IN (" + placeholders + ") "
+				+ "AND war_end_time >= ? AND war_end_time < ?) kriege) mit_vorigem "
+				+ "WHERE vorige IS NULL OR war_end_time - vorige >= INTERVAL '" + CW_GLEICHER_KRIEG + "'";
+	}
+
+	/** Endzeiten desselben Clans, die näher beieinander liegen, gehören zu einem Krieg. */
+	public static final String CW_GLEICHER_KRIEG = "12 hours";
+
+	/**
 	 * Reports every member who was in the lineup of fewer clan wars this season
 	 * than required and - for kickpoint events - hands out kickpoints for it.
 	 *
@@ -1008,11 +1037,7 @@ public class ListeningEvent {
 			params[clanTags.size() + 1] = seasonStart;
 			params[clanTags.size() + 2] = seasonEnd;
 
-			Long count = DBUtil.getValueFromSQL(
-					"SELECT COUNT(DISTINCT war_end_time) AS war_count FROM cw_participation "
-							+ "WHERE player_tag = ? AND war_type = 'cw' AND clan_tag IN (" + placeholders + ") "
-							+ "AND war_end_time >= ? AND war_end_time < ?",
-					Long.class, params);
+			Long count = DBUtil.getValueFromSQL(cwAnzahlSql(placeholders), Long.class, params);
 			int wars = count != null ? count.intValue() : 0;
 
 			// Someone who joined after the season began could not have played them all
@@ -1087,6 +1112,11 @@ public class ListeningEvent {
 
 	private void handleClanWarEvent(Clan clan) {
 		if (!clan.isCWActive()) {
+			// Antwortet die API nicht, ist das kein „kein Krieg“: werfen, damit die
+			// Wiederholung greift und das Event sonst als Fehler statt als „fired“ endet.
+			if (clan.didApiRequestFail()) {
+				throw new IllegalStateException("CW-Status für " + clan.getTag() + " nicht abrufbar (API-Ausfall)");
+			}
 			return;
 		}
 
@@ -1343,6 +1373,15 @@ public class ListeningEvent {
 		}
 	}
 
+	/**
+	 * Räumt nur Filler ÄLTERER Kriege weg, nie die des gerade endenden. Bis 16.11.2026 löschte
+	 * ein Kriegsende-Event ohne Verstoß sofort die Liste dieses Kriegs; hat der Clan zwei solche
+	 * Events (Pflicht 1 und Pflicht 2, feuern in derselben Sekunde), las das zweite danach eine
+	 * leere Liste und führte Filler als „0/x“ – mit Kickpunkt nach der 5-Minuten-Prüfung
+	 * (15.11.2026, #2QC0QQPQ2, Events 226/227). Gesucht wird ohnehin nur ±24 h um das Kriegsende.
+	 */
+	static final String CW_FILLER_AUFRAEUMEN = "DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time < ?::timestamp - INTERVAL '24 hours'";
+
 	private void handleCWMissedAttacks(Clan clan, org.json.JSONObject cwJson) {
 		// Get required attacks from action values (default to attacksPerMember from
 		// API)
@@ -1380,28 +1419,28 @@ public class ListeningEvent {
 				final ListeningEvent thisEvent = this;
 				final String originalMessage = result.message; // Store original message for fallback
 
-				// Schedule 5-minute delayed verification using Bot's scheduler
-				// Using a single-use scheduler that shuts down after execution
+				// Bis zur Prüfung den Krieg weiter beobachten und den letzten vollständigen Stand
+				// merken: sucht der Clan direkt neu, liefert die API nach 5 Minuten nur noch
+				// notInWar ohne Mitglieder (12./13.11.2026).
+				CwKriegsendeStand.merke(clanTag, cwJson);
+				CwKriegsendeStand.beobachte(clanTag, endTimeTs.getTime(),
+						System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
+
+				// Prüfung nach 5 Minuten; fehlt der Krieg dann noch im Kriegslog, wird bis
+				// CW_PRUEFFRIST_MS alle CWL_PRUEF_ABSTAND_S Sekunden nachgefasst.
+				final long frist = System.currentTimeMillis() + CW_PRUEFFRIST_MS;
 				lostmanager.Bot.activeVerificationTasks.incrementAndGet();
-				ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-				scheduler.schedule(() -> {
-					try {
-						handleCWMissedAttacksDelayedVerification(clanTag, finalEndTimeTs,
-								finalFillerTags, messageId, channelId, thisEvent, originalMessage);
-					} catch (Exception e) {
-						System.err.println("Error in delayed CW verification: " + e.getMessage());					} finally {
-						lostmanager.Bot.activeVerificationTasks.decrementAndGet();
-						scheduler.shutdown();
-					}
-				}, 5, TimeUnit.MINUTES);
+				cwlNachpruefen(Executors.newSingleThreadScheduledExecutor(), 300,
+						() -> handleCWMissedAttacksDelayedVerification(clanTag, finalEndTimeTs,
+								finalFillerTags, messageId, channelId, thisEvent, originalMessage, frist));
 
 				System.out.println("Scheduled 5-minute CW missed attacks verification for clan " + clanTag);
 			}
 		} else if (isEndOfWarEvent && !result.hasMissedAttacks) {
 			// End of war but no missed attacks - nothing to send or schedule
 			// Clean up fillers - safe to delete here since no verification will occur (within 24 hours)
-			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time > ?::timestamp - INTERVAL '24 hours' AND war_end_time < ?::timestamp + INTERVAL '24 hours'", clan.getTag(),
-					endTimeTs, endTimeTs);
+			DBUtil.executeUpdate(CW_FILLER_AUFRAEUMEN, clan.getTag(),
+					endTimeTs);
 		} else {
 			// Not end of war (e.g., reminder during war) - use original behavior
 			if (result.hasMissedAttacks) {
@@ -1415,9 +1454,9 @@ public class ListeningEvent {
 	 * Fetches fresh data, updates the message, and processes kickpoints if
 	 * appropriate.
 	 */
-	private void handleCWMissedAttacksDelayedVerification(String clanTag,
+	private boolean handleCWMissedAttacksDelayedVerification(String clanTag,
 			java.sql.Timestamp endTimeTs, ArrayList<String> fillerTags, long messageId, String channelId,
-			ListeningEvent event, String originalMessage) {
+			ListeningEvent event, String originalMessage, long frist) {
 
 		System.out.println("Starting 5-minute CW verification for clan " + clanTag);
 
@@ -1433,50 +1472,105 @@ public class ListeningEvent {
 						+ " could not fetch war data, leaving the original message in place");
 				editMessageInChannel(channelId, messageId, originalMessage
 						+ "\n\n*Daten konnten nach 5min nicht überprüft werden (API nicht erreichbar)*");
-				return;
+				return true;
 			}
 			String currentState = cwJson.getString("state");
 
-			// Check if war data is still available (state is notInWar or warEnded)
-			boolean dataIsReliable = currentState.equals("notInWar") || currentState.equals("warEnded");
+			// Only "warEnded" still carries the finished war with its member list.
+			// "notInWar" means the clan is already searching again: the API then returns
+			// no "clan.members", and counting it as reliable threw
+			// JSONObject["members"] not found (12./13.11.2026). Same rule as the CWL check.
+			boolean dataIsReliable = currentState.equals("warEnded");
 
-			// Re-fetch required attacks from event's action values to ensure the configured
-			// setting is preserved
-			// This prevents the setting from being lost and reverting to the API's
-			// attacksPerMember value
-			int actualRequiredAttacks = event.getRequiredAttacksFromConfig(cwJson);
+			// Daten, nach denen geprüft wird, und der Vermerk dazu
+			org.json.JSONObject pruefDaten = dataIsReliable ? cwJson : null;
+			String vermerk = "\n\n*Daten nach 5min überprüft*";
+			String unzuverlaessigVermerk = null;
+
+			if (!dataIsReliable) {
+				// Sucht der Clan schon neu, den letzten vollständigen Stand vor Kriegsende nehmen
+				// (CwKriegsendeStand) - aber nur, wenn er sicher alle Angriffe enthält.
+				CwKriegsendeStand.Stand stand = CwKriegsendeStand.fuer(clanTag, endTimeTs.getTime());
+				Integer lautLog = null;
+				if (stand != null && !stand.beendet()) {
+					lautLog = CwKriegsendeStand.angriffeLautKriegslog(clan.getWarLogJson(5), endTimeTs.getTime());
+				}
+				CwKriegsendeStand.Urteil urteil = CwKriegsendeStand.beurteile(stand, lautLog);
+				System.out.println("CW verification for clan " + clanTag + ": state=" + currentState
+						+ ", gemerkter Stand " + (stand == null ? "keiner"
+								: stand.state() + " mit " + stand.angriffe() + " Angriffen")
+						+ ", Kriegslog " + lautLog + " -> " + urteil);
+				String standZeit = stand == null ? "" : "<t:" + (stand.abgerufenUm() / 1000) + ":T>";
+				switch (urteil) {
+					case ENDGUELTIG -> {
+						pruefDaten = stand.json();
+						vermerk = "\n\n*Daten nach Kriegsende überprüft (Stand von " + standZeit
+								+ ", bevor der Clan neu gesucht hat)*";
+					}
+					case VOLLSTAENDIG_LAUT_KRIEGSLOG -> {
+						pruefDaten = stand.json();
+						vermerk = "\n\n*Daten aus dem letzten Stand vor Kriegsende (" + standZeit
+								+ "), laut Kriegslog vollständig (" + lautLog + " Angriffe)*";
+					}
+					case KRIEGSLOG_FEHLT -> {
+						if (System.currentTimeMillis() < frist) {
+							System.out.println("CW verification for clan " + clanTag
+									+ ": Krieg noch nicht im Kriegslog, neuer Versuch in " + CWL_PRUEF_ABSTAND_S + "s");
+							return false;
+						}
+						unzuverlaessigVermerk = "\n\n*Der Clan sucht schon den nächsten Krieg. Der letzte Stand vor Kriegsende ("
+								+ standZeit + ") ließ sich nicht mit dem Kriegslog abgleichen – keine Kickpunkte verteilt.*";
+					}
+					case UNVOLLSTAENDIG -> unzuverlaessigVermerk = "\n\n*Der Clan sucht schon den nächsten Krieg. Der letzte Stand vor Kriegsende ("
+							+ standZeit + ") zählt " + stand.angriffe() + " Angriffe, der Kriegslog " + lautLog
+							+ " – wer danach noch angegriffen hat, ist nicht zu sehen. Keine Kickpunkte verteilt.*";
+					case KEIN_STAND -> {
+						// unverändert wie bisher
+					}
+				}
+			}
 
 			String updatedMessage;
 			boolean shouldProcessKickpoints;
 			CWMissedAttacksResult result = null;
+			// Re-fetch required attacks from event's action values to ensure the configured
+			// setting is preserved
+			// This prevents the setting from being lost and reverting to the API's
+			// attacksPerMember value
+			int actualRequiredAttacks = pruefDaten != null ? event.getRequiredAttacksFromConfig(pruefDaten) : 0;
 
-			if (dataIsReliable) {
+			if (pruefDaten != null) {
 				// Data is reliable - build updated message with fresh data
-				result = buildCWMissedAttacksMessage(clan, cwJson, actualRequiredAttacks, fillerTags, true);
+				result = buildCWMissedAttacksMessage(clan, pruefDaten, actualRequiredAttacks, fillerTags, true);
 				
-				org.json.JSONObject clanData = cwJson.getJSONObject("clan");
-				boolean isPerfectWar = clanData.has("stars") && cwJson.has("teamSize") &&
-									   clanData.getInt("stars") == cwJson.getInt("teamSize") * 3;
+				org.json.JSONObject clanData = pruefDaten.getJSONObject("clan");
+				boolean isPerfectWar = clanData.has("stars") && pruefDaten.has("teamSize") &&
+									   clanData.getInt("stars") == pruefDaten.getInt("teamSize") * 3;
 				// Optional per-event override: normally a perfect war exempts everyone,
 				// but a clan can choose to hand out kickpoints for missed attacks anyway.
 				boolean ignorePerfectWar = event.getFlag(SETTING_IGNORE_PERFECT_WAR, false);
 
 				if (isPerfectWar && !ignorePerfectWar) {
-					updatedMessage = result.message + "\n\n*Daten nach 5min überprüft*\n**Perfekter Krieg erreicht! Keine Kickpunkte verteilt.**";
+					updatedMessage = result.message + vermerk + "\n**Perfekter Krieg erreicht! Keine Kickpunkte verteilt.**";
 					shouldProcessKickpoints = false;
 				} else {
-					updatedMessage = result.message + "\n\n*Daten nach 5min überprüft*";
+					updatedMessage = result.message + vermerk;
 					if (isPerfectWar) {
 						updatedMessage += "\n**Perfekter Krieg – Kickpunkte werden dennoch vergeben (Einstellung).**";
 					}
 					shouldProcessKickpoints = result.hasMissedAttacks && event.getActionType() == ACTIONTYPE.KICKPOINT;
 				}
+			} else if (unzuverlaessigVermerk != null) {
+				updatedMessage = originalMessage + unzuverlaessigVermerk;
+				shouldProcessKickpoints = false;
 			} else {
 				// New war has already started - data is not reliable
 				// Use the original message content and just append a warning
 				// Don't try to build a new message as the API would return data for the new war
 				updatedMessage = originalMessage
-						+ "\n\n*Daten sind nicht zuverlässig, da Krieg direkt wieder gestartet wurde*";
+						+ (currentState.equals("notInWar")
+								? "\n\n*Daten nach 5min nicht mehr abrufbar, da der Clan schon den nächsten Krieg sucht*"
+								: "\n\n*Daten sind nicht zuverlässig, da Krieg direkt wieder gestartet wurde*");
 				shouldProcessKickpoints = false; // Don't process kickpoints with unreliable data
 			}
 
@@ -1492,12 +1586,13 @@ public class ListeningEvent {
 			}
 
 			// Clean up fillers after processing (within 24 hours to handle API time shifts)
-			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time > ?::timestamp - INTERVAL '24 hours' AND war_end_time < ?::timestamp + INTERVAL '24 hours'", clanTag, endTimeTs, endTimeTs);
+			DBUtil.executeUpdate(CW_FILLER_AUFRAEUMEN, clanTag, endTimeTs);
 
 			System.out.println("Completed 5-minute CW verification for clan " + clanTag + " (dataReliable="
-					+ dataIsReliable + ", kickpoints=" + shouldProcessKickpoints + ")");
+					+ (pruefDaten != null) + ", kickpoints=" + shouldProcessKickpoints + ")");
+			return true;
 
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			System.err.println("Error in CW delayed verification for clan " + clanTag + ": " + e.getMessage());
 			// On error, try to update the message with an error note appended to original
 			try {
@@ -1509,13 +1604,20 @@ public class ListeningEvent {
 
 			// Still clean up fillers even on error (within 24 hours)
 			try {
-				DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time > ?::timestamp - INTERVAL '24 hours' AND war_end_time < ?::timestamp + INTERVAL '24 hours'", clanTag,
-						endTimeTs, endTimeTs);
+				DBUtil.executeUpdate(CW_FILLER_AUFRAEUMEN, clanTag,
+						endTimeTs);
 			} catch (Exception e3) {
 				System.err.println("Failed to delete fillers on error: " + e3.getMessage());
 			}
+			return true;
 		}
 	}
+
+	/**
+	 * Höchstens so lange nach Kriegsende wird auf den Krieg im Kriegslog gewartet, wenn der
+	 * Clan schon neu sucht und nur der letzte inWar-Stand vorliegt (Kriegslog cacht 120 s).
+	 */
+	private static final long CW_PRUEFFRIST_MS = TimeUnit.MINUTES.toMillis(15);
 
 	/**
 	 * Helper class to store missed attacks result
@@ -2041,7 +2143,7 @@ public class ListeningEvent {
 				+ (frist / 1000) + ":t>).*";
 	}
 
-	/** Wiederholt die Prüfung, bis sie true liefert; dann Zähler runter und Scheduler aus. */
+	/** Wiederholt die Prüfung (CWL-Tag wie Clankrieg), bis sie true liefert; dann Zähler runter und Scheduler aus. */
 	private static void cwlNachpruefen(ScheduledExecutorService scheduler, long verzoegerungSek,
 			java.util.function.BooleanSupplier pruefung) {
 		scheduler.schedule(() -> {
@@ -2059,6 +2161,19 @@ public class ListeningEvent {
 				}
 			}
 		}, verzoegerungSek, TimeUnit.SECONDS);
+	}
+
+	/**
+	 * Erkennt die Ersatzantwort, die {@link Clan#getRaidJson()} bei einem fehlgeschlagenen
+	 * Abruf liefert ({@code {"items":[{"state":"ended"}]}}): ein echter Raid-Eintrag trägt
+	 * immer eine Startzeit. Ein Clan ganz ohne Raids (leere Liste) ist kein Ausfall.
+	 */
+	static boolean raidDatenFehlen(org.json.JSONObject raidJson) {
+		if (raidJson == null) return true;
+		org.json.JSONArray items = raidJson.optJSONArray("items");
+		if (items == null || items.length() == 0) return false;
+		org.json.JSONObject erster = items.optJSONObject(0);
+		return erster == null || !erster.has("startTime");
 	}
 
 	private void handleRaidEvent(Clan clan) {
@@ -2131,8 +2246,106 @@ public class ListeningEvent {
 			return; // RAIDFAILS only handles district analysis
 		}
 
-		// Handle INFOMESSAGE and KICKPOINT - missed attacks only ("Fehlende Hits")
+		// INFOMESSAGE und KICKPOINT: fehlende Angriffe ("Fehlende Hits")
+		RaidTeilnahmeErgebnis ergebnis = baueRaidTeilnahme(clan, isRaidActive);
+		boolean kickpunkte = getActionType() == ACTIONTYPE.KICKPOINT;
+
+		// Ein Kickpunkt-Event zum Raid-Ende vergibt nichts auf dem Stand von 07:00:00. Wer in
+		// den letzten Minuten angreift, steht dann noch mit 5/6 oder gar nicht in der API, und
+		// Angriffe, die vor dem Ende begonnen haben, laufen noch aus. Die Meldung geht sofort
+		// raus, die Kickpunkte vergibt die Nachprüfung mit frischen Daten - dieselbe, die die
+		// Distrikt-Analyse (RAIDFAILS) benutzt, und dieselben 5 Minuten wie bei CW und CWL.
+		if (kickpunkte && getDurationUntilEnd() <= 0) {
+			raidTeilnahmeMitNachpruefung(clan, ergebnis);
+			return;
+		}
+
+		// Erinnerungen während des Raids (Dauer > 0): wie bisher sofort
+		if (ergebnis.hasMissedAttacks) {
+			sendMessageToChannel(ergebnis.message);
+		}
+		if (kickpunkte) {
+			for (RaidKickpunkt k : ergebnis.kickpunkte) {
+				addKickpointForPlayer(k.player(), k.reason(), k.detail());
+			}
+		}
+	}
+
+	/** Ein Kickpunkt, den eine Raid-Auswertung vergeben würde. */
+	record RaidKickpunkt(Player player, String reason, String detail) {
+	}
+
+	/** Nachricht und Kickpunkte der Teilnahme-Auswertung (nicht teilgenommen / Angriffe offen). */
+	private static final class RaidTeilnahmeErgebnis {
+		final String message;
+		final boolean hasMissedAttacks;
+		final ArrayList<RaidKickpunkt> kickpunkte;
+
+		RaidTeilnahmeErgebnis(String message, boolean hasMissedAttacks, ArrayList<RaidKickpunkt> kickpunkte) {
+			this.message = message;
+			this.hasMissedAttacks = hasMissedAttacks;
+			this.kickpunkte = kickpunkte;
+		}
+	}
+
+	/**
+	 * Ergebnis der reinen Teilnahme-Auswertung eines Raid-Stands, siehe
+	 * {@link #raidTeilnahmeAuswerten}.
+	 */
+	static final class RaidTeilnahme {
+		/** Tags ohne Eintrag im Raid, in der Reihenfolge der Mitgliederliste. */
+		final java.util.List<String> nichtDabei = new ArrayList<>();
+		/** Tag -> {Angriffe, Maximum}, in der Reihenfolge der Mitgliederliste. */
+		final java.util.LinkedHashMap<String, int[]> offen = new java.util.LinkedHashMap<>();
+	}
+
+	/**
+	 * Reine Teilnahme-Auswertung: wer von den pflichtigen Mitgliedern gar nicht im Raid
+	 * steht, und wer seine Angriffe nicht ausgeschöpft hat (Angriffe &lt; attackLimit +
+	 * bonusAttackLimit). Liest die Felder wie {@link Clan#getRaidMemberList()}.
+	 */
+	static RaidTeilnahme raidTeilnahmeAuswerten(java.util.List<String> mitgliederTags, JSONObject raidJson) {
+		java.util.Map<String, int[]> stand = new HashMap<>();
+		org.json.JSONArray items = raidJson == null ? null : raidJson.optJSONArray("items");
+		if (items != null && items.length() > 0) {
+			JSONObject raid = items.optJSONObject(0);
+			org.json.JSONArray members = raid == null ? null : raid.optJSONArray("members");
+			if (members != null) {
+				for (int i = 0; i < members.length(); i++) {
+					JSONObject m = members.getJSONObject(i);
+					int attacks = m.optInt("attacks", m.optInt("attackCount", 0));
+					int max = m.optInt("attackLimit", 6) + m.optInt("bonusAttackLimit", 0);
+					stand.put(m.getString("tag"), new int[] { attacks, max });
+				}
+			}
+		}
+		RaidTeilnahme t = new RaidTeilnahme();
+		for (String tag : mitgliederTags) {
+			int[] s = stand.get(tag);
+			if (s == null) {
+				t.nichtDabei.add(tag);
+			} else if (s[0] < s[1]) {
+				t.offen.put(tag, s);
+			}
+		}
+		return t;
+	}
+
+	/**
+	 * Baut die Raid-Meldung (nicht teilgenommen, in anderem LOST-Clan angegriffen, offene
+	 * Angriffe) auf dem Stand, den {@code clan} gerade liefert, samt der Kickpunkte, die ein
+	 * KICKPOINT-Event dafür vergäbe. Vergibt selbst nichts.
+	 *
+	 * @throws IllegalStateException wenn die Raid-Daten dieses oder eines anderen LOST-Clans
+	 *                               fehlen (API-Ausfall) - lieber wiederholen als falsch strafen
+	 */
+	private RaidTeilnahmeErgebnis baueRaidTeilnahme(Clan clan, boolean isRaidActive) {
 		ArrayList<Player> raidMembers = clan.getRaidMemberList();
+		// Ohne echte Raid-Daten wäre die Teilnehmerliste leer und JEDES Mitglied gälte als
+		// „nicht teilgenommen“ (bei KICKPOINT: Strafe für den ganzen Clan). Werfen → Wiederholung.
+		if (raidDatenFehlen(clan.getRaidJsonFull())) {
+			throw new IllegalStateException("Raid-Daten für " + clan.getTag() + " nicht abrufbar (API-Ausfall)");
+		}
 		ArrayList<Player> dbMembers = clan.getPlayersDB();
 
 		StringBuilder message = new StringBuilder();
@@ -2164,39 +2377,38 @@ public class ListeningEvent {
 		message.append("\n");
 
 		boolean hasMissedAttacks = false;
-		ArrayList<Player> notFinished = new ArrayList<>();
-		ArrayList<Player> notDone = new ArrayList<>();
+		ArrayList<RaidKickpunkt> kickpunkte = new ArrayList<>();
 
-		// Check members who didn't raid at all or didn't finish
+		// Pflichtige Mitglieder: ohne versteckte Vize und ohne Abgemeldete (ohne Pings)
+		ArrayList<Player> pflichtig = new ArrayList<>();
 		for (Player dbPlayer : dbMembers) {
-			// Skip hidden co-leaders as they don't need to be in clan/raid
 			if (dbPlayer.isHiddenColeader()) {
 				continue;
 			}
-
-			// Skip signed-off members
 			MemberSignoff signoff = new MemberSignoff(dbPlayer.getTag());
 			if (signoff.isActive() && !signoff.isReceivePings()) {
 				continue;
 			}
+			pflichtig.add(dbPlayer);
+		}
+		ArrayList<String> pflichtTags = new ArrayList<>();
+		for (Player p : pflichtig) {
+			pflichtTags.add(p.getTag());
+		}
+		RaidTeilnahme teilnahme = raidTeilnahmeAuswerten(pflichtTags, clan.getRaidJsonFull());
 
-			boolean foundInRaid = false;
-			for (Player raidPlayer : raidMembers) {
-				if (raidPlayer.getTag().equals(dbPlayer.getTag())) {
-					foundInRaid = true;
-					int attacks = raidPlayer.getCurrentRaidAttacks();
-					int maxAttacks = raidPlayer.getCurrentRaidAttackLimit()
-							+ raidPlayer.getCurrentRaidbonusAttackLimit();
-
-					if (attacks < maxAttacks) {
-						notFinished.add(raidPlayer);
-					}
-					break;
-				}
-			}
-
-			if (!foundInRaid) {
+		ArrayList<Player> notDone = new ArrayList<>();
+		ArrayList<Player> notFinished = new ArrayList<>();
+		for (Player dbPlayer : pflichtig) {
+			if (teilnahme.nichtDabei.contains(dbPlayer.getTag())) {
 				notDone.add(dbPlayer);
+			} else if (teilnahme.offen.containsKey(dbPlayer.getTag())) {
+				for (Player raidPlayer : raidMembers) {
+					if (raidPlayer.getTag().equals(dbPlayer.getTag())) {
+						notFinished.add(raidPlayer);
+						break;
+					}
+				}
 			}
 		}
 
@@ -2207,6 +2419,11 @@ public class ListeningEvent {
 			for (String s : allClantags) {
 				Clan c = new Clan(s);
 				c.getRaidMemberList(); // load from API
+				// Fehlt die Antwort eines anderen LOST-Clans, sähe aus wie „hat nirgends
+				// geraidet“, wer dort angegriffen hat. Lieber wiederholen als falsch strafen.
+				if (raidDatenFehlen(c.getRaidJsonFull())) {
+					throw new IllegalStateException("Raid-Daten für " + s + " nicht abrufbar (API-Ausfall)");
+				}
 				allClans.add(c);
 			}
 			for (int i = 0; i < notDone.size(); i++) {
@@ -2245,9 +2462,7 @@ public class ListeningEvent {
 				}
 				message.append("\n");
 
-				if (getActionType() == ACTIONTYPE.KICKPOINT) {
-					addKickpointForPlayer(p, "Raid nicht teilgenommen", "nicht teilgenommen");
-				}
+				kickpunkte.add(new RaidKickpunkt(p, "Raid nicht teilgenommen", "nicht teilgenommen"));
 			}
 		}
 
@@ -2258,75 +2473,149 @@ public class ListeningEvent {
 			}
 			for (Player p : notFinished) {
 				hasMissedAttacks = true;
-				int attacks = p.getCurrentRaidAttacks();
-				int maxAttacks = p.getCurrentRaidAttackLimit() + p.getCurrentRaidbonusAttackLimit();
+				int[] s = teilnahme.offen.get(p.getTag());
+				int attacks = s[0];
+				int maxAttacks = s[1];
 				message.append(p.getNameAPI());
 				if (p.getUser() != null) {
 					message.append(" (<@").append(p.getUser().getUserID()).append(">)");
 				}
 				message.append(": ").append(attacks).append("/").append(maxAttacks).append("\n");
 
-				if (getActionType() == ACTIONTYPE.KICKPOINT) {
-					addKickpointForPlayer(p, "Raid Angriffe verpasst (" + attacks + "/" + maxAttacks + ")",
-							attacks + "/" + maxAttacks + " Angriffe");
-				}
+				kickpunkte.add(new RaidKickpunkt(p, "Raid Angriffe verpasst (" + attacks + "/" + maxAttacks + ")",
+						attacks + "/" + maxAttacks + " Angriffe"));
 			}
 		}
 
-		if (hasMissedAttacks) {
-			sendMessageToChannel(message.toString());
+		return new RaidTeilnahmeErgebnis(message.toString(), hasMissedAttacks, kickpunkte);
+	}
+
+	/** Hinweis unter der sofortigen Raid-Meldung eines Kickpunkt-Events, bis die Nachprüfung lief. */
+	static final String RAID_VORLAEUFIG_HINWEIS = "\n*Vorläufig – Kickpunkte werden erst nach der Überprüfung in 5 Minuten vergeben.*";
+
+	/**
+	 * Raid-Ende bei einem Kickpunkt-Event: Meldung sofort, Kickpunkte erst in der
+	 * Nachprüfung (siehe {@link #raidNachpruefen}).
+	 */
+	private void raidTeilnahmeMitNachpruefung(Clan clan, RaidTeilnahmeErgebnis ergebnis) {
+		if (!ergebnis.hasMissedAttacks) {
+			// Später kann es nur besser werden (Angriffe kommen dazu, keine weg) - nichts zu prüfen
+			System.out.println("Raid participation for clan " + clan.getTag() + " (event " + getId()
+					+ "): alle haben angegriffen, keine Nachprüfung nötig");
+			return;
+		}
+
+		JSONObject raid = clan.getRaidJsonFull().getJSONArray("items").getJSONObject(0);
+		String raidStart = raid.optString("startTime", "");
+		String raidEnde = raid.optString("endTime", "");
+
+		// Höchstens eine Nachprüfung je Event und Raid - auch wenn der Lauf wiederholt wird
+		if (!raidAuswertungBeanspruchen("plan", getId(), raidStart, raidEnde)) {
+			System.out.println("Raid participation verification for event " + getId() + " (Raid " + raidStart
+					+ " bis " + raidEnde + ") ist schon eingeplant, dieser Lauf tut nichts");
+			return;
+		}
+
+		Message sentMessage = sendMessageToChannelAndReturn(
+				truncateForDiscord(ergebnis.message, RAID_VORLAEUFIG_HINWEIS));
+		RaidNachpruefung np = new RaidNachpruefung(true, this, clan.getTag(),
+				sentMessage != null ? sentMessage.getIdLong() : null, getChannelID(), ergebnis.message, raidStart,
+				raidEnde, 0, 0, 0, true);
+		scheduleRaidVerification(np, 0);
+	}
+	/** Liest den Text einer benutzerdefinierten Nachricht aus den gespeicherten Aktionswerten. */
+	static String parseCustomMessage(String customMessageJson) {
+		if (customMessageJson == null || customMessageJson.isEmpty()) {
+			return "";
+		}
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			java.util.Map<String, String> messageMap = mapper.readValue(customMessageJson,
+					new TypeReference<java.util.HashMap<String, String>>() {
+					});
+			return messageMap.getOrDefault("message", "");
+		} catch (JsonProcessingException e) {
+			System.err.println("Error parsing custom message: " + e.getMessage());
+			return "";
 		}
 	}
 
-	private void handleRaidCustomMessage(boolean isRaidActive) {
-		// Get custom message from action values
-		String customMessageJson = DBUtil.getValueFromSQL("SELECT actionvalues FROM listening_events WHERE id = ?",
-				String.class, getId());
-
-		String customMessage = "";
-		if (customMessageJson != null && !customMessageJson.isEmpty()) {
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				java.util.Map<String, String> messageMap = mapper.readValue(customMessageJson,
-						new TypeReference<java.util.HashMap<String, String>>() {
-						});
-				customMessage = messageMap.getOrDefault("message", "");
-			} catch (JsonProcessingException e) {
-				System.err.println("Error parsing custom message: " + e.getMessage());
-			}
-		}
-
-		// Build message with raid header (like CW format)
+	/**
+	 * Baut die Nachricht: Kopf ("## ... - "), dann Restzeit (bei Dauer &gt; 0) oder der
+	 * Endetext, dann der eigene Text. Ohne Kopf nur der eigene Text.
+	 */
+	static String buildCustomMessage(String kopf, boolean laeuftNoch, long durationUntilEndMs, String endeText,
+			String customMessage) {
 		StringBuilder message = new StringBuilder();
-		message.append("## Raid - ");
+		if (kopf != null) {
+			message.append(kopf);
+			if (laeuftNoch && durationUntilEndMs > 0) {
+				int secondsLeft = (int) (durationUntilEndMs / 1000);
+				int minutesLeft = secondsLeft / 60;
+				int hoursLeft = minutesLeft / 60;
 
-		// Show time remaining if raid is active (same format as CW)
-		if (isRaidActive && getDurationUntilEnd() > 0) {
-			int secondsLeft = (int) (getDurationUntilEnd() / 1000);
-			int minutesLeft = secondsLeft / 60;
-			int hoursLeft = minutesLeft / 60;
+				secondsLeft = secondsLeft % 60;
+				minutesLeft = minutesLeft % 60;
 
-			secondsLeft = secondsLeft % 60;
-			minutesLeft = minutesLeft % 60;
-
-			if (hoursLeft > 0) {
-				message.append("**").append(hoursLeft).append("h** ");
+				if (hoursLeft > 0) {
+					message.append("**").append(hoursLeft).append("h** ");
+				}
+				if (minutesLeft > 0) {
+					message.append("**").append(minutesLeft).append("m** ");
+				}
+				if (secondsLeft > 0) {
+					message.append("**").append(secondsLeft).append("s** ");
+				}
+				message.append("verbleibend\n\n");
+			} else {
+				message.append(endeText).append("\n\n");
 			}
-			if (minutesLeft > 0) {
-				message.append("**").append(minutesLeft).append("m** ");
-			}
-			if (secondsLeft > 0) {
-				message.append("**").append(secondsLeft).append("s** ");
-			}
-			message.append("verbleibend\n\n");
-		} else {
-			message.append("**Raid beendet.**\n\n");
 		}
-
-		// Append custom message
 		message.append(customMessage);
+		return message.toString();
+	}
 
-		sendMessageToChannel(message.toString());
+	private String loadCustomMessage() {
+		return parseCustomMessage(DBUtil.getValueFromSQL("SELECT actionvalues FROM listening_events WHERE id = ?",
+				String.class, getId()));
+	}
+
+	private void handleRaidCustomMessage(boolean isRaidActive) {
+		sendMessageToChannel(buildCustomMessage("## Raid - ", isRaidActive, getDurationUntilEnd(),
+				"**Raid beendet.**", loadCustomMessage()));
+	}
+
+	/**
+	 * Eigene Nachricht für alle Nicht-Raid-Typen. Bei CW/CWL mit Kriegskopf wie die
+	 * anderen Kriegsmeldungen; Dauer 0 heißt: Ereignis am Ende.
+	 */
+	private void handleCustomMessage(Clan clan, LISTENINGTYPE type) {
+		String text = loadCustomMessage();
+		if (text.isBlank()) {
+			System.err.println("Custom message event " + getId() + " has no message text - nothing to post");
+			return;
+		}
+		String kopf;
+		String ende;
+		switch (type) {
+			case CW -> {
+				kopf = "## " + clan.getNameAPI() + " Clankrieg - ";
+				ende = "**Krieg beendet.**";
+			}
+			case CWLDAY -> {
+				kopf = "## " + clan.getNameAPI() + " CWL - ";
+				ende = "**Kriegstag beendet.**";
+			}
+			case CS -> {
+				kopf = "## Clan Games - " + clan.getInfoString() + "\n";
+				ende = "**Clan Games beendet.**";
+			}
+			default -> {
+				kopf = null;
+				ende = "";
+			}
+		}
+		sendMessageToChannel(buildCustomMessage(kopf, true, getDurationUntilEnd(), ende, text));
 	}
 
 	/**
@@ -2575,10 +2864,18 @@ public class ListeningEvent {
 				return;
 			}
 
-			// Capture the endTime of the analyzed raid to make sure the verification
+			// Capture start and end of the analyzed raid to make sure the verification
 			// still looks at the same raid
 			org.json.JSONObject currentRaid = clan.getRaidJsonFull().getJSONArray("items").getJSONObject(0);
+			final String raidStartTimeStr = currentRaid.optString("startTime", "");
 			final String raidEndTimeStr = currentRaid.optString("endTime", "");
+
+			// Höchstens eine Nachprüfung je Event und Raid - auch wenn der Lauf wiederholt wird
+			if (!raidAuswertungBeanspruchen("plan", getId(), raidStartTimeStr, raidEndTimeStr)) {
+				System.out.println("Raid district verification for event " + getId() + " (Raid " + raidStartTimeStr
+						+ " bis " + raidEndTimeStr + ") ist schon eingeplant, dieser Lauf tut nichts");
+				return;
+			}
 
 			// Post immediately if there are fails; the verification can still post a new
 			// message if fails only show up in the fresh data (API cache at raid end)
@@ -2587,18 +2884,14 @@ public class ListeningEvent {
 				sentMessage = sendMessageToChannelAndReturn(truncateForDiscord(result.message));
 			}
 
-			final Long messageId = sentMessage != null ? sentMessage.getIdLong() : null;
-			final String channelId = getChannelID();
-			final String clanTag = clan.getTag();
-			final String originalMessage = result.message;
-			final ListeningEvent thisEvent = this;
-			final boolean finalShouldAddKickpoints = shouldAddKickpoints;
-
 			// Schedule the delayed verification (kickpoints only after verification).
 			// The first check runs after 5 minutes because attacks can still resolve for
 			// up to ~3 minutes past the raid end.
-			scheduleRaidDistrictVerification(clanTag, messageId, channelId, thisEvent, originalMessage,
-					raidEndTimeStr, capitalPeakMax, otherDistrictsMax, penalizeBoth, finalShouldAddKickpoints, 0);
+			RaidNachpruefung np = new RaidNachpruefung(false, this, clan.getTag(),
+					sentMessage != null ? sentMessage.getIdLong() : null, getChannelID(), result.message,
+					raidStartTimeStr, raidEndTimeStr, capitalPeakMax, otherDistrictsMax, penalizeBoth,
+					shouldAddKickpoints);
+			scheduleRaidVerification(np, 0);
 		} catch (JSONException e) {
 			System.err.println("Error analyzing raid districts: " + e.getMessage());
 		}
@@ -2611,22 +2904,153 @@ public class ListeningEvent {
 	 * Later attempts exist because the API sometimes keeps reporting the raid as
 	 * "ongoing" well past its own end time.
 	 */
-	private static final int[] RAID_VERIFICATION_DELAYS_MINUTES = { 5, 5, 10, 10 };
+	static final int[] RAID_VERIFICATION_DELAYS_MINUTES = { 5, 5, 10, 10 };
 
 	/**
 	 * Time after the raid's own end time from which no further attacks can land, so
 	 * the attack log can be treated as final.
 	 */
-	private static final long RAID_END_GRACE_MS = 5 * 60 * 1000L;
+	static final long RAID_END_GRACE_MS = 5 * 60 * 1000L;
 
 	/**
-	 * Schedules attempt number {@code attempt} of the raid district verification.
-	 * Each attempt either finishes the verification or schedules the next one.
+	 * Eine eingeplante Raid-Nachprüfung. Dieselbe Bauart für beide Auswertungen: die
+	 * Distrikt-Analyse eines RAIDFAILS-Events und die Teilnahme (nicht teilgenommen /
+	 * Angriffe offen) eines KICKPOINT-Events. Beide prüfen erst, ob die frischen Daten
+	 * zum selben Raid gehören und endgültig sind, und vergeben erst dann Kickpunkte.
 	 */
-	private void scheduleRaidDistrictVerification(String clanTag, Long messageId, String channelId,
-			ListeningEvent event, String originalMessage, String raidEndTimeStr, int capitalPeakMax,
-			int otherDistrictsMax, int penalizeBoth, boolean shouldAddKickpoints, int attempt) {
+	private static final class RaidNachpruefung {
+		/** true = Teilnahme/Angriffe (KICKPOINT), false = Distrikte (RAIDFAILS) */
+		final boolean teilnahme;
+		final ListeningEvent event;
+		final String clanTag;
+		final Long messageId;
+		final String channelId;
+		final String originalMessage;
+		final String raidStartTimeStr;
+		final String raidEndTimeStr;
+		final int capitalPeakMax;
+		final int otherDistrictsMax;
+		final int penalizeBoth;
+		final boolean shouldAddKickpoints;
 
+		RaidNachpruefung(boolean teilnahme, ListeningEvent event, String clanTag, Long messageId, String channelId,
+				String originalMessage, String raidStartTimeStr, String raidEndTimeStr, int capitalPeakMax,
+				int otherDistrictsMax, int penalizeBoth, boolean shouldAddKickpoints) {
+			this.teilnahme = teilnahme;
+			this.event = event;
+			this.clanTag = clanTag;
+			this.messageId = messageId;
+			this.channelId = channelId;
+			this.originalMessage = originalMessage;
+			this.raidStartTimeStr = raidStartTimeStr;
+			this.raidEndTimeStr = raidEndTimeStr;
+			this.capitalPeakMax = capitalPeakMax;
+			this.otherDistrictsMax = otherDistrictsMax;
+			this.penalizeBoth = penalizeBoth;
+			this.shouldAddKickpoints = shouldAddKickpoints;
+		}
+
+		/** Name im Journal; lostmanager-neustart.sh sucht "Scheduled/Completed ... verification for clan #". */
+		String art() {
+			return teilnahme ? "raid participation" : "raid district";
+		}
+	}
+
+	/**
+	 * Merkt sich, welche Raid-Auswertung je Event und Raid schon eingeplant bzw. vergeben
+	 * ist. Kickpunkte dürfen je Spieler und Raid nur einmal entstehen; ein wiederholter
+	 * Lauf (Retry in Bot.executeEventWithRetry, doppelt eingeplantes Event) darf keine
+	 * zweite Nachprüfung und keine zweite Vergabe auslösen. Lebt nur im Speicher - wie die
+	 * Nachprüfung selbst.
+	 */
+	private static final java.util.Set<String> RAID_AUSWERTUNG_BEANSPRUCHT = java.util.concurrent.ConcurrentHashMap
+			.newKeySet();
+
+	/**
+	 * @param schritt "plan" (Nachprüfung einplanen) oder "vergabe" (Kickpunkte vergeben)
+	 * @return true genau beim ersten Aufruf für diesen Schritt, dieses Event und diesen Raid
+	 */
+	static boolean raidAuswertungBeanspruchen(String schritt, Long eventId, String raidStart, String raidEnde) {
+		return RAID_AUSWERTUNG_BEANSPRUCHT.add(schritt + "|" + eventId + "|" + raidStart + "|" + raidEnde);
+	}
+
+	/** Was mit einem frisch geholten Raid-Stand in der Nachprüfung geschieht. */
+	enum RaidPruefEntscheid {
+		/** Selber Raid, endgültig - auswerten und Kickpunkte vergeben. */
+		AUSWERTEN,
+		/** Noch nicht verlässlich, es bleiben Versuche. */
+		WIEDERHOLEN,
+		/** Noch nicht verlässlich, keine Versuche mehr. */
+		AUFGEBEN
+	}
+
+	/** Entscheidung samt der Größen, die sie begründen (fürs Journal). */
+	record RaidPruefung(RaidPruefEntscheid entscheid, String state, String startTime, String endTime,
+			boolean sameRaid, boolean overByClock) {
+	}
+
+	/**
+	 * Reine Entscheidung der Raid-Nachprüfung. Verlässlich ist ein Stand, wenn er zum
+	 * selben Raid gehört (Start- und Endzeit wie beim Feuern; eine leere erwartete Zeit
+	 * wird nicht verglichen) und endgültig ist: die API meldet "ended", oder die Uhr steht
+	 * mindestens {@link #RAID_END_GRACE_MS} hinter dem Raid-Ende - die API kippt "state"
+	 * erst mit ihrer eigenen Auffrischung, die weit hinter dem Ende liegen kann.
+	 *
+	 * @param versuchNr 1-basiert
+	 */
+	static RaidPruefung raidPruefEntscheid(JSONObject frisch, String erwarteterStart, String erwartetesEnde,
+			long jetzt, int versuchNr, int versuche) {
+		JSONObject raid = null;
+		org.json.JSONArray items = frisch == null ? null : frisch.optJSONArray("items");
+		if (items != null && items.length() > 0) {
+			raid = items.optJSONObject(0);
+		}
+		String state = raid == null ? "" : raid.optString("state", "");
+		String startTime = raid == null ? "" : raid.optString("startTime", "");
+		String endTime = raid == null ? "" : raid.optString("endTime", "");
+
+		// Eine leere Endzeit ist die Ersatzantwort bei API-Ausfall und nie verlässlich
+		boolean sameRaid = !endTime.isEmpty()
+				&& (erwartetesEnde == null || erwartetesEnde.isEmpty() || endTime.equals(erwartetesEnde))
+				&& (erwarteterStart == null || erwarteterStart.isEmpty() || startTime.equals(erwarteterStart));
+		Long endMillis = parseRaidEndTime(endTime);
+		boolean overByClock = endMillis != null && jetzt >= endMillis + RAID_END_GRACE_MS;
+
+		RaidPruefEntscheid e;
+		if (sameRaid && (state.equals("ended") || overByClock)) {
+			e = RaidPruefEntscheid.AUSWERTEN;
+		} else if (versuchNr < versuche) {
+			e = RaidPruefEntscheid.WIEDERHOLEN;
+		} else {
+			e = RaidPruefEntscheid.AUFGEBEN;
+		}
+		return new RaidPruefung(e, state, startTime, endTime, sameRaid, overByClock);
+	}
+
+	/**
+	 * Ob ein Raid-Event zum Raid-Ende (Dauer 0) noch feuern darf, obwohl die API den Raid
+	 * schon als "ended" meldet: ja, wenn das gemeldete Ende zur Feuerzeit gehört. Ohne das
+	 * fiel die Endauswertung still aus (condition_gone), sobald die API um 07:00:00 schon
+	 * umgeschaltet hatte. Raid-Enden liegen eine Woche auseinander; eine Stunde Spielraum
+	 * trennt "dieser Raid" sicher von "der letzte".
+	 *
+	 * @param apiEndMillis Ende des Raids laut API, null wenn unbekannt
+	 * @param fireTarget   berechnete Feuerzeit des Events (bei Dauer 0 = erwartetes Ende)
+	 */
+	public static boolean raidEndauswertungZulassen(long durationUntilEnd, Long apiEndMillis, long fireTarget) {
+		if (durationUntilEnd > 0 || apiEndMillis == null) {
+			return false;
+		}
+		return Math.abs(apiEndMillis - (fireTarget + durationUntilEnd)) <= RAID_GLEICHES_ENDE_TOLERANZ_MS;
+	}
+
+	static final long RAID_GLEICHES_ENDE_TOLERANZ_MS = 60 * 60 * 1000L;
+
+	/**
+	 * Schedules attempt number {@code attempt} of a raid verification. Each attempt
+	 * either finishes the verification or schedules the next one.
+	 */
+	private void scheduleRaidVerification(RaidNachpruefung np, int attempt) {
 		if (attempt >= RAID_VERIFICATION_DELAYS_MINUTES.length) {
 			return;
 		}
@@ -2637,19 +3061,18 @@ public class ListeningEvent {
 		ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 		scheduler.schedule(() -> {
 			try {
-				handleRaidDistrictAnalysisDelayedVerification(clanTag, messageId, channelId, event,
-						originalMessage, raidEndTimeStr, capitalPeakMax, otherDistrictsMax, penalizeBoth,
-						shouldAddKickpoints, attempt);
+				raidNachpruefen(np, attempt);
 			} catch (Exception e) {
-				System.err.println("Error in delayed raid district verification: " + e.getMessage());
+				System.err.println("Error in " + np.art() + " verification for clan " + np.clanTag + ": "
+						+ e.getMessage());
 			} finally {
 				lostmanager.Bot.activeVerificationTasks.decrementAndGet();
 				scheduler.shutdown();
 			}
 		}, delayMinutes, TimeUnit.MINUTES);
 
-		System.out.println("Scheduled raid district verification attempt " + (attempt + 1) + "/"
-				+ RAID_VERIFICATION_DELAYS_MINUTES.length + " for clan " + clanTag + " in " + delayMinutes
+		System.out.println("Scheduled " + np.art() + " verification attempt " + (attempt + 1) + "/"
+				+ RAID_VERIFICATION_DELAYS_MINUTES.length + " for clan " + np.clanTag + " in " + delayMinutes
 				+ " minutes");
 	}
 
@@ -2658,7 +3081,7 @@ public class ListeningEvent {
 	 *
 	 * @return the end time in epoch millis, or null if it cannot be parsed
 	 */
-	private static Long parseRaidEndTime(String endTimeStr) {
+	static Long parseRaidEndTime(String endTimeStr) {
 		if (endTimeStr == null || endTimeStr.isEmpty()) {
 			return null;
 		}
@@ -2672,113 +3095,151 @@ public class ListeningEvent {
 		}
 	}
 
+	/** Ergebnis einer Auswertung auf frischen Daten, gleich für Distrikte und Teilnahme. */
+	private record RaidAuswertung(String message, boolean hasFails, java.util.List<RaidKickpunkt> kickpunkte) {
+	}
+
 	/**
-	 * Handles the delayed verification of the raid district analysis after 5
-	 * minutes. Fetches fresh data, updates (or posts) the message, and adds
-	 * kickpoints only when the fresh data confirms the violations.
+	 * Wertet den frischen Stand aus. Kickpunkte nur, wenn das Event welche vergibt:
+	 * RAIDFAILS mit Grund für Distrikte, KICKPOINT für Teilnahme/Angriffe.
+	 *
+	 * @return null, wenn der Stand keine auswertbaren Distrikt-Daten enthält
 	 */
-	private void handleRaidDistrictAnalysisDelayedVerification(String clanTag, Long messageId, String channelId,
-			ListeningEvent event, String originalMessage, String raidEndTimeStr, int capitalPeakMax,
-			int otherDistrictsMax, int penalizeBoth, boolean shouldAddKickpoints, int attempt) {
-
-		int attemptNumber = attempt + 1;
-		int totalAttempts = RAID_VERIFICATION_DELAYS_MINUTES.length;
-		System.out.println("Starting raid district verification attempt " + attemptNumber + "/" + totalAttempts
-				+ " for clan " + clanTag);
-
-		try {
-			// Fetch fresh raid data
-			Clan clan = new Clan(clanTag);
-			org.json.JSONObject raidJson = clan.getRaidJsonFull();
-			org.json.JSONArray items = raidJson.getJSONArray("items");
-			if (items.length() == 0) {
-				return;
-			}
-
-			org.json.JSONObject currentRaid = items.getJSONObject(0);
-			String state = currentRaid.optString("state", "");
-			String endTimeStr = currentRaid.optString("endTime", "");
-
-			// Still the raid that was analysed at fire time. An empty endTime means the
-			// API answered with the "no data" fallback and cannot be trusted.
-			boolean sameRaid = !endTimeStr.isEmpty()
-					&& (raidEndTimeStr.isEmpty() || endTimeStr.equals(raidEndTimeStr));
-
-			// The attack log is final once the raid is over. The API flips "state" to
-			// "ended" only after its own refresh, which can lag well past the raid end,
-			// so wall-clock time past the raid's own end time counts as well - no further
-			// attacks can land at that point.
-			Long raidEndMillis = parseRaidEndTime(endTimeStr);
-			boolean raidIsOverByClock = raidEndMillis != null
-					&& System.currentTimeMillis() >= raidEndMillis + RAID_END_GRACE_MS;
-			boolean dataIsReliable = sameRaid && (state.equals("ended") || raidIsOverByClock);
-
-			System.out.println("Raid district verification for clan " + clanTag + " (attempt " + attemptNumber + "/"
-					+ totalAttempts + "): state='" + state + "', endTime='" + endTimeStr + "', expectedEndTime='"
-					+ raidEndTimeStr + "', sameRaid=" + sameRaid + ", overByClock=" + raidIsOverByClock
-					+ ", reliable=" + dataIsReliable);
-
-			if (!dataIsReliable) {
-				// Try again later - the API often catches up within the next few minutes
-				if (attemptNumber < totalAttempts) {
-					if (messageId != null) {
-						editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage,
-								"\n*Daten noch nicht bestätigt - weitere Überprüfung läuft*"));
-					}
-					scheduleRaidDistrictVerification(clanTag, messageId, channelId, event, originalMessage,
-							raidEndTimeStr, capitalPeakMax, otherDistrictsMax, penalizeBoth, shouldAddKickpoints,
-							attemptNumber);
-					return;
-				}
-
-				// All attempts used up - fall back to the data from the raid end if the
-				// event is configured to do so
-				handleRaidDistrictVerificationGiveUp(clanTag, messageId, channelId, event, originalMessage,
-						capitalPeakMax, otherDistrictsMax, penalizeBoth, shouldAddKickpoints);
-				return;
-			}
-
-			RaidDistrictAnalysisResult result = buildRaidDistrictAnalysisResult(clan, capitalPeakMax,
-					otherDistrictsMax, penalizeBoth, shouldAddKickpoints);
-			if (result == null) {
-				return;
-			}
-
-			String footer = "\n*Daten überprüft (" + attemptNumber + ". Versuch)*";
-			if (messageId != null) {
-				// Update the original message with verified data
-				String updatedMessage = result.hasFails
-						? truncateForDiscord(result.message, footer)
-						: "## Raidfails - District-Analyse\n\nKeine Verstöße nach Überprüfung gefunden.\n" + footer;
-				editMessageInChannel(channelId, messageId, updatedMessage);
-			} else if (result.hasFails) {
-				// Nothing was posted at fire time, but the fresh data shows violations
-				sendMessageToChannel(truncateForDiscord(result.message, footer));
-			}
-
-			boolean shouldProcessKickpoints = shouldAddKickpoints && result.hasFails
-					&& event.getActionType() == ACTIONTYPE.RAIDFAILS;
-			if (shouldProcessKickpoints) {
-				for (RaidDistrictFail fail : result.penalizedPlayers) {
-					addKickpointForPlayer(fail.player, fail.describe(), fail.detail());
-				}
-			}
-
-			System.out.println("Completed raid district verification for clan " + clanTag + " on attempt "
-					+ attemptNumber + " (dataReliable=true, kickpoints=" + shouldProcessKickpoints + ")");
-
-		} catch (JSONException e) {
-			System.err.println("Error in raid district delayed verification for clan " + clanTag + ": "
-					+ e.getMessage());
-			if (messageId != null) {
-				try {
-					editMessageInChannel(channelId, messageId, truncateForDiscord(originalMessage,
-							"\n*Fehler bei der Überprüfung. Daten möglicherweise nicht aktuell.*"));
-				} catch (Exception e2) {
-					System.err.println("Failed to update message with error: " + e2.getMessage());
-				}
+	private RaidAuswertung raidAuswerten(RaidNachpruefung np, Clan clan) {
+		if (np.teilnahme) {
+			RaidTeilnahmeErgebnis t = baueRaidTeilnahme(clan, false);
+			boolean vergeben = np.event.getActionType() == ACTIONTYPE.KICKPOINT;
+			return new RaidAuswertung(t.message, t.hasMissedAttacks,
+					vergeben ? t.kickpunkte : java.util.List.of());
+		}
+		RaidDistrictAnalysisResult result = buildRaidDistrictAnalysisResult(clan, np.capitalPeakMax,
+				np.otherDistrictsMax, np.penalizeBoth, np.shouldAddKickpoints);
+		if (result == null) {
+			return null;
+		}
+		ArrayList<RaidKickpunkt> kickpunkte = new ArrayList<>();
+		if (np.shouldAddKickpoints && result.hasFails && np.event.getActionType() == ACTIONTYPE.RAIDFAILS) {
+			for (RaidDistrictFail fail : result.penalizedPlayers) {
+				kickpunkte.add(new RaidKickpunkt(fail.player, fail.describe(), fail.detail()));
 			}
 		}
+		return new RaidAuswertung(result.message, result.hasFails, kickpunkte);
+	}
+
+	/**
+	 * Die Raid-Nachprüfung (5 min nach Raid-Ende, bis zu vier Versuche): holt frische
+	 * Daten, prüft, ob sie zum selben Raid gehören und endgültig sind, aktualisiert (oder
+	 * postet) die Meldung und vergibt erst dann die Kickpunkte - genau einmal.
+	 */
+	private void raidNachpruefen(RaidNachpruefung np, int attempt) {
+		int attemptNumber = attempt + 1;
+		int totalAttempts = RAID_VERIFICATION_DELAYS_MINUTES.length;
+		System.out.println("Starting " + np.art() + " verification attempt " + attemptNumber + "/" + totalAttempts
+				+ " for clan " + np.clanTag);
+
+		Clan clan = new Clan(np.clanTag);
+		RaidPruefung pruefung = raidPruefEntscheid(clan.getRaidJsonFull(), np.raidStartTimeStr, np.raidEndTimeStr,
+				System.currentTimeMillis(), attemptNumber, totalAttempts);
+
+		String kopf = np.teilnahme ? "Raid participation" : "Raid district";
+		System.out.println(kopf + " verification for clan "
+				+ np.clanTag + " (attempt " + attemptNumber + "/" + totalAttempts + "): state='" + pruefung.state()
+				+ "', startTime='" + pruefung.startTime() + "', endTime='" + pruefung.endTime()
+				+ "', expectedStartTime='" + np.raidStartTimeStr + "', expectedEndTime='" + np.raidEndTimeStr
+				+ "', sameRaid=" + pruefung.sameRaid() + ", overByClock=" + pruefung.overByClock() + ", reliable="
+				+ (pruefung.entscheid() == RaidPruefEntscheid.AUSWERTEN));
+
+		switch (pruefung.entscheid()) {
+			case WIEDERHOLEN -> {
+				// Try again later - the API often catches up within the next few minutes
+				raidNochmal(np, attemptNumber, "\n*Daten noch nicht bestätigt - weitere Überprüfung läuft*");
+				return;
+			}
+			case AUFGEBEN -> {
+				if (np.teilnahme) {
+					if (np.messageId != null) {
+						editMessageInChannel(np.channelId, np.messageId, truncateForDiscord(np.originalMessage,
+								"\n*Daten sind nicht zuverlässig - keine Kickpunkte vergeben*"));
+					}
+					System.out.println("Completed " + np.art() + " verification for clan " + np.clanTag
+							+ " (dataReliable=false, kickpoints=false)");
+				} else {
+					// All attempts used up - fall back to the data from the raid end if the
+					// event is configured to do so
+					handleRaidDistrictVerificationGiveUp(np.clanTag, np.messageId, np.channelId, np.event,
+							np.originalMessage, np.capitalPeakMax, np.otherDistrictsMax, np.penalizeBoth,
+							np.shouldAddKickpoints);
+				}
+				return;
+			}
+			case AUSWERTEN -> {
+				// weiter unten
+			}
+		}
+
+		RaidAuswertung auswertung;
+		try {
+			auswertung = raidAuswerten(np, clan);
+		} catch (Exception e) {
+			// API-Ausfall bei diesem oder einem anderen LOST-Clan: lieber später nochmal als falsch strafen
+			System.err.println(kopf + " verification for clan " + np.clanTag + ": Auswertung fehlgeschlagen ("
+					+ e.getMessage() + ")");
+			if (attemptNumber < totalAttempts) {
+				raidNochmal(np, attemptNumber, "\n*Daten noch nicht abrufbar - weitere Überprüfung läuft*");
+			} else {
+				if (np.messageId != null) {
+					editMessageInChannel(np.channelId, np.messageId, truncateForDiscord(np.originalMessage,
+							"\n*Fehler bei der Überprüfung - keine Kickpunkte vergeben.*"));
+				}
+				System.err.println("Error in " + np.art() + " verification for clan " + np.clanTag
+						+ ": alle Versuche fehlgeschlagen, keine Kickpunkte vergeben");
+			}
+			return;
+		}
+
+		if (auswertung == null) {
+			System.out.println("Completed " + np.art() + " verification for clan " + np.clanTag
+					+ " (keine auswertbaren Daten, kickpoints=false)");
+			return;
+		}
+
+		String footer = "\n*Daten überprüft (" + attemptNumber + ". Versuch)*";
+		if (np.messageId != null) {
+			// Update the original message with verified data
+			String updatedMessage = auswertung.hasFails()
+					? truncateForDiscord(auswertung.message(), footer)
+					: (np.teilnahme
+							? "## Raid Weekend - **Raid beendet.**\n\nNach Überprüfung haben alle ihre Angriffe gemacht.\n"
+							: "## Raidfails - District-Analyse\n\nKeine Verstöße nach Überprüfung gefunden.\n")
+							+ footer;
+			editMessageInChannel(np.channelId, np.messageId, updatedMessage);
+		} else if (auswertung.hasFails()) {
+			// Nothing was posted at fire time, but the fresh data shows violations
+			sendMessageToChannel(truncateForDiscord(auswertung.message(), footer));
+		}
+
+		boolean vergeben = !auswertung.kickpunkte().isEmpty()
+				&& raidAuswertungBeanspruchen("vergabe", np.event.getId(), np.raidStartTimeStr, np.raidEndTimeStr);
+		if (vergeben) {
+			for (RaidKickpunkt k : auswertung.kickpunkte()) {
+				addKickpointForPlayer(k.player(), k.reason(), k.detail());
+			}
+		} else if (!auswertung.kickpunkte().isEmpty()) {
+			System.err.println(kopf + " verification for clan " + np.clanTag + ": Kickpunkte für Event "
+					+ np.event.getId() + " und diesen Raid wurden schon vergeben, keine zweite Vergabe");
+		}
+
+		System.out.println("Completed " + np.art() + " verification for clan " + np.clanTag + " on attempt "
+				+ attemptNumber + " (dataReliable=true, kickpoints=" + vergeben + ")");
+	}
+
+	/** Vermerk an der Meldung und nächsten Versuch einplanen. */
+	private void raidNochmal(RaidNachpruefung np, int naechsterVersuch, String vermerk) {
+		if (np.messageId != null) {
+			editMessageInChannel(np.channelId, np.messageId, truncateForDiscord(np.originalMessage,
+					(np.teilnahme ? RAID_VORLAEUFIG_HINWEIS : "") + vermerk));
+		}
+		scheduleRaidVerification(np, naechsterVersuch);
 	}
 
 	/**
@@ -2925,6 +3386,17 @@ public class ListeningEvent {
 	 *               leaving attacks open.
 	 */
 	private void addKickpointForPlayer(Player player, String reason, String detail) {
+		// Ein Fehler bei EINEM Spieler (API-Ausfall beim Clannamen, Discord, DB) darf die Schleife
+		// des Aufrufers nicht abbrechen – sonst gingen alle folgenden Spieler straffrei aus.
+		try {
+			kickpunktVergeben(player, reason, detail);
+		} catch (Exception e) {
+			System.err.println("Error: Kickpunkt für " + (player != null ? player.getTag() : "?") + " (Event "
+					+ getId() + ") fehlgeschlagen, übrige Spieler werden weiter geprüft: " + e);
+		}
+	}
+
+	private void kickpunktVergeben(Player player, String reason, String detail) {
 		KickpointTarget target = resolveKickpointTarget(player);
 		if (target.isSkipped()) {
 			System.out.println("Skipping automatic kickpoint for player " + player.getTag() + " - "
@@ -2983,12 +3455,25 @@ public class ListeningEvent {
 
 		String desc = "### Es wurde ein Kickpunkt automatisch hinzugefügt.\n";
 		// Use API name for external clan players since they may not be in DB
+		// Der Kickpunkt steht ab hier in der Datenbank. Die Namen kommen teils von der API;
+		// fällt die aus, geht die Benachrichtigung trotzdem raus (dann mit Tag statt Name).
 		String playerName = player.getNameDB();
 		if (playerName == null) {
-			playerName = player.getNameAPI();
+			try {
+				playerName = player.getNameAPI();
+			} catch (Exception e) {
+				playerName = null;
+			}
 		}
-		desc += "Spieler: " + MessageUtil.unformat(playerName + " (" + player.getTag() + ")") + "\n";
-		desc += "Clan: " + clan.getInfoString() + "\n";
+		String clanInfo;
+		try {
+			clanInfo = clan.getInfoString();
+		} catch (Exception e) {
+			String name = clan.getDisplayName();
+			clanInfo = (name != null ? name + " " : "") + "(" + clan.getTag() + ")";
+		}
+		desc += "Spieler: " + MessageUtil.unformat((playerName != null ? playerName + " " : "") + "(" + player.getTag() + ")") + "\n";
+		desc += "Clan: " + clanInfo + "\n";
 		desc += "Anzahl: " + amount + "\n";
 		desc += "Grund: " + reason + "\n";
 		desc += "ID: " + kickpointId + "\n";

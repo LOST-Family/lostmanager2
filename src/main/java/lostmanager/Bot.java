@@ -455,7 +455,38 @@ public class Bot extends ListenerAdapter {
 											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("remove",
 													"Lösche ein Listening Event")
 													.addOptions(new OptionData(OptionType.INTEGER, "id",
-															"Die ID des zu löschenden Events", true))),
+															"Die ID des zu löschenden Events", true)
+															.setAutoComplete(true)),
+											// Nur was angegeben wird, ändert sich. Fehlen der neuen
+											// Kombination Werte, kommt das Formular von add,
+											// vorausgefüllt (listeningevent.handleEdit).
+											new net.dv8tion.jda.api.interactions.commands.build.SubcommandData("edit",
+													"Ändere ein Listening Event - nur angegebene Optionen ändern sich")
+													.addOptions(new OptionData(OptionType.INTEGER, "id",
+															"Das Event, das geändert werden soll", true)
+															.setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.STRING, "clan",
+															"Neuer Clan (optional)", false).setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.STRING, "type",
+															"Neuer Event-Typ (optional)", false)
+															.addChoices(new Command.Choice("Clan Games", "cs"),
+																	new Command.Choice("Clan War", "cw"),
+																	new Command.Choice("CWL Day", "cwlday"),
+																	new Command.Choice("Raid", "raid"),
+																	new Command.Choice("Season Ende", "seasonend")))
+													.addOptions(new OptionData(OptionType.STRING, "duration",
+															"Neue Dauer/Zeitpunkt, z.B. 1h, 24h, start, 0 (optional)",
+															false).setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.STRING, "actiontype",
+															"Neuer Aktionstyp (optional)", false).setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.CHANNEL, "channel",
+															"Neuer Channel für Nachrichten (optional)", false))
+													.addOptions(new OptionData(OptionType.STRING, "kickpoint_reason",
+															"Neuer Kickpoint-Grund (optional)", false)
+															.setAutoComplete(true))
+													.addOptions(new OptionData(OptionType.BOOLEAN, "werte",
+															"Zusatzwerte (Schwellen, Angriffe, Nachricht ...) im Formular ändern",
+															false))),
 
 							Commands.slash("playerevent",
 									"Verwalte deine Spieler-Benachrichtigungen (per DM).")
@@ -947,6 +978,9 @@ public class Bot extends ListenerAdapter {
 			pool.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
 		}
 		schedulertasks.shutdown();
+		// Die ausstehenden Aufgaben des alten Pools laufen ab hier nicht mehr, ihre
+		// Einträge in der Einplanung wären nur noch Altlast.
+		lostmanager.util.EventEinplanung.BOT.allesVergessen();
 		// Use a multi-threaded pool (matching the initial field size) so a single
 		// blocked/long-running event cannot stall the polling loop or other due events.
 		schedulertasks = Executors.newScheduledThreadPool(10);
@@ -972,9 +1006,10 @@ public class Bot extends ListenerAdapter {
 	 * @param le         The listening event to execute
 	 * @param eventId    The event ID for logging
 	 * @param maxRetries Maximum number of retry attempts
+	 * @param fireTarget the calculated fire time this run belongs to (raid end check)
 	 */
 	@SuppressWarnings("BusyWait")
-	private static String executeEventWithRetry(ListeningEvent le, Long eventId, int maxRetries) {
+	private static String executeEventWithRetry(ListeningEvent le, Long eventId, int maxRetries, long fireTarget) {
 		int attempt = 0;
 		boolean success = false;
 
@@ -984,7 +1019,7 @@ public class Bot extends ListenerAdapter {
 						"Executing event " + eventId + " (attempt " + (attempt + 1) + "/" + (maxRetries + 1) + ")");
 
 				// Validate that the event should still fire
-				if (!shouldEventFire(le)) {
+				if (!shouldEventFire(le, fireTarget)) {
 					System.out.println("Event " + eventId + " validation failed - conditions no longer met, skipping");
 					return ListeningEvent.RESULT_CONDITION_GONE;
 				}
@@ -1053,7 +1088,7 @@ public class Bot extends ListenerAdapter {
 
 		String result = ListeningEvent.RESULT_ERROR;
 		try {
-			result = executeEventWithRetry(le, le.getId(), 3);
+			result = executeEventWithRetry(le, le.getId(), 3, fireTarget);
 		} catch (final Exception e) {
 			System.err.println("Error executing event " + le.getId() + ": " + e.getMessage());
 		} finally {
@@ -1071,7 +1106,7 @@ public class Bot extends ListenerAdapter {
 	 * one event are a CWL day, a war or a raid weekend apart, so six hours separates
 	 * the two cases with room to spare.
 	 */
-	private static final long SAME_OCCASION_TOLERANCE = 6 * 60 * 60 * 1000L;
+	public static final long SAME_OCCASION_TOLERANCE = 6 * 60 * 60 * 1000L;
 
 	/**
 	 * How late an event may be and still be worth firing. A reminder is bounded by
@@ -1082,7 +1117,7 @@ public class Bot extends ListenerAdapter {
 	 * handled once it fell past that, so a single slow or API-throttled poll cycle
 	 * dropped the reminder for good without printing anything.
 	 */
-	private static long latenessToleranceFor(ListeningEvent le) {
+	public static long latenessToleranceFor(ListeningEvent le) {
 		long cap = 30 * 60 * 1000L;
 		long duration = le.getDurationUntilEnd();
 		return duration > 0 ? Math.min(cap, duration) : cap;
@@ -1091,10 +1126,11 @@ public class Bot extends ListenerAdapter {
 	/**
 	 * Validate if an event should still fire by checking current state
 	 * 
-	 * @param le The listening event
+	 * @param le         The listening event
+	 * @param fireTarget the calculated fire time this run belongs to
 	 * @return true if the event should fire, false otherwise
 	 */
-	private static boolean shouldEventFire(ListeningEvent le) {
+	private static boolean shouldEventFire(ListeningEvent le, long fireTarget) {
 		try {
 			Clan clan = new Clan(le.getClanTag());
 
@@ -1150,11 +1186,20 @@ public class Bot extends ListenerAdapter {
 					if (le.getActionType() == ListeningEvent.ACTIONTYPE.RAIDFAILS) {
 						return true;
 					}
-					if (!raidActive) {
-						System.out.println("Raid event validation: No active raid");
-						return false;
+					if (raidActive) {
+						return true;
 					}
-					return true;
+					// Ein Event zum Raid-Ende darf auch feuern, wenn die API den Raid schon als
+					// "ended" meldet - solange es derselbe Raid ist (Ende passt zur Feuerzeit).
+					// Vorher fiel die Endauswertung dann still aus (condition_gone).
+					if (ListeningEvent.raidEndauswertungZulassen(le.getDurationUntilEnd(),
+							clan.getRaidEndTimeMillis(), fireTarget)) {
+						System.out.println("Raid event validation: Raid already ended, but it is the raid this "
+								+ "end-of-raid event belongs to - firing");
+						return true;
+					}
+					System.out.println("Raid event validation: No active raid");
+					return false;
 				}
 				case FIXTIMEINTERVAL -> {
 					// Fixed time events should always fire
@@ -1279,8 +1324,14 @@ public class Bot extends ListenerAdapter {
 									"Scheduling event " + id + " to fire in " + (timeUntilFire / 1000) + " seconds");
 							scheduledEvents.add(id);
 							scheduledEventTimestamps.put(id, timestamp);
-							schedulertasks.schedule(() -> runAndRecord(le, timestamp), timeUntilFire,
-									TimeUnit.MILLISECONDS);
+							// Über die Einplanung, damit /listeningevent edit diese Aufgabe
+							// verlässlich verwerfen kann - siehe EventEinplanung.
+							lostmanager.util.EventEinplanung.Eintrag eintrag = lostmanager.util.EventEinplanung.BOT
+									.einplanen(id, timestamp);
+							eintrag.setFuture(schedulertasks.schedule(
+									lostmanager.util.EventEinplanung.BOT.aufgabe(eintrag,
+											() -> runAndRecord(le, timestamp)),
+									timeUntilFire, TimeUnit.MILLISECONDS));
 						} else {
 							long lateBy = -timeUntilFire;
 							long tolerance = latenessToleranceFor(le);
@@ -1289,7 +1340,10 @@ public class Bot extends ListenerAdapter {
 										+ (lateBy / 1000 / 60) + " min late)");
 								scheduledEvents.add(id);
 								scheduledEventTimestamps.put(id, timestamp);
-								schedulertasks.execute(() -> runAndRecord(le, timestamp));
+								lostmanager.util.EventEinplanung.Eintrag eintrag = lostmanager.util.EventEinplanung.BOT
+										.einplanen(id, timestamp);
+								eintrag.setFuture(schedulertasks.submit(lostmanager.util.EventEinplanung.BOT
+										.aufgabe(eintrag, () -> runAndRecord(le, timestamp))));
 							} else {
 								// This is the case that used to disappear without a trace: too
 								// late to be useful, so still not fired - but now said out loud
@@ -1354,6 +1408,9 @@ public class Bot extends ListenerAdapter {
 
 									// Create a final reference for use in lambda
 									final Long finalEventId = eventId;
+									// Start-Auslöser laufen sofort und bewusst nicht über die
+									// Einplanung: verworfen wäre der Kriegsbeginn für diesen Krieg
+									// verpasst, er wird nach einem Neuaufbau nicht erneut erkannt.
 									schedulertasks.execute(() -> {
 										try {
 											ListeningEvent le = new ListeningEvent(finalEventId);
@@ -1533,6 +1590,12 @@ public class Bot extends ListenerAdapter {
 	 * Only regular clan wars are recorded. CWL rounds are deliberately left out:
 	 * one CWL week would otherwise add seven wars and drown out any threshold.
 	 */
+	/** Zeilen desselben Kriegs unter einer verschobenen, älteren oder neueren Endzeit. */
+	public static final String CW_ALTE_ENDZEIT_AUFRAEUMEN = "DELETE FROM cw_participation WHERE clan_tag = ? AND war_type = 'cw' "
+			+ "AND war_end_time <> ? AND war_end_time > ?::timestamp - INTERVAL '"
+			+ lostmanager.datawrapper.ListeningEvent.CW_GLEICHER_KRIEG + "' AND war_end_time < ?::timestamp + INTERVAL '"
+			+ lostmanager.datawrapper.ListeningEvent.CW_GLEICHER_KRIEG + "'";
+
 	public static void recordClanWarParticipation() {
 		try {
 			String sql = "INSERT INTO cw_participation "
@@ -1574,6 +1637,10 @@ public class Bot extends ListenerAdapter {
 						int used = member.has("attacks") ? member.getJSONArray("attacks").length() : 0;
 						DBUtil.executeUpdate(sql, clanTag, member.getString("tag"), warEnd, used, attacksPerMember);
 					}
+					// Hat Supercell die Endzeit verschoben, liegt derselbe Krieg noch unter der alten
+					// Endzeit - erst nach dem vollständigen Schreiben wegräumen, damit ein Abbruch
+					// mittendrin nichts verliert. Am Kampftag ändert sich die Aufstellung nicht.
+					DBUtil.executeUpdate(CW_ALTE_ENDZEIT_AUFRAEUMEN, clanTag, warEnd, warEnd, warEnd);
 				} catch (final Exception e) {
 					System.err.println("Error recording war participation for clan " + clanTag + ": "
 							+ e.getMessage());
@@ -1871,6 +1938,9 @@ public class Bot extends ListenerAdapter {
 			}
 		};
 		schedulerfest.scheduleAtFixedRate(statsKanaele, 1, 15, TimeUnit.MINUTES);
+
+		// Perfect Day / Trophy Hunt / Rolle Trophyhunt, eigener Takt (lostmanager.legend).
+		lostmanager.legend.LegendWertung.start();
 	}
 
 	public void stopScheduler() {

@@ -344,7 +344,11 @@ public class Player {
 		if (warmapposition == null) {
 			Clan c = getClanAPI();
 			if (c != null) {
+				// null = Clan ist nicht im Krieg; vorher lief die Schleife dann in eine NPE.
 				ArrayList<Player> warmemberlist = c.getWarMemberList();
+				if (warmemberlist == null) {
+					return null;
+				}
 				for (Player p : warmemberlist) {
 					if (p.getTag().equals(tag)) {
 						warmapposition = p.getWarMapPosition();
@@ -391,8 +395,15 @@ public class Player {
 
 	public String getNameAPI() {
 		if (nameapi == null) {
-			JSONObject jsonObject = new JSONObject(getJson());
-			nameapi = jsonObject.getString("name");
+			// Profil nicht abrufbar (404 nach Sperre/Löschung, Timeout): früher eine
+			// NullPointerException, die ganze Auswertungen abbrach. Dann Name aus der
+			// Datenbank, sonst der Tag – und nicht merken, der nächste Versuch darf klappen.
+			String json = getJson();
+			if (json == null) {
+				String db = getNameDB();
+				return db != null ? db : tag;
+			}
+			nameapi = new JSONObject(json).getString("name");
 		}
 		return nameapi;
 	}
@@ -635,6 +646,12 @@ public class Player {
 				.timeout(java.time.Duration.ofSeconds(15))
 				.header("Authorization", "Bearer " + ApiUtil.apiKey()).header("Accept", "application/json").GET().build();
 
+		// Läuft eine Pause wegen API-Ausfall (Wartung), gar nicht erst fragen.
+		if (ApiUtil.PAUSE.gesperrt()) {
+			return null;
+		}
+		int letzterStatus = 0;
+
 		int attempt = 0;
 		while (attempt <= maxRetries) {
 			try {
@@ -643,9 +660,11 @@ public class Player {
 				// If successful (200) or client error (4xx), return immediately (no retry for
 				// client errors)
 				if (response.statusCode() == 200 || (response.statusCode() >= 400 && response.statusCode() < 500)) {
+					ApiUtil.PAUSE.erfolg();
 					return response;
 				}
 
+				letzterStatus = response.statusCode();
 				// For server errors (5xx) or other errors, retry
 				if (attempt < maxRetries) {
 					long waitTime = (long) Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
@@ -675,7 +694,31 @@ public class Player {
 			attempt++;
 		}
 
+		if (letzterStatus >= 500) {
+			ApiUtil.PAUSE.ausfall(letzterStatus);
+		}
 		System.err.println("All retry attempts failed for URL: " + url);
+		return null;
+	}
+
+	/**
+	 * Unterseite des Spielers roh, etwa "battlelog" oder "leaguehistory"
+	 * (/players/{tag}/<unterpfad>). null, wenn die API nicht antwortet. Fuer
+	 * Perfect Day / Trophy Hunt (lostmanager.legend).
+	 */
+	public String getUnterpfadJson(String unterpfad) {
+		if (tag == null) {
+			return null;
+		}
+		String encodedTag = java.net.URLEncoder.encode(tag, java.nio.charset.StandardCharsets.UTF_8);
+		HttpResponse<String> response = performHttpRequestWithRetry(
+				ApiUtil.basisUrl() + "/players/" + encodedTag + "/" + unterpfad, 3);
+		if (response != null && response.statusCode() == 200) {
+			return response.body();
+		}
+		if (response != null && response.statusCode() != 404) {
+			System.err.println(unterpfad + " " + tag + ": HTTP " + response.statusCode());
+		}
 		return null;
 	}
 
@@ -703,7 +746,7 @@ public class Player {
 				// Only log errors for non-404 responses (404 is expected when player is not found)
 				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
 				System.err.println("Antwort: " + response.body());
-			} else if (response == null) {
+			} else if (response == null && !ApiUtil.PAUSE.aktiv()) {
 				System.err.println("Fehler beim Abrufen: response is null");
 			}
 			return null;
@@ -827,22 +870,17 @@ public class Player {
 				Integer currentWins = (Integer) currentData.getData();
 
 				// determine if linked mid-season using season start time
-				java.sql.Timestamp seasonStart = null;
-				try {
-					seasonStart = lostmanager.util.SeasonUtil.fetchSeasonStartTime();
-				} catch (Throwable t) {
-					// Ignore exception and keep seasonStart null
-				}
-
-				boolean linkedMid = false;
-				if (seasonStart != null) {
-					long timeDiff = startData.getTimeExtracted().getTime() - seasonStart.getTime();
-					linkedMid = timeDiff > ONE_DAY_MS;
-				}
+				// Gemessen am Beginn der BEWERTETEN Saison (startOfMonth), nicht am Monat der
+				// Uhr: das Saisonende-Event feuert am 1. um 00:00 UTC, da war "dieser Monat"
+				// schon der neue, die Differenz negativ und der Schutz für spät Verlinkte aus.
+				long timeDiff = startData.getTimeExtracted().getTime() - startOfMonth.toInstant().toEpochMilli();
+				boolean linkedMid = timeDiff > ONE_DAY_MS;
 
 				return new WinsData(Math.max(currentWins - startWins, 0), linkedMid);
 			} catch (Exception e) {
-				System.err.println("Error fetching current wins for player " + tag + ": " + e.getMessage());
+				if (!ApiUtil.PAUSE.aktiv()) {
+					System.err.println("Error fetching current wins for player " + tag + ": " + e.getMessage());
+				}
 				return null;
 			}
 		} else {

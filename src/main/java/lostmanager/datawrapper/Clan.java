@@ -1,5 +1,6 @@
 package lostmanager.datawrapper;
 
+import lostmanager.apiutil.ApiNichtErreichbarException;
 import lostmanager.apiutil.ApiUtil;
 
 import java.io.IOException;
@@ -674,6 +675,12 @@ public class Clan {
 		// instead of a timeout being silently masked as a "no active raid/war" default.
 		apiRequestFailed = true;
 
+		// Läuft eine Pause wegen API-Ausfall (Wartung), gar nicht erst fragen.
+		if (ApiUtil.PAUSE.gesperrt()) {
+			return null;
+		}
+		int letzterStatus = 0;
+
 		int attempt = 0;
 		while (attempt <= maxRetries) {
 			try {
@@ -684,9 +691,11 @@ public class Clan {
 				if (response.statusCode() == 200 || (response.statusCode() >= 400 && response.statusCode() < 500
 						&& response.statusCode() != 429)) {
 					apiRequestFailed = false;
+					ApiUtil.PAUSE.erfolg();
 					return response;
 				}
 
+				letzterStatus = response.statusCode();
 				// For server errors (5xx) or throttling (429), retry
 				if (attempt < maxRetries) {
 					long waitTime = (long) Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
@@ -726,6 +735,9 @@ public class Clan {
 			attempt++;
 		}
 
+		if (letzterStatus >= 500) {
+			ApiUtil.PAUSE.ausfall(letzterStatus);
+		}
 		System.err.println("All retry attempts failed for URL: " + url);
 		return null;
 	}
@@ -757,7 +769,7 @@ public class Clan {
 					// Only log errors for non-404 responses (404 is expected when no war is active)
 					System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
 					System.err.println("Antwort: " + response.body());
-				} else if (response == null) {
+				} else if (response == null && !ApiUtil.PAUSE.aktiv()) {
 					System.err.println("Fehler beim Abrufen: response is null");
 				}
 				json = null;
@@ -792,12 +804,19 @@ public class Clan {
 
 	public ArrayList<Player> getWarMemberList() {
 		if (clanwarmembers == null) {
-			clanwarmembers = new ArrayList<>();
 			JSONObject jsonObject = getCWJson();
+			// Keine Antwort der API (Ausfall/Wartung) ist nicht "nicht im Krieg" und auch
+			// keine leere Kriegsliste: werfen, und das Feld erst nach vollständigem Lesen
+			// setzen. Vorher blieb nach der NPE hier eine LEERE Liste im Objekt stehen, die
+			// der nächste Aufruf als "Krieg ohne Teilnehmer" zurückgab.
+			if (jsonObject == null) {
+				throw new ApiNichtErreichbarException("Kriegsdaten von " + clan_tag + " nicht abrufbar");
+			}
 			String state = jsonObject.getString("state");
 			if (state.equals("notInWar")) {
 				return null;
 			}
+			ArrayList<Player> liste = new ArrayList<>();
 			JSONObject WarClan = jsonObject.getJSONObject("clan");
 			JSONArray ClanWarMemberList = WarClan.getJSONArray("members");
 
@@ -807,8 +826,9 @@ public class Clan {
 				String name = member.getString("name");
 				int warmapposition = member.getInt("mapPosition");
 				Player p = new Player(tag).setNameAPI(name).setWarMapPosition(warmapposition);
-				clanwarmembers.add(p);
+				liste.add(p);
 			}
+			clanwarmembers = liste;
 		}
 		return clanwarmembers;
 	}
@@ -845,7 +865,7 @@ public class Clan {
 				// Only log errors for non-404 responses (404 is expected when no CWL is active)
 				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
 				System.err.println("Antwort: " + response.body());
-			} else if (response == null) {
+			} else if (response == null && !ApiUtil.PAUSE.aktiv()) {
 				System.err.println("Fehler beim Abrufen: response is null");
 			}
 			json = null;
@@ -858,6 +878,26 @@ public class Clan {
 			// Return a default JSONObject indicating no war
 			return new JSONObject("{\"state\":\"groupnotfound\"}");
 		}
+	}
+
+	/**
+	 * Die letzten Einträge des Kriegslogs, oder null (Log privat, API nicht erreichbar).
+	 * Dient der Prüfung nach Kriegsende als Gegenprobe der Angriffszahl.
+	 */
+	public JSONObject getWarLogJson(int limit) {
+		if (clan_tag == null) {
+			return null;
+		}
+		String encodedTag = java.net.URLEncoder.encode(clan_tag, java.nio.charset.StandardCharsets.UTF_8);
+		String url = ApiUtil.basisUrl() + "/clans/" + encodedTag + "/warlog?limit=" + limit;
+		HttpResponse<String> response = performHttpRequestWithRetry(url, 3);
+		if (response != null && response.statusCode() == 200) {
+			return new JSONObject(response.body());
+		}
+		if (response != null && response.statusCode() != 403 && response.statusCode() != 404) {
+			System.err.println("Kriegslog " + clan_tag + ": HTTP " + response.statusCode());
+		}
+		return null;
 	}
 
 	public JSONObject getCWJson() {
@@ -886,7 +926,7 @@ public class Clan {
 				// Only log errors for non-404 responses (404 is expected when no war is active)
 				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
 				System.err.println("Antwort: " + response.body());
-			} else if (response == null) {
+			} else if (response == null && !ApiUtil.PAUSE.aktiv()) {
 				System.err.println("Fehler beim Abrufen: response is null");
 			}
 			json = null;
@@ -931,7 +971,7 @@ public class Clan {
 				// available)
 				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
 				System.err.println("Antwort: " + response.body());
-			} else if (response == null) {
+			} else if (response == null && !ApiUtil.PAUSE.aktiv()) {
 				System.err.println("Fehler beim Abrufen: response is null");
 			}
 			json = null;
@@ -1050,7 +1090,7 @@ public class Clan {
 				// found)
 				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
 				System.err.println("Antwort: " + response.body());
-			} else if (response == null) {
+			} else if (response == null && !ApiUtil.PAUSE.aktiv()) {
 				System.err.println("Fehler beim Abrufen: response is null");
 			}
 			return null;
