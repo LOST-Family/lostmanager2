@@ -1006,9 +1006,10 @@ public class Bot extends ListenerAdapter {
 	 * @param le         The listening event to execute
 	 * @param eventId    The event ID for logging
 	 * @param maxRetries Maximum number of retry attempts
+	 * @param fireTarget the calculated fire time this run belongs to (raid end check)
 	 */
 	@SuppressWarnings("BusyWait")
-	private static String executeEventWithRetry(ListeningEvent le, Long eventId, int maxRetries) {
+	private static String executeEventWithRetry(ListeningEvent le, Long eventId, int maxRetries, long fireTarget) {
 		int attempt = 0;
 		boolean success = false;
 
@@ -1018,7 +1019,7 @@ public class Bot extends ListenerAdapter {
 						"Executing event " + eventId + " (attempt " + (attempt + 1) + "/" + (maxRetries + 1) + ")");
 
 				// Validate that the event should still fire
-				if (!shouldEventFire(le)) {
+				if (!shouldEventFire(le, fireTarget)) {
 					System.out.println("Event " + eventId + " validation failed - conditions no longer met, skipping");
 					return ListeningEvent.RESULT_CONDITION_GONE;
 				}
@@ -1087,7 +1088,7 @@ public class Bot extends ListenerAdapter {
 
 		String result = ListeningEvent.RESULT_ERROR;
 		try {
-			result = executeEventWithRetry(le, le.getId(), 3);
+			result = executeEventWithRetry(le, le.getId(), 3, fireTarget);
 		} catch (final Exception e) {
 			System.err.println("Error executing event " + le.getId() + ": " + e.getMessage());
 		} finally {
@@ -1125,10 +1126,11 @@ public class Bot extends ListenerAdapter {
 	/**
 	 * Validate if an event should still fire by checking current state
 	 * 
-	 * @param le The listening event
+	 * @param le         The listening event
+	 * @param fireTarget the calculated fire time this run belongs to
 	 * @return true if the event should fire, false otherwise
 	 */
-	private static boolean shouldEventFire(ListeningEvent le) {
+	private static boolean shouldEventFire(ListeningEvent le, long fireTarget) {
 		try {
 			Clan clan = new Clan(le.getClanTag());
 
@@ -1184,11 +1186,20 @@ public class Bot extends ListenerAdapter {
 					if (le.getActionType() == ListeningEvent.ACTIONTYPE.RAIDFAILS) {
 						return true;
 					}
-					if (!raidActive) {
-						System.out.println("Raid event validation: No active raid");
-						return false;
+					if (raidActive) {
+						return true;
 					}
-					return true;
+					// Ein Event zum Raid-Ende darf auch feuern, wenn die API den Raid schon als
+					// "ended" meldet - solange es derselbe Raid ist (Ende passt zur Feuerzeit).
+					// Vorher fiel die Endauswertung dann still aus (condition_gone).
+					if (ListeningEvent.raidEndauswertungZulassen(le.getDurationUntilEnd(),
+							clan.getRaidEndTimeMillis(), fireTarget)) {
+						System.out.println("Raid event validation: Raid already ended, but it is the raid this "
+								+ "end-of-raid event belongs to - firing");
+						return true;
+					}
+					System.out.println("Raid event validation: No active raid");
+					return false;
 				}
 				case FIXTIMEINTERVAL -> {
 					// Fixed time events should always fire

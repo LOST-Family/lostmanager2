@@ -1,0 +1,18 @@
+{
+  "items": [
+    {
+      "state": "ongoing",
+      "startTime": "20261113T070000.000Z",
+      "endTime": "20261116T070000.000Z",
+      "capitalTotalLoot": 1234567,
+      "raidsCompleted": 9,
+      "totalAttacks": 160,
+      "enemyDistrictsDestroyed": 63,
+      "members": [
+        { "tag": "#AAA111", "name": "Spaetstarter", "attacks": 5, "attackLimit": 5, "bonusAttackLimit": 1, "capitalResourcesLooted": 20000 },
+        { "tag": "#BBB222", "name": "Fertig", "attacks": 6, "attackLimit": 5, "bonusAttackLimit": 1, "capitalResourcesLooted": 24000 },
+        { "tag": "#CCC333", "name": "Halbfertig", "attacks": 3, "attackLimit": 5, "bonusAttackLimit": 1, "capitalResourcesLooted": 9000 }
+      ]
+    }
+  ]
+}
