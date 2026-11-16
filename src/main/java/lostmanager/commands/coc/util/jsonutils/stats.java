@@ -575,27 +575,8 @@ public class stats extends ListenerAdapter {
 		}
 
 		if (hasPermission) {
-			// Get all players with uploaded JSONs
-			String sql = "SELECT DISTINCT tag FROM userjsons ORDER BY tag";
-			List<String> tags = DBUtil.getArrayListFromSQL(sql, String.class);
-			for (String tag : tags) {
-				// Try to get player name for better display
-				Player player = new Player(tag);
-				String clanName = player.getClanDB() != null ? player.getClanDB().getNameDB() : null;
-				String display = new Player(tag).getInfoStringDB();
-				if (clanName != null && !clanName.isEmpty()) {
-					display += " - " + clanName;
-				}
-
-				// Filter mit Eingabe (input ist String mit aktuell eingegebenem Text)
-				if (display.toLowerCase().contains(input.toLowerCase())
-						|| tag.toLowerCase().startsWith(input.toLowerCase())) {
-					choices.add(new Command.Choice(display, tag));
-					if (choices.size() == 25) {
-						break; // Max 25 Vorschläge
-					}
-				}
-			}
+			// All players with uploaded JSONs, in one query (see UploadedPlayerChoices)
+			choices.addAll(UploadedPlayerChoices.forAll(input));
 		} else {
 			// Get only linked accounts with uploaded JSONs
 			ArrayList<Player> linkedAccounts = user.getAllLinkedAccounts();
