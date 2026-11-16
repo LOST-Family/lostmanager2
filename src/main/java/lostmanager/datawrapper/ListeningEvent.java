@@ -949,6 +949,26 @@ public class ListeningEvent {
 	}
 
 	/**
+	 * Zählt die Clankriege eines Spielers in einer Season. Verschiebt Supercell die Endzeit eines
+	 * laufenden Kriegs (Wartungspause), stand derselbe Krieg früher unter zwei Endzeiten in
+	 * cw_participation (35 Paare bis 16.11.2026, Verschiebung höchstens 2 h; echte Kriege desselben
+	 * Clans liegen mindestens ~46 h auseinander). Endzeiten desselben Clans, die weniger als
+	 * {@link #CW_GLEICHER_KRIEG} hinter der vorigen liegen, zählen deshalb als ein Krieg.
+	 * Parameter: player_tag, die Clan-Tags, Season-Beginn, Season-Ende.
+	 */
+	static String cwAnzahlSql(String placeholders) {
+		return "SELECT COUNT(*) AS war_count FROM ("
+				+ "SELECT war_end_time, LAG(war_end_time) OVER (PARTITION BY clan_tag ORDER BY war_end_time) AS vorige "
+				+ "FROM (SELECT DISTINCT clan_tag, war_end_time FROM cw_participation "
+				+ "WHERE player_tag = ? AND war_type = 'cw' AND clan_tag IN (" + placeholders + ") "
+				+ "AND war_end_time >= ? AND war_end_time < ?) kriege) mit_vorigem "
+				+ "WHERE vorige IS NULL OR war_end_time - vorige >= INTERVAL '" + CW_GLEICHER_KRIEG + "'";
+	}
+
+	/** Endzeiten desselben Clans, die näher beieinander liegen, gehören zu einem Krieg. */
+	public static final String CW_GLEICHER_KRIEG = "12 hours";
+
+	/**
 	 * Reports every member who was in the lineup of fewer clan wars this season
 	 * than required and - for kickpoint events - hands out kickpoints for it.
 	 *
@@ -1017,11 +1037,7 @@ public class ListeningEvent {
 			params[clanTags.size() + 1] = seasonStart;
 			params[clanTags.size() + 2] = seasonEnd;
 
-			Long count = DBUtil.getValueFromSQL(
-					"SELECT COUNT(DISTINCT war_end_time) AS war_count FROM cw_participation "
-							+ "WHERE player_tag = ? AND war_type = 'cw' AND clan_tag IN (" + placeholders + ") "
-							+ "AND war_end_time >= ? AND war_end_time < ?",
-					Long.class, params);
+			Long count = DBUtil.getValueFromSQL(cwAnzahlSql(placeholders), Long.class, params);
 			int wars = count != null ? count.intValue() : 0;
 
 			// Someone who joined after the season began could not have played them all

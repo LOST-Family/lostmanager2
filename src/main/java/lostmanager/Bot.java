@@ -1579,6 +1579,12 @@ public class Bot extends ListenerAdapter {
 	 * Only regular clan wars are recorded. CWL rounds are deliberately left out:
 	 * one CWL week would otherwise add seven wars and drown out any threshold.
 	 */
+	/** Zeilen desselben Kriegs unter einer verschobenen, älteren oder neueren Endzeit. */
+	public static final String CW_ALTE_ENDZEIT_AUFRAEUMEN = "DELETE FROM cw_participation WHERE clan_tag = ? AND war_type = 'cw' "
+			+ "AND war_end_time <> ? AND war_end_time > ?::timestamp - INTERVAL '"
+			+ lostmanager.datawrapper.ListeningEvent.CW_GLEICHER_KRIEG + "' AND war_end_time < ?::timestamp + INTERVAL '"
+			+ lostmanager.datawrapper.ListeningEvent.CW_GLEICHER_KRIEG + "'";
+
 	public static void recordClanWarParticipation() {
 		try {
 			String sql = "INSERT INTO cw_participation "
@@ -1620,6 +1626,10 @@ public class Bot extends ListenerAdapter {
 						int used = member.has("attacks") ? member.getJSONArray("attacks").length() : 0;
 						DBUtil.executeUpdate(sql, clanTag, member.getString("tag"), warEnd, used, attacksPerMember);
 					}
+					// Hat Supercell die Endzeit verschoben, liegt derselbe Krieg noch unter der alten
+					// Endzeit - erst nach dem vollständigen Schreiben wegräumen, damit ein Abbruch
+					// mittendrin nichts verliert. Am Kampftag ändert sich die Aufstellung nicht.
+					DBUtil.executeUpdate(CW_ALTE_ENDZEIT_AUFRAEUMEN, clanTag, warEnd, warEnd, warEnd);
 				} catch (final Exception e) {
 					System.err.println("Error recording war participation for clan " + clanTag + ": "
 							+ e.getMessage());
