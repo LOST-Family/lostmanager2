@@ -344,7 +344,11 @@ public class Player {
 		if (warmapposition == null) {
 			Clan c = getClanAPI();
 			if (c != null) {
+				// null = Clan ist nicht im Krieg; vorher lief die Schleife dann in eine NPE.
 				ArrayList<Player> warmemberlist = c.getWarMemberList();
+				if (warmemberlist == null) {
+					return null;
+				}
 				for (Player p : warmemberlist) {
 					if (p.getTag().equals(tag)) {
 						warmapposition = p.getWarMapPosition();
@@ -642,6 +646,12 @@ public class Player {
 				.timeout(java.time.Duration.ofSeconds(15))
 				.header("Authorization", "Bearer " + ApiUtil.apiKey()).header("Accept", "application/json").GET().build();
 
+		// Läuft eine Pause wegen API-Ausfall (Wartung), gar nicht erst fragen.
+		if (ApiUtil.PAUSE.gesperrt()) {
+			return null;
+		}
+		int letzterStatus = 0;
+
 		int attempt = 0;
 		while (attempt <= maxRetries) {
 			try {
@@ -650,9 +660,11 @@ public class Player {
 				// If successful (200) or client error (4xx), return immediately (no retry for
 				// client errors)
 				if (response.statusCode() == 200 || (response.statusCode() >= 400 && response.statusCode() < 500)) {
+					ApiUtil.PAUSE.erfolg();
 					return response;
 				}
 
+				letzterStatus = response.statusCode();
 				// For server errors (5xx) or other errors, retry
 				if (attempt < maxRetries) {
 					long waitTime = (long) Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
@@ -682,6 +694,9 @@ public class Player {
 			attempt++;
 		}
 
+		if (letzterStatus >= 500) {
+			ApiUtil.PAUSE.ausfall(letzterStatus);
+		}
 		System.err.println("All retry attempts failed for URL: " + url);
 		return null;
 	}
@@ -710,7 +725,7 @@ public class Player {
 				// Only log errors for non-404 responses (404 is expected when player is not found)
 				System.err.println("Fehler beim Abrufen: HTTP " + response.statusCode());
 				System.err.println("Antwort: " + response.body());
-			} else if (response == null) {
+			} else if (response == null && !ApiUtil.PAUSE.aktiv()) {
 				System.err.println("Fehler beim Abrufen: response is null");
 			}
 			return null;
@@ -842,7 +857,9 @@ public class Player {
 
 				return new WinsData(Math.max(currentWins - startWins, 0), linkedMid);
 			} catch (Exception e) {
-				System.err.println("Error fetching current wins for player " + tag + ": " + e.getMessage());
+				if (!ApiUtil.PAUSE.aktiv()) {
+					System.err.println("Error fetching current wins for player " + tag + ": " + e.getMessage());
+				}
 				return null;
 			}
 		} else {

@@ -714,6 +714,17 @@ public class RestApiServer {
             // die Verbindung schließen, bevor der Server fertig geantwortet hat.
             // Ignorieren, um Log-Spam zu vermeiden:
             // System.out.println("Client disconnected in " + handlerName + ": " + e.getMessage());
+        } else if (e instanceof lostmanager.apiutil.ApiNichtErreichbarException) {
+            // CoC-API fällt aus (Wartung): 503 statt 500, eine Zeile statt Stacktrace,
+            // und während einer laufenden Pause gar keine Zeile.
+            if (!lostmanager.apiutil.ApiUtil.PAUSE.aktiv()) {
+                System.err.println(handlerName + ": " + e.getMessage());
+            }
+            try {
+                sendResponse(exchange, 503, "{\"error\":\"CoC API unavailable\"}");
+            } catch (IOException ignore) {
+                // Failed to send error response
+            }
         } else {
             String errorMessage = String.valueOf(e);
             System.err.println("Error in " + handlerName + ": " + errorMessage);

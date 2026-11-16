@@ -13,6 +13,9 @@ import lostmanager.Bot;
 
 public class ApiUtil {
 
+	/** Gemeinsame Pause bei API-Ausfall (Wartung), siehe {@link ApiPause}. */
+	public static final ApiPause PAUSE = new ApiPause();
+
 	/**
 	 * Basisadresse der Clash of Clans-API.
 	 *
