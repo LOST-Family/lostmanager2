@@ -22,11 +22,11 @@ class LegendTexteTest {
 		assertEquals(1, t.size());
 		String s = t.get(0);
 		assertTrue(s.startsWith("# 🏆 LOST Family · Perfect Day Battle 🏆\n-# Punktestand 17.11.2026\n### 🏆 Rangliste\n"
-				+ "> 🥇 **Spieler A** – 393 Punkte · gestern +29\n> 🥈 **Spieler B** – 376 Punkte · gestern +28\n"
-				+ "> 🥉 **Spieler C** – 372 Punkte · gestern +27\n> 4. **Spieler D** – 371 Punkte · gestern +26\n"
-				+ "-# Gesamtpunkte inklusive gestern. Nur Legend 1, Angriffspokale ÷ 10, abgerundet. "
-				+ "Screenshots der Tagesübersicht bitte trotzdem aufheben.\n"), s);
-		assertTrue(s.endsWith("Weiter pushen und dranbleiben! ⚔️"));
+				+ "> 🥇 **Spieler A** – 393 (+29)\n> 🥈 **Spieler B** – 376 (+28)\n"
+				+ "> 🥉 **Spieler C** – 372 (+27)\n> 4. **Spieler D** – 371 (+26)\n"
+				+ "-# Gesamtpunkte inklusive gestern, in der Klammer die Punkte von gestern. Nur Legend 1, "
+				+ "Angriffspokale ÷ 10, abgerundet.\n"), s);
+		assertTrue(s.endsWith("━━━━━━━━━━━━━━━━━━━━━━\nWeiter pushen und dranbleiben! ⚔️"));
 		assertTrue(s.contains("Näherung"));
 		assertFalse(s.contains("* Tag"));
 	}
@@ -37,7 +37,7 @@ class LegendTexteTest {
 				LocalDate.of(2026, 11, 30), true, true));
 		assertTrue(s.contains("Endstand der Legend-Saison · 30.11.2026"));
 		assertTrue(s.contains("ohne Belohnung"));
-		assertTrue(s.contains("gestern +3*"));
+		assertTrue(s.contains("– 10 (+3*)"));
 		assertTrue(s.contains("**A\\_b\\*c**"), s);
 		assertTrue(s.contains("* Tag nicht vollständig erfasst"));
 	}
@@ -67,7 +67,9 @@ class LegendTexteTest {
 				+ "### 🥇 Gewinner: **Spieler A** mit 1100 Angriffspokalen\n> 🥈 **Spieler B** – 1040\n"
 				+ "> 🥉 **Spieler C** – 985\n> 4. **Spieler D** – 940\n"
 				+ "-# Es zählen nur Angriffspokale, keine aus Verteidigungen. Einspruchsfrist bis 29.11.2026: "
-				+ "Schickt dafür eure Screenshots der Angriffe."), s);
+				+ "Stimmen eure Werte nicht, schickt uns bis dahin Screenshots von eurer tatsächlichen Off.\n"), s);
+		assertTrue(s.endsWith("━━━━━━━━━━━━━━━━━━━━━━\nGlückwunsch an den Gewinner und danke an alle fürs Mitmachen! 🎉 "
+				+ "Wir sehen uns beim nächsten Trophy Hunt wieder. ⚔️"));
 	}
 
 	@Test
@@ -83,5 +85,6 @@ class LegendTexteTest {
 				new HuntZeile("C", 1100, false, false)), List.of(0, 1), LocalDate.of(2026, 11, 16),
 				LocalDate.of(2026, 11, 22), LocalDate.of(2026, 11, 29)));
 		assertTrue(s.contains("Gleichstand: **B** und **C** mit 1100 Angriffspokalen – ein 1vs1 (Best of 3) entscheidet"));
+		assertFalse(s.contains("Glückwunsch an den Gewinner"));
 	}
 }

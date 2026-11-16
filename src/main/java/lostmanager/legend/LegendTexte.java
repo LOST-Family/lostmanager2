@@ -8,13 +8,15 @@ import java.util.List;
 
 /**
  * Die Posts in ⭐┋perfect-day-results und 🏆┋trophy-hunt-results, im Format,
- * das Stefan am 16.11.2026 im Kanal trophy-hunt-planung abgesegnet hat.
+ * das Stefan am 16.11.2026 um 14:56 UTC im Kanal trophy-hunt-planung abgesegnet hat
+ * („die nachrichten sind jetzt sehr gut“), ergänzt um die Näherungszeile.
  */
 public final class LegendTexte {
 
 	static final DateTimeFormatter DATUM = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 	static final DateTimeFormatter TAG_MONAT = DateTimeFormatter.ofPattern("dd.MM.");
 	private static final int DISCORD_GRENZE = 2000;
+	static final String TRENNER = "━━━━━━━━━━━━━━━━━━━━━━";
 
 	private LegendTexte() {
 	}
@@ -66,15 +68,15 @@ public final class LegendTexte {
 			PdZeile z = zeilen.get(i);
 			String gestern = (z.gestern() >= 0 ? "+" : "") + z.gestern() + (z.gesternUnvollstaendig() ? "*" : "");
 			stern |= z.gesternUnvollstaendig();
-			liste.add("> " + rangZeichen(i + 1) + " **" + name(z.name()) + "** – " + z.gesamt() + " Punkte · gestern "
-					+ gestern);
+			liste.add("> " + rangZeichen(i + 1) + " **" + name(z.name()) + "** – " + z.gesamt() + " (" + gestern + ")");
 		}
 
 		List<String> fuss = new ArrayList<>();
-		fuss.add("-# Gesamtpunkte inklusive gestern. Nur Legend 1, Angriffspokale ÷ 10, abgerundet. "
-				+ "Screenshots der Tagesübersicht bitte trotzdem aufheben.");
-		fuss.add("-# Automatisch aus dem Pokalverlauf ermittelt (Näherung): Die API kennt keine einzelnen Angriffe."
+		fuss.add("-# Gesamtpunkte inklusive gestern, in der Klammer die Punkte von gestern. Nur Legend 1, "
+				+ "Angriffspokale ÷ 10, abgerundet.");
+		fuss.add("-# Automatisch aus dem Pokalverlauf ermittelt (Näherung), Screenshots der Tagesübersicht bitte aufheben."
 				+ (stern ? " * Tag nicht vollständig erfasst – fehlende Angriffe bitte per Screenshot melden." : ""));
+		fuss.add(TRENNER);
 		fuss.add("Weiter pushen und dranbleiben! ⚔️");
 		return zerlegen(kopf, liste, fuss);
 	}
@@ -121,9 +123,13 @@ public final class LegendTexte {
 
 		List<String> fuss = new ArrayList<>();
 		fuss.add("-# Es zählen nur Angriffspokale, keine aus Verteidigungen. Einspruchsfrist bis "
-				+ einspruchBis.format(DATUM) + ": Schickt dafür eure Screenshots der Angriffe.");
-		fuss.add("-# Automatisch aus dem Pokalverlauf ermittelt (Näherung): Die API kennt keine einzelnen Angriffe."
-				+ (stern ? " * nicht vollständig erfasst." : ""));
+				+ einspruchBis.format(DATUM)
+				+ ": Stimmen eure Werte nicht, schickt uns bis dahin Screenshots von eurer tatsächlichen Off.");
+		fuss.add("-# Automatisch aus dem Pokalverlauf ermittelt (Näherung)." + (stern ? " * nicht vollständig erfasst." : ""));
+		fuss.add(TRENNER);
+		fuss.add(sieger.size() == 1
+				? "Glückwunsch an den Gewinner und danke an alle fürs Mitmachen! 🎉 Wir sehen uns beim nächsten Trophy Hunt wieder. ⚔️"
+				: "Danke an alle fürs Mitmachen! 🎉 Wir sehen uns beim nächsten Trophy Hunt wieder. ⚔️");
 		return zerlegen(kopf, liste, fuss);
 	}
 
