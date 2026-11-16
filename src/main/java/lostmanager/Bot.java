@@ -1938,6 +1938,9 @@ public class Bot extends ListenerAdapter {
 			}
 		};
 		schedulerfest.scheduleAtFixedRate(statsKanaele, 1, 15, TimeUnit.MINUTES);
+
+		// Perfect Day / Trophy Hunt / Rolle Trophyhunt, eigener Takt (lostmanager.legend).
+		lostmanager.legend.LegendWertung.start();
 	}
 
 	public void stopScheduler() {

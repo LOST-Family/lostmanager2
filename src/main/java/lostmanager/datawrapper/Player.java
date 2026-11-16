@@ -701,6 +701,27 @@ public class Player {
 		return null;
 	}
 
+	/**
+	 * Unterseite des Spielers roh, etwa "battlelog" oder "leaguehistory"
+	 * (/players/{tag}/<unterpfad>). null, wenn die API nicht antwortet. Fuer
+	 * Perfect Day / Trophy Hunt (lostmanager.legend).
+	 */
+	public String getUnterpfadJson(String unterpfad) {
+		if (tag == null) {
+			return null;
+		}
+		String encodedTag = java.net.URLEncoder.encode(tag, java.nio.charset.StandardCharsets.UTF_8);
+		HttpResponse<String> response = performHttpRequestWithRetry(
+				ApiUtil.basisUrl() + "/players/" + encodedTag + "/" + unterpfad, 3);
+		if (response != null && response.statusCode() == 200) {
+			return response.body();
+		}
+		if (response != null && response.statusCode() != 404) {
+			System.err.println(unterpfad + " " + tag + ": HTTP " + response.statusCode());
+		}
+		return null;
+	}
+
 	public String getJson() {
 		// Check if tag is null before encoding
 		if (tag == null) {
