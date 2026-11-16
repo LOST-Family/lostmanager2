@@ -1096,6 +1096,11 @@ public class ListeningEvent {
 
 	private void handleClanWarEvent(Clan clan) {
 		if (!clan.isCWActive()) {
+			// Antwortet die API nicht, ist das kein „kein Krieg“: werfen, damit die
+			// Wiederholung greift und das Event sonst als Fehler statt als „fired“ endet.
+			if (clan.didApiRequestFail()) {
+				throw new IllegalStateException("CW-Status für " + clan.getTag() + " nicht abrufbar (API-Ausfall)");
+			}
 			return;
 		}
 
@@ -1352,6 +1357,15 @@ public class ListeningEvent {
 		}
 	}
 
+	/**
+	 * Räumt nur Filler ÄLTERER Kriege weg, nie die des gerade endenden. Bis 16.11.2026 löschte
+	 * ein Kriegsende-Event ohne Verstoß sofort die Liste dieses Kriegs; hat der Clan zwei solche
+	 * Events (Pflicht 1 und Pflicht 2, feuern in derselben Sekunde), las das zweite danach eine
+	 * leere Liste und führte Filler als „0/x“ – mit Kickpunkt nach der 5-Minuten-Prüfung
+	 * (15.11.2026, #2QC0QQPQ2, Events 226/227). Gesucht wird ohnehin nur ±24 h um das Kriegsende.
+	 */
+	static final String CW_FILLER_AUFRAEUMEN = "DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time < ?::timestamp - INTERVAL '24 hours'";
+
 	private void handleCWMissedAttacks(Clan clan, org.json.JSONObject cwJson) {
 		// Get required attacks from action values (default to attacksPerMember from
 		// API)
@@ -1409,8 +1423,8 @@ public class ListeningEvent {
 		} else if (isEndOfWarEvent && !result.hasMissedAttacks) {
 			// End of war but no missed attacks - nothing to send or schedule
 			// Clean up fillers - safe to delete here since no verification will occur (within 24 hours)
-			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time > ?::timestamp - INTERVAL '24 hours' AND war_end_time < ?::timestamp + INTERVAL '24 hours'", clan.getTag(),
-					endTimeTs, endTimeTs);
+			DBUtil.executeUpdate(CW_FILLER_AUFRAEUMEN, clan.getTag(),
+					endTimeTs);
 		} else {
 			// Not end of war (e.g., reminder during war) - use original behavior
 			if (result.hasMissedAttacks) {
@@ -1556,13 +1570,13 @@ public class ListeningEvent {
 			}
 
 			// Clean up fillers after processing (within 24 hours to handle API time shifts)
-			DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time > ?::timestamp - INTERVAL '24 hours' AND war_end_time < ?::timestamp + INTERVAL '24 hours'", clanTag, endTimeTs, endTimeTs);
+			DBUtil.executeUpdate(CW_FILLER_AUFRAEUMEN, clanTag, endTimeTs);
 
 			System.out.println("Completed 5-minute CW verification for clan " + clanTag + " (dataReliable="
 					+ (pruefDaten != null) + ", kickpoints=" + shouldProcessKickpoints + ")");
 			return true;
 
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			System.err.println("Error in CW delayed verification for clan " + clanTag + ": " + e.getMessage());
 			// On error, try to update the message with an error note appended to original
 			try {
@@ -1574,8 +1588,8 @@ public class ListeningEvent {
 
 			// Still clean up fillers even on error (within 24 hours)
 			try {
-				DBUtil.executeUpdate("DELETE FROM cw_fillers WHERE clan_tag = ? AND war_end_time > ?::timestamp - INTERVAL '24 hours' AND war_end_time < ?::timestamp + INTERVAL '24 hours'", clanTag,
-						endTimeTs, endTimeTs);
+				DBUtil.executeUpdate(CW_FILLER_AUFRAEUMEN, clanTag,
+						endTimeTs);
 			} catch (Exception e3) {
 				System.err.println("Failed to delete fillers on error: " + e3.getMessage());
 			}
@@ -2133,6 +2147,19 @@ public class ListeningEvent {
 		}, verzoegerungSek, TimeUnit.SECONDS);
 	}
 
+	/**
+	 * Erkennt die Ersatzantwort, die {@link Clan#getRaidJson()} bei einem fehlgeschlagenen
+	 * Abruf liefert ({@code {"items":[{"state":"ended"}]}}): ein echter Raid-Eintrag trägt
+	 * immer eine Startzeit. Ein Clan ganz ohne Raids (leere Liste) ist kein Ausfall.
+	 */
+	static boolean raidDatenFehlen(org.json.JSONObject raidJson) {
+		if (raidJson == null) return true;
+		org.json.JSONArray items = raidJson.optJSONArray("items");
+		if (items == null || items.length() == 0) return false;
+		org.json.JSONObject erster = items.optJSONObject(0);
+		return erster == null || !erster.has("startTime");
+	}
+
 	private void handleRaidEvent(Clan clan) {
 		// Get raid status - we need to handle both ongoing and recently ended raids
 		org.json.JSONObject raidJson = clan.getRaidJsonFull();
@@ -2205,6 +2232,11 @@ public class ListeningEvent {
 
 		// Handle INFOMESSAGE and KICKPOINT - missed attacks only ("Fehlende Hits")
 		ArrayList<Player> raidMembers = clan.getRaidMemberList();
+		// Ohne echte Raid-Daten wäre die Teilnehmerliste leer und JEDES Mitglied gälte als
+		// „nicht teilgenommen“ (bei KICKPOINT: Strafe für den ganzen Clan). Werfen → Wiederholung.
+		if (raidDatenFehlen(clan.getRaidJsonFull())) {
+			throw new IllegalStateException("Raid-Daten für " + clan.getTag() + " nicht abrufbar (API-Ausfall)");
+		}
 		ArrayList<Player> dbMembers = clan.getPlayersDB();
 
 		StringBuilder message = new StringBuilder();
@@ -2279,6 +2311,11 @@ public class ListeningEvent {
 			for (String s : allClantags) {
 				Clan c = new Clan(s);
 				c.getRaidMemberList(); // load from API
+				// Fehlt die Antwort eines anderen LOST-Clans, sähe aus wie „hat nirgends
+				// geraidet“, wer dort angegriffen hat. Lieber wiederholen als falsch strafen.
+				if (raidDatenFehlen(c.getRaidJsonFull())) {
+					throw new IllegalStateException("Raid-Daten für " + s + " nicht abrufbar (API-Ausfall)");
+				}
 				allClans.add(c);
 			}
 			for (int i = 0; i < notDone.size(); i++) {
@@ -3041,6 +3078,17 @@ public class ListeningEvent {
 	 *               leaving attacks open.
 	 */
 	private void addKickpointForPlayer(Player player, String reason, String detail) {
+		// Ein Fehler bei EINEM Spieler (API-Ausfall beim Clannamen, Discord, DB) darf die Schleife
+		// des Aufrufers nicht abbrechen – sonst gingen alle folgenden Spieler straffrei aus.
+		try {
+			kickpunktVergeben(player, reason, detail);
+		} catch (Exception e) {
+			System.err.println("Error: Kickpunkt für " + (player != null ? player.getTag() : "?") + " (Event "
+					+ getId() + ") fehlgeschlagen, übrige Spieler werden weiter geprüft: " + e);
+		}
+	}
+
+	private void kickpunktVergeben(Player player, String reason, String detail) {
 		KickpointTarget target = resolveKickpointTarget(player);
 		if (target.isSkipped()) {
 			System.out.println("Skipping automatic kickpoint for player " + player.getTag() + " - "
@@ -3099,12 +3147,25 @@ public class ListeningEvent {
 
 		String desc = "### Es wurde ein Kickpunkt automatisch hinzugefügt.\n";
 		// Use API name for external clan players since they may not be in DB
+		// Der Kickpunkt steht ab hier in der Datenbank. Die Namen kommen teils von der API;
+		// fällt die aus, geht die Benachrichtigung trotzdem raus (dann mit Tag statt Name).
 		String playerName = player.getNameDB();
 		if (playerName == null) {
-			playerName = player.getNameAPI();
+			try {
+				playerName = player.getNameAPI();
+			} catch (Exception e) {
+				playerName = null;
+			}
 		}
-		desc += "Spieler: " + MessageUtil.unformat(playerName + " (" + player.getTag() + ")") + "\n";
-		desc += "Clan: " + clan.getInfoString() + "\n";
+		String clanInfo;
+		try {
+			clanInfo = clan.getInfoString();
+		} catch (Exception e) {
+			String name = clan.getDisplayName();
+			clanInfo = (name != null ? name + " " : "") + "(" + clan.getTag() + ")";
+		}
+		desc += "Spieler: " + MessageUtil.unformat((playerName != null ? playerName + " " : "") + "(" + player.getTag() + ")") + "\n";
+		desc += "Clan: " + clanInfo + "\n";
 		desc += "Anzahl: " + amount + "\n";
 		desc += "Grund: " + reason + "\n";
 		desc += "ID: " + kickpointId + "\n";

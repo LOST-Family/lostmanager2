@@ -391,8 +391,15 @@ public class Player {
 
 	public String getNameAPI() {
 		if (nameapi == null) {
-			JSONObject jsonObject = new JSONObject(getJson());
-			nameapi = jsonObject.getString("name");
+			// Profil nicht abrufbar (404 nach Sperre/Löschung, Timeout): früher eine
+			// NullPointerException, die ganze Auswertungen abbrach. Dann Name aus der
+			// Datenbank, sonst der Tag – und nicht merken, der nächste Versuch darf klappen.
+			String json = getJson();
+			if (json == null) {
+				String db = getNameDB();
+				return db != null ? db : tag;
+			}
+			nameapi = new JSONObject(json).getString("name");
 		}
 		return nameapi;
 	}
@@ -827,18 +834,11 @@ public class Player {
 				Integer currentWins = (Integer) currentData.getData();
 
 				// determine if linked mid-season using season start time
-				java.sql.Timestamp seasonStart = null;
-				try {
-					seasonStart = lostmanager.util.SeasonUtil.fetchSeasonStartTime();
-				} catch (Throwable t) {
-					// Ignore exception and keep seasonStart null
-				}
-
-				boolean linkedMid = false;
-				if (seasonStart != null) {
-					long timeDiff = startData.getTimeExtracted().getTime() - seasonStart.getTime();
-					linkedMid = timeDiff > ONE_DAY_MS;
-				}
+				// Gemessen am Beginn der BEWERTETEN Saison (startOfMonth), nicht am Monat der
+				// Uhr: das Saisonende-Event feuert am 1. um 00:00 UTC, da war "dieser Monat"
+				// schon der neue, die Differenz negativ und der Schutz für spät Verlinkte aus.
+				long timeDiff = startData.getTimeExtracted().getTime() - startOfMonth.toInstant().toEpochMilli();
+				boolean linkedMid = timeDiff > ONE_DAY_MS;
 
 				return new WinsData(Math.max(currentWins - startWins, 0), linkedMid);
 			} catch (Exception e) {
