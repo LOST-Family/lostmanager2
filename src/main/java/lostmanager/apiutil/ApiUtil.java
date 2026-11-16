@@ -46,8 +46,11 @@ public class ApiUtil {
 		long jetzt = System.currentTimeMillis();
 		if (jetzt - umschalterGeprueft < 10_000) return umschalterWerte;
 		synchronized (ApiUtil.class) {
-			if (jetzt - umschalterGeprueft < 10_000) return umschalterWerte;
-			umschalterGeprueft = jetzt;
+			// Erst NACH dem Lesen als geprueft markieren (finally unten). Vorher stand die Marke
+			// schon hier: ein zweiter Thread sah sie beim Start, kehrte ohne Sperre mit den noch
+			// leeren Werten zurueck und mischte Adresse aus der Umgebung mit Key aus der Datei
+			// (CR-Manager 13.11.2026: 403 invalidIp ueber den Proxy direkt nach dem Start).
+			if (System.currentTimeMillis() - umschalterGeprueft < 10_000) return umschalterWerte;
 			java.nio.file.Path datei = java.nio.file.Path.of(UMSCHALTER);
 			try {
 				long stand = java.nio.file.Files.exists(datei)
@@ -67,6 +70,8 @@ public class ApiUtil {
 						+ ", " + (key != null ? "Key aus Datei" : "Key aus Umgebung"));
 			} catch (Exception e) {
 				System.err.println("API-Umschalter nicht lesbar, bleibe beim letzten Stand: " + e.getMessage());
+			} finally {
+				umschalterGeprueft = System.currentTimeMillis();
 			}
 		}
 		return umschalterWerte;
