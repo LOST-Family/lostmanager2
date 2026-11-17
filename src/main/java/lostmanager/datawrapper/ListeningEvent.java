@@ -219,16 +219,35 @@ public class ListeningEvent {
 		if (actionvalues == null) {
 			String json = DBUtil.getValueFromSQL("SELECT actionvalues FROM listening_events WHERE id = ?", String.class,
 					id);
-			ObjectMapper mapper = new ObjectMapper();
 			try {
-				actionvalues = mapper.readValue(json, new TypeReference<ArrayList<ActionValue>>() {
-				});
+				actionvalues = parseActionValues(json);
 			} catch (JsonProcessingException e) {
 				System.err.println("Error parsing actionvalues JSON for event " + id + ": " + e.getMessage());
 				actionvalues = new ArrayList<>();
 			}
 		}
 		return actionvalues;
+	}
+
+	/**
+	 * Liest die Aktionswerte eines Events. {@code custommessage}-Events speichern
+	 * statt einer Liste ein Objekt ({@code {"message": "…"}}); das ist kein
+	 * Fehler, sie haben schlicht keine Aktionswerte. Leer oder {@code null}
+	 * genauso.
+	 *
+	 * @throws JsonProcessingException nur bei wirklich kaputtem JSON
+	 */
+	static ArrayList<ActionValue> parseActionValues(String json) throws JsonProcessingException {
+		if (json == null || json.isBlank()) {
+			return new ArrayList<>();
+		}
+		ObjectMapper mapper = new ObjectMapper();
+		com.fasterxml.jackson.databind.JsonNode knoten = mapper.readTree(json);
+		if (knoten == null || !knoten.isArray()) {
+			return new ArrayList<>();
+		}
+		return mapper.convertValue(knoten, new TypeReference<ArrayList<ActionValue>>() {
+		});
 	}
 
 	/**

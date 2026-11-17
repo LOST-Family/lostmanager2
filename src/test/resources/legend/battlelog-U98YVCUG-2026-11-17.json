@@ -1,0 +1,405 @@
+{
+"quelle": "CoC-API /players/%23U98YVCUG/battlelog, abgerufen 17.11.2026 18:40 UTC (Gegner entfernt)",
+"items": [
+{
+"battleType": "legend",
+"attack": false,
+"stars": 2,
+"destructionPercentage": 92,
+"battleTimestamp": "20261115T174329.000Z",
+"battleTime": 180
+},
+{
+"battleType": "homeVillage",
+"attack": false,
+"stars": 0,
+"destructionPercentage": 33,
+"battleTimestamp": "20261115T213623.000Z",
+"battleTime": 49
+},
+{
+"battleType": "homeVillage",
+"attack": false,
+"stars": 1,
+"destructionPercentage": 20,
+"battleTimestamp": "20261116T053848.000Z",
+"battleTime": 111
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261116T124652.000Z",
+"battleTime": 152
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261116T124751.000Z",
+"battleTime": 133
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 2,
+"destructionPercentage": 98,
+"battleTimestamp": "20261116T124942.000Z",
+"battleTime": 180
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261116T124945.000Z",
+"battleTime": 157
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 2,
+"destructionPercentage": 99,
+"battleTimestamp": "20261116T125231.000Z",
+"battleTime": 180
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261116T125527.000Z",
+"battleTime": 146
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261116T125811.000Z",
+"battleTime": 155
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 2,
+"destructionPercentage": 96,
+"battleTimestamp": "20261116T130056.000Z",
+"battleTime": 180
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261116T130338.000Z",
+"battleTime": 174
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261116T130720.000Z",
+"battleTime": 158
+},
+{
+"battleType": "homeVillage",
+"attack": false,
+"stars": 2,
+"destructionPercentage": 71,
+"battleTimestamp": "20261116T142536.000Z",
+"battleTime": 30
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261116T151520.000Z",
+"battleTime": 121
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261116T154350.000Z",
+"battleTime": 101
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261116T161504.000Z",
+"battleTime": 177
+},
+{
+"battleType": "homeVillage",
+"attack": false,
+"stars": 2,
+"destructionPercentage": 87,
+"battleTimestamp": "20261116T180517.000Z",
+"battleTime": 86
+},
+{
+"battleType": "homeVillage",
+"attack": false,
+"stars": 0,
+"destructionPercentage": 12,
+"battleTimestamp": "20261116T201020.000Z",
+"battleTime": 17
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261116T201419.000Z",
+"battleTime": 148
+},
+{
+"battleType": "homeVillage",
+"attack": false,
+"stars": 0,
+"destructionPercentage": 8,
+"battleTimestamp": "20261116T231754.000Z",
+"battleTime": 11
+},
+{
+"battleType": "homeVillage",
+"attack": false,
+"stars": 1,
+"destructionPercentage": 29,
+"battleTimestamp": "20261116T233853.000Z",
+"battleTime": 140
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261117T010406.000Z",
+"battleTime": 152
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261117T033340.000Z",
+"battleTime": 144
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 2,
+"destructionPercentage": 91,
+"battleTimestamp": "20261117T051654.000Z",
+"battleTime": 176
+},
+{
+"battleType": "homeVillage",
+"attack": false,
+"stars": 2,
+"destructionPercentage": 77,
+"battleTimestamp": "20261117T053036.000Z",
+"battleTime": 180
+},
+{
+"battleType": "homeVillage",
+"attack": false,
+"stars": 1,
+"destructionPercentage": 69,
+"battleTimestamp": "20261117T072335.000Z",
+"battleTime": 32
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 2,
+"destructionPercentage": 86,
+"battleTimestamp": "20261117T080118.000Z",
+"battleTime": 131
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261117T081956.000Z",
+"battleTime": 166
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 2,
+"destructionPercentage": 76,
+"battleTimestamp": "20261117T082110.000Z",
+"battleTime": 170
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 2,
+"destructionPercentage": 96,
+"battleTimestamp": "20261117T082650.000Z",
+"battleTime": 180
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261117T082940.000Z",
+"battleTime": 152
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261117T083230.000Z",
+"battleTime": 141
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261117T083604.000Z",
+"battleTime": 178
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 2,
+"destructionPercentage": 80,
+"battleTimestamp": "20261117T083858.000Z",
+"battleTime": 143
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 2,
+"destructionPercentage": 91,
+"battleTimestamp": "20261117T084137.000Z",
+"battleTime": 174
+},
+{
+"battleType": "legend",
+"attack": true,
+"stars": 2,
+"destructionPercentage": 94,
+"battleTimestamp": "20261117T084430.000Z",
+"battleTime": 176
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 3,
+"destructionPercentage": 100,
+"battleTimestamp": "20261117T092038.000Z",
+"battleTime": 112
+},
+{
+"battleType": "legend",
+"attack": false,
+"stars": 2,
+"destructionPercentage": 94,
+"battleTimestamp": "20261117T113731.000Z",
+"battleTime": 110
+},
+{
+"battleType": "homeVillage",
+"attack": false,
+"stars": 2,
+"destructionPercentage": 88,
+"battleTimestamp": "20261117T130319.000Z",
+"battleTime": 67
+},
+{
+"battleType": "homeVillage",
+"attack": false,
+"stars": 2,
+"destructionPercentage": 69,
+"battleTimestamp": "20261117T153719.000Z",
+"battleTime": 84
+},
+{
+"battleType": "homeVillage",
+"attack": false,
+"stars": 2,
+"destructionPercentage": 69,
+"battleTimestamp": "20261117T160146.000Z",
+"battleTime": 161
+},
+{
+"battleType": "homeVillage",
+"attack": true,
+"stars": 1,
+"destructionPercentage": 66,
+"battleTimestamp": "20261117T183524.000Z",
+"battleTime": 23
+},
+{
+"battleType": "homeVillage",
+"attack": true,
+"stars": 1,
+"destructionPercentage": 74,
+"battleTimestamp": "20261117T183555.000Z",
+"battleTime": 21
+},
+{
+"battleType": "homeVillage",
+"attack": true,
+"stars": 2,
+"destructionPercentage": 86,
+"battleTimestamp": "20261117T183651.000Z",
+"battleTime": 43
+},
+{
+"battleType": "homeVillage",
+"attack": true,
+"stars": 1,
+"destructionPercentage": 63,
+"battleTimestamp": "20261117T183723.000Z",
+"battleTime": 16
+},
+{
+"battleType": "homeVillage",
+"attack": true,
+"stars": 1,
+"destructionPercentage": 55,
+"battleTimestamp": "20261117T183748.000Z",
+"battleTime": 13
+},
+{
+"battleType": "homeVillage",
+"attack": true,
+"stars": 2,
+"destructionPercentage": 64,
+"battleTimestamp": "20261117T183840.000Z",
+"battleTime": 24
+},
+{
+"battleType": "homeVillage",
+"attack": true,
+"stars": 1,
+"destructionPercentage": 55,
+"battleTimestamp": "20261117T183912.000Z",
+"battleTime": 17
+},
+{
+"battleType": "homeVillage",
+"attack": true,
+"stars": 1,
+"destructionPercentage": 57,
+"battleTimestamp": "20261117T183952.000Z",
+"battleTime": 25
+}
+]
+}
