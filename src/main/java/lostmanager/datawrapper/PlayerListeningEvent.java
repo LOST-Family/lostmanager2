@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lostmanager.Bot;
@@ -230,8 +229,7 @@ public class PlayerListeningEvent {
 		String actionValuesJson = rs.getString("actionvalues");
 		if (actionValuesJson != null && !actionValuesJson.isBlank()) {
 			try {
-				values = new ObjectMapper().readValue(actionValuesJson, new TypeReference<ArrayList<ActionValue>>() {
-				});
+				values = ListeningEvent.parseActionValues(actionValuesJson);
 			} catch (final JsonProcessingException e) {
 				System.err.println("Error parsing actionvalues JSON for player event " + rs.getLong("id") + ": "
 						+ e.getMessage());
