@@ -81,6 +81,22 @@ class LegendDatenbankTest {
 	}
 
 	@Test
+	void korrekturBleibtUndLegendEinsHoechstens320() {
+		LegendWertung.buchen("#K", "K", LegendRegeln.LIGA_1, SAISON, Map.of(T17, 200), 5, 0, false);
+		DBUtil.executeUpdate("UPDATE legend_tageswert SET angriffspokale = 291, quelle = 'korrektur' WHERE player_tag = '#K'");
+		LegendWertung.buchen("#K", "K", LegendRegeln.LIGA_1, SAISON, Map.of(T17, 40), 1, 0, true);
+		assertEquals(291, DBUtil.getValueFromSQL("SELECT angriffspokale FROM legend_tageswert WHERE player_tag='#K'", Integer.class));
+		assertEquals(Boolean.FALSE, DBUtil.getValueFromSQL("SELECT unvollstaendig FROM legend_tageswert WHERE player_tag='#K'", Boolean.class));
+		LegendWertung.buchen("#M", "M", LegendRegeln.LIGA_1, SAISON, Map.of(T17, 300), 7, 0, false);
+		LegendWertung.buchen("#M", "M", LegendRegeln.LIGA_1, SAISON, Map.of(T17, 40), 1, 0, false);
+		assertEquals(320, DBUtil.getValueFromSQL("SELECT angriffspokale FROM legend_tageswert WHERE player_tag='#M'", Integer.class));
+		// Legend II ohne Tagesdeckel
+		LegendWertung.buchen("#H", "H", LegendRegeln.LIGA_2, SAISON, Map.of(T17, 300), 8, 0, false);
+		LegendWertung.buchen("#H", "H", LegendRegeln.LIGA_2, SAISON, Map.of(T17, 300), 8, 0, false);
+		assertEquals(600, DBUtil.getValueFromSQL("SELECT angriffspokale FROM legend_tageswert WHERE player_tag='#H'", Integer.class));
+	}
+
+	@Test
 	void perfectDayRanglisteMitStartstandUndGleichstandsregel() {
 		// A: 16.11. 300, 17.11. 320 (Perfect Day) -> 30 + 32 = 62
 		LegendWertung.buchen("#A", "Anna", LegendRegeln.LIGA_1, SAISON, Map.of(T16, 300), 8, 0, false);

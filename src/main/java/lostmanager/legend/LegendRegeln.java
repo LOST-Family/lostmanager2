@@ -219,6 +219,127 @@ public final class LegendRegeln {
 		return new Zuordnung(wert, angriffe.size(), true, -1, 0, 0);
 	}
 
+	/** Ein Kampf mit seinem Schlüssel im Protokoll (Zeitstempel, Seite, Dauer, Gegner). */
+	public record Eintrag(String schluessel, Kampf kampf) {
+	}
+
+	/**
+	 * Stand eines Legend-I-Spielers zwischen zwei Abfragen.
+	 *
+	 * @param pokale       zuletzt abgefragter Pokalstand
+	 * @param gesehen      Schlüssel aller Kämpfe, die schon verbucht sind oder im Topf liegen
+	 * @param blindBis     Kämpfe, die bis dahin geendet haben, gelten als verbucht
+	 *                     (Übergang/erste Sichtung/Notbuchung; sonst null)
+	 * @param topfPokale   Pokaländerung, die noch keinem Kampf zugeordnet ist
+	 * @param topf         Schlüssel der Kämpfe, die noch keiner Änderung zugeordnet sind
+	 * @param letzteRegung wann sich zuletzt Pokalstand oder Protokoll bewegt hat
+	 * @param offenSeit    seit wann der Topf nicht leer ist
+	 */
+	public record EinsStand(int pokale, java.util.Set<String> gesehen, Instant blindBis, int topfPokale,
+			java.util.Set<String> topf, Instant letzteRegung, Instant offenSeit) {
+	}
+
+	/** Ergebnis einer Abfrage: neuer Stand, zu buchende Pokale je Tag, Zuordnung (für Zahl und Stichprobe). */
+	public record EinsErgebnis(EinsStand stand, Map<LocalDate, Integer> tage, Zuordnung zuordnung) {
+	}
+
+	/**
+	 * So lange müssen Pokalstand und Protokoll still stehen, bevor der Topf
+	 * aufgelöst wird. Die API hält den Spieler bis 30 s, das Protokoll bis 60 s
+	 * im Zwischenspeicher (Cache-Control, gemessen 17.11.2026) – eins kann dem
+	 * anderen also bis eine Minute voraus sein.
+	 */
+	public static final java.time.Duration RUHE = java.time.Duration.ofSeconds(90);
+	/** Passt der Topf so lange nicht zusammen, wird nach dem Vorzeichen gebucht. */
+	public static final java.time.Duration HOECHSTENS_OFFEN = java.time.Duration.ofMinutes(10);
+
+	/**
+	 * Legend I, seit 17.11.2026 (Pixel: „mach das gleiche per api“ wie ClashPerk).
+	 * Der Takt fragt alle 30 Sekunden. Pokaländerungen und neue Kämpfe (erkannt am
+	 * Schlüssel im Protokoll, nicht an Zeitgrenzen) wandern in einen Topf; steht
+	 * beides {@link #RUHE} lang still und passt zusammen (Plus nur mit neuem
+	 * Angriff, höchstens 40 je Angriff und Verteidigung), ordnet {@link #zuordnen}
+	 * den Topf zu. Weil zwischen zwei Angriffen eines Spielers Minuten liegen,
+	 * enthält der Topf fast immer einen Kampf, sonst einen Angriff und eine
+	 * Verteidigung (Dreistern-Verteidigung = genau 40, sonst gelernt geschätzt).
+	 * Vorher filterte der Bot nach Zeitgrenzen und schätzte ganze Serien; am 17.11.
+	 * ergab das bei Vendetta 120 statt 276.
+	 *
+	 * @param protokoll liefert die Legend-Kämpfe des Protokolls, null = nicht abrufbar
+	 * @return null = Protokoll nicht abrufbar, Stand unverändert lassen
+	 */
+	public static EinsErgebnis legendEins(EinsStand vorher, int pokale, java.util.function.Supplier<List<Eintrag>> protokoll,
+			Instant jetzt, Schaetzer schaetzer) {
+		int delta = pokale - vorher.pokale();
+		int topfPokale = vorher.topfPokale() + delta;
+		if (delta == 0 && topfPokale == 0 && vorher.topf().isEmpty()) {
+			return new EinsErgebnis(new EinsStand(pokale, vorher.gesehen(), vorher.blindBis(), 0, vorher.topf(),
+					vorher.letzteRegung(), null), Map.of(), null);
+		}
+		List<Eintrag> log = protokoll.get();
+		if (log == null) {
+			return null;
+		}
+		java.util.Set<String> gesehen = new java.util.HashSet<>(vorher.gesehen());
+		java.util.Set<String> topf = new java.util.HashSet<>(vorher.topf());
+		java.util.Set<String> imLog = new java.util.HashSet<>();
+		boolean neu = false;
+		for (Eintrag e : log) {
+			imLog.add(e.schluessel());
+			if (gesehen.contains(e.schluessel())) {
+				continue;
+			}
+			gesehen.add(e.schluessel());
+			if (vorher.blindBis() != null && !e.kampf().ende().isAfter(vorher.blindBis())) {
+				continue;
+			}
+			topf.add(e.schluessel());
+			neu = true;
+		}
+		gesehen.retainAll(imLog);
+		topf.retainAll(imLog);
+		Instant regung = (delta != 0 || neu || vorher.letzteRegung() == null) ? jetzt : vorher.letzteRegung();
+		Instant offen = vorher.offenSeit() != null ? vorher.offenSeit() : jetzt;
+
+		List<Kampf> kaempfe = new ArrayList<>();
+		for (Eintrag e : log) {
+			if (topf.contains(e.schluessel())) {
+				kaempfe.add(e.kampf());
+			}
+		}
+		kaempfe.sort((x, y) -> x.ende().compareTo(y.ende()));
+		long angriffe = kaempfe.stream().filter(Kampf::angriff).count();
+		long verteidigungen = kaempfe.size() - angriffe;
+		boolean passt = !kaempfe.isEmpty() && topfPokale <= MAX_JE_KAMPF * angriffe
+				&& topfPokale >= -MAX_JE_KAMPF * verteidigungen;
+		boolean ruhig = java.time.Duration.between(regung, jetzt).compareTo(RUHE) >= 0;
+
+		boolean zuLange = java.time.Duration.between(offen, jetzt).compareTo(HOECHSTENS_OFFEN) >= 0;
+		// Lange Angriffsserie ohne Pause: passt der Topf, trotzdem zuordnen.
+		if (passt && (ruhig || zuLange)) {
+			Zuordnung z = zuordnen(topfPokale, kaempfe, false, schaetzer);
+			Map<LocalDate, Integer> tage = z.angriffe() > 0
+					? aufTageVerteilen(z.angriffspokale(), kaempfe, false, schaetzer)
+					: Map.of();
+			return new EinsErgebnis(new EinsStand(pokale, gesehen, vorher.blindBis(), 0, new java.util.HashSet<>(),
+					regung, null), tage, z);
+		}
+		if (kaempfe.isEmpty() && topfPokale == 0) {
+			return new EinsErgebnis(new EinsStand(pokale, gesehen, vorher.blindBis(), 0, topf, regung, null), Map.of(),
+					null);
+		}
+		if (zuLange) {
+			// Passt nicht zusammen (Protokoll unvollständig?): nach dem Vorzeichen. Was bis
+			// jetzt geendet hat, gilt als verbucht.
+			int wert = Math.max(0, Math.min(topfPokale, MAX_JE_KAMPF * (int) Math.max(1, angriffe)));
+			Map<LocalDate, Integer> tage = wert > 0 ? Map.of(legendTag(jetzt), wert) : Map.of();
+			return new EinsErgebnis(new EinsStand(pokale, gesehen, jetzt, 0, new java.util.HashSet<>(), regung, null),
+					tage, new Zuordnung(wert, wert > 0 ? (int) Math.max(1, angriffe) : 0, true, -1, 0, 0));
+		}
+		return new EinsErgebnis(new EinsStand(pokale, gesehen, vorher.blindBis(), topfPokale, topf, regung, offen),
+				Map.of(), null);
+	}
+
 	/**
 	 * Verteilt die Angriffspokale eines Fensters auf Legend-Tage (falls die
 	 * Angriffe über einen Tageswechsel reichen), gewichtet mit der Schätzung.
