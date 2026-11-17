@@ -29,10 +29,9 @@ import lostmanager.legend.LegendRegeln.Eintrag;
  * Pokale je Kampf nennt das Protokoll nicht. Für Vendetta am 16.11. sind sie
  * belegt (ClashPerk-Karte im Kanal trophy-hunt-planung, Nachricht
  * 1571951848741539960: +40 +32 +32 +40 +40 +31 +40 +40 = 295, Verteidigungen je
- * −40). Für den 17.11. ist nur die Summe aus ClashPerk belegt (Nachricht
- * 1572317806706434078); Dreisterne sind genau 40, der Rest wird auf die übrigen
- * Angriffe verteilt – die Prüfung ist also, dass die Summe über alle Abfragen
- * herauskommt, gleich wie die Kämpfe in die Takte fallen.
+ * −40). Für den 17.11. ist die Summe aus ClashPerk belegt (Nachricht
+ * 1572317806706434078); die Einzelwerte ergeben sich aus der Formel
+ * (LegendRegeln.legendEinsPokale), deren Summe der Test gegen ClashPerk prüft.
  */
 class LegendNachspielTest {
 
@@ -70,20 +69,10 @@ class LegendNachspielTest {
 		List<JSONObject> ang = amTag.stream().filter(k -> k.getBoolean("attack")).toList();
 		int[] werte = angriffe;
 		if (werte == null) {
+			// Pokale je Angriff nach der Formel (LegendRegeln.legendEinsPokale)
 			werte = new int[ang.size()];
-			List<Integer> zweistern = new ArrayList<>();
-			int rest = summe;
 			for (int i = 0; i < ang.size(); i++) {
-				if (ang.get(i).getInt("stars") == 3) {
-					werte[i] = 40;
-					rest -= 40;
-				} else {
-					zweistern.add(i);
-				}
-			}
-			for (int j = 0; j < zweistern.size(); j++) {
-				werte[zweistern.get(j)] = j == zweistern.size() - 1 ? rest - (rest / zweistern.size()) * j
-						: rest / zweistern.size();
+				werte[i] = LegendRegeln.legendEinsPokale(ang.get(i).getInt("stars"), ang.get(i).getInt("destructionPercentage"));
 			}
 		}
 		List<Sim> sims = new ArrayList<>();
@@ -99,8 +88,7 @@ class LegendNachspielTest {
 				pokale = werte[a++];
 			} else {
 				pokale = verteidigungen != null ? verteidigungen[v++]
-						: -(k.getInt("stars") == 3 ? 40 : LegendRegeln.GROB.angreiferPokale(false, k.getInt("stars"),
-								k.getInt("destructionPercentage")));
+						: -LegendRegeln.legendEinsPokale(k.getInt("stars"), k.getInt("destructionPercentage"));
 			}
 			sims.add(new Sim(aenderung, aenderung.plusSeconds(logVerzugSek), pokale, eintraege.get(i)));
 		}
@@ -122,7 +110,8 @@ class LegendNachspielTest {
 			final Instant jetzt = t;
 			int pokale = start + sims.stream().filter(s -> !s.aenderung().isAfter(jetzt)).mapToInt(Sim::pokale).sum();
 			List<Eintrag> log = sims.stream().filter(s -> !s.imLog().isAfter(jetzt)).map(Sim::eintrag).toList();
-			EinsErgebnis e = LegendRegeln.legendEins(stand, pokale, () -> log, jetzt, LegendRegeln.GROB);
+			EinsErgebnis e = LegendRegeln.legendEins(stand, pokale, () -> log, jetzt,
+					LegendRegeln.formel(LegendRegeln.GROB));
 			if (e == null) {
 				continue;
 			}
@@ -177,6 +166,22 @@ class LegendNachspielTest {
 	@Test
 	void mulm17Nov296() throws Exception {
 		pruefeAlleVarianten("2VCL0PQG0", LocalDate.of(2026, 11, 17), null, 296, null);
+	}
+
+	@Test
+	void formelTrifftClashPerk() throws Exception {
+		// Einzelwerte der ClashPerk-Karte Vendetta 16.11.
+		assertEquals(32, LegendRegeln.legendEinsPokale(2, 98));
+		assertEquals(32, LegendRegeln.legendEinsPokale(2, 99));
+		assertEquals(31, LegendRegeln.legendEinsPokale(2, 96));
+		assertEquals(40, LegendRegeln.legendEinsPokale(3, 100));
+		// Tagessummen aus dem Protokoll (Erstsichtung mitten am Tag) gegen ClashPerk 17.11.
+		LocalDate t17 = LocalDate.of(2026, 11, 17);
+		assertArrayEquals(new int[] { 276, 8 }, LegendWertung.tagesSumme(protokoll("U98YVCUG"), t17));
+		assertArrayEquals(new int[] { 281, 8 }, LegendWertung.tagesSumme(protokoll("LQ2QJQGUY"), t17));
+		assertArrayEquals(new int[] { 265, 8 }, LegendWertung.tagesSumme(protokoll("YP2JVC882"), t17));
+		assertArrayEquals(new int[] { 296, 8 }, LegendWertung.tagesSumme(protokoll("2VCL0PQG0"), t17));
+		assertArrayEquals(new int[] { 295, 8 }, LegendWertung.tagesSumme(protokoll("U98YVCUG"), LocalDate.of(2026, 11, 16)));
 	}
 
 	@Test

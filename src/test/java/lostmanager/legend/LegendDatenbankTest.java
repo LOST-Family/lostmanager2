@@ -97,6 +97,20 @@ class LegendDatenbankTest {
 	}
 
 	@Test
+	void erstsichtungSetztMindestensUndAddiertNicht() {
+		LegendWertung.mindestens("#E", "E", LegendRegeln.LIGA_1, SAISON, T17, 234, 8, false);
+		LegendWertung.mindestens("#E", "E", LegendRegeln.LIGA_1, SAISON, T17, 234, 8, false);
+		assertEquals(234, DBUtil.getValueFromSQL("SELECT angriffspokale FROM legend_tageswert WHERE player_tag='#E'", Integer.class));
+		assertEquals(8, DBUtil.getValueFromSQL("SELECT angriffe FROM legend_tageswert WHERE player_tag='#E'", Integer.class));
+		LegendWertung.mindestens("#E", "E", LegendRegeln.LIGA_1, SAISON, T17, 200, 7, false);
+		assertEquals(234, DBUtil.getValueFromSQL("SELECT angriffspokale FROM legend_tageswert WHERE player_tag='#E'", Integer.class));
+		DBUtil.executeUpdate("UPDATE legend_tageswert SET angriffspokale = 225, quelle = 'korrektur' WHERE player_tag = '#E'");
+		LegendWertung.mindestens("#E", "E", LegendRegeln.LIGA_1, SAISON, T17, 300, 8, true);
+		assertEquals(225, DBUtil.getValueFromSQL("SELECT angriffspokale FROM legend_tageswert WHERE player_tag='#E'", Integer.class));
+		assertEquals(Boolean.FALSE, DBUtil.getValueFromSQL("SELECT unvollstaendig FROM legend_tageswert WHERE player_tag='#E'", Boolean.class));
+	}
+
+	@Test
 	void perfectDayRanglisteMitStartstandUndGleichstandsregel() {
 		// A: 16.11. 300, 17.11. 320 (Perfect Day) -> 30 + 32 = 62
 		LegendWertung.buchen("#A", "Anna", LegendRegeln.LIGA_1, SAISON, Map.of(T16, 300), 8, 0, false);

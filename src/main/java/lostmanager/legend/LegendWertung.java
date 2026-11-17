@@ -468,7 +468,7 @@ public final class LegendWertung {
 		LegendRegeln.EinsErgebnis erg = LegendRegeln.legendEins(stand, pokale, () -> {
 			JSONArray p = protokoll(tag);
 			return p == null ? null : eintraege(p);
-		}, jetzt, schaetzer);
+		}, jetzt, LegendRegeln.formel(schaetzer));
 		if (erg == null) {
 			return;
 		}
@@ -574,15 +574,68 @@ public final class LegendWertung {
 				verbuchen(tag, name, liga, saison, pokale, seitBeginn, true, schaetzer, abgeschnitten);
 			}
 		} else {
-			boolean schonAngegriffen = seitBeginn.stream().anyMatch(Kampf::angriff);
-			if (schonAngegriffen) {
-				buchen(tag, name, liga, saison, Map.of(LegendRegeln.legendTag(jetzt), 0), 0, 0, true);
+			// Mitten am Tag dazugekommen (Bot-Start, Aufstieg, neu im Clan): die Angriffe des
+			// Tages stehen im Protokoll, ihre Pokale ergeben sich aus Sternen und Prozent.
+			// Vorher startete so jemand bei 0 (Maxi am 17.11.: 0 statt 234).
+			LocalDate heute = LegendRegeln.legendTag(jetzt);
+			int[] summe = tagesSumme(protokoll, heute);
+			if (summe[1] > 0) {
+				boolean unvollstaendig = protokoll.length() >= 50 && aeltestes(protokoll).isAfter(ab);
+				mindestens(tag, name, liga, saison, heute, summe[0], summe[1], unvollstaendig);
+				System.out.println("Perfect Day: " + name + " " + tag + " erstmals gesehen, " + summe[1]
+						+ " Angriffe heute aus dem Protokoll = " + summe[0] + " Pokale"
+						+ (unvollstaendig ? " (Protokoll reicht nicht bis Tagesbeginn)" : ""));
 			}
 		}
 		speichern(tag, liga, saison, pokale, jetzt, stand, null);
 		// Legend I beginnt danach neu: was bis jetzt geendet hat, steckt im Stand.
 		DBUtil.executeUpdate("UPDATE legend_beobachtung SET kaempfe = NULL, topf = NULL, topf_pokale = 0, "
 				+ "letzte_regung = NULL WHERE player_tag = ?", tag);
+	}
+
+	/**
+	 * Legend I: Angriffspokale und Zahl der Angriffe eines Legend-Tages aus dem
+	 * Protokoll (nach battleTimestamp, wie ClashPerk und legend-gegenprobe.py).
+	 */
+	static int[] tagesSumme(JSONArray protokoll, LocalDate legendTag) {
+		int pokale = 0, angriffe = 0;
+		for (int i = 0; i < protokoll.length(); i++) {
+			JSONObject k = protokoll.getJSONObject(i);
+			if (!"legend".equals(k.optString("battleType")) || !k.optBoolean("attack")) {
+				continue;
+			}
+			try {
+				Instant beginn = java.time.ZonedDateTime.parse(k.getString("battleTimestamp"), KAMPFZEIT).toInstant();
+				if (LegendRegeln.legendTag(beginn).equals(legendTag)) {
+					pokale += LegendRegeln.legendEinsPokale(k.optInt("stars"), k.optInt("destructionPercentage"));
+					angriffe++;
+				}
+			} catch (Exception e) {
+				// unlesbarer Zeitstempel: nicht zählen
+			}
+		}
+		return new int[] { Math.min(pokale, LegendRegeln.PERFECT_DAY_POKALE), angriffe };
+	}
+
+	/**
+	 * Setzt den Tageswert auf mindestens diesen Stand (nie addieren: wer am selben
+	 * Tag schon gezählt wurde und erneut „erstmals“ gesehen wird, bekäme ihn sonst
+	 * doppelt). Korrigierte Tage bleiben.
+	 */
+	static void mindestens(String tag, String name, String liga, long saison, LocalDate legendTag, int pokale,
+			int angriffe, boolean unvollstaendig) {
+		if (saison == 0) {
+			Long haeufigste = DBUtil.getValueFromSQL("SELECT saison FROM legend_beobachtung WHERE liga = ? AND saison > 0 "
+					+ "GROUP BY saison ORDER BY count(*) DESC LIMIT 1", Long.class, liga);
+			saison = haeufigste == null ? 0 : haeufigste;
+		}
+		DBUtil.executeUpdate("INSERT INTO legend_tageswert (legend_tag, player_tag, liga, saison, name, angriffspokale, "
+				+ "angriffe, unvollstaendig) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT (legend_tag, player_tag, liga) DO UPDATE "
+				+ "SET name = EXCLUDED.name, angriffspokale = GREATEST(legend_tageswert.angriffspokale, EXCLUDED.angriffspokale), "
+				+ "angriffe = GREATEST(legend_tageswert.angriffe, EXCLUDED.angriffe), "
+				+ "unvollstaendig = legend_tageswert.unvollstaendig OR EXCLUDED.unvollstaendig "
+				+ "WHERE legend_tageswert.quelle IS NULL", legendTag, tag, liga, saison, name, pokale, angriffe,
+				unvollstaendig);
 	}
 
 	/**

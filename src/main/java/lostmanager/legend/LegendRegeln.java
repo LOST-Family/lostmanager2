@@ -160,6 +160,32 @@ public final class LegendRegeln {
 			: Math.min(MAX_JE_KAMPF - 1, sterne * 10 + prozent / 10);
 
 	/**
+	 * Pokale eines Legend-I-Angriffs aus Sternen und Prozent (für die Verteidigung
+	 * dasselbe mit umgekehrtem Vorzeichen). Am 17.11.2026 recherchiert und an acht
+	 * ClashPerk-Werten bestätigt (betreuung/legend-gegenprobe.py): 3 Sterne 40;
+	 * 2 Sterne 16 + (p−50)/3, höchstens 32; 1 Stern 5 + (p−1)/9, höchstens 15;
+	 * 0 Sterne p/10, höchstens 4.
+	 */
+	public static int legendEinsPokale(int sterne, int prozent) {
+		if (sterne >= 3) {
+			return MAX_JE_KAMPF;
+		}
+		if (sterne == 2) {
+			return Math.max(0, Math.min(32, 16 + (prozent - 50) / 3));
+		}
+		if (sterne == 1) {
+			return Math.max(0, Math.min(15, 5 + (prozent - 1) / 9));
+		}
+		return Math.max(0, Math.min(4, prozent / 10));
+	}
+
+	/** Legend I nach der Formel, Legend II (dort unbekannt) nach {@code sonst}. */
+	public static Schaetzer formel(Schaetzer sonst) {
+		return (ranked, sterne, prozent) -> ranked ? sonst.angreiferPokale(true, sterne, prozent)
+				: legendEinsPokale(sterne, prozent);
+	}
+
+	/**
 	 * Ergebnis einer Zuordnung.
 	 *
 	 * @param angriffspokale Pokale aus den Angriffen des Fensters (≥ 0)
