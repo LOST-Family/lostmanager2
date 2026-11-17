@@ -8729,6 +8729,14 @@
     "name": "Portal Pendant (Oct. 2026)",
     "icon": "/home-base/equipments/61.png"
   },
+  "90000062": {
+    "name": "Blizzard Axe Legendary (Dec. 2026)",
+    "icon": "/home-base/equipments/62.png"
+  },
+  "90000063": {
+    "name": "Shield Brooch (Feb. 2027)",
+    "icon": "/home-base/equipments/63.png"
+  },
   "73000000": {
     "name": "L.A.S.S.I",
     "character": "/home-base/pets/lassi-character.png",
