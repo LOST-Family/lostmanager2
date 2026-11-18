@@ -1424,17 +1424,16 @@ public class Bot extends ListenerAdapter {
 									// Einplanung: verworfen wäre der Kriegsbeginn für diesen Krieg
 									// verpasst, er wird nach einem Neuaufbau nicht erneut erkannt.
 									schedulertasks.execute(() -> {
-										try {
-											ListeningEvent le = new ListeningEvent(finalEventId);
-											le.fireEvent();
+										// Wiederholt an Ort und Stelle: der nächste Poll erkennt diesen
+										// Kriegsstart nicht noch einmal (siehe StartAusloeser).
+										final int versuche = lostmanager.util.StartAusloeser.mitWiederholung(
+												"start trigger " + finalEventId,
+												() -> new ListeningEvent(finalEventId).fireEvent(),
+												lostmanager.util.StartAusloeser.WARTEZEITEN_MS, Thread::sleep);
+										if (versuche > 0) {
 											System.out.println("Successfully fired start event " + finalEventId
-													+ " for clan " + clanTag);
-										} catch (final Exception e) {
-											System.err.println("Error firing start trigger " + finalEventId + ": "
-													+ e.getMessage());
-											System.out.println(e.getMessage());
-											// Remove from fired set to allow retry in next poll
-											clanFiredEvents.remove(finalEventId);
+													+ " for clan " + clanTag
+													+ (versuche > 1 ? " (Versuch " + versuche + ")" : ""));
 										}
 									});
 								} else {
