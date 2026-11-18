@@ -126,6 +126,15 @@ class LegendDatenbankTest {
 		// andere Saison zählt nicht
 		LegendWertung.buchen("#A", "Anna", LegendRegeln.LIGA_1, SAISON - 1, Map.of(LocalDate.of(2026, 11, 15), 320), 8, 0, false);
 
+		// Nur mit Discord verknüpfte Spieler zählen (Stefan 18.11.2026); #D (Boshi-Fall)
+		// hat Pokale, aber keine Verknüpfung, #E einen Eintrag ohne discord_id.
+		DBUtil.executeUpdate("INSERT INTO players (coc_tag, discord_id, name) VALUES ('#A', '1', 'Anna'), ('#B', '2', 'Bert'), "
+				+ "('#C', '3', 'Carl'), ('#E', NULL, 'Emil')");
+		LegendWertung.buchen("#D", "Dora", LegendRegeln.LIGA_1, SAISON, Map.of(T17, 320), 8, 0, false);
+		LegendWertung.buchen("#E", "Emil", LegendRegeln.LIGA_1, SAISON, Map.of(T17, 320), 8, 0, false);
+		DBUtil.executeUpdate("INSERT INTO legend_korrektur (wertung, schluessel, player_tag, name, wert, grund) VALUES "
+				+ "('perfectday', ?, '#D', 'Dora', 5, 'Test')", String.valueOf(SAISON));
+
 		List<LegendTexte.PdZeile> z = LegendWertung.perfectDayRangliste(SAISON, T17);
 		assertEquals(3, z.size());
 		assertEquals(new LegendTexte.PdZeile("Anna", 62, 32, false), z.get(0)); // mehr Perfect Days
@@ -144,6 +153,12 @@ class LegendDatenbankTest {
 		z = LegendWertung.perfectDayRangliste(SAISON, T17, raus);
 		assertEquals(3, z.size());
 		assertEquals(new LegendTexte.PdZeile("Anna", 62, 32, false), z.get(0));
+
+		// Dauerhafter Ausschluss (*=) gilt an jedem Tag
+		z = LegendWertung.perfectDayRangliste(SAISON, T17, "*=#C");
+		assertEquals(List.of("Anna", "Bert"), z.stream().map(LegendTexte.PdZeile::name).toList());
+		z = LegendWertung.perfectDayRangliste(SAISON, T16, "*=#C");
+		assertEquals(List.of("Bert", "Anna"), z.stream().map(LegendTexte.PdZeile::name).toList());
 	}
 
 	@Test
