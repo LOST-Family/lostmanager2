@@ -1639,6 +1639,15 @@ public class ListeningEvent {
 	private static final long CW_PRUEFFRIST_MS = TimeUnit.MINUTES.toMillis(15);
 
 	/**
+	 * Versteckte Vize haben keine Pflichten. Wer sich aber abgemeldet und dabei
+	 * Reminder-Pings aktiviert hat, will an offene Angriffe erinnert werden.
+	 */
+	private static boolean versteckterVizeWillPings(String tag) {
+		MemberSignoff signoff = new MemberSignoff(tag);
+		return signoff.isActive() && signoff.isReceivePings();
+	}
+
+	/**
 	 * Helper class to store missed attacks result
 	 */
 	private static class CWMissedAttacksResult {
@@ -1731,8 +1740,15 @@ public class ListeningEvent {
 				}
 
 				Player p = new Player(tag);
-				// Skip hidden co-leaders
+				// Versteckte Vize sind ausgenommen - außer sie sind abgemeldet und haben
+				// Reminder-Pings aktiviert: dann nur der Ping, nie ein Kickpunkt
 				if (p.isHiddenColeader()) {
+					if (!isVerificationPhase && getDurationUntilEnd() > 0 && p.getUser() != null
+							&& versteckterVizeWillPings(tag)) {
+						hasMissedAttacks = true;
+						message.append("- (<@").append(p.getUser().getUserID()).append(">) ").append(name)
+								.append(" (").append(attacks).append("/").append(requiredAttacks).append(")\n");
+					}
 					continue;
 				}
 
@@ -2011,8 +2027,15 @@ public class ListeningEvent {
 
 			if (attacks < 1) { // CWL has 1 attack per member
 				Player p = new Player(tag);
-				// Skip hidden co-leaders
+				// Versteckte Vize sind ausgenommen - außer sie sind abgemeldet und haben
+				// Reminder-Pings aktiviert: dann nur der Ping, nie ein Kickpunkt
 				if (p.isHiddenColeader()) {
+					if (!isVerificationPhase && millisRemaining > 0 && p.getUser() != null
+							&& versteckterVizeWillPings(tag)) {
+						hasMissedAttacks = true;
+						message.append("- ").append(name).append(" (").append(tag).append(")")
+								.append(" (<@").append(p.getUser().getUserID()).append(">)\n");
+					}
 					continue;
 				}
 
