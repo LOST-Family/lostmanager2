@@ -50,38 +50,31 @@ public class UserDTO {
 		HashMap<String, Player.RoleType> roles = user.getClanRoles();
 		Collection<Player.RoleType> rolestypes = roles.values();
 
-		Player.RoleType highest = Player.RoleType.NOTINCLAN;
-
-		for (Player.RoleType role : rolestypes) {
-			switch (role) {
-			case ADMIN:
-				highestRole = role.toString();
-				break;
-			case LEADER:
-				if (highest != Player.RoleType.ADMIN)
-					highestRole = role.toString();
-				break;
-			case COLEADER:
-				if (highest != Player.RoleType.ADMIN || highest != Player.RoleType.LEADER)
-					highestRole = role.toString();
-				break;
-			case ELDER:
-				if (highest != Player.RoleType.ADMIN || highest != Player.RoleType.LEADER
-						|| highest != Player.RoleType.COLEADER)
-					highestRole = role.toString();
-				break;
-			case MEMBER:
-				if (highest != Player.RoleType.ADMIN || highest != Player.RoleType.LEADER
-						|| highest != Player.RoleType.COLEADER || highest != Player.RoleType.ELDER)
-					highestRole = role.toString();
-				break;
-			default:
-				break;
-			}
-		}
+		Player.RoleType hoechste = hoechsteRolle(rolestypes);
+		highestRole = hoechste == null ? null : hoechste.toString();
 
 		this.nickname = user.getNickname();
 
+	}
+
+	/**
+	 * Der höchste Rang über alle Clans. Die Aufzählung ist absteigend sortiert
+	 * (ADMIN zuerst), der kleinste Ordinalwert gewinnt. Bis 18.11.2026 wurde hier
+	 * nie verglichen: es gewann der Rang des Clans, der in der HashMap zufällig
+	 * zuletzt kam – ein Vize mit Zweitaccount als Mitglied in einem anderen Clan
+	 * galt auf der Website je nach Reihenfolge nur als Mitglied.
+	 *
+	 * @return null, wenn die Person in keinem Clan steht
+	 */
+	static Player.RoleType hoechsteRolle(Collection<Player.RoleType> rollen) {
+		Player.RoleType beste = null;
+		for (Player.RoleType rolle : rollen) {
+			if (rolle == null || rolle == Player.RoleType.NOTINCLAN)
+				continue;
+			if (beste == null || rolle.ordinal() < beste.ordinal())
+				beste = rolle;
+		}
+		return beste;
 	}
 
 	public boolean isAdmin() {
