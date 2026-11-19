@@ -70,6 +70,13 @@ class LegendRegelnTest {
 	}
 
 	@Test
+	void ausschlussMitSternGiltJedenTag() {
+		String k = "*=#22Y2ULG9U, 8vpp22u2;2026-11-16=#ABC";
+		assertEquals(java.util.Set.of("#22Y2ULG9U", "#8VPP22U2", "#ABC"), LegendRegeln.ausgeschlossen(LocalDate.of(2026, 11, 16), k));
+		assertEquals(java.util.Set.of("#22Y2ULG9U", "#8VPP22U2"), LegendRegeln.ausgeschlossen(LocalDate.of(2026, 12, 1), k));
+	}
+
+	@Test
 	void ohneBelohnungStandardregelUndKonfiguration() {
 		LocalDate nov = LocalDate.of(2026, 11, 30), dez = LocalDate.of(2026, 12, 28);
 		assertTrue(LegendRegeln.ohneBelohnung(nov, nov.plusDays(28), ""));

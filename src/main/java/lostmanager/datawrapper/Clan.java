@@ -182,7 +182,28 @@ public class Clan {
 	// Names
 
 	public String getInfoString() {
-		return getNameAPI() + " (" + clan_tag + ")";
+		return infoString(this::getNameAPI, this::getDisplayName, clan_tag);
+	}
+
+	/**
+	 * Name aus der API, bei API-Ausfall der Name aus der Datenbank.
+	 *
+	 * Ohne den Rueckfall warf getNameAPI bei einer Wartung der CoC-API eine
+	 * NullPointerException (kein JSON); /listmembers starb damit im Hintergrund-Thread
+	 * und die Antwort blieb ewig bei "denkt nach" (18.11.2026, 13:03 UTC).
+	 */
+	static String infoString(java.util.function.Supplier<String> api, java.util.function.Supplier<String> db,
+			String tag) {
+		String name = null;
+		try {
+			name = api.get();
+		} catch (RuntimeException e) {
+			System.err.println("Clan-Name fuer " + tag + " nicht aus der API lesbar, nehme Datenbank: " + e);
+		}
+		if (name == null || name.isBlank()) {
+			name = db.get();
+		}
+		return (name == null || name.isBlank() ? "?" : name) + " (" + tag + ")";
 	}
 
 	/**

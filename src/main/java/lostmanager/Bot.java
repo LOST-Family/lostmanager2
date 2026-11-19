@@ -1384,10 +1384,22 @@ public class Bot extends ListenerAdapter {
 						}
 						String currentState = cwJson.getString("state");
 
-						// Check if war just started (only once per clan)
-						boolean warJustStarted = !lastState.isEmpty()
-								&& (lastState.equals("notInWar") || lastState.equals("warEnded"))
-								&& (currentState.equals("preparation") || currentState.equals("inWar"));
+						// Check if war just started (only once per clan). Aus "unbekannt" (keine
+						// API-Antwort seit dem Start) zählt ein laufender Krieg nur, wenn seine
+						// Vorbereitung nach dem Bot-Start begann - siehe KriegsstartErkennung.
+						boolean warJustStarted = lostmanager.util.KriegsstartErkennung.istKriegsstart(lastState,
+								currentState,
+								lostmanager.util.KriegsstartErkennung
+										.zeitLesen(cwJson.optString("preparationStartTime", null)),
+								BOT_START_MILLIS);
+						if (!warJustStarted && lastState.isEmpty()
+								&& lostmanager.util.KriegsstartErkennung.laeuft(currentState)) {
+							// Krieg lief schon vor dem Start: nur den Zustand nachtragen, damit
+							// das Ende und der nächste Start wieder erkannt werden.
+							setCWLastState(clanTag, currentState);
+							System.out.println("CW state for clan " + clanTag + " first seen as " + currentState
+									+ " (war already running before start, no start events)");
+						}
 
 						// Fire all start events for this clan if war just started
 						if (warJustStarted) {
@@ -1412,17 +1424,16 @@ public class Bot extends ListenerAdapter {
 									// Einplanung: verworfen wäre der Kriegsbeginn für diesen Krieg
 									// verpasst, er wird nach einem Neuaufbau nicht erneut erkannt.
 									schedulertasks.execute(() -> {
-										try {
-											ListeningEvent le = new ListeningEvent(finalEventId);
-											le.fireEvent();
+										// Wiederholt an Ort und Stelle: der nächste Poll erkennt diesen
+										// Kriegsstart nicht noch einmal (siehe StartAusloeser).
+										final int versuche = lostmanager.util.StartAusloeser.mitWiederholung(
+												"start trigger " + finalEventId,
+												() -> new ListeningEvent(finalEventId).fireEvent(),
+												lostmanager.util.StartAusloeser.WARTEZEITEN_MS, Thread::sleep);
+										if (versuche > 0) {
 											System.out.println("Successfully fired start event " + finalEventId
-													+ " for clan " + clanTag);
-										} catch (final Exception e) {
-											System.err.println("Error firing start trigger " + finalEventId + ": "
-													+ e.getMessage());
-											System.out.println(e.getMessage());
-											// Remove from fired set to allow retry in next poll
-											clanFiredEvents.remove(finalEventId);
+													+ " for clan " + clanTag
+													+ (versuche > 1 ? " (Versuch " + versuche + ")" : ""));
 										}
 									});
 								} else {
@@ -1479,17 +1490,15 @@ public class Bot extends ListenerAdapter {
 		for (final String clanTag : clanTags) {
 			try {
 				lostmanager.datawrapper.Clan clan = new lostmanager.datawrapper.Clan(clanTag);
-				String currentState = "notInWar"; // default
-
-				if (clan.isCWActive()) {
-					org.json.JSONObject cwJson = clan.getCWJson();
-					// getCWJson returns null when the API call fails outright. Reading
-					// through it threw an NPE past the JSONException handler below and out
-					// of startEventPolling, which would have left the bot with no event
-					// polling at all until the next restart.
-					if (cwJson != null) {
-						currentState = cwJson.optString("state", currentState);
-					}
+				org.json.JSONObject cwJson = clan.getCWJson();
+				// Keine Antwort (API-Wartung, 403, Netz) heißt NICHT "notInWar": der Zustand
+				// bleibt unbekannt. Am 18.11.2026 trug ein Neustart während einer Wartung hier
+				// überall notInWar ein, und die zurückkehrenden laufenden Kriege feuerten ihre
+				// Start-Auslöser erneut. Der erste erfolgreiche Abruf im Polling trägt nach.
+				String currentState = cwJson == null ? null : cwJson.optString("state", null);
+				if (currentState == null || currentState.isEmpty()) {
+					System.out.println("CW state for clan " + clanTag + " unknown at startup (no API answer)");
+					continue;
 				}
 
 				// Initialize last state to current state
@@ -1500,6 +1509,10 @@ public class Bot extends ListenerAdapter {
 			}
 		}
 	}
+
+	/** Startzeit der JVM - Kriege, deren Vorbereitung davor begann, sind kein Start. */
+	private static final long BOT_START_MILLIS = java.lang.management.ManagementFactory.getRuntimeMXBean()
+			.getStartTime();
 
 	// Simple in-memory storage for last war states
 	private static final java.util.HashMap<String, String> cwLastStates = new java.util.HashMap<>();

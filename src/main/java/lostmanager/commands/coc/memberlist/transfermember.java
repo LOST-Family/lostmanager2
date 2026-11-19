@@ -270,8 +270,7 @@ public class transfermember extends ListenerAdapter {
 			}
 			if (focused.equals("clan")) {
 				List<Command.Choice> choices = DBManager.getClansAutocomplete(input);
-				Player p = new Player(event.getOption("player").getAsString());
-				Clan c = p.getClanDB();
+				Clan c = aktuellerClan(event.getOption("player"));
 				Command.Choice todelete = null;
 				if (c != null) {
 					for (Command.Choice choice : choices) {
@@ -290,6 +289,17 @@ public class transfermember extends ListenerAdapter {
 				});
 			}
 		}, "TransfermemberAutocomplete-" + event.getUser().getId()).start();
+	}
+
+	/**
+	 * Clan des schon gewählten Spielers, um ihn aus den Zielvorschlägen zu nehmen.
+	 * Füllt jemand das Clan-Feld vor dem Spieler aus, gibt es noch keinen Spieler:
+	 * dann null (alle Clans anbieten) statt NullPointerException im Autocomplete-Thread.
+	 */
+	static Clan aktuellerClan(OptionMapping spieler) {
+		if (spieler == null || spieler.getAsString().isBlank())
+			return null;
+		return new Player(spieler.getAsString()).getClanDB();
 	}
 
 	/**

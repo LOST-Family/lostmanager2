@@ -61,7 +61,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
  *
  * Umgebung: PERFECTDAY_KANAL, TROPHYHUNT_KANAL, TROPHYHUNT_ROLLE_ID (ohne: kein
  * Abgleich), PERFECTDAY_OHNE_BELOHNUNG, PERFECTDAY_AUSSCHLUSS (Tag=#A,#B;… nur
- * im Post dieses Tages weglassen), PERFECTDAY_ERSTER_TAG,
+ * im Post dieses Tages weglassen, *=#C;… an jedem Tag), PERFECTDAY_ERSTER_TAG,
  * TROPHYHUNT_ERSTER_MONAT, LEGEND_TROCKEN=1 (nichts posten, keine Rollen, nur
  * Journal), LEGEND_AUS=1.
  */
@@ -870,13 +870,27 @@ public final class LegendWertung {
 		}
 		List<Roh> liste = new ArrayList<>();
 		java.util.Set<String> raus = LegendRegeln.ausgeschlossen(tag, ausschluss);
+		// Gewertet wird nur, wer mit Discord verknüpft ist (Stefan 18.11.2026: Boshi
+		// und FL Maxi stehen in LOST-Clans in Legend I, gehören aber nicht zum Event).
+		// Alle echten Teilnehmer waren zu dem Zeitpunkt verknüpft.
+		java.util.Set<String> verknuepft = new HashSet<>(DBUtil.getArrayListFromSQL(
+				"SELECT coc_tag FROM players WHERE discord_id IS NOT NULL AND discord_id <> ''", String.class));
+		List<String> ohneVerknuepfung = new ArrayList<>();
 		for (Roh r : roh.values()) {
 			if (raus.contains(r.tag())) {
+				continue;
+			}
+			if (!verknuepft.contains(r.tag())) {
+				ohneVerknuepfung.add(r.name() + " " + r.tag());
 				continue;
 			}
 			if (r.gesamt() > 0 || r.gestern() > 0) {
 				liste.add(r);
 			}
+		}
+		if (!ohneVerknuepfung.isEmpty()) {
+			System.out.println("Perfect Day " + tag + ": ohne Discord-Verknüpfung nicht gewertet: "
+					+ String.join(", ", ohneVerknuepfung));
 		}
 		// Gleichstand: mehr Perfect Days, dann mehr Angriffspokale (Regeln vom 26.10.2026).
 		liste.sort((a, b) -> a.gesamt() != b.gesamt() ? Integer.compare(b.gesamt(), a.gesamt())
