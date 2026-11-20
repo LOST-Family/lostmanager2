@@ -112,11 +112,9 @@ public class checkpoll extends ListenerAdapter {
 				try {
 					String messageContent = event.getMessage().getContentRaw();
 					List<String> userIds = extractUserIdsFromMessage(messageContent);
-					if (!userIds.isEmpty()) {
-						event.getInteraction().getMessageChannel().sendMessage(
-								String.join(" ",
-										userIds.stream().map(uid -> "<@" + uid + ">").toArray(String[]::new)))
-								.queue();
+					// Über etwa 86 Erwähnungen passt es nicht mehr in eine Nachricht.
+					for (String nachricht : lostmanager.util.LangeListe.pingNachrichten(userIds)) {
+						event.getInteraction().getMessageChannel().sendMessage(nachricht).queue();
 					}
 				} catch (Exception e) {
 					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
@@ -351,9 +349,15 @@ public class checkpoll extends ListenerAdapter {
 			String messageContent = "";
 
 			if (!regularMissingUserIds.isEmpty()) {
-				Button pingButton = Button.primary("cpping", "Fehlende Mitglieder pingen");
-				buttons.add(pingButton);
-				messageContent = encodeUserIds(regularMissingUserIds);
+				// Ab 188 IDs passt der Text nicht mehr in eine Nachricht (2000 Zeichen)
+				String kodiert = lostmanager.util.LangeListe.kodiereIds(regularMissingUserIds);
+				if (kodiert != null) {
+					buttons.add(Button.primary("cpping", "Fehlende Mitglieder pingen"));
+					messageContent = kodiert;
+				} else {
+					description.append("\n-# Zu viele Fehlende (").append(regularMissingUserIds.size())
+							.append(") für den Ping-Knopf.");
+				}
 			}
 
 			// Add timestamp
@@ -415,18 +419,6 @@ public class checkpoll extends ListenerAdapter {
 		String messageId = String.valueOf(buffer.getLong());
 
 		return new String[] { roleId, channelId, messageId };
-	}
-
-	/**
-	 * Encodes user IDs into a compact Base64 string for storage in message content.
-	 */
-	private String encodeUserIds(List<String> userIds) {
-		int bufferSize = userIds.size() * 8;
-		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-		for (String userId : userIds) {
-			buffer.putLong(Long.parseLong(userId));
-		}
-		return Base64.getUrlEncoder().withoutPadding().encodeToString(buffer.array());
 	}
 
 	/**
