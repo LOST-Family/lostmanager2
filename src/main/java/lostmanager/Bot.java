@@ -1535,14 +1535,13 @@ public class Bot extends ListenerAdapter {
 
 		Timestamp timestampend = Timestamp.from(zdt.toInstant());
 
-		schedulertasks.schedule(() -> {
+		// Je Spieler abgesichert und mit garantierter Neueinplanung, siehe Stichtagslauf.
+		schedulertasks.schedule(lostmanager.util.Stichtagslauf.mitNeueinplanung("Clanspiele Endstand", () -> {
 			System.out.println("Es werden alle Clanspieldaten übertragen...");
-			for (String tag : DBUtil.getArrayListFromSQL(sql, String.class)) {
-				Player p = new Player(tag);
-				p.addAchievementDataToDB(Type.CLANGAMES_POINTS, timestampend);
-			}
-			endClanGamesSavings();
-		}, enddelay, TimeUnit.MILLISECONDS);
+			lostmanager.util.Stichtagslauf.fuerAlle(DBUtil.getArrayListFromSQL(sql, String.class),
+					tag -> new Player(tag).addAchievementDataToDB(Type.CLANGAMES_POINTS, timestampend),
+					"Clanspiele Endstand");
+		}, Bot::endClanGamesSavings), enddelay, TimeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -1674,14 +1673,22 @@ public class Bot extends ListenerAdapter {
 
 		Timestamp timestampstart = Timestamp.from(zdt.toInstant());
 
-		schedulertasks.schedule(() -> {
+		// Je Spieler abgesichert und mit garantierter Neueinplanung, siehe Stichtagslauf.
+		schedulertasks.schedule(lostmanager.util.Stichtagslauf.mitNeueinplanung("Clanspiele Startstand", () -> {
 			System.out.println("Es werden alle Clanspieldaten übertragen...");
-			for (String tag : DBUtil.getArrayListFromSQL(sql, String.class)) {
-				Player p = new Player(tag);
-				p.addAchievementDataToDB(Type.CLANGAMES_POINTS, timestampstart);
+			int gescheitert = lostmanager.util.Stichtagslauf.fuerAlle(DBUtil.getArrayListFromSQL(sql, String.class),
+					tag -> new Player(tag).addAchievementDataToDB(Type.CLANGAMES_POINTS, timestampstart),
+					"Clanspiele Startstand");
+			// Wer leer ausging, bekäme seinen Startwert sonst erst beim nächsten
+			// Zwei-Stunden-Lauf - und gälte ab einer Stunde nach Beginn als "zu spät
+			// erfasst" (ClanGamesWindow.getBaselineLateAfter), also als nicht wertbar.
+			// Deshalb zweimal innerhalb der ersten Stunde nachfassen; der Nachtrag
+			// fragt nur Spieler ab, denen ein Startwert fehlt.
+			if (gescheitert > 0) {
+				schedulertasks.schedule(Bot::backfillClanGamesBaselines, 10, TimeUnit.MINUTES);
+				schedulertasks.schedule(Bot::backfillClanGamesBaselines, 40, TimeUnit.MINUTES);
 			}
-			startClanGamesSavings();
-		}, startdelay, TimeUnit.MILLISECONDS);
+		}, Bot::startClanGamesSavings), startdelay, TimeUnit.MILLISECONDS);
 	}
 
 	public static void scheduleSeasonEndWinsSaving() {
