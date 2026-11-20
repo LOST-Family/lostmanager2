@@ -1542,7 +1542,7 @@ public class stats extends ListenerAdapter {
 			List.of(1, 2, 3), false, true);
 
 	/**
-	 * The buildings the extra costs below hang on, by their id in the image map. Add the prices of the single buildings to the full price once the player has merged those defenses into a new defense.
+	 * The buildings the extra costs below hang on, by their id in the image map. 
 	 */
 	private static final String DATA_TOWN_HALL = "1000001";
 	private static final String DATA_CANNON = "1000008";
@@ -1554,7 +1554,7 @@ public class stats extends ListenerAdapter {
 	private static final String DATA_MULTI_ARCHER_TOWER = "1000084";
 	private static final String DATA_RICOCHET_CANNON = "1000085";
 	private static final String DATA_SUPER_WIZARD_TOWER = "1000102";
-	private static final String DATA_FIRECRACKER_TOWER = "1000103";
+	private static final String DATA_FIRECRACKER_TOWER = "1000108";
 
 	/**
 	 * What a merged defence was made of.
@@ -1570,6 +1570,7 @@ public class stats extends ListenerAdapter {
 	 */
 	private static final Map<String, Map<String, Integer>> MERGED_BUILDING_SOURCES = new LinkedHashMap<>();
 
+	/* Add the prices of the single buildings to the full price once the player has merged those defenses into a new defense. */
 	static {
 		MERGED_BUILDING_SOURCES.put(DATA_RICOCHET_CANNON, Map.of(DATA_CANNON, 2));
 		MERGED_BUILDING_SOURCES.put(DATA_MULTI_ARCHER_TOWER, Map.of(DATA_ARCHER_TOWER, 2));
@@ -1578,8 +1579,6 @@ public class stats extends ListenerAdapter {
 		MERGED_BUILDING_SOURCES.put(DATA_FIRECRACKER_TOWER, Map.of(DATA_ARCHER_TOWER, 1, DATA_SCATTER_SHOT, 1));
 	}
 
-
-	
 	/**
 	 * From this Town Hall level on, an Eagle Artillery went into the merged
 	 * defence as well and is added at full price.
@@ -1602,6 +1601,7 @@ public class stats extends ListenerAdapter {
 
 	private static final Map<Integer, Long> KEPT_OBSTACLE_EXTRA = new HashMap<>();
 
+	/* Add the extra costs for upgrading the TH weapon */
 	static {
 		KEPT_OBSTACLE_EXTRA.put(13, 10_500_000L);
 		KEPT_OBSTACLE_EXTRA.put(14, 24_500_000L);
