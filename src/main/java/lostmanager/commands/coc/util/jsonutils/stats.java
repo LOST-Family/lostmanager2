@@ -1542,17 +1542,19 @@ public class stats extends ListenerAdapter {
 			List.of(1, 2, 3), false, true);
 
 	/**
-	 * The buildings the extra costs below hang on, by their id in the image map.
+	 * The buildings the extra costs below hang on, by their id in the image map. Add the prices of the single buildings to the full price once the player has merged those defenses into a new defense.
 	 */
 	private static final String DATA_TOWN_HALL = "1000001";
 	private static final String DATA_CANNON = "1000008";
 	private static final String DATA_ARCHER_TOWER = "1000009";
 	private static final String DATA_WIZARD_TOWER = "1000011";
 	private static final String DATA_EAGLE_ARTILLERY = "1000031";
+	private static final String DATA_SCATTER_SHOT = "1000067";
 	private static final String DATA_MULTI_GEAR_TOWER = "1000079";
 	private static final String DATA_MULTI_ARCHER_TOWER = "1000084";
 	private static final String DATA_RICOCHET_CANNON = "1000085";
 	private static final String DATA_SUPER_WIZARD_TOWER = "1000102";
+	private static final String DATA_FIRECRACKER_TOWER = "1000103";
 
 	/**
 	 * What a merged defence was made of.
@@ -1573,8 +1575,11 @@ public class stats extends ListenerAdapter {
 		MERGED_BUILDING_SOURCES.put(DATA_MULTI_ARCHER_TOWER, Map.of(DATA_ARCHER_TOWER, 2));
 		MERGED_BUILDING_SOURCES.put(DATA_MULTI_GEAR_TOWER, Map.of(DATA_CANNON, 1, DATA_ARCHER_TOWER, 1));
 		MERGED_BUILDING_SOURCES.put(DATA_SUPER_WIZARD_TOWER, Map.of(DATA_WIZARD_TOWER, 2));
+		MERGED_BUILDING_SOURCES.put(DATA_FIRECRACKER_TOWER, Map.of(DATA_ARCHER_TOWER, 1, DATA_SCATTER_SHOT, 1));
 	}
 
+
+	
 	/**
 	 * From this Town Hall level on, an Eagle Artillery went into the merged
 	 * defence as well and is added at full price.
@@ -1604,6 +1609,7 @@ public class stats extends ListenerAdapter {
 		KEPT_OBSTACLE_EXTRA.put(16, 66_500_000L);
 		KEPT_OBSTACLE_EXTRA.put(17, 66_500_000L);
 		KEPT_OBSTACLE_EXTRA.put(18, 120_500_000L);
+		KEPT_OBSTACLE_EXTRA.put(19, 120_500_000L);
 	}
 
 	/**
