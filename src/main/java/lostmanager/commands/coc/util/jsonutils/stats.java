@@ -109,7 +109,9 @@ public class stats extends ListenerAdapter {
 		STAT_TO_FIELD.put("Skins", List.of("skins"));
 		STAT_TO_FIELD.put("Skins (BB)", List.of("skins2"));
 		STAT_TO_FIELD.put("Spells", List.of("spells"));
-		STAT_TO_FIELD.put("Squads", List.of("squads"));
+		// Squads stehen im Upload nicht in einem eigenen Feld, sondern zusammen mit den
+		// Truppen in "units" (siehe selectStatEntries).
+		STAT_TO_FIELD.put("Squads", List.of("units"));
 		STAT_TO_FIELD.put("Traps", List.of("traps"));
 		STAT_TO_FIELD.put("Units", List.of("units"));
 		STAT_TO_FIELD.put("Units (BB)", List.of("units2"));
@@ -148,6 +150,42 @@ public class stats extends ListenerAdapter {
 			}
 		}
 		return combined;
+	}
+
+	/**
+	 * Squads und Truppen teilen sich im Upload das Feld "units". Diese Methode
+	 * schneidet aus den Daten eines Feldes heraus, was zur Kategorie gehört:
+	 * "Squads" nur Einträge, deren image_map-Pfad /squads/ enthält, "Units" alle
+	 * übrigen. Andere Kategorien und Daten ohne Liste bleiben unverändert.
+	 */
+	private Object selectStatEntries(String statType, Object data, JSONObject imageMap) {
+		boolean squads = "Squads".equals(statType);
+		if ((!squads && !"Units".equals(statType)) || !(data instanceof JSONArray arr) || imageMap == null) {
+			return data;
+		}
+
+		JSONArray kept = new JSONArray();
+		for (int i = 0; i < arr.length(); i++) {
+			Object item = arr.get(i);
+			boolean isSquad = false;
+			if (item instanceof JSONObject obj && obj.has("data") && obj.get("data") != JSONObject.NULL) {
+				JSONObject entry = imageMap.optJSONObject(String.valueOf(obj.get("data")));
+				isSquad = entry != null && matchesStatType("Squads", entry);
+			}
+			if (isSquad == squads) {
+				kept.put(item);
+			}
+		}
+		return kept;
+	}
+
+	private JSONObject imageMapOrNull() {
+		try {
+			return lostmanager.util.ImageMapCache.fetchFullMapOnce();
+		} catch (Exception e) {
+			System.err.println("Failed to fetch image map for stat selection: " + e.getMessage());
+			return null;
+		}
 	}
 
 	// German translations for attributes
@@ -643,6 +681,9 @@ public class stats extends ListenerAdapter {
 
 				// Check if field exists in JSON
 				Object fieldData = collectStatData(json, fieldNames);
+				if (fieldData != null) {
+					fieldData = selectStatEntries(statType, fieldData, imageMapOrNull());
+				}
 				if (fieldData == null) {
 					hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 							"Keine Daten für **" + statType + "** gefunden.", MessageUtil.EmbedType.INFO)).queue();
@@ -1686,7 +1727,8 @@ public class stats extends ListenerAdapter {
 				// A count-based building belongs to exactly one field, so its running
 				// total is still read exactly once.
 				Map<String, Integer> countBasedOwned = new HashMap<>();
-				collectUpgradePrices(json.get(field), imageMap, false, target, countBasedOwned, scheme);
+				collectUpgradePrices(selectStatEntries(category.getKey(), json.get(field), imageMap), imageMap, false,
+						target, countBasedOwned, scheme);
 				if (scheme.countBased()) {
 					addCountBasedPrices(countBasedOwned, false, target);
 				}
