@@ -1835,52 +1835,52 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price2": 0
+        "upgrade-price3": 0
       },
       "2": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price2": 35000,
-        "upgrade-price-old2": 35000
+        "upgrade-price3": 35000,
+        "upgrade-price-old3": 35000
       },
       "3": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price2": 45000,
-        "upgrade-price-old2": 45000
+        "upgrade-price3": 45000,
+        "upgrade-price-old3": 45000
       },
       "4": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price2": 55000,
-        "upgrade-price-old2": 55000
+        "upgrade-price3": 55000,
+        "upgrade-price-old3": 55000
       },
       "5": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price2": 65000,
-        "upgrade-price-old2": 65000
+        "upgrade-price3": 65000,
+        "upgrade-price-old3": 65000
       },
       "6": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price2": 75000,
-        "upgrade-price-old2": 75000
+        "upgrade-price3": 75000,
+        "upgrade-price-old3": 75000
       },
       "7": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price2": 85000,
-        "upgrade-price-old2": 85000
+        "upgrade-price3": 85000,
+        "upgrade-price-old3": 85000
       },
       "8": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price2": 95000,
-        "upgrade-price-old2": 95000
+        "upgrade-price3": 95000,
+        "upgrade-price-old3": 95000
       },
       "9": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price2": 105000,
-        "upgrade-price-old2": 105000
+        "upgrade-price3": 105000,
+        "upgrade-price-old3": 105000
       },
       "10": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price2": 115000,
-        "upgrade-price-old2": 115000
+        "upgrade-price3": 115000,
+        "upgrade-price-old3": 115000
       }
     }
   },
@@ -1889,52 +1889,564 @@
     "levels": {
       "1": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price3": 0
+        "upgrade-price2": 0
       },
       "2": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price2": 4000000,
+        "upgrade-price-old2": 4000000
+      },
+      "3": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price2": 5000000,
+        "upgrade-price-old2": 5000000
+      },
+      "4": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price2": 6000000,
+        "upgrade-price-old2": 6000000
+      },
+      "5": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price2": 7500000,
+        "upgrade-price-old2": 7500000
+      },
+      "6": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price2": 9000000,
+        "upgrade-price-old2": 9000000
+      },
+      "7": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price2": 10500000,
+        "upgrade-price-old2": 10500000
+      },
+      "8": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price2": 12000000,
+        "upgrade-price-old2": 12000000
+      },
+      "9": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price2": 13500000,
+        "upgrade-price-old2": 13500000
+      },
+      "10": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price2": 15000000,
+        "upgrade-price-old2": 15000000
+      }
+    }
+  },
+  "103000014": {
+    "name": "Rocket Artillery",
+    "icon": "/home-base/seasonal-defenses/rocket-artillery/rocket-artillery-5.png",
+    "tier_1": "/home-base/seasonal-defenses/rocket-artillery/rocket-artillery-1.png",
+    "tier_2": "/home-base/seasonal-defenses/rocket-artillery/rocket-artillery-2.png",
+    "tier_3": "/home-base/seasonal-defenses/rocket-artillery/rocket-artillery-3.png",
+    "tier_4": "/home-base/seasonal-defenses/rocket-artillery/rocket-artillery-4.png",
+    "tier_5": "/home-base/seasonal-defenses/rocket-artillery/rocket-artillery-5.png"
+  },
+  "102000042": {
+    "name": "Hitpoints",
+    "levels": {
+      "1": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price2": 0
+      },
+      "2": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price2": 3500000,
+        "upgrade-price-old2": 3500000
+      },
+      "3": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price2": 4500000,
+        "upgrade-price-old2": 4500000
+      },
+      "4": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price2": 5500000,
+        "upgrade-price-old2": 5500000
+      },
+      "5": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price2": 6500000,
+        "upgrade-price-old2": 6500000
+      },
+      "6": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price2": 7500000,
+        "upgrade-price-old2": 7500000
+      },
+      "7": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price2": 8500000,
+        "upgrade-price-old2": 8500000
+      },
+      "8": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price2": 10000000,
+        "upgrade-price-old2": 10000000
+      },
+      "9": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price2": 11500000,
+        "upgrade-price-old2": 11500000
+      },
+      "10": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price2": 13000000,
+        "upgrade-price-old2": 13000000
+      }
+    }
+  },
+  "102000043": {
+    "name": "Damage per Second",
+    "levels": {
+      "1": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price1": 0
+      },
+      "2": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price1": 4000000,
+        "upgrade-price-old1": 4000000
+      },
+      "3": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price1": 5000000,
+        "upgrade-price-old1": 5000000
+      },
+      "4": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price1": 6000000,
+        "upgrade-price-old1": 6000000
+      },
+      "5": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price1": 7500000,
+        "upgrade-price-old1": 7500000
+      },
+      "6": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price1": 9000000,
+        "upgrade-price-old1": 9000000
+      },
+      "7": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price1": 10500000,
+        "upgrade-price-old1": 10500000
+      },
+      "8": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price1": 12000000,
+        "upgrade-price-old1": 12000000
+      },
+      "9": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price1": 13500000,
+        "upgrade-price-old1": 13500000
+      },
+      "10": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price1": 15000000,
+        "upgrade-price-old1": 15000000
+      }
+    }
+  },
+  "102000044": {
+    "name": "Range",
+    "levels": {
+      "1": {
+        "level-icon": "/home-base/seasonal-defenses/range.png",
+        "upgrade-price3": 0
+      },
+      "2": {
+        "level-icon": "/home-base/seasonal-defenses/range.png",
+        "upgrade-price3": 30000,
+        "upgrade-price-old3": 30000
+      },
+      "3": {
+        "level-icon": "/home-base/seasonal-defenses/range.png",
+        "upgrade-price3": 40000,
+        "upgrade-price-old3": 40000
+      },
+      "4": {
+        "level-icon": "/home-base/seasonal-defenses/range.png",
+        "upgrade-price3": 50000,
+        "upgrade-price-old3": 50000
+      },
+      "5": {
+        "level-icon": "/home-base/seasonal-defenses/range.png",
+        "upgrade-price3": 60000,
+        "upgrade-price-old3": 60000
+      },
+      "6": {
+        "level-icon": "/home-base/seasonal-defenses/range.png",
+        "upgrade-price3": 70000,
+        "upgrade-price-old3": 70000
+      },
+      "7": {
+        "level-icon": "/home-base/seasonal-defenses/range.png",
+        "upgrade-price3": 80000,
+        "upgrade-price-old3": 80000
+      },
+      "8": {
+        "level-icon": "/home-base/seasonal-defenses/range.png",
+        "upgrade-price3": 90000,
+        "upgrade-price-old3": 90000
+      },
+      "9": {
+        "level-icon": "/home-base/seasonal-defenses/range.png",
+        "upgrade-price3": 100000,
+        "upgrade-price-old3": 100000
+      },
+      "10": {
+        "level-icon": "/home-base/seasonal-defenses/range.png",
+        "upgrade-price3": 110000,
+        "upgrade-price-old3": 110000
+      }
+    }
+  },
+  "103000015": {
+    "name": "Mini-Minion Hive",
+    "icon": "/home-base/seasonal-defenses/mini-minion-hive/mini-minion-hive-5.png",
+    "tier_1": "/home-base/seasonal-defenses/mini-minion-hive/mini-minion-hive-1.png",
+    "tier_2": "/home-base/seasonal-defenses/mini-minion-hive/mini-minion-hive-2.png",
+    "tier_3": "/home-base/seasonal-defenses/mini-minion-hive/mini-minion-hive-3.png",
+    "tier_4": "/home-base/seasonal-defenses/mini-minion-hive/mini-minion-hive-4.png",
+    "tier_5": "/home-base/seasonal-defenses/mini-minion-hive/mini-minion-hive-5.png"
+  },
+  "102000045": {
+    "name": "Hitpoints",
+    "levels": {
+      "1": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price1": 0
+      },
+      "2": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
         "upgrade-price3": 4000000,
         "upgrade-price-old3": 4000000
       },
       "3": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price1": 5000000,
+        "upgrade-price-old1": 5000000
+      },
+      "4": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price1": 6000000,
+        "upgrade-price-old1": 6000000
+      },
+      "5": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price1": 7500000,
+        "upgrade-price-old1": 7500000
+      },
+      "6": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price1": 9000000,
+        "upgrade-price-old1": 9000000
+      },
+      "7": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price1": 10500000,
+        "upgrade-price-old1": 10500000
+      },
+      "8": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price1": 12000000,
+        "upgrade-price-old1": 12000000
+      },
+      "9": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price1": 13500000,
+        "upgrade-price-old1": 13500000
+      },
+      "10": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price1": 15000000,
+        "upgrade-price-old1": 15000000
+      }
+    }
+  },
+  "102000046": {
+    "name": "Damage per Hit",
+    "levels": {
+      "1": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price3": 5000000,
-        "upgrade-price-old3": 5000000
+        "upgrade-price3": 0
+      },
+      "2": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price3": 30000,
+        "upgrade-price-old3": 30000
+      },
+      "3": {
+        "level-icon": "/home-base/seasonal-defenses/damage.png",
+        "upgrade-price3": 40000,
+        "upgrade-price-old3": 40000
       },
       "4": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price3": 6000000,
-        "upgrade-price-old3": 6000000
+        "upgrade-price3": 50000,
+        "upgrade-price-old3": 50000
       },
       "5": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price3": 7500000,
-        "upgrade-price-old3": 7500000
+        "upgrade-price3": 60000,
+        "upgrade-price-old3": 60000
       },
       "6": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price3": 9000000,
-        "upgrade-price-old3": 9000000
+        "upgrade-price3": 70000,
+        "upgrade-price-old3": 70000
       },
       "7": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price3": 10500000,
-        "upgrade-price-old3": 10500000
+        "upgrade-price3": 80000,
+        "upgrade-price-old3": 80000
       },
       "8": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price3": 12000000,
-        "upgrade-price-old3": 12000000
+        "upgrade-price3": 90000,
+        "upgrade-price-old3": 90000
       },
       "9": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price3": 13500000,
-        "upgrade-price-old3": 13500000
+        "upgrade-price3": 100000,
+        "upgrade-price-old3": 100000
       },
       "10": {
         "level-icon": "/home-base/seasonal-defenses/damage.png",
-        "upgrade-price3": 15000000,
-        "upgrade-price-old3": 15000000
+        "upgrade-price3": 110000,
+        "upgrade-price-old3": 110000
+      }
+    }
+  },
+  "102000047": {
+    "name": "Attack Cooldown Seconds",
+    "levels": {
+      "1": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price2": 0
+      },
+      "2": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price2": 3500000,
+        "upgrade-price-old2": 3500000
+      },
+      "3": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price2": 4500000,
+        "upgrade-price-old2": 4500000
+      },
+      "4": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price2": 5500000,
+        "upgrade-price-old2": 5500000
+      },
+      "5": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price2": 6500000,
+        "upgrade-price-old2": 6500000
+      },
+      "6": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price2": 7500000,
+        "upgrade-price-old2": 7500000
+      },
+      "7": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price2": 8500000,
+        "upgrade-price-old2": 8500000
+      },
+      "8": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price2": 10000000,
+        "upgrade-price-old2": 10000000
+      },
+      "9": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price2": 11500000,
+        "upgrade-price-old2": 11500000
+      },
+      "10": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price2": 13000000,
+        "upgrade-price-old2": 13000000
+      }
+    }
+  },
+  "103000016": {
+    "name": "Goblin Thrower",
+    "icon": "/home-base/seasonal-defenses/goblin-thrower/goblin-thrower-4.png",
+    "tier_1": "/home-base/seasonal-defenses/goblin-thrower/goblin-thrower-1.png",
+    "tier_2": "/home-base/seasonal-defenses/goblin-thrower/goblin-thrower-2.png",
+    "tier_3": "/home-base/seasonal-defenses/goblin-thrower/goblin-thrower-3.png",
+    "tier_4": "/home-base/seasonal-defenses/goblin-thrower/goblin-thrower-4.png"
+  },
+  "102000048": {
+    "name": "Hitpoints",
+    "levels": {
+      "1": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price3": 0
+      },
+      "2": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price3": 30000,
+        "upgrade-price-old3": 30000
+      },
+      "3": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price3": 40000,
+        "upgrade-price-old3": 40000
+      },
+      "4": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price3": 50000,
+        "upgrade-price-old3": 50000
+      },
+      "5": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price3": 60000,
+        "upgrade-price-old3": 60000
+      },
+      "6": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price3": 70000,
+        "upgrade-price-old3": 70000
+      },
+      "7": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price3": 80000,
+        "upgrade-price-old3": 80000
+      },
+      "8": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price3": 90000,
+        "upgrade-price-old3": 90000
+      },
+      "9": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price3": 100000,
+        "upgrade-price-old3": 100000
+      },
+      "10": {
+        "level-icon": "/home-base/seasonal-defenses/hitpoints.png",
+        "upgrade-price3": 110000,
+        "upgrade-price-old3": 110000
+      }
+    }
+  },
+  "102000049": {
+    "name": "Spear Goblin Level",
+    "levels": {
+      "1": {
+        "level-icon": "/home-base/seasonal-defenses/hero.png",
+        "upgrade-price2": 0
+      },
+      "2": {
+        "level-icon": "/home-base/seasonal-defenses/hero.png",
+        "upgrade-price2": 3500000,
+        "upgrade-price-old2": 3500000
+      },
+      "3": {
+        "level-icon": "/home-base/seasonal-defenses/hero.png",
+        "upgrade-price2": 4500000,
+        "upgrade-price-old2": 4500000
+      },
+      "4": {
+        "level-icon": "/home-base/seasonal-defenses/hero.png",
+        "upgrade-price2": 5500000,
+        "upgrade-price-old2": 5500000
+      },
+      "5": {
+        "level-icon": "/home-base/seasonal-defenses/hero.png",
+        "upgrade-price2": 6500000,
+        "upgrade-price-old2": 6500000
+      },
+      "6": {
+        "level-icon": "/home-base/seasonal-defenses/hero.png",
+        "upgrade-price2": 7500000,
+        "upgrade-price-old2": 7500000
+      },
+      "7": {
+        "level-icon": "/home-base/seasonal-defenses/hero.png",
+        "upgrade-price2": 8500000,
+        "upgrade-price-old2": 8500000
+      },
+      "8": {
+        "level-icon": "/home-base/seasonal-defenses/hero.png",
+        "upgrade-price2": 10000000,
+        "upgrade-price-old2": 10000000
+      },
+      "9": {
+        "level-icon": "/home-base/seasonal-defenses/hero.png",
+        "upgrade-price2": 11500000,
+        "upgrade-price-old2": 11500000
+      },
+      "10": {
+        "level-icon": "/home-base/seasonal-defenses/hero.png",
+        "upgrade-price2": 13000000,
+        "upgrade-price-old2": 13000000
+      }
+    }
+  },
+  "102000050": {
+    "name": "Ability Level",
+    "levels": {
+      "1": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price1": 0
+      },
+      "2": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price1": 4000000,
+        "upgrade-price-old1": 4000000
+      },
+      "3": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price1": 5000000,
+        "upgrade-price-old1": 5000000
+      },
+      "4": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price1": 6000000,
+        "upgrade-price-old1": 6000000
+      },
+      "5": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price1": 7500000,
+        "upgrade-price-old1": 7500000
+      },
+      "6": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price1": 9000000,
+        "upgrade-price-old1": 9000000
+      },
+      "7": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price1": 10500000,
+        "upgrade-price-old1": 10500000
+      },
+      "8": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price1": 12000000,
+        "upgrade-price-old1": 12000000
+      },
+      "9": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price1": 13500000,
+        "upgrade-price-old1": 13500000
+      },
+      "10": {
+        "level-icon": "/home-base/seasonal-defenses/attackspeed.png",
+        "upgrade-price1": 15000000,
+        "upgrade-price-old1": 15000000
       }
     }
   },
@@ -13233,6 +13745,21 @@
     "icon": "/home-base/sceneries/99.png",
     "index": 76
   },
+  "60000100": {
+    "name": "Winter Hunt Scenery (Dec. 2026, XL)",
+    "icon": "/home-base/sceneries/100.png",
+    "index": 77
+  },
+  "60000101": {
+    "name": "Larry's Lair Scenery (Dec. 2026, XL)",
+    "icon": "/home-base/sceneries/101.png",
+    "index": 78
+  },
+  "60000102": {
+    "name": "Year of the Goat Scenery (Feb. 2027, XL)",
+    "icon": "/home-base/sceneries/102.png",
+    "index": 79
+  },
   "52000001": {
     "name": "Gladiator King (Apr. 2019 GP)",
     "icon": "/home-base/skins/1.png",
@@ -14678,35 +15205,65 @@
     "icon": "/home-base/skins/388.png",
     "index": 283
   },  
-  "52000329": {
-    "name": "? Warden (Dec. 2026)",
-    "icon": "/home-base/skins/329.png",
+  "52000338": {
+    "name": "Winter Warden (Dec. 2026)",
+    "icon": "/home-base/skins/338.png",
     "index": 284
   },
   "52000371": {
-    "name": "? King (Dec. 2026)",
+    "name": "Wolf King (Dec. 2026)",
     "icon": "/home-base/skins/371.png",
     "index": 285
   },
   "52000326": {
-    "name": "? Queen (Dec. 2026)",
+    "name": "Dark Wood Queen (Dec. 2026)",
     "icon": "/home-base/skins/326.png",
     "index": 286
   },
   "52000389": {
-    "name": "? Duke (Dec. 2026)",
+    "name": "Grouch Duke (Dec. 2026)",
     "icon": "/home-base/skins/389.png",
     "index": 287
   },
   "52000358": {
-    "name": "? Prince (Dec. 2026)",
+    "name": "Jingle Prince (Dec. 2026)",
     "icon": "/home-base/skins/358.png",
     "index": 288
   },
-  "52000384": {
-    "name": "? Champion (Dec. 2026)",
-    "icon": "/home-base/skins/384.png",
+  "52000382": {
+    "name": "Wild Champion (Dec. 2026)",
+    "icon": "/home-base/skins/382.png",
     "index": 289
+  },
+  "52000372": {
+    "name": "Sour King (Dec. 2026)",
+    "icon": "/home-base/skins/372.png",
+    "index": 290
+  },
+  "52000329": {
+    "name": "Manga Warden (Jan. 2027)",
+    "icon": "/home-base/skins/329.png",
+    "index": 291
+  },
+  "52000290": {
+    "name": "Manga King (Jan. 2027)",
+    "icon": "/home-base/skins/290.png",
+    "index": 292
+  },
+  "52000229": {
+    "name": "Manga Queen (Jan. 2027)",
+    "icon": "/home-base/skins/229.png",
+    "index": 293
+  },
+  "52000347": {
+    "name": "Manga Duke (Jan. 2027)",
+    "icon": "/home-base/skins/347.png",
+    "index": 294
+  },
+  "52000302": {
+    "name": "Manga Champion (Jan. 2027)",
+    "icon": "/home-base/skins/302.png",
+    "index": 295
   },
   "82000000": {
     "name": "Brown Fence",
@@ -15407,6 +15964,26 @@
     "name": "Portal Panic Deco",
     "icon": "/home-base/clancapital/162.png",
     "index": 139
+  },
+  "82000166": {
+    "name": "Winterhunt Deco",
+    "icon": "/home-base/clancapital/166.png",
+    "index": 140
+  },
+  "82000167": {
+    "name": "Winterhunt Roof",
+    "icon": "/home-base/clancapital/167.png",
+    "index": 141
+  },
+  "82000168": {
+    "name": "LNY 2027 Walls",
+    "icon": "/home-base/clancapital/168.png",
+    "index": 142
+  },
+  "82000169": {
+    "name": "LNY 2027 Ground",
+    "icon": "/home-base/clancapital/169.png",
+    "index": 143
   },
   "126000000": {
     "name": "Good Job! (free)",
