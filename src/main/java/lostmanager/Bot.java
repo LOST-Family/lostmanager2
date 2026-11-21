@@ -164,6 +164,7 @@ public class Bot extends ListenerAdapter {
 
 		restartAllEvents();
 
+		lostmanager.util.PingSchutz.setzeStandard();
 		JDABuilder.createDefault(token).enableIntents(GatewayIntent.GUILD_MEMBERS)
 				.setMemberCachePolicy(MemberCachePolicy.ALL).setChunkingFilter(ChunkingFilter.ALL)
 				.setActivity(Activity.playing("mit deinen Kickpunkten")).addEventListeners(getListenerClassObjects())
