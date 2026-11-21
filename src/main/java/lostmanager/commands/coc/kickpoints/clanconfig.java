@@ -129,6 +129,7 @@ public class clanconfig extends ListenerAdapter {
 							max, days, wins, clantag);
 				}
 
+				c = new Clan(clantag); // frisch lesen, sonst zeigt die Bestätigung die alte Gültigkeitsdauer (zwischengespeichert)
 				String desc = "### Die Clan-Settings wurden bearbeitet.\n";
 				desc += "Clan: " + c.getInfoString() + "\n";
 				desc += "Gültigkeitsdauer von Kickpunkten: " + c.getDaysKickpointsExpireAfter() + " Tage\n";

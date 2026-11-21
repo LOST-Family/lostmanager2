@@ -83,6 +83,7 @@ public class F2PCwlRecorder {
 		String groupState = group.optString("state", "");
 		if (groupState.equals("groupnotfound") || groupState.equals("notInWar") || !group.has("rounds")) {
 			// Der Normalfall außerhalb der CWL-Woche, kein Fehler.
+			schliesseOffeneTage(team, hostTag);
 			writeStatus(team.getTeamNo(), groupState, null, 0, null);
 			return;
 		}
@@ -145,6 +146,31 @@ public class F2PCwlRecorder {
 	}
 
 	/**
+	 * Schließt Kriegstage ab, deren Gruppe nicht mehr abrufbar ist.
+	 *
+	 * Startet ein Clan nach dem letzten CWL-Tag gleich wieder einen normalen
+	 * Clankrieg, antwortet die leaguegroup-Abfrage sofort mit "nicht gefunden" -
+	 * oft bevor der nächste Zwei-Stunden-Lauf das Kriegsende gesehen hat. So
+	 * blieb bei Team 1 im September und Oktober 2026 der siebte Tag auf "inWar"
+	 * stehen: Angriffe der letzten Minuten wären nie erfasst worden, und der
+	 * Tagesbericht des letzten Tages kam nie. Der einzelne Krieg bleibt über
+	 * seinen War-Tag aber noch tagelang abrufbar (geprüft am 21.11.2026 für
+	 * einen Krieg vom 09.11.) - also wird er darüber nachgetragen.
+	 */
+	private static void schliesseOffeneTage(F2PCwlTeam team, String hostTag) {
+		for (F2PCwlSeason.OffenerTag t : F2PCwlSeason.offeneTage(team.getTeamNo())) {
+			try {
+				boolean geholt = recordDay(t.season(), team, t.day(), t.warTag(), hostTag);
+				System.out.println("F2P-CWL: Team " + team.getTeamNo() + " Tag " + t.day() + " (" + t.season()
+						+ ") ohne Gruppe nachgetragen: " + (geholt ? "ok" : "Krieg nicht mehr abrufbar"));
+			} catch (final Exception e) {
+				System.err.println("F2P-CWL: Nachtragen von Team " + team.getTeamNo() + " Tag " + t.day()
+						+ " fehlgeschlagen: " + e.getMessage());
+			}
+		}
+	}
+
+	/**
 	 * Holt einen bereits bekannten Kampftag frisch von der API.
 	 *
 	 * Für die Erinnerung an offene Angriffe: recordAll läuft nur alle zwei Stunden,
@@ -185,12 +211,14 @@ public class F2PCwlRecorder {
 				System.err.println("Unlesbare Endzeit im Krieg " + warTag + ": " + e.getMessage());
 			}
 		}
+		boolean warSchonFertig = F2PCwlSeason.isDayFinished(season, team.getTeamNo(), day);
 		F2PCwlSeason.saveWarTag(season, team.getTeamNo(), day, warTag, endTime, warState);
 
 		// In der Vorbereitungsphase steht noch kein Angriff an, die Aufstellung wird
 		// aber schon festgehalten - so ist später nachvollziehbar, wer eingeplant war.
 		JSONArray members = ourSide.optJSONArray("members");
 		if (members == null) {
+			verdichteNachLetztemTag(season, team.getTeamNo(), day, warSchonFertig, warState);
 			return true;
 		}
 
@@ -242,7 +270,44 @@ public class F2PCwlRecorder {
 						+ " fehlgeschlagen: " + e.getMessage());
 			}
 		}
+		verdichteNachLetztemTag(season, team.getTeamNo(), day, warSchonFertig, warState);
 		return true;
+	}
+
+	/** Ein CWL-Monat hat sieben Kampftage. */
+	private static final int LETZTER_TAG = 7;
+
+	/**
+	 * Schreibt die Saisonbilanz fort, sobald der letzte Kriegstag eines Teams
+	 * abgerechnet ist.
+	 *
+	 * Bisher entstand die Bilanz nur, wenn jemand {@code /f2pcwl auswertung}
+	 * tippte. Im September 2026 tat das niemand - die Saison fehlte in der
+	 * Historie, aus der die Einteilung der nächsten Monate rechnet. Im Oktober
+	 * lief der Befehl, bevor Team 4 fertig war: fünf Spieler standen mit zwei
+	 * bis drei Sternen zu wenig da (gefunden am 21.11.2026).
+	 *
+	 * Verdichtet wird die ganze Saison, bei jedem Team neu: der Lauf ist ein
+	 * Upsert, das letzte Team stellt also den Endstand her. Vor dem letzten Tag
+	 * geschieht bewusst nichts - halbe Bilanzen der laufenden Saison gingen sonst
+	 * als "Historie" in den Aufstellungsvorschlag ein.
+	 *
+	 * @return ob verdichtet wurde
+	 */
+	public static boolean verdichteNachLetztemTag(String season, int teamNo, int day, boolean warSchonFertig,
+			String warState) {
+		if (day != LETZTER_TAG || warSchonFertig || !"warEnded".equals(warState)) {
+			return false;
+		}
+		try {
+			int zeilen = lostmanager.commands.coc.f2pcwl.F2PCwlSeasonEnd.verdichte(season);
+			System.out.println("F2P-CWL: Saison " + season + " nach dem letzten Tag von Team " + teamNo
+					+ " verdichtet (" + zeilen + " Spielerbilanzen)");
+			return true;
+		} catch (final Exception e) {
+			System.err.println("F2P-CWL: Verdichten der Saison " + season + " fehlgeschlagen: " + e.getMessage());
+			return false;
+		}
 	}
 
 	/** Die Seite des Krieges, die dem eigenen Clan gehört - oder null. */

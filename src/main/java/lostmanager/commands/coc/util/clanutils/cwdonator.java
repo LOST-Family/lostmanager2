@@ -97,7 +97,11 @@ public class cwdonator extends ListenerAdapter {
 			ArrayList<Player> originalList = clan.getWarMemberList();
 
 			if (originalList == null) {
-				originalList = clan.getCWLMemberList();
+				// In der CWL meldet /currentwar "notInWar". Früher kam hier
+				// getCWLMemberList() – die Kader ALLER Clans der Gruppe (über 100 Leute,
+				// ohne Kartenplatz), also nie eine hinterlegte Kriegsgröße. Richtig ist
+				// die Aufstellung des laufenden Kriegstags dieses Clans.
+				originalList = cwlTagesaufstellung(clantag, clan.getCWLJson(), Clan::getCWLDayJson);
 				if (originalList == null) {
 					event.getHook()
 							.editOriginalEmbeds(MessageUtil.buildEmbed(title,
@@ -279,6 +283,77 @@ public class cwdonator extends ListenerAdapter {
 			map = mappings;
 		}
 		return map;
+	}
+
+	/**
+	 * Aufstellung des Clans am aktuellen CWL-Tag, mit Kartenplatz. Gespendet wird
+	 * für den Krieg in Vorbereitung; läuft keiner (letzter Tag), für den laufenden.
+	 * Die Runden werden von hinten gelesen: die späteste Runde, in der der Clan
+	 * schon einen Krieg hat, ist der Vorbereitungstag oder – am letzten Tag – der
+	 * laufende Krieg. Ist sie schon beendet, gibt es nichts mehr einzuteilen (null).
+	 */
+	static ArrayList<Player> cwlTagesaufstellung(String clanTag, org.json.JSONObject liga,
+			java.util.function.Function<String, org.json.JSONObject> kriegAbruf) {
+		if (liga == null || !liga.has("rounds") || liga.isNull("rounds")) {
+			return null;
+		}
+		String state = liga.optString("state", "");
+		if (state.equals("notInWar") || state.equalsIgnoreCase("groupnotfound") || state.equalsIgnoreCase("ended")) {
+			return null;
+		}
+		org.json.JSONArray runden = liga.getJSONArray("rounds");
+		for (int r = runden.length() - 1; r >= 0; r--) {
+			org.json.JSONArray kriege = runden.getJSONObject(r).optJSONArray("warTags");
+			if (kriege == null) {
+				continue;
+			}
+			for (int w = 0; w < kriege.length(); w++) {
+				String warTag = kriege.optString(w, "#0");
+				if (warTag.equals("#0")) {
+					continue;
+				}
+				org.json.JSONObject krieg = kriegAbruf.apply(warTag);
+				if (krieg == null || !krieg.has("clan") || !krieg.has("opponent")) {
+					continue;
+				}
+				org.json.JSONObject seite = null;
+				if (gleicherTag(krieg.getJSONObject("clan").optString("tag"), clanTag)) {
+					seite = krieg.getJSONObject("clan");
+				} else if (gleicherTag(krieg.getJSONObject("opponent").optString("tag"), clanTag)) {
+					seite = krieg.getJSONObject("opponent");
+				}
+				if (seite == null) {
+					continue;
+				}
+				String kriegState = krieg.optString("state", "");
+				if (!kriegState.equals("preparation") && !kriegState.equals("inWar")) {
+					return null;
+				}
+				org.json.JSONArray mitglieder = seite.optJSONArray("members");
+				if (mitglieder == null) {
+					return null;
+				}
+				// mapPosition ist in der CWL nicht 1..N, sondern hat Lücken (echter Tag 7
+				// im November: 1–18 bei 15 Teilnehmern). Der Platz auf der Karte ist die
+				// Reihenfolge danach, also neu durchnummerieren.
+				ArrayList<org.json.JSONObject> sortiert = new ArrayList<>();
+				for (int i = 0; i < mitglieder.length(); i++) {
+					sortiert.add(mitglieder.getJSONObject(i));
+				}
+				sortiert.sort(java.util.Comparator.comparingInt(m -> m.optInt("mapPosition", Integer.MAX_VALUE)));
+				ArrayList<Player> liste = new ArrayList<>();
+				for (int i = 0; i < sortiert.size(); i++) {
+					org.json.JSONObject m = sortiert.get(i);
+					liste.add(new Player(m.getString("tag")).setNameAPI(m.optString("name")).setWarMapPosition(i + 1));
+				}
+				return liste;
+			}
+		}
+		return null;
+	}
+
+	private static boolean gleicherTag(String a, String b) {
+		return a != null && b != null && a.replace("#", "").equalsIgnoreCase(b.replace("#", ""));
 	}
 
 	/**

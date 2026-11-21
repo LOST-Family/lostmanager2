@@ -9,6 +9,7 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import lostmanager.datawrapper.Clan;
@@ -16,6 +17,7 @@ import lostmanager.datawrapper.MemberSignoff;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
+import lostmanager.util.LangeListe;
 import lostmanager.util.MessageUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -32,6 +34,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 public class checkreacts extends ListenerAdapter {
+
+	// Höchstzahl Reagierender je Emoji (JDA blättert in Hunderterseiten)
+	private static final int REAKTIONEN_MAX = 5000;
 
 	@SuppressWarnings("null")
 	@Override
@@ -106,11 +111,9 @@ public class checkreacts extends ListenerAdapter {
 				try {
 					String messageContent = event.getMessage().getContentRaw();
 					List<String> userIds = extractUserIdsFromMessage(messageContent);
-					if (!userIds.isEmpty()) {
-						event.getInteraction().getMessageChannel().sendMessage(
-								String.join(" ",
-										userIds.stream().map(uid -> "<@" + uid + ">").toArray(String[]::new)))
-								.queue();
+					// Über etwa 86 Erwähnungen passt es nicht mehr in eine Nachricht.
+					for (String nachricht : LangeListe.pingNachrichten(userIds)) {
+						event.getInteraction().getMessageChannel().sendMessage(nachricht).queue();
 					}
 				} catch (Exception e) {
 					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
@@ -205,24 +208,28 @@ public class checkreacts extends ListenerAdapter {
 			// Use actual formatted string from reaction for embed display
 			String displayEmoji = reaction.getEmoji().getFormatted();
 
-			reaction.retrieveUsers().queue(users -> {
-				Set<String> reactedUserIds = users.stream().map(net.dv8tion.jda.api.entities.User::getId).collect(Collectors.toSet());
+			// queue() holt nur die erste Seite (100 Nutzer) – wer danach reagiert hat, galt
+			// als fehlend und wäre gepingt worden. takeAsync blättert weiter.
+			MessageReaction reaction2 = emoji2 != null ? findReaction(message, emoji2) : null;
+			String displayEmoji2 = reaction2 != null ? reaction2.getEmoji().getFormatted() : emoji2;
+			CompletableFuture<List<net.dv8tion.jda.api.entities.User>> ersteHolen = reaction.retrieveUsers()
+					.takeAsync(REAKTIONEN_MAX);
+			CompletableFuture<List<net.dv8tion.jda.api.entities.User>> zweiteHolen = reaction2 != null
+					? reaction2.retrieveUsers().takeAsync(REAKTIONEN_MAX)
+					: CompletableFuture.completedFuture(List.of());
 
-				// Retrieve users for emoji2 if provided
-				if (emoji2 != null) {
-					MessageReaction reaction2 = findReaction(message, emoji2);
-					if (reaction2 != null) {
-						String displayEmoji2 = reaction2.getEmoji().getFormatted();
-						reaction2.retrieveUsers().queue(users2 -> {
-							Set<String> reactedEmoji2UserIds = users2.stream().map(net.dv8tion.jda.api.entities.User::getId).collect(Collectors.toSet());
-							processMembers(hook, guild, title, role, messagelink, displayEmoji, displayEmoji2, buttonId, reactedUserIds, reactedEmoji2UserIds);
-						});
-					} else {
-						processMembers(hook, guild, title, role, messagelink, displayEmoji, emoji2, buttonId, reactedUserIds, new HashSet<>());
-					}
-				} else {
-					processMembers(hook, guild, title, role, messagelink, displayEmoji, null, buttonId, reactedUserIds, new HashSet<>());
-				}
+			ersteHolen.thenAcceptBoth(zweiteHolen, (users, users2) -> {
+				Set<String> reactedUserIds = users.stream().map(net.dv8tion.jda.api.entities.User::getId)
+						.collect(Collectors.toSet());
+				Set<String> reactedEmoji2UserIds = users2.stream().map(net.dv8tion.jda.api.entities.User::getId)
+						.collect(Collectors.toSet());
+				processMembers(hook, guild, title, role, messagelink, displayEmoji, displayEmoji2, buttonId,
+						reactedUserIds, reactedEmoji2UserIds);
+			}).exceptionally(fehler -> {
+				System.err.println("checkreacts: Reaktionen laden gescheitert: " + fehler);
+				hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, "Fehler beim Laden der Reaktionen.",
+						MessageUtil.EmbedType.ERROR)).queue();
+				return null;
 			});
 		}, _ -> {
 			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
@@ -252,7 +259,12 @@ public class checkreacts extends ListenerAdapter {
 		// Resolve which clan this role belongs to (if any)
 		String roleClanTag = getClanTagForRole(role.getId());
 
-		guild.loadMembers().onSuccess(members -> {
+		guild.loadMembers().onError(fehler -> {
+			System.err.println("checkreacts: Mitglieder laden gescheitert: " + fehler);
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, "Fehler beim Laden der Mitglieder.",
+					MessageUtil.EmbedType.ERROR)).queue();
+		}).onSuccess(members -> {
+			try {
 			List<Member> missingMembers = members.stream()
 					.filter(member -> member.getRoles().contains(role))
 					.filter(member -> !reactedUserIds.contains(member.getId()))
@@ -312,9 +324,8 @@ public class checkreacts extends ListenerAdapter {
 				description.append("**Fehlende Reaktionen (").append(regularMissingMembers.size())
 						.append("):**\n");
 				if (!regularMissingMembers.isEmpty()) {
-					for (Member member : regularMissingMembers) {
-						description.append(member.getAsMention()).append("\n");
-					}
+					LangeListe.anhaengen(description, regularMissingMembers.stream().map(Member::getAsMention).toList(),
+							LangeListe.BESCHREIBUNG_WEICH);
 				} else {
 					description.append("---\n");
 				}
@@ -324,9 +335,8 @@ public class checkreacts extends ListenerAdapter {
 					description.append("**Reagiert mit ").append(emoji2).append(" (").append(emoji2Reactors.size())
 							.append("):**\n");
 					if (!emoji2Reactors.isEmpty()) {
-						for (Member member : emoji2Reactors) {
-							description.append(member.getEffectiveName()).append("\n");
-						}
+						LangeListe.anhaengen(description, emoji2Reactors.stream().map(Member::getEffectiveName).toList(),
+							LangeListe.BESCHREIBUNG_WEICH);
 					} else {
 						description.append("---\n");
 					}
@@ -336,9 +346,8 @@ public class checkreacts extends ListenerAdapter {
 				description.append("**Abgemeldete Mitglieder (").append(signedOffMembers.size())
 						.append("):**\n");
 				if (!signedOffMembers.isEmpty()) {
-					for (Member member : signedOffMembers) {
-						description.append(member.getAsMention()).append("\n");
-					}
+					LangeListe.anhaengen(description, signedOffMembers.stream().map(Member::getAsMention).toList(),
+							LangeListe.BESCHREIBUNG_WEICH);
 				} else {
 					description.append("---\n");
 				}
@@ -352,9 +361,14 @@ public class checkreacts extends ListenerAdapter {
 			String messageContent = "";
 
 			if (!regularMissingUserIds.isEmpty()) {
-				Button pingButton = Button.primary("crping", "Fehlende Mitglieder pingen");
-				buttons.add(pingButton);
-				messageContent = encodeUserIds(regularMissingUserIds);
+				String kodiert = LangeListe.kodiereIds(regularMissingUserIds);
+				if (kodiert != null) {
+					buttons.add(Button.primary("crping", "Fehlende Mitglieder pingen"));
+					messageContent = kodiert;
+				} else {
+					description.append("\n-# Zu viele Fehlende (").append(regularMissingUserIds.size())
+							.append(") für den Ping-Knopf.");
+				}
 			}
 
 			// Add timestamp
@@ -366,6 +380,12 @@ public class checkreacts extends ListenerAdapter {
 					.setEmbeds(MessageUtil.buildEmbed(title, description.toString(),
 							MessageUtil.EmbedType.INFO, "Zuletzt aktualisiert am " + formatiert))
 					.setActionRow(buttons).queue();
+			} catch (Exception e) {
+				// Sonst bliebe die Antwort für immer auf „Wird geladen...“ stehen.
+				e.printStackTrace();
+				hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Fehler beim Auswerten der Reaktionen.", MessageUtil.EmbedType.ERROR)).queue();
+			}
 		});
 	}
 
@@ -457,18 +477,6 @@ public class checkreacts extends ListenerAdapter {
 			buffer.get(bytes);
 			return new String(bytes);
 		}
-	}
-
-	/**
-	 * Encodes user IDs into a compact Base64 string for storage in message content.
-	 */
-	private String encodeUserIds(List<String> userIds) {
-		int bufferSize = userIds.size() * 8;
-		ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-		for (String userId : userIds) {
-			buffer.putLong(Long.parseLong(userId));
-		}
-		return Base64.getUrlEncoder().withoutPadding().encodeToString(buffer.array());
 	}
 
 	/**

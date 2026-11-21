@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import lostmanager.datawrapper.User;
+import lostmanager.util.LangeListe;
 import lostmanager.util.MessageUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageReaction;
@@ -16,6 +17,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class reactionsrole extends ListenerAdapter {
+
+	/** Obergrenze fürs Blättern, wie in /checkreacts. */
+	private static final int REAKTIONEN_MAX = 5000;
 
 	@SuppressWarnings("null")
 	@Override
@@ -105,7 +109,9 @@ public class reactionsrole extends ListenerAdapter {
 					return;
 				}
 
-				reaction.retrieveUsers().queue(users -> {
+				// queue() holt nur die erste Seite (100 Nutzer) – wer danach reagiert hat, bekam
+				// die Rolle still nicht. takeAsync blättert weiter (wie /checkreacts).
+				reaction.retrieveUsers().takeAsync(REAKTIONEN_MAX).thenAccept(users -> {
 					// Handle case where no users reacted
 					if (users.isEmpty()) {
 						event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
@@ -147,6 +153,11 @@ public class reactionsrole extends ListenerAdapter {
 									notInGuild, processedCount, totalUsers);
 						});
 					}
+				}).exceptionally(fehler -> {
+					System.err.println("reactionsrole: Reaktionen laden gescheitert: " + fehler);
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Fehler beim Laden der Reaktionen.", MessageUtil.EmbedType.ERROR)).queue();
+					return null;
 				});
 			}, _ -> {
 				event.getHook()
@@ -165,36 +176,44 @@ public class reactionsrole extends ListenerAdapter {
 		// Increment processed count and check if we're done
 		int processed = processedCount.incrementAndGet();
 		if (processed >= totalUsers) {
-			StringBuilder response = new StringBuilder();
-			response.append("Überprüfung der Reaktionen mit dem Emoji ").append(emoji).append(" auf die Nachricht ")
-					.append(messagelink).append(" abgeschlossen.\n\n");
-			response.append("**Rolle:** ").append(role.getAsMention()).append("\n\n");
-
-			if (!roleGiven.isEmpty()) {
-				response.append("**Rolle vergeben an (").append(roleGiven.size()).append("):**\n");
-				for (String user : roleGiven) {
-					response.append("- ").append(user).append("\n");
-				}
-				response.append("\n");
-			}
-
-			if (!alreadyHadRole.isEmpty()) {
-				response.append("**Hatte Rolle bereits (").append(alreadyHadRole.size()).append("):**\n");
-				for (String user : alreadyHadRole) {
-					response.append("- ").append(user).append("\n");
-				}
-				response.append("\n");
-			}
-
-			if (!notInGuild.isEmpty()) {
-				response.append("**Nicht im Server oder Fehler (").append(notInGuild.size()).append("):**\n");
-				for (String user : notInGuild) {
-					response.append("- ").append(user).append("\n");
-				}
-			}
+			String response = baueAntwort(emoji, messagelink, role.getAsMention(), roleGiven, alreadyHadRole,
+					notInGuild);
 
 			event.getHook().editOriginalEmbeds(
-					MessageUtil.buildEmbed(title, response.toString(), MessageUtil.EmbedType.SUCCESS)).queue();
+					MessageUtil.buildEmbed(title, response, MessageUtil.EmbedType.SUCCESS)).queue();
 		}
+	}
+
+	/**
+	 * Die Abschlussmeldung. Jede Liste hört mit „… und N weitere“ auf, bevor die
+	 * Beschreibung die 4096 Zeichen eines Embeds erreicht – ab etwa 160 Reagierenden
+	 * warf JDA sonst beim Bau, und die Antwort blieb auf „denkt nach“ stehen, obwohl die
+	 * Rollen vergeben waren. Die Zahl in der Überschrift bleibt die echte.
+	 */
+	static String baueAntwort(String emoji, String messagelink, String rolle, List<String> roleGiven,
+			List<String> alreadyHadRole, List<String> notInGuild) {
+		StringBuilder response = new StringBuilder();
+		response.append("Überprüfung der Reaktionen mit dem Emoji ").append(emoji).append(" auf die Nachricht ")
+				.append(messagelink).append(" abgeschlossen.\n\n");
+		response.append("**Rolle:** ").append(rolle).append("\n\n");
+		abschnitt(response, "Rolle vergeben an", roleGiven);
+		abschnitt(response, "Hatte Rolle bereits", alreadyHadRole);
+		abschnitt(response, "Nicht im Server oder Fehler", notInGuild);
+		return response.toString();
+	}
+
+	private static void abschnitt(StringBuilder response, String titel, List<String> nutzer) {
+		if (nutzer.isEmpty()) {
+			return;
+		}
+		response.append("**").append(titel).append(" (").append(nutzer.size()).append("):**\n");
+		List<String> zeilen = new ArrayList<>();
+		synchronized (nutzer) {
+			for (String user : nutzer) {
+				zeilen.add("- " + user);
+			}
+		}
+		LangeListe.anhaengen(response, zeilen, LangeListe.BESCHREIBUNG_WEICH);
+		response.append("\n");
 	}
 }

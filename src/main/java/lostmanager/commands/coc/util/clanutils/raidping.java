@@ -10,6 +10,7 @@ import lostmanager.datawrapper.MemberSignoff;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
+import lostmanager.util.LangeListe;
 import lostmanager.util.MessageUtil;
 import lostmanager.util.Tuple;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -63,15 +64,6 @@ public class raidping extends ListenerAdapter {
 
 			boolean raidactive = clan.RaidActive();
 
-			String desc = "";
-			desc += "ausgeführt von " + event.getUser().getAsMention() + "\n";
-
-			if (!raidactive) {
-				desc += "\n**Kein Ping, da Raid aktuell nicht aktiv ist.**\n";
-			}
-
-			desc += "## Fehlende Raid Angriffe:\n";
-
 			ArrayList<Player> dbmemberlist = clan.getPlayersDB();
 
 			ArrayList<Player> notfinished = new ArrayList<>();
@@ -107,6 +99,9 @@ public class raidping extends ListenerAdapter {
 					notdone.add(dbPlayer);
 				}
 			}
+
+			List<String> andererClan = new ArrayList<>();
+			List<String> garNicht = new ArrayList<>();
 			if (!notdone.isEmpty()) {
 				ArrayList<String> allclantags = DBManager.getAllClans();
 				ArrayList<Clan> allclans = new ArrayList<>();
@@ -115,71 +110,99 @@ public class raidping extends ListenerAdapter {
 					c.getRaidMemberList(); // load from API
 					allclans.add(c);
 				}
-				for (int i = 0; i < notdone.size(); i++) {
-					Player p = notdone.get(i);
+				// Wer seine Angriffe auf zwei andere LOST-Clans verteilt hat, steht in beiden
+				// Raids. Früher zählte die Schleife den Index dann zweimal zurück und starb,
+				// wenn es der Erste der Liste war (Antwort blieb auf „denkt nach“).
+				for (Player p : notdone) {
+					boolean woanders = false;
 					for (Clan c : allclans) {
-						ArrayList<Player> raidmemberlist = c.getRaidMemberList();
-						for (Player t : raidmemberlist) {
+						for (Player t : c.getRaidMemberList()) {
 							if (t.getTag().equals(p.getTag())) {
-								if (!desc.contains("In")) {
-									desc += "### In einem anderen Lost-Clan angegriffen:\n";
-								}
-								desc += t.getNameAPI() + " in " + c.getNameDB() + ": " + t.getCurrentRaidAttacks() + "/"
-										+ (t.getCurrentRaidAttackLimit() + t.getCurrentRaidbonusAttackLimit()) + "\n";
-								notdone.remove(p);
-								i--;
+								andererClan.add(t.getNameAPI() + " in " + c.getNameDB() + ": "
+										+ t.getCurrentRaidAttacks() + "/"
+										+ (t.getCurrentRaidAttackLimit() + t.getCurrentRaidbonusAttackLimit()));
+								woanders = true;
 								break;
 							}
 						}
 					}
-				}
-				for (Player p : notdone) {
-					if (!desc.contains("icht angegriffen")) {
-						if (raidactive) {
-							desc += "### Noch gar nicht angegriffen:\n";
-						} else {
-							desc += "### Nicht angegriffen:\n";
-						}
+					if (!woanders) {
+						garNicht.add(p.getNameAPI() + erwaehnung(p));
 					}
-					desc += p.getNameAPI() + " (<@" + p.getUser().getUserID() + ">)\n";
 				}
 			}
 
 			notfinished.sort(Comparator.comparingInt(Player::getCurrentRaidAttacks));
+			List<String> offen = new ArrayList<>();
 			for (Player p : notfinished) {
 				int currentattacks = p.getCurrentRaidAttacks();
 				int max = p.getCurrentRaidAttackLimit() + p.getCurrentRaidbonusAttackLimit();
-				if (!desc.contains("Angriffe")) {
-					if (raidactive) {
-						desc += "### Noch offene Angriffe:\n";
-					} else {
-						desc += "### Teil der Angriffe gemacht:\n";
-					}
-				}
-				desc += p.getNameAPI() + " (<@" + p.getUser().getUserID() + ">): " + currentattacks + "/" + max + "\n";
+				offen.add(p.getNameAPI() + erwaehnung(p) + ": " + currentattacks + "/" + max);
 			}
 
-			// Add signed-off members section
-			if (!signedOffMembers.isEmpty()) {
-				desc += "### Abgemeldet (keine Pings):\n";
-				for (Player p : signedOffMembers) {
-					desc += p.getNameDB() + "\n";
-				}
+			List<String> abgemeldet = new ArrayList<>();
+			for (Player p : signedOffMembers) {
+				abgemeldet.add(p.getNameDB());
 			}
+
+			List<String> teile = LangeListe.teileNachZeilen(
+					baueText(event.getUser().getAsMention(), raidactive, andererClan, garNicht, offen, abgemeldet),
+					LangeListe.NACHRICHT_MAX);
 
 			event.getHook().editOriginal(".").queue(message -> {
 				message.delete().queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 			});
-			if (raidactive) {
-				event.getChannel().sendMessage(desc).queue();
-			} else {
-				final String newmessage = desc;
-				event.getChannel().sendMessage(".").queue(message -> {
-					message.editMessage(newmessage).queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
-				});
+			for (final String teil : teile) {
+				if (raidactive) {
+					event.getChannel().sendMessage(teil).queue();
+				} else {
+					// Erst ein Punkt, dann bearbeiten: eine Bearbeitung pingt niemanden.
+					event.getChannel().sendMessage(".").queue(message -> {
+						message.editMessage(teil).queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
+					});
+				}
 			}
 		}, "RaidpingCommand-" + event.getUser().getId()).start();
 
+	}
+
+	/** „ (<@id>)“ – oder nichts, wenn der Spieler (noch) mit niemandem verknüpft ist. */
+	private static String erwaehnung(Player p) {
+		User u = p.getUser();
+		return u == null ? "" : " (<@" + u.getUserID() + ">)";
+	}
+
+	/**
+	 * Der Text des Pings aus fertigen Zeilen. Jeder Abschnitt bekommt seine Überschrift
+	 * genau dann, wenn er Zeilen hat.
+	 *
+	 * Bis zum 21.11.2026 hing die Überschrift an {@code desc.contains("Angriffe")} – das
+	 * steht schon im Titel „Fehlende Raid Angriffe“, also erschien „Noch offene Angriffe“
+	 * nie, und wer 3/6 hatte, stand unter „Noch gar nicht angegriffen“.
+	 */
+	static String baueText(String ausfuehrer, boolean raidactive, List<String> andererClan, List<String> garNicht,
+			List<String> offen, List<String> abgemeldet) {
+		StringBuilder desc = new StringBuilder();
+		desc.append("ausgeführt von ").append(ausfuehrer).append("\n");
+		if (!raidactive) {
+			desc.append("\n**Kein Ping, da Raid aktuell nicht aktiv ist.**\n");
+		}
+		desc.append("## Fehlende Raid Angriffe:\n");
+		abschnitt(desc, "### In einem anderen Lost-Clan angegriffen:", andererClan);
+		abschnitt(desc, raidactive ? "### Noch gar nicht angegriffen:" : "### Nicht angegriffen:", garNicht);
+		abschnitt(desc, raidactive ? "### Noch offene Angriffe:" : "### Teil der Angriffe gemacht:", offen);
+		abschnitt(desc, "### Abgemeldet (keine Pings):", abgemeldet);
+		return desc.toString();
+	}
+
+	private static void abschnitt(StringBuilder desc, String ueberschrift, List<String> zeilen) {
+		if (zeilen.isEmpty()) {
+			return;
+		}
+		desc.append(ueberschrift).append("\n");
+		for (String z : zeilen) {
+			desc.append(z).append("\n");
+		}
 	}
 
 	@SuppressWarnings("null")

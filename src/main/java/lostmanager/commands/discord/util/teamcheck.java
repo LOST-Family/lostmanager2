@@ -13,6 +13,7 @@ import java.util.Map;
 import lostmanager.datawrapper.Player;
 import lostmanager.datawrapper.User;
 import lostmanager.dbutil.DBManager;
+import lostmanager.util.LangeListe;
 import lostmanager.util.MessageUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -254,18 +255,46 @@ public class teamcheck extends ListenerAdapter {
 			// Create refresh button
 			Button refreshButton = Button.secondary(buttonId, "\u200B").withEmoji(Emoji.fromUnicode("🔁"));
 
-			try {
-				hook.editOriginal(description.toString()).setActionRow(refreshButton).queue();
-			} catch (Exception ex) {
+			// Passt es als Nachrichtentext, dann so (Embeds leeren, falls vorher eins dastand);
+			// sonst als Embed und den Text leeren – sonst bliebe „Wird geladen...“ vom
+			// Auffrischen über dem Ergebnis stehen. Zu lange Listen werden gekürzt, statt dass
+			// der Embed-Bau wirft und die Antwort hängen bleibt.
+			String text = description.toString();
+			if (text.length() <= LangeListe.NACHRICHT_MAX) {
+				hook.editOriginal(text).setEmbeds().setActionRow(refreshButton).queue();
+			} else {
 				ZonedDateTime jetzt = ZonedDateTime.now(ZoneId.of("Europe/Berlin"));
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'");
 				String formatiert = jetzt.format(formatter);
 
-				hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, description.toString(),
-						MessageUtil.EmbedType.INFO, "Zuletzt aktualisiert am " + formatiert))
-						.setActionRow(refreshButton).queue();
+				hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						kuerzen(text, LangeListe.BESCHREIBUNG_WEICH), MessageUtil.EmbedType.INFO,
+						"Zuletzt aktualisiert am " + formatiert))
+						.setContent("").setActionRow(refreshButton).queue();
 			}
+		}).onError(fehler -> {
+			System.err.println("teamcheck: Mitglieder nicht geladen: " + fehler);
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+					"Fehler: Die Mitglieder des Servers konnten nicht geladen werden.", MessageUtil.EmbedType.ERROR))
+					.setContent("").queue();
 		});
+	}
+
+	/**
+	 * Kürzt an der letzten Zeilen- oder Listengrenze vor {@code grenze} und sagt, dass gekürzt
+	 * wurde. Eine Teamzeile ist eine einzige kommagetrennte Zeile, deshalb zählt auch „, “.
+	 */
+	static String kuerzen(String text, int grenze) {
+		if (text.length() <= grenze) {
+			return text;
+		}
+		String hinweis = "\n… gekürzt – die Liste ist zu lang für Discord (" + text.length() + " Zeichen).";
+		int ende = grenze - hinweis.length();
+		int schnitt = Math.max(text.lastIndexOf('\n', ende), text.lastIndexOf(", ", ende));
+		if (schnitt <= 0) {
+			schnitt = ende;
+		}
+		return text.substring(0, schnitt) + hinweis;
 	}
 
 	/**
