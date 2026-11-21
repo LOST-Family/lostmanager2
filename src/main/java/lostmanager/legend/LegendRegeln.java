@@ -35,9 +35,10 @@ import java.util.Optional;
  * den neuen Kämpfen im Protokoll zu. Legend I: eine Verteidigung kostet Pokale.
  * Legend II (Ranked): jeder Kampf ist 40 Pokale wert, der Verteidiger bekommt,
  * was der Angreifer liegen lässt – Verteidigungen bringen also auch Pokale
- * (Stefan: „1100 aus der Off + 260 aus der Def“). Fallen ein Angriff und eine
- * Verteidigung in dasselbe Fenster, wird geschätzt; das ist die Näherung, die
- * die Posts ausweisen.
+ * (Stefan: „1100 aus der Off + 260 aus der Def“). Seit 17.11.2026 (Legend I)
+ * bzw. der Hunt-Woche Dezember 2026 (Legend II) rechnet der Bot die Pokale je
+ * Angriff aus Sternen und Prozent ({@link #legendEinsPokale}); geschätzt wird
+ * nur noch, wenn Pokalstand und Protokoll nicht zusammenfinden.
  */
 public final class LegendRegeln {
 
@@ -182,7 +183,7 @@ public final class LegendRegeln {
 		return Math.max(0, Math.min(4, prozent / 10));
 	}
 
-	/** Legend I nach der Formel, Legend II (dort unbekannt) nach {@code sonst}. */
+	/** Legend I nach der Formel; Legend II nach {@code sonst} (nur noch für alte Aufrufer, siehe {@link #legendZwei}). */
 	public static Schaetzer formel(Schaetzer sonst) {
 		return (ranked, sterne, prozent) -> ranked ? sonst.angreiferPokale(true, sterne, prozent)
 				: legendEinsPokale(sterne, prozent);
@@ -325,7 +326,11 @@ public final class LegendRegeln {
 			topf.add(e.schluessel());
 			neu = true;
 		}
-		gesehen.retainAll(imLog);
+		// Nicht „nur behalten, was im Protokoll steht“: die API lässt einzelne ältere Kämpfe
+		// gelegentlich für eine Antwort weg und liefert sie dann wieder (21.11.2026, im
+		// Trockenlauf gesehen; am 20.11. zählte Perfect Day so bei einem Spieler 9 statt 8
+		// Angriffe). Verbucht bleibt verbucht, vergessen wird nach Alter.
+		alteSchluesselWeg(gesehen, jetzt.minus(3, ChronoUnit.DAYS));
 		topf.retainAll(imLog);
 		Instant regung = (delta != 0 || neu || vorher.letzteRegung() == null) ? jetzt : vorher.letzteRegung();
 		Instant offen = vorher.offenSeit() != null ? vorher.offenSeit() : jetzt;
@@ -367,6 +372,184 @@ public final class LegendRegeln {
 		}
 		return new EinsErgebnis(new EinsStand(pokale, gesehen, vorher.blindBis(), topfPokale, topf, regung, offen),
 				Map.of(), null);
+	}
+
+	// ------------------------------------------------------------------
+	// Legend II (Trophy Hunt): jeder Kampf nach der Formel
+	// ------------------------------------------------------------------
+
+	/** Ein Ranked-Kampf aus dem Protokoll; {@code beginn} = battleTimestamp. */
+	public record Zweikampf(String schluessel, boolean angriff, int sterne, int prozent, Instant beginn) {
+	}
+
+	/**
+	 * Stand eines Legend-II-Spielers zwischen zwei Abfragen.
+	 *
+	 * @param pokale    zuletzt abgefragter Pokalstand
+	 * @param rest      Teil davon, den noch kein Kampf im Protokoll erklärt (kann
+	 *                  negativ sein: das Protokoll ist dem Pokalstand voraus)
+	 * @param gesehen   Schlüssel aller schon verbuchten Kämpfe; {@code null} = noch
+	 *                  nie nach diesem Verfahren erfasst (dann gilt alles im
+	 *                  Protokoll als verbucht)
+	 * @param offenSeit Pokalstand und Protokoll passen nicht zusammen – seit der letzten Bewegung
+	 * @param ohneAnschluss während der Rest offen ist: das Protokoll schloss nicht an
+	 *                  das schon Verbuchte an (es können Angriffe herausgefallen sein)
+	 */
+	public record ZweiStand(int pokale, int rest, java.util.Set<String> gesehen, Instant offenSeit,
+			boolean ohneAnschluss) {
+		public ZweiStand(int pokale, int rest, java.util.Set<String> gesehen, Instant offenSeit) {
+			this(pokale, rest, gesehen, offenSeit, false);
+		}
+	}
+
+	/**
+	 * @param tage           Angriffspokale je Legend-Tag aus den neuen Angriffen
+	 * @param anzahl         Zahl der neuen Angriffe je Legend-Tag
+	 * @param unerklaert     aufgegebener Rest (Pokaländerung ohne passenden Kampf), sonst 0
+	 * @param unvollstaendig es fehlen wohl Angriffe: das Protokoll schloss nicht an das
+	 *                       Verbuchte an, und der Pokalstand blieb über dem, was die
+	 *                       Kämpfe erklären (steht erst fest, wenn der Rest aufgegeben wird)
+	 */
+	public record ZweiErgebnis(ZweiStand stand, Map<LocalDate, Integer> tage, Map<LocalDate, Integer> anzahl,
+			int unerklaert, boolean unvollstaendig) {
+	}
+
+	/** Bewegt sich so lange nichts und Pokalstand und Protokoll passen nicht zusammen, gilt der Pokalstand. */
+	public static final java.time.Duration ZWEI_LUECKE = java.time.Duration.ofMinutes(6);
+
+	/** Was der Verteidiger in Legend II bekommt: was der Angreifer von 40 liegen lässt. */
+	public static int legendZweiVerteidigung(int sterne, int prozent) {
+		return MAX_JE_KAMPF - legendEinsPokale(sterne, prozent);
+	}
+
+	/**
+	 * Legend II, ab der Hunt-Woche Dezember 2026 (Stefan 17.11.2026). Die Formel
+	 * von Legend I gilt auch hier (273 von 274 Einzelkampf-Fenstern der Woche
+	 * 16.–22.11. exakt; Angreifer X, Verteidiger 40 − X). Deshalb wird nicht mehr
+	 * der Pokalstand auf Kämpfe verteilt, sondern jeder neue Angriff im Protokoll
+	 * (erkannt am Schlüssel) einzeln nach der Formel gebucht, auf den Legend-Tag
+	 * seines Beginns. Der Pokalstand dient nur noch zwei Dingen: er löst den
+	 * Blick ins Protokoll aus, und er zeigt, ob etwas fehlt.
+	 *
+	 * Das Protokoll hält nur etwa die letzten 16 Angriffe (gemessen 21.11.2026:
+	 * 51 Spieler, nie mehr als 16 Ranked-Angriffe, auch bei unter 50 Einträgen).
+	 * Wer in einer Lücke (Bot aus, API weg) mehr angreift, verliert Angriffe –
+	 * das zeigt sich daran, dass kein schon bekannter Angriff mehr im Protokoll
+	 * steht und der Pokalstand dauerhaft über dem Erklärten liegt: dann
+	 * unvollständig. Entschieden wird das erst, wenn sich {@link #ZWEI_LUECKE} lang
+	 * nichts mehr bewegt hat – vorher kann das Protokoll bloß hinterherhinken.
+	 *
+	 * Erste Sichtung: {@code vorher} = Stand 0 mit leerer Menge – die Woche
+	 * beginnt bei 0 Pokalen, alles im Protokoll seit Wochenbeginn wird gebucht.
+	 *
+	 * @param protokoll liefert die Ranked-Kämpfe des Protokolls, null = nicht abrufbar
+	 * @return null = Protokoll nicht abrufbar, Stand unverändert lassen
+	 */
+	public static ZweiErgebnis legendZwei(ZweiStand vorher, int pokale,
+			java.util.function.Supplier<List<Zweikampf>> protokoll, Instant wochenBeginn, Instant jetzt) {
+		int bewegung = pokale - vorher.pokale();
+		int delta = bewegung + vorher.rest();
+		if (delta == 0 && vorher.offenSeit() == null && vorher.gesehen() != null) {
+			return new ZweiErgebnis(vorher, Map.of(), Map.of(), 0, false);
+		}
+		List<Zweikampf> log = protokoll.get();
+		if (log == null) {
+			return null;
+		}
+		Instant wochenEnde = wochenBeginn.plus(7, ChronoUnit.DAYS);
+		// Verbucht bleibt verbucht: die Menge wächst über die Woche und wird nicht auf das
+		// gekürzt, was gerade im Protokoll steht – die API lässt einzelne ältere Kämpfe
+		// gelegentlich für eine Antwort weg und liefert sie dann wieder (21.11.2026, im
+		// Trockenlauf gesehen: ein Angriff wäre doppelt gebucht worden). Gemerkt werden
+		// nur Kämpfe der Woche, andere zählen ohnehin nie.
+		java.util.Set<String> gesehen = vorher.gesehen() == null ? new java.util.HashSet<>()
+				: new java.util.HashSet<>(vorher.gesehen());
+		if (vorher.gesehen() == null) {
+			// Übergang vom alten Verfahren: was im Protokoll steht, steckt schon im Stand.
+			for (Zweikampf k : log) {
+				if (!k.beginn().isBefore(wochenBeginn) && k.beginn().isBefore(wochenEnde)) {
+					gesehen.add(k.schluessel());
+				}
+			}
+			return new ZweiErgebnis(new ZweiStand(pokale, 0, gesehen, null), Map.of(), Map.of(), 0, false);
+		}
+		Map<LocalDate, Integer> tage = new java.util.TreeMap<>();
+		Map<LocalDate, Integer> anzahl = new java.util.TreeMap<>();
+		int erklaert = 0;
+		boolean neu = false;
+		// Reicht das Protokoll lückenlos an das schon Verbuchte heran? Ja, wenn noch ein
+		// bekannter Angriff darin steht oder einer von vor Wochenbeginn (oder gar keiner).
+		boolean angriffImLog = false, anschluss = false;
+		for (Zweikampf k : log) {
+			boolean inWoche = !k.beginn().isBefore(wochenBeginn) && k.beginn().isBefore(wochenEnde);
+			boolean bekannt = vorher.gesehen().contains(k.schluessel());
+			if (k.angriff()) {
+				angriffImLog = true;
+				anschluss |= bekannt || k.beginn().isBefore(wochenBeginn);
+			}
+			if (bekannt || !inWoche || !gesehen.add(k.schluessel())) {
+				continue;
+			}
+			neu = true;
+			int x = legendEinsPokale(k.sterne(), k.prozent());
+			if (k.angriff()) {
+				tage.merge(legendTag(k.beginn()), x, Integer::sum);
+				anzahl.merge(legendTag(k.beginn()), 1, Integer::sum);
+				erklaert += x;
+			} else {
+				erklaert += MAX_JE_KAMPF - x;
+			}
+		}
+		int rest = delta - erklaert;
+		boolean ohne = vorher.ohneAnschluss() || (angriffImLog && !anschluss);
+		if (rest == 0) {
+			return new ZweiErgebnis(new ZweiStand(pokale, 0, gesehen, null), tage, anzahl, 0, false);
+		}
+		// Die Frist läuft ab der letzten Bewegung: in einer langen Angriffsserie ist der
+		// Pokalstand dem Protokoll dauernd ein Stück voraus, ohne dass etwas fehlt.
+		Instant offen = (vorher.offenSeit() != null && bewegung == 0 && !neu) ? vorher.offenSeit() : jetzt;
+		if (java.time.Duration.between(offen, jetzt).compareTo(ZWEI_LUECKE) >= 0) {
+			return new ZweiErgebnis(new ZweiStand(pokale, 0, gesehen, null), tage, anzahl, rest, rest > 0 && ohne);
+		}
+		return new ZweiErgebnis(new ZweiStand(pokale, rest, gesehen, offen, ohne), tage, anzahl, 0, false);
+	}
+
+	/**
+	 * Wochenende: Angriffe der Woche, die im Protokoll stehen, aber noch nicht
+	 * verbucht sind (zwischen letzter Abfrage und Wochenwechsel).
+	 */
+	public static ZweiErgebnis legendZweiAbschluss(ZweiStand vorher, List<Zweikampf> log, Instant wochenBeginn) {
+		if (vorher.gesehen() == null) {
+			return new ZweiErgebnis(vorher, Map.of(), Map.of(), 0, false);
+		}
+		// Hier zählen nur die Schlüssel: den Pokalstand so ansetzen, dass nichts offen bleibt
+		// (der Endstand der Woche ist nach dem Wechsel nicht mehr abrufbar).
+		int summe = 0;
+		Instant wochenEnde = wochenBeginn.plus(7, ChronoUnit.DAYS);
+		for (Zweikampf k : log) {
+			if (vorher.gesehen().contains(k.schluessel()) || k.beginn().isBefore(wochenBeginn)
+					|| !k.beginn().isBefore(wochenEnde)) {
+				continue;
+			}
+			int x = legendEinsPokale(k.sterne(), k.prozent());
+			summe += k.angriff() ? x : MAX_JE_KAMPF - x;
+		}
+		return legendZwei(new ZweiStand(vorher.pokale(), 0, vorher.gesehen(), wochenEnde), vorher.pokale() + summe,
+				() -> log, wochenBeginn, wochenEnde);
+	}
+
+	private static final java.time.format.DateTimeFormatter SCHLUESSELZEIT = java.time.format.DateTimeFormatter
+			.ofPattern("yyyyMMdd'T'HHmmss").withZone(ZoneOffset.UTC);
+
+	/**
+	 * Entfernt Schlüssel von Kämpfen, die vor {@code vor} begonnen haben. Ein
+	 * Schlüssel beginnt mit dem battleTimestamp der API (yyyyMMdd'T'HHmmss…), der
+	 * sich als Text sortiert; anders gebaute Schlüssel bleiben.
+	 */
+	static void alteSchluesselWeg(java.util.Set<String> schluessel, Instant vor) {
+		String grenze = SCHLUESSELZEIT.format(vor);
+		schluessel.removeIf(k -> k.length() >= 15 && Character.isDigit(k.charAt(0)) && k.charAt(8) == 'T'
+				&& k.compareTo(grenze) < 0);
 	}
 
 	/**

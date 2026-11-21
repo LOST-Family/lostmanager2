@@ -201,6 +201,107 @@ class LegendDatenbankTest {
 	}
 
 	@Test
+	void legendZweiStandUeberlebtNeustartUndErsteSichtungZaehltNichtDoppelt() {
+		long woche = 1797829200L; // 21.12.2026 05:00 UTC
+		Instant t = Instant.parse("2026-12-21T09:00:00Z");
+		LocalDate t21 = LocalDate.of(2026, 12, 21);
+		List<LegendRegeln.Zweikampf> log = new java.util.ArrayList<>(List.of(LegendZweiTest.a("2026-12-21T08:00:00Z", 3, 100),
+				LegendZweiTest.v("2026-12-21T08:10:00Z", 1, 50), LegendZweiTest.a("2026-12-21T08:20:00Z", 2, 80)));
+		String sql = "SELECT angriffspokale FROM legend_tageswert WHERE player_tag='#Z2'";
+		// Erste Sichtung: 40 + 30 + 26 = 96, der Pokalstand zeigt den letzten Angriff noch nicht
+		LegendWertung.legendZweiBeobachten("#Z2", "Zwei", LegendRegeln.LIGA_2, woche, 70, t,
+				new LegendRegeln.ZweiStand(0, 0, new java.util.HashSet<>(), null), true, () -> log);
+		assertEquals(66, DBUtil.getValueFromSQL(sql, Integer.class));
+		assertEquals(2, DBUtil.getValueFromSQL("SELECT angriffe FROM legend_tageswert WHERE player_tag='#Z2'", Integer.class));
+		// Stand aus der Datenbank (wie nach einem Neustart): Schlüssel, Rest und offen_seit sind da
+		LegendWertung.Beobachtung b = LegendWertung.ladeBeobachtung("#Z2");
+		LegendRegeln.ZweiStand stand = LegendWertung.ladeZweiStand("#Z2", b);
+		assertEquals(70, stand.pokale());
+		assertEquals(-26, stand.rest());
+		assertEquals(3, stand.gesehen().size());
+		assertNotNull(stand.offenSeit());
+		// Pokalstand zieht nach, dazu ein neuer Angriff: nur der neue wird gebucht
+		log.add(LegendZweiTest.a("2026-12-21T09:05:00Z", 3, 100));
+		LegendWertung.legendZweiBeobachten("#Z2", "Zwei", LegendRegeln.LIGA_2, woche, 136, t.plusSeconds(600), stand, false,
+				() -> log);
+		assertEquals(106, DBUtil.getValueFromSQL(sql, Integer.class));
+		b = LegendWertung.ladeBeobachtung("#Z2");
+		stand = LegendWertung.ladeZweiStand("#Z2", b);
+		assertEquals(0, stand.rest());
+		assertNull(stand.offenSeit());
+		// Ohne Änderung: kein Protokollabruf, nichts gebucht, Schlüssel bleiben
+		LegendWertung.legendZweiBeobachten("#Z2", "Zwei", LegendRegeln.LIGA_2, woche, 136, t.plusSeconds(630), stand, false,
+				() -> fail("kein Abruf ohne Änderung"));
+		assertEquals(4, LegendWertung.ladeZweiStand("#Z2", LegendWertung.ladeBeobachtung("#Z2")).gesehen().size());
+		// Noch einmal „erstmals“ gesehen (war länger nicht abrufbar): gesetzt, nicht addiert
+		LegendWertung.legendZweiBeobachten("#Z2", "Zwei", LegendRegeln.LIGA_2, woche, 136, t.plusSeconds(900),
+				new LegendRegeln.ZweiStand(0, 0, new java.util.HashSet<>(), null), true, () -> log);
+		assertEquals(106, DBUtil.getValueFromSQL(sql, Integer.class));
+		assertEquals(3, DBUtil.getValueFromSQL("SELECT angriffe FROM legend_tageswert WHERE player_tag='#Z2'", Integer.class));
+		assertEquals(Boolean.FALSE, DBUtil.getValueFromSQL("SELECT unvollstaendig FROM legend_tageswert WHERE player_tag='#Z2'", Boolean.class));
+		assertEquals(t21, DBUtil.getValueFromSQL("SELECT legend_tag FROM legend_tageswert WHERE player_tag='#Z2'", java.sql.Date.class).toLocalDate());
+	}
+
+	@Test
+	void legendZweiWochenbeginnBeiNullPokalenVerliertDenErstenAngriffNicht() {
+		long woche = 1797829200L;
+		Instant t = Instant.parse("2026-12-21T05:00:30Z");
+		// Wochenbeginn: 0 Pokale, im Protokoll nur die Vorwoche – kein Abruf nötig
+		LegendWertung.legendZweiBeobachten("#W", "Woche", LegendRegeln.LIGA_2, woche, 0, t,
+				new LegendRegeln.ZweiStand(0, 0, new java.util.HashSet<>(), null), true, () -> fail("kein Abruf bei 0 Pokalen"));
+		LegendRegeln.ZweiStand stand = LegendWertung.ladeZweiStand("#W", LegendWertung.ladeBeobachtung("#W"));
+		assertNotNull(stand.gesehen(), "leere Schlüsselmenge, nicht „altes Verfahren“");
+		List<LegendRegeln.Zweikampf> log = List.of(LegendZweiTest.a("2026-12-20T20:00:00Z", 3, 100),
+				LegendZweiTest.a("2026-12-21T05:03:00Z", 3, 100));
+		LegendWertung.legendZweiBeobachten("#W", "Woche", LegendRegeln.LIGA_2, woche, 40, t.plusSeconds(300), stand, false,
+				() -> log);
+		assertEquals(40, DBUtil.getValueFromSQL("SELECT angriffspokale FROM legend_tageswert WHERE player_tag='#W'", Integer.class));
+		assertEquals(Boolean.FALSE, DBUtil.getValueFromSQL("SELECT unvollstaendig FROM legend_tageswert WHERE player_tag='#W'", Boolean.class));
+	}
+
+	/**
+	 * Trockenlauf gegen die echte API (nur lesend), solange eine Hunt-Woche läuft:
+	 * LEGEND_LIVE_MINUTEN=30 LEGEND_LIVE_TAGS=#A,#B … Beobachtet die Spieler im
+	 * 30-s-Takt in der Wegwerf-Datenbank; das Journal des Laufs zeigt, ob jede
+	 * Pokaländerung durch Kämpfe erklärt wurde („ohne passenden Kampf“).
+	 */
+	@Test
+	void legendZweiTrockenlaufGegenEchteApi() throws Exception {
+		String minuten = System.getenv("LEGEND_LIVE_MINUTEN"), tags = System.getenv("LEGEND_LIVE_TAGS");
+		assumeTrue(minuten != null && tags != null, "kein Trockenlauf verlangt");
+		assumeTrue(LegendRegeln.laufenderHunt(Instant.now()).isPresent(), "gerade keine Hunt-Woche");
+		Instant ende = Instant.now().plusSeconds(Long.parseLong(minuten) * 60);
+		int runden = 0;
+		while (Instant.now().isBefore(ende)) {
+			Instant jetzt = Instant.now();
+			for (String tag : tags.split(",")) {
+				LegendWertung.beobachten(tag.trim(), jetzt, LegendRegeln.GROB);
+			}
+			if (runden++ % 10 == 0) {
+				System.out.println("Trockenlauf " + Instant.now() + ": offen "
+						+ DBUtil.getValueFromSQL("SELECT count(*) FROM legend_beobachtung WHERE offen_seit IS NOT NULL", Long.class)
+						+ ", Angriffe gebucht " + DBUtil.getValueFromSQL("SELECT COALESCE(SUM(angriffe),0) FROM legend_tageswert", Long.class));
+			}
+			Thread.sleep(30_000);
+		}
+		try (java.sql.Statement st = Connection.getConnection().createStatement();
+				java.sql.ResultSet rs = st.executeQuery("SELECT b.player_tag, b.pokale, b.topf_pokale, b.offen_seit, "
+						+ "COALESCE((SELECT SUM(angriffspokale) FROM legend_tageswert t WHERE t.player_tag = b.player_tag),0), "
+						+ "COALESCE((SELECT SUM(angriffe) FROM legend_tageswert t WHERE t.player_tag = b.player_tag),0), "
+						+ "COALESCE((SELECT BOOL_OR(unvollstaendig) FROM legend_tageswert t WHERE t.player_tag = b.player_tag),FALSE) "
+						+ "FROM legend_beobachtung b ORDER BY 1")) {
+			while (rs.next()) {
+				System.out.println("ENDE " + rs.getString(1) + " pokale " + rs.getInt(2) + " rest " + rs.getInt(3) + " offen "
+						+ rs.getTimestamp(4) + " gebucht " + rs.getInt(5) + " (" + rs.getInt(6) + " A) unvoll " + rs.getBoolean(7));
+				// Jeder gemerkte Angriff genau einmal gebucht (nichts doppelt, nichts vergessen)
+				long gemerkt = LegendWertung.ladeZweiStand(rs.getString(1), LegendWertung.ladeBeobachtung(rs.getString(1)))
+						.gesehen().stream().filter(k -> k.contains("|A|")).count();
+				assertEquals(gemerkt, rs.getInt(6), "Angriffe von " + rs.getString(1));
+			}
+		}
+	}
+
+	@Test
 	void ersteSichtungUndLaufGegenEchteApi() {
 		assumeTrue(System.getenv("API_UMSCHALTER") != null || System.getenv("LOST_MANAGER_API_KEY") != null,
 				"keine CoC-API konfiguriert");
