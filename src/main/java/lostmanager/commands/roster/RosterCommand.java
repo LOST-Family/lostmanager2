@@ -118,6 +118,8 @@ public class RosterCommand extends ListenerAdapter {
         int deleteAfter = getOptInt(event, "delete_after", 60);
         boolean onlySignoff = getOptBool(event, "only_signoff", false);
 
+        if (nameZuLang(event, name)) return;
+
         if (Roster.getRoster(name) != null) {
             event.reply("Ein Roster mit diesem Namen existiert bereits!").setEphemeral(true).queue();
             return;
@@ -156,6 +158,8 @@ public class RosterCommand extends ListenerAdapter {
             event.reply("Der angegebene Basis-Roster wurde nicht gefunden.").setEphemeral(true).queue();
             return;
         }
+
+        if (nameZuLang(event, newName)) return;
 
         if (Roster.getRoster(newName) != null) {
             event.reply("Ein Roster mit dem Namen `" + newName + "` existiert bereits!").setEphemeral(true).queue();
@@ -275,16 +279,57 @@ public class RosterCommand extends ListenerAdapter {
                 return;
             }
 
-            String pings = pingIds.stream().map(id -> "<@" + id + ">").collect(Collectors.joining(" "));
-            
+            List<String> nachrichten = erinnerung(name, pingIds);
+
             // Sending it to the current channel directly to avoid pinging in command reply directly (or using a normal message message)
             event.reply("Erfolgreich ausgeführt.").setEphemeral(true).queue(s -> {
-                event.getChannel().sendMessage("**Roster Erinnerung (" + name + ")**\nBitte tragt euch ein oder meldet euch ab!\n" + pings).queue();
+                for (String nachricht : nachrichten) {
+                    event.getChannel().sendMessage(nachricht).queue();
+                }
             });
 
         } catch(Exception e) {
             event.reply("Fehler beim Abrufen des Clans: " + e.getMessage()).setEphemeral(true).queue();
         }
+    }
+
+    /**
+     * Die Erinnerung mit allen Erwähnungen, auf so viele Nachrichten verteilt, dass jede unter
+     * 2000 Zeichen bleibt. Als eine Nachricht warf JDA ab etwa 85 Erwähnungen im Rückruf – der
+     * Vize las „Erfolgreich ausgeführt.“, und im Kanal kam nichts an. Der F2P-Verbund hat 86
+     * Nutzer; direkt nach dem Posten eines neuen Rosters wäre es soweit gewesen. (21.11.2026)
+     */
+    static List<String> erinnerung(String name, List<String> pingIds) {
+        List<String> nachrichten = new ArrayList<>();
+        StringBuilder aktuell = new StringBuilder(
+                "**Roster Erinnerung (" + name + ")**\nBitte tragt euch ein oder meldet euch ab!\n");
+        boolean zeilenanfang = true;
+        for (String id : pingIds) {
+            String erwaehnung = "<@" + id + ">";
+            if (aktuell.length() + 1 + erwaehnung.length() > lostmanager.util.LangeListe.NACHRICHT_MAX) {
+                nachrichten.add(aktuell.toString());
+                aktuell.setLength(0);
+                zeilenanfang = true;
+            }
+            if (!zeilenanfang) aktuell.append(' ');
+            aktuell.append(erwaehnung);
+            zeilenanfang = false;
+        }
+        nachrichten.add(aktuell.toString());
+        return nachrichten;
+    }
+
+    /**
+     * Der Name steckt in den IDs der Knöpfe und des Auswahlmenüs (höchstens 100 Zeichen, davon
+     * bis zu 43 für Vorsilbe und Nachrichten-ID). Ein längerer Name ließe sich anlegen, aber
+     * niemand könnte sich eintragen.
+     */
+    static final int NAME_MAX = 50;
+
+    private boolean nameZuLang(SlashCommandInteractionEvent event, String name) {
+        if (name.length() <= NAME_MAX) return false;
+        event.reply("Der Name darf höchstens " + NAME_MAX + " Zeichen haben.").setEphemeral(true).queue();
+        return true;
     }
 
     private void handleForceSign(SlashCommandInteractionEvent event, String action) {
