@@ -83,6 +83,7 @@ public class F2PCwlRecorder {
 		String groupState = group.optString("state", "");
 		if (groupState.equals("groupnotfound") || groupState.equals("notInWar") || !group.has("rounds")) {
 			// Der Normalfall außerhalb der CWL-Woche, kein Fehler.
+			schliesseOffeneTage(team, hostTag);
 			writeStatus(team.getTeamNo(), groupState, null, 0, null);
 			return;
 		}
@@ -142,6 +143,31 @@ public class F2PCwlRecorder {
 		}
 
 		writeStatus(team.getTeamNo(), groupState, season, daysSeen, null);
+	}
+
+	/**
+	 * Schließt Kriegstage ab, deren Gruppe nicht mehr abrufbar ist.
+	 *
+	 * Startet ein Clan nach dem letzten CWL-Tag gleich wieder einen normalen
+	 * Clankrieg, antwortet die leaguegroup-Abfrage sofort mit "nicht gefunden" -
+	 * oft bevor der nächste Zwei-Stunden-Lauf das Kriegsende gesehen hat. So
+	 * blieb bei Team 1 im September und Oktober 2026 der siebte Tag auf "inWar"
+	 * stehen: Angriffe der letzten Minuten wären nie erfasst worden, und der
+	 * Tagesbericht des letzten Tages kam nie. Der einzelne Krieg bleibt über
+	 * seinen War-Tag aber noch tagelang abrufbar (geprüft am 21.11.2026 für
+	 * einen Krieg vom 09.11.) - also wird er darüber nachgetragen.
+	 */
+	private static void schliesseOffeneTage(F2PCwlTeam team, String hostTag) {
+		for (F2PCwlSeason.OffenerTag t : F2PCwlSeason.offeneTage(team.getTeamNo())) {
+			try {
+				boolean geholt = recordDay(t.season(), team, t.day(), t.warTag(), hostTag);
+				System.out.println("F2P-CWL: Team " + team.getTeamNo() + " Tag " + t.day() + " (" + t.season()
+						+ ") ohne Gruppe nachgetragen: " + (geholt ? "ok" : "Krieg nicht mehr abrufbar"));
+			} catch (final Exception e) {
+				System.err.println("F2P-CWL: Nachtragen von Team " + team.getTeamNo() + " Tag " + t.day()
+						+ " fehlgeschlagen: " + e.getMessage());
+			}
+		}
 	}
 
 	/**

@@ -95,6 +95,41 @@ public class F2PCwlSeason {
 				season, teamNo, day, warTag, endTime, state);
 	}
 
+	/** Ein Kriegstag, dessen Ende noch nicht erfasst ist. */
+	public record OffenerTag(String season, int day, String warTag) {
+	}
+
+	/**
+	 * Wie lange ein abgelaufener, aber nicht abgeschlossener Kriegstag noch
+	 * nachgetragen wird. Danach liefert die API den Krieg ohnehin nicht mehr,
+	 * und ohne Grenze würde jeder Altfall alle zwei Stunden neu abgefragt.
+	 */
+	public static final int NACHTRAG_TAGE = 14;
+
+	/**
+	 * Kriegstage eines Teams, deren Endzeit vorbei ist, die aber noch nicht als
+	 * beendet erfasst sind - höchstens {@link #NACHTRAG_TAGE} Tage zurück.
+	 */
+	public static List<OffenerTag> offeneTage(int teamNo) {
+		List<OffenerTag> out = new java.util.ArrayList<>();
+		String sql = "SELECT season, day, war_tag FROM f2pcwl_war_tags "
+				+ "WHERE team_no = ? AND state <> 'warEnded' AND war_tag IS NOT NULL "
+				+ "AND end_time < NOW() AND end_time > NOW() - make_interval(days => ?) "
+				+ "ORDER BY season, day";
+		try (PreparedStatement pstmt = Connection.getConnection().prepareStatement(sql)) {
+			pstmt.setInt(1, teamNo);
+			pstmt.setInt(2, NACHTRAG_TAGE);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					out.add(new OffenerTag(rs.getString("season"), rs.getInt("day"), rs.getString("war_tag")));
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("Database error: " + e.getMessage());
+		}
+		return out;
+	}
+
 	/**
 	 * Ob für diese Saison nur mitgeschrieben und nichts gepostet wird.
 	 *
