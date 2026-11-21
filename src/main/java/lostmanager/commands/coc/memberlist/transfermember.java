@@ -104,6 +104,17 @@ public class transfermember extends ListenerAdapter {
 
 			// If user has permission in only one clan, create approval request
 			if (!hasOldClanPermission || !hasNewClanPermission) {
+				// Spricht der Auslöser selbst für den alten Clan, gilt die Rangregel schon
+				// hier – sonst käme ein Vize am Anführer vorbei, indem er die Anfrage von
+				// irgendeinem Vize des Zielclans bestätigen lässt.
+				if (hasOldClanPermission) {
+					String sperre = rangSperre(role, userexecuted.getClanRoles().get(clantag));
+					if (sperre != null) {
+						event.getHook().editOriginalEmbeds(
+								MessageUtil.buildEmbed(title, sperre, MessageUtil.EmbedType.ERROR)).queue();
+						return;
+					}
+				}
 				// Determine which clan needs to approve (the one where initiator lacks
 				// permission)
 				String clanNeedingApproval = !hasOldClanPermission ? clantag : newclantag;
@@ -140,18 +151,9 @@ public class transfermember extends ListenerAdapter {
 			}
 
 			// Additional role-based permission checks for immediate execution
-			if (role == Player.RoleType.LEADER && userexecuted.getClanRoles().get(clantag) != Player.RoleType.ADMIN) {
-				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
-						"Um jemanden als Leader zu entfernen, musst du Admin sein.", MessageUtil.EmbedType.ERROR))
-						.queue();
-				return;
-			}
-			if (role == Player.RoleType.COLEADER && !(userexecuted.getClanRoles().get(clantag) == Player.RoleType.ADMIN
-					|| userexecuted.getClanRoles().get(clantag) == Player.RoleType.LEADER)) {
-				event.getHook()
-						.editOriginalEmbeds(MessageUtil.buildEmbed(title,
-								"Um jemanden als Vize-Anführer zu entfernen, musst du Admin oder Anführer sein.",
-								MessageUtil.EmbedType.ERROR))
+			String sperre = rangSperre(role, userexecuted.getClanRoles().get(clantag));
+			if (sperre != null) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, sperre, MessageUtil.EmbedType.ERROR))
 						.queue();
 				return;
 			}
@@ -230,6 +232,36 @@ public class transfermember extends ListenerAdapter {
 			}
 
 			if (isAccept) {
+				// Die Anfrage kann Tage alt sein: sitzt der Spieler nicht mehr im alten
+				// Clan, würde er sonst aus einem dritten Clan gezogen (oder gar nicht
+				// verschoben und trotzdem als verschoben gemeldet).
+				Clan jetzt = player.getClanDB();
+				if (veraltet(jetzt == null ? null : jetzt.getTag(), oldclantag, newclantag)) {
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"Diese Anfrage ist veraltet: Der Spieler ist nicht mehr in " + oldclan.getInfoString()
+									+ ". Bitte erstelle eine neue Transfer-Anfrage.",
+							MessageUtil.EmbedType.ERROR)).queue();
+					event.getMessage().editMessageComponents().queue();
+					return;
+				}
+				// Rangregel wie beim direkten Weg. Für den alten Clan spricht der
+				// Bestätigende, wenn dessen Clan zustimmen musste, sonst der Auslöser
+				// (dessen Rang kann sich seit der Anfrage geändert haben, die Rolle des
+				// Spielers auch).
+				Player.RoleType rangImAltenClan;
+				if (clanNeedingApproval.equals(oldclantag)) {
+					rangImAltenClan = approver.getClanRoles().get(oldclantag);
+				} else {
+					net.dv8tion.jda.api.entities.Message.Interaction ausloeser = event.getMessage().getInteraction();
+					rangImAltenClan = ausloeser == null ? null
+							: new User(ausloeser.getUser().getId()).getClanRoles().get(oldclantag);
+				}
+				String sperre = rangSperre(player.getRoleDB(), rangImAltenClan);
+				if (sperre != null) {
+					event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							"<@" + event.getUser().getId() + ">:\n" + sperre, MessageUtil.EmbedType.ERROR)).queue();
+					return;
+				}
 				// Execute the transfer
 				executeTransfer(event.getHook(), player, oldclan, newclan, playertag, oldclantag, newclantag, title,
 						event.getUser().getId());
@@ -303,6 +335,33 @@ public class transfermember extends ListenerAdapter {
 	}
 
 	/**
+	 * Rangregel beim Verschieben: einen Anführer bewegt nur ein Admin, einen Vize
+	 * (auch versteckten) nur Admin oder Anführer des alten Clans. Gilt für den
+	 * direkten Weg und für beide Richtungen der Anfrage mit Bestätigung – bis
+	 * 21.11.2026 nur für den direkten Weg, zwei Vize konnten so einen Anführer
+	 * verschieben und dabei zum Mitglied machen.
+	 *
+	 * @param spielerRolle    Rolle des Spielers im alten Clan
+	 * @param rangImAltenClan Rang dessen, der für den alten Clan spricht (null = unbekannt)
+	 * @return null, wenn erlaubt, sonst der Fehlertext
+	 */
+	static String rangSperre(Player.RoleType spielerRolle, Player.RoleType rangImAltenClan) {
+		if (spielerRolle == Player.RoleType.LEADER && rangImAltenClan != Player.RoleType.ADMIN) {
+			return "Um jemanden als Leader zu entfernen, musst du Admin sein.";
+		}
+		if (spielerRolle == Player.RoleType.COLEADER && !(rangImAltenClan == Player.RoleType.ADMIN
+				|| rangImAltenClan == Player.RoleType.LEADER)) {
+			return "Um jemanden als Vize-Anführer zu entfernen, musst du Admin oder Anführer sein.";
+		}
+		return null;
+	}
+
+	/** Eine Anfrage gilt nur, solange der Spieler noch im alten Clan sitzt. */
+	static boolean veraltet(String clanJetzt, String alterClan, String neuerClan) {
+		return clanJetzt == null || !clanJetzt.equals(alterClan) || clanJetzt.equals(neuerClan);
+	}
+
+	/**
 	 * Encodes transfer data for button IDs. Uses simple underscore-separated format
 	 * if under 100 chars (Discord limit). Format:
 	 * playertag_oldclantag_newclantag_clanNeedingApproval
@@ -363,6 +422,11 @@ public class transfermember extends ListenerAdapter {
 				+ playerclan.getInfoString() + " zum Clan " + newclan.getInfoString() + " verschoben.";
 		String userid = player.getUser().getUserID();
 		Guild guild = Bot.getJda().getGuildById(Bot.guild_id);
+		if (guild == null) {
+			desc += "\n\n**Fehler: Der Discord-Server wurde nicht gefunden.**";
+			hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
+			return;
+		}
 		Member member = guild.getMemberById(userid);
 		if (member != null) {
 			ArrayList<Player> allaccs = player.getUser().getAllLinkedAccounts();
