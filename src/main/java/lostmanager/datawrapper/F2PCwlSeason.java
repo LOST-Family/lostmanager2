@@ -63,6 +63,20 @@ public class F2PCwlSeason {
 		DBUtil.executeUpdate("UPDATE f2pcwl_seasons SET state = ? WHERE season = ?", state, season);
 	}
 
+	/**
+	 * Welche Saison {@code /f2pcwl start} meint, wenn keine angegeben ist.
+	 *
+	 * Eröffnet wird etwa eine Woche vor Monatsende für den Folgemonat (2026-10
+	 * am 23.09., 2026-11 am 21.10.). "Dieser Monat" war deshalb praktisch immer
+	 * der falsche: er hätte die gerade gespielte Saison samt ihrem alten
+	 * Anmelde-Roster noch einmal "eröffnet". Die CWL läuft vom 1. bis etwa zum
+	 * 10.; danach ist die nächste gemeint.
+	 */
+	public static String standardFuerStart(java.time.LocalDate heute) {
+		java.time.YearMonth monat = java.time.YearMonth.from(heute);
+		return (heute.getDayOfMonth() > 10 ? monat.plusMonths(1) : monat).toString();
+	}
+
 	public static List<String> getAllSeasons() {
 		return DBUtil.getArrayListFromSQL("SELECT season FROM f2pcwl_seasons ORDER BY season DESC", String.class);
 	}

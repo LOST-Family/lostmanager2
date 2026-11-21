@@ -296,7 +296,7 @@ public class F2PCwlCommand extends ListenerAdapter {
 	private void handleStart(SlashCommandInteractionEvent event) {
 		String season = optString(event, "saison");
 		if (season == null) {
-			season = java.time.YearMonth.now().toString();
+			season = F2PCwlSeason.standardFuerStart(java.time.LocalDate.now(java.time.ZoneId.of("Europe/Berlin")));
 		}
 		if (!season.matches("\\d{4}-\\d{2}")) {
 			reply(event, "Die Saison muss als `JJJJ-MM` angegeben werden, z. B. `2026-10`.",

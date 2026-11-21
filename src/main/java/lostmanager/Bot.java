@@ -710,7 +710,7 @@ public class Bot extends ListenerAdapter {
 											new SubcommandData("start",
 													"Eröffnet eine Saison und legt den Anmelde-Roster an")
 													.addOption(OptionType.STRING, "saison",
-															"Saison als JJJJ-MM (Standard: dieser Monat)", false),
+															"Saison als JJJJ-MM (Standard: die nächste CWL)", false),
 											new SubcommandData("ankuendigen",
 													"Erzeugt die Team-Ankündigungen zum CWL-Start")
 													.addOption(OptionType.STRING, "frist",
