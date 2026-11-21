@@ -13075,6 +13075,41 @@
     "icon": "/home-base/decorations/251.png",
     "index": 173
   },
+  "18000252": {
+    "name": "Golden Pekka (Dec. 2026)",
+    "icon": "/home-base/decorations/252.png",
+    "index": 174
+  },
+  "18000253": {
+    "name": "Larrys Hoard (Dec. 2026)",
+    "icon": "/home-base/decorations/253.png",
+    "index": 175
+  },
+  "18000254": {
+    "name": "Collection Case (Dec. 2026)",
+    "icon": "/home-base/decorations/254.png",
+    "index": 176
+  },
+  "18000255": {
+    "name": "Ember Pot (Dec. 2026)",
+    "icon": "/home-base/decorations/255.png",
+    "index": 177
+  },
+  "18000256": {
+    "name": "Clash on Ice (Dec. 2026)",
+    "icon": "/home-base/decorations/256.png",
+    "index": 174
+  },
+  "18000257": {
+    "name": "Shield Banner (Dec. 2026)",
+    "icon": "/home-base/decorations/257.png",
+    "index": 175
+  },
+  "18000258": {
+    "name": "Stuck Sword (Dec. 2026)",
+    "icon": "/home-base/decorations/258.png",
+    "index": 176
+  },
   "8000015": {
     "name": "2012 Stone",
     "icon": "/home-base/obstacles/15.png",
