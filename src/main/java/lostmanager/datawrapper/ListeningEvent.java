@@ -2568,7 +2568,11 @@ public class ListeningEvent {
 		StringBuilder message = new StringBuilder();
 		if (kopf != null) {
 			message.append(kopf);
-			if (laeuftNoch && durationUntilEndMs > 0) {
+			if (laeuftNoch && durationUntilEndMs == -1) {
+				// Auslöser „start“ (nur bei CW möglich): der Krieg hat gerade begonnen.
+				// Bis 21.11.2026 stand hier der Endetext, also „Krieg beendet.“ zum Kriegsbeginn.
+				message.append("**Krieg gestartet.**\n\n");
+			} else if (laeuftNoch && durationUntilEndMs > 0) {
 				int secondsLeft = (int) (durationUntilEndMs / 1000);
 				int minutesLeft = secondsLeft / 60;
 				int hoursLeft = minutesLeft / 60;
@@ -3500,26 +3504,32 @@ public class ListeningEvent {
 		sendMessageToChannel(desc);
 	}
 
-	@SuppressWarnings("null")
+	/**
+	 * Schickt eine Meldung in den Kanal des Events. Geht seit 21.11.2026 immer über
+	 * {@link #sendMessageInChunks}: eine eigene Nachricht darf laut Formular 2000 Zeichen
+	 * haben, mit Kopfzeile davor war sie zu lang, JDA warf beim Bau, und das Event galt als
+	 * gefeuert, ohne dass etwas im Kanal stand.
+	 */
 	private void sendMessageToChannel(String message) {
-		String channelId = getChannelID();
-		if (channelId != null && !channelId.isEmpty()) {
-			try {
-				MessageChannelUnion channel = MessageUtil.getChannelById(channelId);
-				if (channel != null) {
-					channel.sendMessage(message).queue();
-					markMessageSent();
-				}
-			} catch (Exception e) {
-				System.err.println("Failed to send message to channel " + channelId + ": " + e.getMessage());
-			}
-		}
+		sendMessageInChunks(message);
+	}
+
+	/** Luft unter den 2000 Zeichen einer Discord-Nachricht. */
+	static final int TEIL_MAX = 1900;
+
+	/**
+	 * Teilt eine Meldung an Zeilengrenzen. Vorher wurde stur alle 1900 Zeichen geschnitten -
+	 * mitten in der Zeile, also auch mitten durch eine Erwähnung ({@code <@123…} | {@code …456>}),
+	 * die dann niemanden mehr erreicht.
+	 */
+	static java.util.List<String> teileFuerDiscord(String message) {
+		return lostmanager.util.LangeListe.teileNachZeilen(message, TEIL_MAX);
 	}
 
 	@SuppressWarnings("null")
 	private void sendMessageInChunks(String message) {
 		String channelId = getChannelID();
-		if (message == null || message.isEmpty()) {
+		if (message == null || message.isBlank()) {
 			// Nothing goes out, so nothing may be recorded as delivered
 			return;
 		}
@@ -3527,13 +3537,9 @@ public class ListeningEvent {
 			try {
 				MessageChannelUnion channel = MessageUtil.getChannelById(channelId);
 				if (channel != null) {
-					// Split message into chunks of max 3900 characters to be safe
-					int chunkSize = 1900;
 					// Stagger sends with a small, non-blocking delay to avoid rate limiting
 					long delayMs = 0;
-					for (int i = 0; i < message.length(); i += chunkSize) {
-						int end = Math.min(message.length(), i + chunkSize);
-						String chunk = message.substring(i, end);
+					for (String chunk : teileFuerDiscord(message)) {
 						channel.sendMessage(chunk).queueAfter(delayMs, TimeUnit.MILLISECONDS);
 						delayMs += 100;
 					}
