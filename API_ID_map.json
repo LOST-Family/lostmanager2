@@ -707,6 +707,18 @@
     "type": "heroEquipment",
     "icon": "/home-base/equipments/61.png"
   },
+  "90000062": {
+    "name": "Blizzard Axxe",
+    "nameAPI": "Blizzard Axe",
+    "type": "heroEquipment",
+    "icon": "/home-base/equipments/62.png"
+  },
+  "90000063": {
+    "name": "Shield Brooch",
+    "nameAPI": "Shield Brooch",
+    "type": "heroEquipment",
+    "icon": "/home-base/equipments/63.png"
+  },
   "4000031": {
     "name": "Raged Barbarian",
     "nameAPI": "Raged Barbarian",
@@ -898,5 +910,11 @@
     "nameAPI": "Angry Spell",
     "type": "spells",
     "icon": "/home-base/spells/123.png"
+  },
+  "26000153": {
+    "name": "Heroic Spell",
+    "nameAPI": "Heroic Spell",
+    "type": "spells",
+    "icon": "/home-base/spells/153.png"
   }
 }
