@@ -27,6 +27,22 @@ public class wins extends ListenerAdapter {
 
 		new Thread(() -> {
 			String title = "Wins Statistik";
+			try {
+				beantworte(event, title);
+			} catch (Throwable t) {
+				// Ohne diesen Fang stirbt der Thread still und die Antwort bleibt ewig bei "denkt nach".
+				System.err.println("wins: Abbruch: " + t);
+				t.printStackTrace();
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Beim Zusammenstellen der Wins ist ein Fehler aufgetreten. Bitte später erneut versuchen.",
+						MessageUtil.EmbedType.ERROR)).queue();
+			}
+		}, "WinsCommand-" + event.getUser().getId()).start();
+	}
+
+	@SuppressWarnings("null")
+	private void beantworte(SlashCommandInteractionEvent event, String title) {
+		{
 
 			OptionMapping clanOption = event.getOption("clan");
 			OptionMapping playerOption = event.getOption("player");
@@ -52,9 +68,14 @@ public class wins extends ListenerAdapter {
 				return;
 			}
 
-			String seasonStr = seasonOption.getAsString();
-			YearMonth selectedMonth = YearMonth.parse(seasonStr, DateTimeFormatter.ofPattern("yyyy-MM"));
-			YearMonth currentMonth = YearMonth.now();
+			YearMonth selectedMonth = leseSeason(seasonOption.getAsString());
+			if (selectedMonth == null) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Unbekannte Season. Bitte einen Monat aus der Vorschlagsliste wählen (z. B. 2026-11).",
+						MessageUtil.EmbedType.ERROR)).queue();
+				return;
+			}
+			YearMonth currentMonth = YearMonth.now(java.time.ZoneId.of("Europe/Berlin"));
 
 			String desc = "";
 
@@ -121,7 +142,30 @@ public class wins extends ListenerAdapter {
 			}
 
 			event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.INFO)).queue();
-		}, "WinsCommand-" + event.getUser().getId()).start();
+		}
+	}
+
+	private static final DateTimeFormatter SEASON_WERT = DateTimeFormatter.ofPattern("yyyy-MM");
+
+	/**
+	 * Liest die Season. Normal kommt der Wert der Vorschlagsliste ("2026-11"); wer selbst tippt,
+	 * schreibt eher den Anzeigetext ("November 2026"). Beides wird angenommen, sonst null.
+	 */
+	static YearMonth leseSeason(String eingabe) {
+		if (eingabe == null)
+			return null;
+		String s = eingabe.trim();
+		try {
+			return YearMonth.parse(s, SEASON_WERT);
+		} catch (java.time.format.DateTimeParseException e) {
+			// weiter mit dem Anzeigetext
+		}
+		try {
+			return YearMonth.parse(s, new java.time.format.DateTimeFormatterBuilder().parseCaseInsensitive()
+					.appendPattern("MMMM yyyy").toFormatter(Locale.GERMAN));
+		} catch (java.time.format.DateTimeParseException e) {
+			return null;
+		}
 	}
 
 	@SuppressWarnings("null")
@@ -157,7 +201,7 @@ public class wins extends ListenerAdapter {
 		List<Command.Choice> choices = new ArrayList<>();
 
 		// Letzte 6 Monate inkl. aktuellem Monat
-		YearMonth currentMonth = YearMonth.now();
+		YearMonth currentMonth = YearMonth.now(java.time.ZoneId.of("Europe/Berlin"));
 		List<YearMonth> months = new ArrayList<>();
 		for (int i = 0; i < 6; i++) {
 			months.add(currentMonth.minusMonths(i));
