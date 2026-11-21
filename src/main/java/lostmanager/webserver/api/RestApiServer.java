@@ -532,6 +532,11 @@ public class RestApiServer {
         }
     }
 
+    /** Discord-IDs sind Snowflakes: reine Ziffern, heute 17 bis 19 Stellen (mit Luft: 15 bis 20). */
+    static boolean istDiscordId(String id) {
+        return id != null && id.matches("[0-9]{15,20}");
+    }
+
     /**
      * Handler for GET /api/users/{userId}
      * Returns a user object with isAdmin and list of linked players (DB call only)
@@ -568,6 +573,14 @@ public class RestApiServer {
                 }
 
                 String userId = parts[3];
+
+                // Nur echte Discord-IDs: user.isAdmin() legt für jede unbekannte ID
+                // eine Zeile in users an. Eine Abfrage nach "abc" hinterließ so einen
+                // Eintrag, an dem der Namensabgleich alle zwei Stunden scheiterte.
+                if (!istDiscordId(userId)) {
+                    sendResponse(exchange, 404, "{\"error\":\"User not found or has no linked accounts\"}");
+                    return;
+                }
 
                 // Create user object
                 User user = new User(userId);
