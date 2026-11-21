@@ -33,7 +33,6 @@ import lostmanager.dbutil.Connection;
 import lostmanager.dbutil.DBUtil;
 import lostmanager.legend.LegendRegeln.Kampf;
 import lostmanager.legend.LegendRegeln.Schaetzer;
-import lostmanager.legend.LegendRegeln.Zuordnung;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -52,7 +51,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
  * ({@code legend_spieler}).</li>
  * <li>Häufig abgefragt werden nur, wen es betrifft: Legend I immer, Legend II
  * nur in der Trophy-Hunt-Woche. Ändert sich der Pokalstand, holt der Bot das
- * Kampfprotokoll und ordnet die Änderung Angriffen und Verteidigungen zu.</li>
+ * Kampfprotokoll und bucht jeden neuen Angriff nach der Pokalformel.</li>
  * <li>Nach dem Legend-Tageswechsel (05:00 UTC) die Perfect-Day-Rangliste, nach
  * Ende der Trophy-Hunt-Woche die Auswertung. Jeder Post genau einmal
  * ({@code legend_meldung}).</li>
@@ -85,10 +84,6 @@ public final class LegendWertung {
 	private static final DateTimeFormatter KAMPFZEIT = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSSX");
 
 	private static final Duration SUCHE_ALLE = Duration.ofMinutes(15);
-	/** Kampf vor so kurzer Zeit zu Ende: Pokalstand und Protokoll könnten noch nicht zusammenpassen. */
-	private static final Duration SETZEN_LASSEN = Duration.ofSeconds(90);
-	private static final Duration HOECHSTENS_WARTEN = Duration.ofMinutes(30);
-	private static final Duration PROTOKOLL_LUECKE = Duration.ofMinutes(6);
 
 	private static final ScheduledExecutorService TAKT = Executors.newSingleThreadScheduledExecutor(r -> {
 		Thread t = new Thread(r, "legend-wertung");
@@ -385,54 +380,127 @@ public final class LegendWertung {
 			return;
 		}
 
-		int delta = pokale - vorher.pokale();
 		if (!ranked) {
 			legendEinsBeobachten(tag, name, liga, saison, pokale, jetzt, vorher, schaetzer);
 			return;
 		}
-		if (delta == 0 && vorher.offenSeit() == null) {
-			speichern(tag, liga, saison, pokale, jetzt, vorher.kampfStand(), null);
-			return;
-		}
+		legendZweiBeobachten(tag, name, liga, saison, pokale, jetzt, ladeZweiStand(tag, vorher), false);
+	}
 
-		List<Kampf> neue = neueKaempfe(tag, ranked, untergrenze(vorher));
-		if (neue == null) {
+	/**
+	 * Legend II: jeden neuen Angriff im Protokoll nach der Formel buchen
+	 * (LegendRegeln.legendZwei). {@code erste}: erste Sichtung – dann wird der
+	 * Tageswert gesetzt statt addiert, damit eine wiederholte erste Sichtung
+	 * (Spieler war länger nicht abrufbar) nichts doppelt zählt.
+	 */
+	static void legendZweiBeobachten(String tag, String name, String liga, long saison, int pokale, Instant jetzt,
+			LegendRegeln.ZweiStand vorher, boolean erste) {
+		legendZweiBeobachten(tag, name, liga, saison, pokale, jetzt, vorher, erste, () -> {
+			JSONArray p = protokoll(tag);
+			return p == null ? null : zweikaempfe(p);
+		});
+	}
+
+	static void legendZweiBeobachten(String tag, String name, String liga, long saison, int pokale, Instant jetzt,
+			LegendRegeln.ZweiStand vorher, boolean erste, java.util.function.Supplier<List<LegendRegeln.Zweikampf>> protokoll) {
+		LegendRegeln.ZweiErgebnis erg = LegendRegeln.legendZwei(vorher, pokale, protokoll, Instant.ofEpochSecond(saison),
+				jetzt);
+		if (erg == null) {
 			return; // API antwortet nicht – nächster Takt
 		}
-		if (neue.isEmpty()) {
-			if (delta == 0) {
-				speichern(tag, liga, saison, pokale, jetzt, vorher.kampfStand(), null);
-				return;
-			}
-			// Pokalstand hat sich bewegt, das Protokoll zeigt den Kampf noch nicht.
-			if (vorher.offenSeit() == null) {
-				speichern(tag, liga, saison, vorher.pokale(), vorher.zeit(), vorher.kampfStand(), jetzt);
-				return;
-			}
-			if (Duration.between(vorher.offenSeit(), jetzt).compareTo(PROTOKOLL_LUECKE) < 0) {
-				return;
-			}
-			// Aufgeben und nach dem Vorzeichen raten: in Legend I heißt Plus Angriff.
-			int angriff = (!ranked && delta > 0) ? Math.min(delta, LegendRegeln.MAX_JE_KAMPF) : 0;
-			buchen(tag, name, liga, saison, Map.of(LegendRegeln.legendTag(jetzt), angriff), angriff > 0 ? 1 : 0, 1,
-					false);
-			speichern(tag, liga, saison, pokale, jetzt, vorher.kampfStand(), null);
-			return;
+		zweiBuchen(tag, name, liga, saison, erg, erste, jetzt);
+		LegendRegeln.ZweiStand neu = erg.stand();
+		if (neu == vorher && !erste) {
+			speichern(tag, liga, saison, neu.pokale(), jetzt, null, null);
+			return; // nichts bewegt: die Schlüssel bleiben, wie sie sind
 		}
+		// Erste Sichtung bei 0 Pokalen (Wochenbeginn): die leere Schlüsselmenge trotzdem
+		// schreiben – eine leere Spalte hieße „altes Verfahren“, und der erste Angriff
+		// der Woche gälte beim nächsten Takt als schon verbucht.
+		speichern(tag, liga, saison, neu.pokale(), jetzt, null, neu.offenSeit());
+		// topf_pokale trägt in Legend II den noch nicht erklärten Rest des Pokalstands.
+		// (topf: Merker, dass das Protokoll nicht ans Verbuchte anschloss.)
+		DBUtil.executeUpdate("UPDATE legend_beobachtung SET kaempfe = ?, topf = ?, topf_pokale = ?, letzte_regung = NULL "
+				+ "WHERE player_tag = ?", String.join("\n", new java.util.TreeSet<>(neu.gesehen())),
+				neu.ohneAnschluss() ? OHNE_ANSCHLUSS : null, neu.rest(), tag);
+	}
 
-		Instant neuestes = neue.get(neue.size() - 1).ende();
-		boolean frisch = neuestes.isAfter(jetzt.minus(SETZEN_LASSEN));
-		boolean schonLange = vorher.offenSeit() != null
-				&& Duration.between(vorher.offenSeit(), jetzt).compareTo(HOECHSTENS_WARTEN) >= 0;
-		if (frisch && !schonLange) {
-			// Mitten in einer Angriffsserie: abwarten, bis sich Stand und Protokoll gesetzt haben.
-			if (vorher.offenSeit() == null) {
-				speichern(tag, liga, saison, vorher.pokale(), vorher.zeit(), vorher.kampfStand(), jetzt);
+	private static final String OHNE_ANSCHLUSS = "ohne-anschluss";
+
+	private static void zweiBuchen(String tag, String name, String liga, long saison, LegendRegeln.ZweiErgebnis erg,
+			boolean erste, Instant jetzt) {
+		int summe = 0, angriffe = 0;
+		for (Map.Entry<LocalDate, Integer> e : erg.tage().entrySet()) {
+			int n = erg.anzahl().getOrDefault(e.getKey(), 0);
+			summe += e.getValue();
+			angriffe += n;
+			if (erste) {
+				mindestens(tag, name, liga, saison, e.getKey(), e.getValue(), n, erg.unvollstaendig());
+			} else {
+				buchen(tag, name, liga, saison, Map.of(e.getKey(), e.getValue()), n, 0, erg.unvollstaendig());
 			}
-			return;
 		}
-		verbuchen(tag, name, liga, saison, delta, neue, ranked, schaetzer, false);
-		speichern(tag, liga, saison, pokale, jetzt, neuestes, null);
+		if (erg.unvollstaendig() && erg.tage().isEmpty()) {
+			buchen(tag, name, liga, saison, Map.of(LegendRegeln.legendTag(jetzt), 0), 0, 0, true);
+		}
+		if (erste && angriffe > 0) {
+			System.out.println("Trophy Hunt: " + name + " " + tag + " erstmals gesehen, " + angriffe
+					+ " Angriffe der Woche aus dem Protokoll = " + summe + " Pokale");
+		}
+		if (erg.unvollstaendig()) {
+			System.out.println("Trophy Hunt: " + name + " " + tag + " unvollständig – das Protokoll schloss nicht an "
+					+ "die verbuchten Angriffe an, " + erg.unerklaert() + " Pokale liegen über den erfassten Kämpfen");
+		} else if (erg.unerklaert() != 0) {
+			System.out.println("Trophy Hunt: " + name + " " + tag + ": " + erg.unerklaert()
+					+ " Pokale ohne passenden Kampf im Protokoll (Stand übernommen, Angriffe unberührt)");
+		}
+	}
+
+	/** Legend-II-Stand aus der Datenbank; Schlüssel null = Spalte leer (noch nie nach Schlüsseln erfasst). */
+	static LegendRegeln.ZweiStand ladeZweiStand(String tag, Beobachtung vorher) {
+		Set<String> gesehen = null;
+		int rest = 0;
+		boolean ohne = false;
+		try (PreparedStatement ps = Connection.getConnection()
+				.prepareStatement("SELECT kaempfe, topf_pokale, topf FROM legend_beobachtung WHERE player_tag = ?")) {
+			ps.setString(1, tag);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next() && rs.getString(1) != null) {
+					gesehen = schluessel(rs.getString(1));
+					rest = rs.getInt(2);
+					ohne = OHNE_ANSCHLUSS.equals(rs.getString(3));
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("Trophy Hunt: Stand " + tag + " nicht lesbar: " + e.getMessage());
+		}
+		return new LegendRegeln.ZweiStand(vorher.pokale(), rest, gesehen, vorher.offenSeit(), ohne);
+	}
+
+	/** Die Ranked-Kämpfe des Protokolls mit Schlüssel, älteste zuerst. */
+	static List<LegendRegeln.Zweikampf> zweikaempfe(JSONArray protokoll) {
+		List<LegendRegeln.Zweikampf> liste = new ArrayList<>();
+		for (int i = 0; i < protokoll.length(); i++) {
+			JSONObject k = protokoll.getJSONObject(i);
+			if (!"ranked".equals(k.optString("battleType"))) {
+				continue;
+			}
+			Instant beginn;
+			try {
+				beginn = java.time.ZonedDateTime.parse(k.getString("battleTimestamp"), KAMPFZEIT).toInstant();
+			} catch (Exception e) {
+				continue;
+			}
+			liste.add(new LegendRegeln.Zweikampf(schluesselVon(k), k.optBoolean("attack"), k.optInt("stars"),
+					k.optInt("destructionPercentage"), beginn));
+		}
+		liste.sort((x, y) -> x.beginn().compareTo(y.beginn()));
+		return liste;
+	}
+
+	private static String schluesselVon(JSONObject k) {
+		return k.optString("battleTimestamp") + "|" + (k.optBoolean("attack") ? "A" : "V") + "|" + k.optInt("battleTime")
+				+ "|" + k.optString("opponentPlayerTag");
 	}
 
 	/** Legend I: jede Pokaländerung sofort zuordnen (LegendRegeln.legendEins). */
@@ -522,82 +590,53 @@ public final class LegendWertung {
 			if (ende == null) {
 				continue;
 			}
-			String schluessel = k.optString("battleTimestamp") + "|" + (k.optBoolean("attack") ? "A" : "V") + "|"
-					+ k.optInt("battleTime") + "|" + k.optString("opponentPlayerTag");
-			liste.add(new LegendRegeln.Eintrag(schluessel,
+			liste.add(new LegendRegeln.Eintrag(schluesselVon(k),
 					new Kampf(k.optBoolean("attack"), k.optInt("stars"), k.optInt("destructionPercentage"), ende)));
 		}
 		return liste;
 	}
 
-	/** Ab wann Kämpfe als neu gelten. */
-	private static Instant untergrenze(Beobachtung b) {
-		Instant ausZeit = b.zeit().minus(Duration.ofMinutes(3));
-		if (b.kampfStand() == null) {
-			return ausZeit;
-		}
-		return b.kampfStand().isAfter(ausZeit) ? b.kampfStand() : ausZeit;
-	}
-
-	private static void verbuchen(String tag, String name, String liga, long saison, int delta, List<Kampf> neue,
-			boolean ranked, Schaetzer schaetzer, boolean unvollstaendig) {
-		Zuordnung z = LegendRegeln.zuordnen(delta, neue, ranked, schaetzer);
-		if (z.lernSterne() >= 0) {
-			DBUtil.executeUpdate("INSERT INTO legend_stichprobe (ranked, sterne, prozent, pokale_summe, anzahl) "
-					+ "VALUES (?,?,?,?,1) ON CONFLICT (ranked, sterne, prozent) DO UPDATE SET "
-					+ "pokale_summe = legend_stichprobe.pokale_summe + EXCLUDED.pokale_summe, "
-					+ "anzahl = legend_stichprobe.anzahl + 1", ranked, z.lernSterne(), z.lernProzent(),
-					(long) z.lernPokale());
-		}
-		if (z.angriffe() == 0 && !unvollstaendig) {
-			return;
-		}
-		Map<LocalDate, Integer> tage = LegendRegeln.aufTageVerteilen(z.angriffspokale(), neue, ranked, schaetzer);
-		if (tage.isEmpty()) {
-			tage = Map.of(LegendRegeln.legendTag(Instant.now()), 0);
-		}
-		buchen(tag, name, liga, saison, tage, z.angriffe(), z.unsicher() ? 1 : 0, unvollstaendig);
-	}
-
 	/**
 	 * Erste Sichtung (Start, Auf-/Abstieg, neue Woche/Saison). Legend II: die Woche
-	 * beginnt bei 0 Pokalen, alles bisher Gesammelte lässt sich also aus dem
-	 * Protokoll zuordnen. Legend I: der Stand zu Tagesbeginn ist unbekannt – hat
-	 * er heute schon angegriffen, ist der Tag nur teilweise erfasst.
+	 * beginnt bei 0 Pokalen, die Angriffe seit Wochenbeginn stehen im Protokoll
+	 * (soweit es zurückreicht, siehe LegendRegeln.legendZwei). Legend I: der Stand
+	 * zu Tagesbeginn ist unbekannt, die Angriffe des Tages stehen im Protokoll.
 	 */
 	static void ersteSichtung(String tag, String name, String liga, long saison, int pokale, Instant jetzt,
 			Schaetzer schaetzer) {
 		boolean ranked = LegendRegeln.LIGA_2.equals(liga);
-		Instant ab = ranked ? Instant.ofEpochSecond(saison)
-				: LegendRegeln.tagesbeginn(LegendRegeln.legendTag(jetzt));
+		if (ranked) {
+			boolean huntWoche = LegendRegeln.laufenderHunt(jetzt).map(m -> LegendRegeln.huntStart(m).getEpochSecond())
+					.orElse(-1L) == saison;
+			if (huntWoche) {
+				legendZweiBeobachten(tag, name, liga, saison, pokale, jetzt,
+						new LegendRegeln.ZweiStand(0, 0, new HashSet<>(), null), true);
+			} else {
+				// Noch keine Saison genannt (frisch aufgestiegen) oder Nachlauf: nur merken.
+				speichern(tag, liga, saison, pokale, jetzt, null, null);
+				DBUtil.executeUpdate("UPDATE legend_beobachtung SET kaempfe = NULL, topf = NULL, topf_pokale = 0, "
+						+ "letzte_regung = NULL WHERE player_tag = ?", tag);
+			}
+			return;
+		}
+		Instant ab = LegendRegeln.tagesbeginn(LegendRegeln.legendTag(jetzt));
 		JSONArray protokoll = protokoll(tag);
 		if (protokoll == null) {
 			return; // ohne Protokoll keine sichere Grundlage, nächster Takt
 		}
-		List<Kampf> seitBeginn = kaempfe(protokoll, ranked, ab);
+		List<Kampf> seitBeginn = kaempfe(protokoll, false, ab);
 		Instant stand = seitBeginn.isEmpty() ? ab : seitBeginn.get(seitBeginn.size() - 1).ende();
-		// Ist das Protokoll voll (50 Einträge) und reicht nicht bis zum Beginn zurück, fehlt etwas.
-		boolean abgeschnitten = protokoll.length() >= 50 && aeltestes(protokoll).isAfter(ab);
-
-		if (ranked) {
-			boolean huntWoche = LegendRegeln.laufenderHunt(jetzt).map(m -> LegendRegeln.huntStart(m).getEpochSecond())
-					.orElse(-1L) == saison;
-			if (huntWoche && (pokale != 0 || !seitBeginn.isEmpty())) {
-				verbuchen(tag, name, liga, saison, pokale, seitBeginn, true, schaetzer, abgeschnitten);
-			}
-		} else {
-			// Mitten am Tag dazugekommen (Bot-Start, Aufstieg, neu im Clan): die Angriffe des
-			// Tages stehen im Protokoll, ihre Pokale ergeben sich aus Sternen und Prozent.
-			// Vorher startete so jemand bei 0 (Maxi am 17.11.: 0 statt 234).
-			LocalDate heute = LegendRegeln.legendTag(jetzt);
-			int[] summe = tagesSumme(protokoll, heute);
-			if (summe[1] > 0) {
-				boolean unvollstaendig = protokoll.length() >= 50 && aeltestes(protokoll).isAfter(ab);
-				mindestens(tag, name, liga, saison, heute, summe[0], summe[1], unvollstaendig);
-				System.out.println("Perfect Day: " + name + " " + tag + " erstmals gesehen, " + summe[1]
-						+ " Angriffe heute aus dem Protokoll = " + summe[0] + " Pokale"
-						+ (unvollstaendig ? " (Protokoll reicht nicht bis Tagesbeginn)" : ""));
-			}
+		// Mitten am Tag dazugekommen (Bot-Start, Aufstieg, neu im Clan): die Angriffe des
+		// Tages stehen im Protokoll, ihre Pokale ergeben sich aus Sternen und Prozent.
+		// Vorher startete so jemand bei 0 (Maxi am 17.11.: 0 statt 234).
+		LocalDate heute = LegendRegeln.legendTag(jetzt);
+		int[] summe = tagesSumme(protokoll, heute);
+		if (summe[1] > 0) {
+			boolean unvollstaendig = protokoll.length() >= 50 && aeltestes(protokoll).isAfter(ab);
+			mindestens(tag, name, liga, saison, heute, summe[0], summe[1], unvollstaendig);
+			System.out.println("Perfect Day: " + name + " " + tag + " erstmals gesehen, " + summe[1]
+					+ " Angriffe heute aus dem Protokoll = " + summe[0] + " Pokale"
+					+ (unvollstaendig ? " (Protokoll reicht nicht bis Tagesbeginn)" : ""));
 		}
 		speichern(tag, liga, saison, pokale, jetzt, stand, null);
 		// Legend I beginnt danach neu: was bis jetzt geendet hat, steckt im Stand.
@@ -652,40 +691,22 @@ public final class LegendWertung {
 
 	/**
 	 * Eine Legend-II-Woche ist vorbei (oder der Spieler hat die Liga gewechselt).
-	 * War es die Trophy-Hunt-Woche, wird der Rest bis Wochenende verbucht – mit dem
-	 * Endstand aus der Ligahistorie.
+	 * War es die Trophy-Hunt-Woche, werden die Angriffe nachgetragen, die zwischen
+	 * der letzten Abfrage und dem Wechsel noch ins Protokoll gekommen sind.
 	 */
 	static void wocheAbschliessen(String tag, String name, Beobachtung vorher, Schaetzer schaetzer) {
 		if (!istHuntSaison(vorher.saison())) {
 			return;
 		}
-		String json = new Player(tag).getUnterpfadJson("leaguehistory");
-		if (json == null) {
-			System.err.println("Trophy Hunt: Endstand von " + tag + " nicht abrufbar, Rest der Woche fehlt");
-			return;
-		}
-		Integer ende = null;
-		JSONArray items = new JSONObject(json).optJSONArray("items");
-		for (int i = 0; items != null && i < items.length(); i++) {
-			if (items.getJSONObject(i).optLong("leagueSeasonId") == vorher.saison()) {
-				ende = items.getJSONObject(i).optInt("leagueTrophies");
-			}
-		}
 		JSONArray protokoll = protokoll(tag);
-		if (ende == null || protokoll == null) {
+		if (protokoll == null) {
+			System.err.println("Trophy Hunt: Protokoll von " + tag + " nicht abrufbar, letzte Angriffe der Woche fehlen");
 			return;
 		}
-		Instant wochenende = Instant.ofEpochSecond(vorher.saison()).plus(Duration.ofDays(7));
-		List<Kampf> neue = new ArrayList<>();
-		for (Kampf k : kaempfe(protokoll, true, untergrenze(vorher))) {
-			if (k.ende().isBefore(wochenende)) {
-				neue.add(k);
-			}
-		}
-		int delta = ende - vorher.pokale();
-		if (!neue.isEmpty()) {
-			verbuchen(tag, name, LegendRegeln.LIGA_2, vorher.saison(), delta, neue, true, schaetzer, false);
-		}
+		LegendRegeln.ZweiErgebnis erg = LegendRegeln.legendZweiAbschluss(ladeZweiStand(tag, vorher),
+				zweikaempfe(protokoll), Instant.ofEpochSecond(vorher.saison()));
+		zweiBuchen(tag, name, LegendRegeln.LIGA_2, vorher.saison(), erg, false,
+				Instant.ofEpochSecond(vorher.saison()).plus(Duration.ofDays(7)).minusSeconds(1));
 	}
 
 	/** Ist diese Liga-Woche (Saison-ID = Beginn in Sekunden) eine Trophy-Hunt-Woche? */
@@ -704,11 +725,6 @@ public final class LegendWertung {
 		}
 		JSONArray items = new JSONObject(json).optJSONArray("items");
 		return items == null ? new JSONArray() : items;
-	}
-
-	private static List<Kampf> neueKaempfe(String tag, boolean ranked, Instant ab) {
-		JSONArray protokoll = protokoll(tag);
-		return protokoll == null ? null : kaempfe(protokoll, ranked, ab);
 	}
 
 	/** Kämpfe der Liga (legend bzw. ranked), die nach {@code ab} geendet haben, älteste zuerst. */
