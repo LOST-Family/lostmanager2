@@ -75,4 +75,37 @@ public final class LangeListe {
 		}
 		return nachrichten;
 	}
+
+	/**
+	 * Teilt einen mehrzeiligen Text an Zeilengrenzen in Stücke von höchstens {@code max}
+	 * Zeichen. Anlass: /raidping schickte seine Liste als eine Nachricht – am Raid-Freitag
+	 * mit 50 offenen Mitgliedern sind das über 2000 Zeichen, JDA wirft, und es kommt gar
+	 * nichts an. Eine einzelne überlange Zeile wird hart geschnitten.
+	 */
+	public static List<String> teileNachZeilen(String text, int max) {
+		List<String> teile = new ArrayList<>();
+		StringBuilder aktuell = new StringBuilder();
+		for (String zeile : text.split("\n", -1)) {
+			while (zeile.length() > max) {
+				if (aktuell.length() > 0) {
+					teile.add(aktuell.toString());
+					aktuell.setLength(0);
+				}
+				teile.add(zeile.substring(0, max));
+				zeile = zeile.substring(max);
+			}
+			if (aktuell.length() > 0 && aktuell.length() + 1 + zeile.length() > max) {
+				teile.add(aktuell.toString());
+				aktuell.setLength(0);
+			}
+			if (aktuell.length() > 0) {
+				aktuell.append('\n');
+			}
+			aktuell.append(zeile);
+		}
+		if (!aktuell.toString().isBlank()) {
+			teile.add(aktuell.toString());
+		}
+		return teile;
+	}
 }
