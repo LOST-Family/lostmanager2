@@ -88,6 +88,23 @@ public final class LegendRegeln {
 	}
 
 	/**
+	 * Ob die Rolle „Trophyhunt“ zu diesem Zeitpunkt abgeglichen wird: von einer
+	 * Woche vor dem Hunt bis zu seinem Ende. Außerhalb bleibt sie, wie sie ist
+	 * (Stefan, 22.11.2026: wer seine Übersicht erst nach dem Event schickt und
+	 * dann nach Legend I aufsteigt, soll die Rolle nicht verlieren und weiter
+	 * gepingt werden).
+	 */
+	public static boolean rollenFenster(Instant t) {
+		YearMonth m = YearMonth.from(t.atZone(ZoneOffset.UTC));
+		for (YearMonth k : List.of(m.minusMonths(1), m, m.plusMonths(1))) {
+			if (!t.isBefore(huntStart(k).minus(7, ChronoUnit.DAYS)) && t.isBefore(huntEnde(k))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Ob eine Legend-Saison ohne Belohnung läuft (Stefan: die Saison über
 	 * Weihnachten/Silvester wird weiter gezählt, aber nicht belohnt).
 	 *

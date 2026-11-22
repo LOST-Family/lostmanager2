@@ -56,7 +56,9 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
  * <li>Nach dem Legend-Tageswechsel (05:00 UTC) die Perfect-Day-Rangliste, nach
  * Ende der Trophy-Hunt-Woche die Auswertung. Jeder Post genau einmal
  * ({@code legend_meldung}).</li>
- * <li>Täglich ab 05:30 UTC (und gleich nach dem Start) die Rolle abgleichen.</li>
+ * <li>Täglich ab 05:30 UTC (und gleich nach dem Start) die Rolle abgleichen –
+ * nur in der Woche vor dem Hunt und in der Hunt-Woche
+ * ({@link LegendRegeln#rollenFenster}).</li>
  * </ol>
  *
  * Umgebung: PERFECTDAY_KANAL, TROPHYHUNT_KANAL, TROPHYHUNT_ROLLE_ID (ohne: kein
@@ -1102,6 +1104,12 @@ public final class LegendWertung {
 				rolleFehltGemeldet = true;
 				System.out.println("Trophyhunt-Rolle: TROPHYHUNT_ROLLE_ID nicht gesetzt, kein Abgleich");
 			}
+			return;
+		}
+		// Nur in der Woche vor dem Hunt und in der Hunt-Woche; sonst bleibt die Rolle stehen.
+		if (!LegendRegeln.rollenFenster(jetzt)) {
+			letzterRollenabgleich = jetzt;
+			System.out.println("Trophyhunt-Rolle: außerhalb von Vorwoche und Hunt-Woche, kein Abgleich");
 			return;
 		}
 		// Nur auf frischer Grundlage abgleichen, sonst nähme ein API-Ausfall allen die Rolle.

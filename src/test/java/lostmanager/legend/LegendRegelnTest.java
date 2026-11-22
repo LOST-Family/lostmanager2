@@ -155,4 +155,36 @@ class LegendRegelnTest {
 		t = LegendRegeln.aufTageVerteilen(37, List.of(angriff(3, 100, "2026-11-16T20:00:00Z")), false, fest);
 		assertEquals(Map.of(LocalDate.of(2026, 11, 16), 37), t);
 	}
+
+	@Test
+	void rolleWirdNurInVorwocheUndHuntWocheAbgeglichen() {
+		// November 2026: Hunt 16.11. 05:00 bis 23.11. 05:00 UTC, Vorwoche ab 09.11. 05:00.
+		assertFalse(LegendRegeln.rollenFenster(Instant.parse("2026-11-09T04:59:59Z")));
+		assertTrue(LegendRegeln.rollenFenster(Instant.parse("2026-11-09T05:30:00Z")));
+		assertTrue(LegendRegeln.rollenFenster(Instant.parse("2026-11-16T05:30:00Z")));
+		assertTrue(LegendRegeln.rollenFenster(Instant.parse("2026-11-22T05:30:00Z")));
+		assertTrue(LegendRegeln.rollenFenster(Instant.parse("2026-11-23T04:59:59Z")));
+		// Der Abgleich am Montag nach dem Hunt (05:30) fällt weg – darum geht es.
+		assertFalse(LegendRegeln.rollenFenster(Instant.parse("2026-11-23T05:00:00Z")));
+		assertFalse(LegendRegeln.rollenFenster(Instant.parse("2026-11-23T05:30:00Z")));
+		assertFalse(LegendRegeln.rollenFenster(Instant.parse("2026-12-14T04:59:59Z")));
+		// Dezember: Hunt 21.–28.12., Vorwoche ab 14.12.
+		assertTrue(LegendRegeln.rollenFenster(Instant.parse("2026-12-14T05:30:00Z")));
+		assertTrue(LegendRegeln.rollenFenster(Instant.parse("2026-12-27T12:00:00Z")));
+		assertFalse(LegendRegeln.rollenFenster(Instant.parse("2026-12-28T05:30:00Z")));
+		// Über den Jahreswechsel: Januar-Hunt 18.–25.01.2027, Vorwoche ab 11.01.
+		assertFalse(LegendRegeln.rollenFenster(Instant.parse("2027-01-01T12:00:00Z")));
+		assertTrue(LegendRegeln.rollenFenster(Instant.parse("2027-01-11T05:30:00Z")));
+		// Vorwoche, die im Vormonat beginnt: Hunt März 2027 ab 15.03.; Juni 2026 ab 15.06.
+		assertTrue(LegendRegeln.rollenFenster(Instant.parse("2027-03-08T05:30:00Z")));
+		// Jeder Tag eines Jahres: genau 14 Tage je Monat liegen im Fenster.
+		int tage = 0;
+		for (Instant t = Instant.parse("2027-01-01T05:30:00Z"); t.isBefore(Instant.parse("2028-01-01T00:00:00Z")); t = t
+				.plusSeconds(86400)) {
+			if (LegendRegeln.rollenFenster(t)) {
+				tage++;
+			}
+		}
+		assertEquals(12 * 14, tage);
+	}
 }
