@@ -187,4 +187,16 @@ class LegendRegelnTest {
 		}
 		assertEquals(12 * 14, tage);
 	}
+
+	@Test
+	void rollenAusnahmenNehmenNurDiscordIds() {
+		assertEquals(java.util.Set.of(), LegendRegeln.rollenAusnahmen(""));
+		assertEquals(java.util.Set.of(), LegendRegeln.rollenAusnahmen(null));
+		assertEquals(java.util.Set.of("516665333671788547"),
+				LegendRegeln.rollenAusnahmen("516665333671788547 (Marc)"));
+		assertEquals(java.util.Set.of("516665333671788547", "1283191994767642715"),
+				LegendRegeln.rollenAusnahmen("516665333671788547,1283191994767642715; 516665333671788547"));
+		// Zu kurze Zahlen oder Spieler-Tags sind keine Discord-IDs.
+		assertEquals(java.util.Set.of(), LegendRegeln.rollenAusnahmen("12345, #2PP, 123456789012345678901"));
+	}
 }

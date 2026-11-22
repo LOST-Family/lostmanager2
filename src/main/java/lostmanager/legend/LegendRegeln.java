@@ -8,10 +8,14 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Die Regeln von Perfect Day und Trophy Hunt, ohne Datenbank und ohne API –
@@ -102,6 +106,25 @@ public final class LegendRegeln {
 			}
 		}
 		return false;
+	}
+
+	private static final Pattern DISCORD_ID = Pattern.compile("(?<!\\d)\\d{17,20}(?!\\d)");
+
+	/**
+	 * Discord-IDs, die die Rolle „Trophyhunt“ nie automatisch bekommen (Stefan,
+	 * 22.11.2026). Aus TROPHYHUNT_ROLLE_AUSNAHMEN; gezählt werden nur die
+	 * Discord-IDs darin, alles andere (Namen, Trennzeichen) ist Beiwerk –
+	 * etwa {@code 516665333671788547 (Marc), 123…}.
+	 */
+	public static Set<String> rollenAusnahmen(String konfig) {
+		Set<String> ids = new LinkedHashSet<>();
+		if (konfig != null) {
+			Matcher m = DISCORD_ID.matcher(konfig);
+			while (m.find()) {
+				ids.add(m.group());
+			}
+		}
+		return ids;
 	}
 
 	/**
