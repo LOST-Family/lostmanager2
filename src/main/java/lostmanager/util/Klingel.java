@@ -47,6 +47,15 @@ public class Klingel extends ListenerAdapter {
 	/** Wer klingeln darf. Komma-getrennte Discord-IDs, sonst nur Keksi. */
 	private static final Set<String> ERLAUBT = erlaubte();
 
+	/**
+	 * Wer keine Eingangsbestaetigung bekommt. Komma-getrennte Discord-IDs,
+	 * Standard leer. Seit 23.11.2026: Jonas verweist Leute per DM an den
+	 * Assistenten, die die Bestaetigung nur verwirrt (zuerst Max). Neue
+	 * Kontakte kommen ohne Code-Aenderung dazu: Drop-in, daemon-reload,
+	 * lostmanager-neustart.sh. Geklingelt wird fuer sie trotzdem.
+	 */
+	private static final Set<String> OHNE_BESTAETIGUNG = idListe("KLINGEL_OHNE_BESTAETIGUNG", "");
+
 	/** Wohin die Zeile geht. Der Assistent haengt mit tail -F an dieser Datei. */
 	private static final Path DATEI = Paths.get(
 			System.getenv().getOrDefault("KLINGEL_DATEI",
@@ -85,9 +94,20 @@ public class Klingel extends ListenerAdapter {
 	private static final DateTimeFormatter UHRZEIT = DateTimeFormatter.ofPattern("HH:mm");
 
 	private static Set<String> erlaubte() {
-		final String roh = System.getenv().getOrDefault("KLINGEL_ERLAUBT", "362260317071343630");
+		return idListe("KLINGEL_ERLAUBT", "362260317071343630");
+	}
+
+	private static Set<String> idListe(String variable, String standard) {
+		return liesIds(System.getenv().getOrDefault(variable, standard));
+	}
+
+	static Set<String> liesIds(String roh) {
 		return Arrays.stream(roh.split(",")).map(String::trim).filter(s -> !s.isEmpty())
 				.collect(Collectors.toUnmodifiableSet());
+	}
+
+	static boolean bekommtBestaetigung(String userId) {
+		return userId != null && !OHNE_BESTAETIGUNG.contains(userId);
 	}
 
 	static boolean darfKlingeln(String userId) {
@@ -188,6 +208,10 @@ public class Klingel extends ListenerAdapter {
 					StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 		} catch (IOException e) {
 			System.err.println("Klingel: konnte " + DATEI + " nicht schreiben: " + e.getMessage());
+			return;
+		}
+
+		if (!bekommtBestaetigung(id)) {
 			return;
 		}
 
