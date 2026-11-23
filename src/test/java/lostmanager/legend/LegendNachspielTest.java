@@ -347,16 +347,15 @@ class LegendNachspielTest {
 		Eintrag a = new Eintrag("20261117T080010.000Z|A|150|#X", new LegendRegeln.Kampf(true, 3, 100, t0.plusSeconds(10)));
 		Eintrag v = new Eintrag("20261117T080400.000Z|V|150|#Y", new LegendRegeln.Kampf(false, 2, 60, t0.plusSeconds(250)));
 		EinsStand s = new EinsStand(5000, new HashSet<>(), null, 0, new HashSet<>(), null, null);
+		// seit 23.11.2026 sofort nach Formel gebucht, nicht erst nach Ruhe
 		EinsErgebnis e = LegendRegeln.legendEins(s, 5040, () -> List.of(a), t0.plusSeconds(30), LegendRegeln.GROB);
-		e = LegendRegeln.legendEins(e.stand(), 5040, () -> List.of(a), t0.plusSeconds(160), LegendRegeln.GROB);
 		assertEquals(Map.of(LocalDate.of(2026, 11, 17), 40), e.tage());
 		// Verteidigung −19; in dieser Antwort fehlt der Angriff, in der nächsten ist er wieder da
 		e = LegendRegeln.legendEins(e.stand(), 5021, () -> List.of(v), t0.plusSeconds(300), LegendRegeln.GROB);
-		e = LegendRegeln.legendEins(e.stand(), 5021, () -> List.of(a, v), t0.plusSeconds(330), LegendRegeln.GROB);
-		assertEquals(Set_of(v.schluessel()), e.stand().topf(), "der alte Angriff ist nicht wieder im Topf");
-		e = LegendRegeln.legendEins(e.stand(), 5021, () -> List.of(a, v), t0.plusSeconds(460), LegendRegeln.GROB);
 		assertTrue(e.tage().isEmpty());
-		assertEquals(0, e.zuordnung().angriffe(), "kein neunter Angriff");
+		e = LegendRegeln.legendEins(e.stand(), 5021, () -> List.of(a, v), t0.plusSeconds(330), LegendRegeln.GROB);
+		assertTrue(e.tage().isEmpty(), "kein neunter Angriff");
+		assertEquals(0, e.stand().topfPokale());
 		// nach drei Tagen wird vergessen (das Protokoll reicht nicht so weit zurück)
 		e = LegendRegeln.legendEins(e.stand(), 5030, List::of, t0.plus(Duration.ofDays(4)), LegendRegeln.GROB);
 		assertTrue(e.stand().gesehen().isEmpty());
