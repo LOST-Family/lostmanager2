@@ -200,6 +200,21 @@ class LegendDatenbankTest {
 		assertEquals(java.util.Set.of("1"), LegendWertung.trophyhuntBerechtigte());
 	}
 
+	/** Lauf mit TROPHYHUNT_ROLLE_AUSNAHMEN=100000000000000001 prüft den Ausschluss wirklich. */
+	@Test
+	void rollenAusnahmenFallenRaus() {
+		String aus = "100000000000000001", drin = "100000000000000002";
+		DBUtil.executeUpdate("INSERT INTO players (coc_tag, discord_id, name) VALUES ('#A1', '" + aus + "', 'a'), ('#A2', '"
+				+ drin + "', 'b')");
+		DBUtil.executeUpdate("INSERT INTO legend_spieler (player_tag, name, liga, gesehen) VALUES "
+				+ "('#A1', 'a', 'Legend League II', now()), ('#A2', 'b', 'Legend League II', now())");
+		java.util.Set<String> erwartet = new java.util.HashSet<>(java.util.Set.of(drin));
+		if (!LegendWertung.ROLLEN_AUSNAHMEN.contains(aus)) {
+			erwartet.add(aus);
+		}
+		assertEquals(erwartet, LegendWertung.trophyhuntBerechtigte());
+	}
+
 	@Test
 	void ersteSichtungUndLaufGegenEchteApi() {
 		assumeTrue(System.getenv("API_UMSCHALTER") != null || System.getenv("LOST_MANAGER_API_KEY") != null,

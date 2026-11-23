@@ -8,10 +8,14 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Die Regeln von Perfect Day und Trophy Hunt, ohne Datenbank und ohne API –
@@ -85,6 +89,42 @@ public final class LegendRegeln {
 			}
 		}
 		return Optional.empty();
+	}
+
+	/**
+	 * Ob die Rolle „Trophyhunt“ zu diesem Zeitpunkt abgeglichen wird: von einer
+	 * Woche vor dem Hunt bis zu seinem Ende. Außerhalb bleibt sie, wie sie ist
+	 * (Stefan, 22.11.2026: wer seine Übersicht erst nach dem Event schickt und
+	 * dann nach Legend I aufsteigt, soll die Rolle nicht verlieren und weiter
+	 * gepingt werden).
+	 */
+	public static boolean rollenFenster(Instant t) {
+		YearMonth m = YearMonth.from(t.atZone(ZoneOffset.UTC));
+		for (YearMonth k : List.of(m.minusMonths(1), m, m.plusMonths(1))) {
+			if (!t.isBefore(huntStart(k).minus(7, ChronoUnit.DAYS)) && t.isBefore(huntEnde(k))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static final Pattern DISCORD_ID = Pattern.compile("(?<!\\d)\\d{17,20}(?!\\d)");
+
+	/**
+	 * Discord-IDs, die die Rolle „Trophyhunt“ nie automatisch bekommen (Stefan,
+	 * 22.11.2026). Aus TROPHYHUNT_ROLLE_AUSNAHMEN; gezählt werden nur die
+	 * Discord-IDs darin, alles andere (Namen, Trennzeichen) ist Beiwerk –
+	 * etwa {@code 516665333671788547 (Marc), 123…}.
+	 */
+	public static Set<String> rollenAusnahmen(String konfig) {
+		Set<String> ids = new LinkedHashSet<>();
+		if (konfig != null) {
+			Matcher m = DISCORD_ID.matcher(konfig);
+			while (m.find()) {
+				ids.add(m.group());
+			}
+		}
+		return ids;
 	}
 
 	/**

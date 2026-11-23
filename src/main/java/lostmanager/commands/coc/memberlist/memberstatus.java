@@ -134,7 +134,7 @@ public class memberstatus extends ListenerAdapter {
 					signedOffStr += "unbegrenzt";
 				} else {
 					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-					signedOffStr += "bis " + signoff.getEndDate().toLocalDateTime().format(formatter);
+					signedOffStr += "bis " + MemberSignoff.inBerlin(signoff.getEndDate()).format(formatter);
 				}
 				signedOffStr += "\n";
 			}
@@ -316,7 +316,7 @@ public class memberstatus extends ListenerAdapter {
 							signedOffStr += "unbegrenzt";
 						} else {
 							DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-							signedOffStr += "bis " + signoff.getEndDate().toLocalDateTime().format(formatter);
+							signedOffStr += "bis " + MemberSignoff.inBerlin(signoff.getEndDate()).format(formatter);
 						}
 						signedOffStr += "\n";
 					}

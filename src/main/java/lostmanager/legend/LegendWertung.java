@@ -56,11 +56,14 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
  * <li>Nach dem Legend-Tageswechsel (05:00 UTC) die Perfect-Day-Rangliste, nach
  * Ende der Trophy-Hunt-Woche die Auswertung. Jeder Post genau einmal
  * ({@code legend_meldung}).</li>
- * <li>Täglich ab 05:30 UTC (und gleich nach dem Start) die Rolle abgleichen.</li>
+ * <li>Täglich ab 05:30 UTC (und gleich nach dem Start) die Rolle abgleichen –
+ * nur in der Woche vor dem Hunt und in der Hunt-Woche
+ * ({@link LegendRegeln#rollenFenster}).</li>
  * </ol>
  *
  * Umgebung: PERFECTDAY_KANAL, TROPHYHUNT_KANAL, TROPHYHUNT_ROLLE_ID (ohne: kein
- * Abgleich), PERFECTDAY_OHNE_BELOHNUNG, PERFECTDAY_AUSSCHLUSS (Tag=#A,#B;… nur
+ * Abgleich), TROPHYHUNT_ROLLE_AUSNAHMEN (Discord-IDs, die die Rolle nie
+ * automatisch bekommen und sie beim Abgleich verlieren), PERFECTDAY_OHNE_BELOHNUNG, PERFECTDAY_AUSSCHLUSS (Tag=#A,#B;… nur
  * im Post dieses Tages weglassen, *=#C;… an jedem Tag), PERFECTDAY_ERSTER_TAG,
  * TROPHYHUNT_ERSTER_MONAT, LEGEND_TROCKEN=1 (nichts posten, keine Rollen, nur
  * Journal), LEGEND_AUS=1.
@@ -70,6 +73,7 @@ public final class LegendWertung {
 	static final String PD_KANAL = env("PERFECTDAY_KANAL", "1564398086321602580");
 	static final String HUNT_KANAL = env("TROPHYHUNT_KANAL", "1564398226222747810");
 	static final String ROLLE = env("TROPHYHUNT_ROLLE_ID", "");
+	static final Set<String> ROLLEN_AUSNAHMEN = LegendRegeln.rollenAusnahmen(env("TROPHYHUNT_ROLLE_AUSNAHMEN", ""));
 	static final String OHNE_BELOHNUNG = env("PERFECTDAY_OHNE_BELOHNUNG", "");
 	static final String AUSSCHLUSS = env("PERFECTDAY_AUSSCHLUSS", "");
 	static final LocalDate ERSTER_TAG = LocalDate.parse(env("PERFECTDAY_ERSTER_TAG", "2026-11-16"));
@@ -121,7 +125,8 @@ public final class LegendWertung {
 		TAKT.scheduleWithFixedDelay(LegendWertung::tickSicher, 30, 30, TimeUnit.SECONDS);
 		System.out.println("Perfect Day / Trophy Hunt: Takt alle 30 Sekunden gestartet"
 				+ (TROCKEN ? " (TROCKEN: nichts wird gepostet, keine Rollen)" : "")
-				+ (ROLLE.isEmpty() ? ", Trophyhunt-Rolle nicht konfiguriert" : ", Trophyhunt-Rolle " + ROLLE));
+				+ (ROLLE.isEmpty() ? ", Trophyhunt-Rolle nicht konfiguriert" : ", Trophyhunt-Rolle " + ROLLE
+						+ (ROLLEN_AUSNAHMEN.isEmpty() ? "" : " (" + ROLLEN_AUSNAHMEN.size() + " ausgenommen)")));
 	}
 
 	// ------------------------------------------------------------------
@@ -1104,23 +1109,44 @@ public final class LegendWertung {
 			}
 			return;
 		}
+		// Nur in der Woche vor dem Hunt und in der Hunt-Woche; sonst bleibt die Rolle stehen.
+		if (!LegendRegeln.rollenFenster(jetzt)) {
+			letzterRollenabgleich = jetzt;
+			System.out.println("Trophyhunt-Rolle: außerhalb von Vorwoche und Hunt-Woche, kein Abgleich"
+					+ (ROLLEN_AUSNAHMEN.isEmpty() ? "" : " (nur Ausnahmen entfernen)"));
+			// Ausgenommene verlieren die Rolle aber auch außerhalb des Fensters.
+			rolleAbgleichen(true);
+			return;
+		}
 		// Nur auf frischer Grundlage abgleichen, sonst nähme ein API-Ausfall allen die Rolle.
 		if (Duration.between(letzteErfolgreicheSuche, jetzt).compareTo(Duration.ofHours(1)) > 0) {
 			return;
 		}
 		letzterRollenabgleich = jetzt;
-		rolleAbgleichen();
+		rolleAbgleichen(false);
 	}
 
-	/** Discord-IDs, deren verknüpfte LOST-Accounts gerade (mindestens einer) in Legend II sind. */
+	/**
+	 * Discord-IDs, deren verknüpfte LOST-Accounts gerade (mindestens einer) in
+	 * Legend II sind – ohne die Ausnahmen aus TROPHYHUNT_ROLLE_AUSNAHMEN.
+	 */
 	static Set<String> trophyhuntBerechtigte() {
-		return new HashSet<>(DBUtil.getArrayListFromSQL(
+		Set<String> ids = new HashSet<>(DBUtil.getArrayListFromSQL(
 				"SELECT DISTINCT p.discord_id FROM players p JOIN legend_spieler l ON l.player_tag = p.coc_tag "
 						+ "WHERE l.liga = ? AND l.gesehen > now() - interval '6 hours' AND p.discord_id IS NOT NULL",
 				String.class, LegendRegeln.LIGA_2));
+		ids.removeAll(ROLLEN_AUSNAHMEN);
+		return ids;
 	}
 
-	static void rolleAbgleichen() {
+	/**
+	 * @param nurAusnahmen außerhalb des Rollenfensters: niemandem die Rolle
+	 *                     geben, nur den Ausgenommenen nehmen.
+	 */
+	static void rolleAbgleichen(boolean nurAusnahmen) {
+		if (nurAusnahmen && ROLLEN_AUSNAHMEN.isEmpty()) {
+			return;
+		}
 		Guild guild = Bot.getJda().getGuildById(Bot.guild_id);
 		Role rolle = guild == null ? null : guild.getRoleById(ROLLE);
 		if (rolle == null) {
@@ -1134,14 +1160,18 @@ public final class LegendWertung {
 			System.err.println("Trophyhunt-Rolle: der Bot steht nicht über der Rolle, kein Abgleich");
 			return;
 		}
-		Set<String> soll = trophyhuntBerechtigte();
+		Set<String> soll = nurAusnahmen ? Set.of() : trophyhuntBerechtigte();
 		List<Member> weg = new ArrayList<>();
 		Set<String> haben = new HashSet<>();
 		for (Member m : guild.getMembersWithRoles(rolle)) {
 			haben.add(m.getId());
-			if (!soll.contains(m.getId())) {
+			boolean entfernen = nurAusnahmen ? ROLLEN_AUSNAHMEN.contains(m.getId()) : !soll.contains(m.getId());
+			if (entfernen) {
 				weg.add(m);
 			}
+		}
+		if (nurAusnahmen && weg.isEmpty()) {
+			return;
 		}
 		List<Member> dazu = new ArrayList<>();
 		for (String id : soll) {
@@ -1150,7 +1180,7 @@ public final class LegendWertung {
 				dazu.add(m);
 			}
 		}
-		System.out.println("Trophyhunt-Rolle: " + soll.size() + " berechtigt, +" + dazu.size() + " −" + weg.size()
+		System.out.println("Trophyhunt-Rolle: " + (nurAusnahmen ? "nur Ausnahmen, " : "") + soll.size() + " berechtigt, +" + dazu.size() + " −" + weg.size()
 				+ (TROCKEN ? " (TROCKEN, nichts geändert)" : ""));
 		if (TROCKEN) {
 			return;
@@ -1160,7 +1190,9 @@ public final class LegendWertung {
 					f -> System.err.println("Trophyhunt-Rolle an " + m.getId() + " gescheitert: " + f.getMessage()));
 		}
 		for (Member m : weg) {
-			guild.removeRoleFromMember(m, rolle).reason("Trophyhunt: kein Account mehr in Legend League II").queue(null,
+			String grund = ROLLEN_AUSNAHMEN.contains(m.getId()) ? "Trophyhunt: ausgenommen (TROPHYHUNT_ROLLE_AUSNAHMEN)"
+					: "Trophyhunt: kein Account mehr in Legend League II";
+			guild.removeRoleFromMember(m, rolle).reason(grund).queue(null,
 					f -> System.err.println("Trophyhunt-Rolle von " + m.getId() + " gescheitert: " + f.getMessage()));
 		}
 	}

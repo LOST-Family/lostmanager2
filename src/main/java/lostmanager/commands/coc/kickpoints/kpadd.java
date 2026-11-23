@@ -197,8 +197,7 @@ public class kpadd extends ListenerAdapter {
 					if (signoff.isUnlimited()) {
 						desc += "unbegrenzt.\n";
 					} else {
-						desc += "bis " + signoff.getEndDate().toLocalDateTime()
-								.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy 'um' HH:mm 'Uhr'")) + ".\n";
+						desc += "bis " + MemberSignoff.berlin(signoff.getEndDate(), "dd.MM.yyyy 'um' HH:mm 'Uhr'") + ".\n";
 					}
 				}
 

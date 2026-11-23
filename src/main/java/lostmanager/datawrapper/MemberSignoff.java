@@ -5,6 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 import lostmanager.dbutil.DBUtil;
 
@@ -72,6 +75,41 @@ public class MemberSignoff {
      * instance.
      * More efficient for quick checks.
      */
+    /**
+     * Aktiv oder noch geplant (Start liegt in der Zukunft) – also eine Abmeldung,
+     * die man ansehen, verlängern oder beenden können muss.
+     */
+    public boolean isActiveOrPlanned() {
+        if (!exists()) {
+            return false;
+        }
+        return endDate == null || Timestamp.from(Instant.now()).before(endDate);
+    }
+
+    public boolean isPlanned() {
+        return exists() && startDate != null && startDate.after(Timestamp.from(Instant.now()));
+    }
+
+    /*
+     * Zeitbasis: die Spalten sind „timestamp without time zone“ und werden wie
+     * NOW() der Datenbank (Etc/UTC) als UTC-Wanduhr geführt – isSignedOff und die
+     * F2P-CWL-Abfragen vergleichen direkt mit NOW(). Eingaben und Anzeigen sind
+     * aber Berliner Zeit; deshalb laufen beide Richtungen über diese zwei Helfer.
+     */
+    public static final ZoneId BERLIN = ZoneId.of("Europe/Berlin");
+
+    public static Timestamp ausBerlin(LocalDateTime berlinerZeit) {
+        return Timestamp.from(berlinerZeit.atZone(BERLIN).toInstant());
+    }
+
+    public static LocalDateTime inBerlin(Timestamp ts) {
+        return ts.toInstant().atZone(BERLIN).toLocalDateTime();
+    }
+
+    public static String berlin(Timestamp ts, String muster) {
+        return inBerlin(ts).format(DateTimeFormatter.ofPattern(muster));
+    }
+
     public static boolean isSignedOff(String playerTag) {
         // Query database directly without loading full object
         String sql = "SELECT COUNT(*) FROM member_signoffs WHERE player_tag = ? AND start_date <= NOW() AND (end_date IS NULL OR end_date > NOW())";
