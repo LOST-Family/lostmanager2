@@ -125,6 +125,73 @@ class LegendNachspielTest {
 		return gebucht;
 	}
 
+	static JSONArray protokoll(String tag, String datum) throws Exception {
+		try (InputStream in = LegendNachspielTest.class
+				.getResourceAsStream("/legend/battlelog-" + tag + "-" + datum + ".json")) {
+			return new JSONObject(new String(in.readAllBytes(), StandardCharsets.UTF_8)).getJSONArray("items");
+		}
+	}
+
+	/**
+	 * Wie {@link #nachspielen}, aber Pokalstand und Protokoll hinken unabhängig
+	 * voneinander hinterher (Zwischenspeicher der API, langsamer Takt), und auf
+	 * Wunsch fehlt in jeder dritten Antwort der älteste Kampf (kommt in der API
+	 * gelegentlich vor, 21.11.2026).
+	 */
+	static int nachspielenVerzoegert(List<Sim> sims, LocalDate tag, Instant von, Instant bis, int taktSek,
+			long pokalVerzug, long logVerzug, boolean luecken) {
+		int start = 5000;
+		java.util.Set<String> vorher = new HashSet<>();
+		for (Sim s : sims) {
+			if (s.aenderung().isBefore(von)) {
+				vorher.add(s.eintrag().schluessel());
+			}
+		}
+		int basis = start + sims.stream().filter(s -> s.aenderung().isBefore(von)).mapToInt(Sim::pokale).sum();
+		EinsStand stand = new EinsStand(basis, vorher, null, 0, new HashSet<>(), von, null);
+		int summe = 0, n = 0;
+		for (Instant t = von; t.isBefore(bis); t = t.plusSeconds(taktSek)) {
+			final Instant jetzt = t;
+			Instant sichtP = jetzt.minusSeconds(pokalVerzug), sichtL = jetzt.minusSeconds(logVerzug);
+			int pokale = start + sims.stream().filter(s -> !s.aenderung().isAfter(sichtP)).mapToInt(Sim::pokale).sum();
+			List<Eintrag> log = new ArrayList<>(sims.stream().filter(s -> !s.aenderung().isAfter(sichtL)).map(Sim::eintrag).toList());
+			if (luecken && n++ % 3 == 1 && log.size() > 1) {
+				log.remove(0);
+			}
+			EinsErgebnis e = LegendRegeln.legendEins(stand, pokale, () -> log, jetzt,
+					LegendRegeln.formel(LegendRegeln.GROB));
+			if (e == null) {
+				continue;
+			}
+			summe += e.tage().getOrDefault(tag, 0);
+			stand = e.stand();
+		}
+		return summe;
+	}
+
+	@Test
+	void stefan22NovSerieOhnePause() throws Exception {
+		// 22.11.2026: acht Angriffe 16:42–16:58 UTC am Stück (7× 3 Sterne, 1 Stern 96 % = 15), Bot buchte 200
+		// statt 295 (perfect-day-results, Nachricht 1574368783437660163). Der Pokalstand lief dem Protokoll
+		// davon bzw. hinterher; nach zehn Minuten ohne Passung buchte der Notweg höchstens 40 je Angriff im
+		// Topf. Seit 23.11.2026 zählt jeder Angriff einzeln nach der Formel – egal, wie die beiden hinken.
+		JSONArray p = protokoll("L8RUP2ULR", "2026-11-22");
+		LocalDate d = LocalDate.of(2026, 11, 22);
+		List<Sim> sims = kaempfe(p, d, null, 295, null, false, 0);
+		Instant von = Instant.parse("2026-11-22T16:30:00Z"), bis = Instant.parse("2026-11-22T18:30:00Z");
+		for (int takt : new int[] { 30, 60, 120 }) {
+			for (long pv : new long[] { 0, 30, 90, 180, 360 }) {
+				for (long lv : new long[] { 0, 30, 60, 90, 180, 360 }) {
+					for (boolean luecken : new boolean[] { false, true }) {
+						assertEquals(295, nachspielenVerzoegert(sims, d, von, bis, takt, pv, lv, luecken),
+								"Takt " + takt + " s, Pokalstand " + pv + " s hinterher, Protokoll " + lv
+										+ " s hinterher, Lücken " + luecken);
+					}
+				}
+			}
+		}
+	}
+
 	static void pruefeAlleVarianten(String tag, LocalDate tagDatum, int[] angriffe, int summe, int[] verteidigungen) throws Exception {
 		JSONArray p = protokoll(tag);
 		for (boolean endeIstZeitstempel : new boolean[] { false, true }) {
@@ -185,41 +252,88 @@ class LegendNachspielTest {
 	}
 
 	@Test
-	void topfWartetAufsProtokollUndBuchtNichtDoppelt() {
+	void jederKampfNachFormelNichtsDoppelt() {
 		Instant t0 = Instant.parse("2026-11-17T08:00:00Z");
 		LocalDate d = LocalDate.of(2026, 11, 17);
+		// 2 Sterne 90 % = 29, Dreistern-Verteidigung −40
 		Eintrag a = new Eintrag("a", new LegendRegeln.Kampf(true, 2, 90, t0.plusSeconds(10)));
 		Eintrag v = new Eintrag("v", new LegendRegeln.Kampf(false, 3, 100, t0.plusSeconds(15)));
 		EinsStand s = new EinsStand(5000, new HashSet<>(), null, 0, new HashSet<>(), null, null);
-		// Angriff +30 und Dreistern-Verteidigung −40 in derselben halben Minute: Saldo −10
-		EinsErgebnis e1 = LegendRegeln.legendEins(s, 4990, List::of, t0.plusSeconds(30), LegendRegeln.GROB);
+		// Pokalstand schon da (Saldo −11), Protokoll noch leer: nichts buchen, Rest merken
+		EinsErgebnis e1 = LegendRegeln.legendEins(s, 4989, List::of, t0.plusSeconds(30), LegendRegeln.GROB);
 		assertTrue(e1.tage().isEmpty());
-		assertEquals(-10, e1.stand().topfPokale());
-		EinsErgebnis e2 = LegendRegeln.legendEins(e1.stand(), 4990, () -> List.of(a, v), t0.plusSeconds(60),
+		assertEquals(-11, e1.stand().topfPokale());
+		// Protokoll kommt nach: Angriff sofort nach Formel, Rest aufgegangen
+		EinsErgebnis e2 = LegendRegeln.legendEins(e1.stand(), 4989, () -> List.of(a, v), t0.plusSeconds(60),
 				LegendRegeln.GROB);
-		assertTrue(e2.tage().isEmpty(), "noch keine Ruhe");
-		EinsErgebnis e3 = LegendRegeln.legendEins(e2.stand(), 4990, () -> List.of(a, v), t0.plusSeconds(160),
+		assertEquals(Map.of(d, 29), e2.tage());
+		assertEquals(0, e2.stand().topfPokale());
+		assertNull(e2.stand().offenSeit());
+		// Älterer Kampf fehlt in einer Antwort und kommt wieder: nichts doppelt
+		EinsErgebnis e3 = LegendRegeln.legendEins(e2.stand(), 4989, () -> List.of(v), t0.plusSeconds(90),
 				LegendRegeln.GROB);
-		assertEquals(Map.of(d, 30), e3.tage());
-		EinsErgebnis e4 = LegendRegeln.legendEins(e3.stand(), 4990, () -> List.of(a, v), t0.plusSeconds(190),
+		assertTrue(e3.tage().isEmpty());
+		EinsErgebnis e4 = LegendRegeln.legendEins(e3.stand(), 4989, () -> List.of(a, v), t0.plusSeconds(120),
 				LegendRegeln.GROB);
 		assertTrue(e4.tage().isEmpty());
-		// Protokoll bleibt aus: nach zehn Minuten nach dem Vorzeichen, danach nichts doppelt
-		Eintrag b = new Eintrag("b", new LegendRegeln.Kampf(true, 3, 100, t0.plusSeconds(300)));
+		assertTrue(e4.stand().gesehen().contains("a"));
+		// Plus ohne Kampf im Protokoll: nach zehn Minuten Stillstand verworfen und gemeldet, nichts gebucht
 		EinsStand st = e4.stand();
 		EinsErgebnis e = null;
-		for (int t = 310; t <= 310 + 600; t += 30) {
-			e = LegendRegeln.legendEins(st, 5030, () -> List.of(a, v), t0.plusSeconds(t), LegendRegeln.GROB);
-			if (!e.tage().isEmpty()) {
-				break;
-			}
+		boolean gemeldet = false;
+		for (int t = 150; t <= 150 + 660; t += 30) {
+			e = LegendRegeln.legendEins(st, 5029, () -> List.of(a, v), t0.plusSeconds(t), LegendRegeln.GROB);
+			assertTrue(e.tage().isEmpty());
+			gemeldet |= e.zuordnung() != null && e.zuordnung().unsicher() && e.zuordnung().lernPokale() == 40;
 			st = e.stand();
 		}
-		assertEquals(Map.of(d, 40), e.tage());
-		EinsErgebnis f = LegendRegeln.legendEins(e.stand(), 5030, () -> List.of(a, v, b), t0.plusSeconds(1000),
+		assertTrue(gemeldet);
+		assertEquals(0, st.topfPokale());
+		assertNull(st.offenSeit());
+		// Steht der Kampf doch noch im Protokoll, wird er beim nächsten Blick hinein (nächste
+		// Pokaländerung) genau einmal nach Formel gebucht
+		Eintrag b = new Eintrag("b", new LegendRegeln.Kampf(true, 3, 100, t0.plusSeconds(140)));
+		Eintrag c = new Eintrag("c", new LegendRegeln.Kampf(true, 3, 100, t0.plusSeconds(880)));
+		EinsErgebnis f = LegendRegeln.legendEins(st, 5069, () -> List.of(a, v, b, c), t0.plusSeconds(900),
 				LegendRegeln.GROB);
-		assertTrue(f.tage().isEmpty());
-		assertTrue(f.stand().topf().isEmpty());
+		assertEquals(Map.of(d, 80), f.tage());
+		EinsErgebnis g = LegendRegeln.legendEins(f.stand(), 5069, () -> List.of(a, v, b, c), t0.plusSeconds(930),
+				LegendRegeln.GROB);
+		assertTrue(g.tage().isEmpty());
+	}
+
+	@Test
+	void umstiegBuchtDenAltenTopf() {
+		// Stand aus dem Verfahren bis 22.11.: Angriff b liegt im Topf (gesehen, aber noch nicht gebucht).
+		Instant t0 = Instant.parse("2026-11-23T08:00:00Z");
+		Eintrag a = new Eintrag("a", new LegendRegeln.Kampf(true, 3, 100, t0.minusSeconds(600)));
+		Eintrag b = new Eintrag("b", new LegendRegeln.Kampf(true, 1, 96, t0.minusSeconds(60)));
+		EinsStand alt = new EinsStand(5055, Set_of("a", "b"), null, 15, Set_of("b"), t0.minusSeconds(30),
+				t0.minusSeconds(60));
+		EinsErgebnis e = LegendRegeln.legendEins(alt, 5055, () -> List.of(a, b), t0, LegendRegeln.GROB);
+		assertEquals(Map.of(LocalDate.of(2026, 11, 23), 15), e.tage());
+		assertEquals(0, e.stand().topfPokale());
+		assertTrue(e.stand().topf().isEmpty());
+	}
+
+	@Test
+	void verbuchteSchluesselNachDreiTagenVergessen() {
+		Instant t0 = Instant.parse("2026-11-23T08:00:00Z");
+		EinsStand s = new EinsStand(5000, Set_of("20261119T070000.000Z|A|100|#X", "20261122T070000.000Z|A|100|#Y"),
+				null, 0, new HashSet<>(), null, null);
+		// vergessen wird beim nächsten Blick ins Protokoll (ausgelöst durch eine Pokaländerung)
+		EinsErgebnis e = LegendRegeln.legendEins(s, 4990, List::of, t0, LegendRegeln.GROB);
+		assertEquals(Set_of("20261122T070000.000Z|A|100|#Y"), e.stand().gesehen());
+	}
+
+	@Test
+	void angriffZaehltAufDenTagSeinesBeginns() {
+		// Beginn 04:58:30 UTC, Ende 05:00:10: gehört zum Vortag (wie ClashPerk und tagesSumme)
+		Instant ende = Instant.parse("2026-11-23T05:00:10Z");
+		Eintrag a = new Eintrag("20261123T045830.000Z|A|100|#X", new LegendRegeln.Kampf(true, 3, 100, ende));
+		EinsStand s = new EinsStand(5000, new HashSet<>(), null, 0, new HashSet<>(), null, null);
+		EinsErgebnis e = LegendRegeln.legendEins(s, 5040, () -> List.of(a), ende.plusSeconds(30), LegendRegeln.GROB);
+		assertEquals(Map.of(LocalDate.of(2026, 11, 22), 40), e.tage());
 	}
 
 	private static java.util.Set<String> Set_of(String... s) {

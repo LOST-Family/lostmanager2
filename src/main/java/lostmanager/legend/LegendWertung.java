@@ -487,6 +487,13 @@ public final class LegendWertung {
 		}
 		if (!erg.tage().isEmpty()) {
 			buchen(tag, name, liga, saison, erg.tage(), z.angriffe(), z.unsicher() ? 1 : 0, false);
+		} else if (z != null && z.unsicher()) {
+			buchen(tag, name, liga, saison, Map.of(LegendRegeln.legendTag(jetzt), 0), 0, 1, false);
+		}
+		if (z != null && z.unsicher()) {
+			System.out.println("Perfect Day: " + name + " " + tag + " Pokalstand passt seit "
+					+ LegendRegeln.HOECHSTENS_OFFEN.toMinutes() + " min nicht zum Protokoll, Rest " + z.lernPokale()
+					+ " verworfen (Gegenprobe: betreuung/legend-gegenprobe.py)");
 		}
 		LegendRegeln.EinsStand neu = erg.stand();
 		speichern(tag, liga, saison, neu.pokale(), jetzt, neu.blindBis(), neu.offenSeit());

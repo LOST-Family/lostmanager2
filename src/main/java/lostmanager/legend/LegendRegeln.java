@@ -313,35 +313,49 @@ public final class LegendRegeln {
 	}
 
 	/**
-	 * So lange müssen Pokalstand und Protokoll still stehen, bevor der Topf
-	 * aufgelöst wird. Die API hält den Spieler bis 30 s, das Protokoll bis 60 s
-	 * im Zwischenspeicher (Cache-Control, gemessen 17.11.2026) – eins kann dem
-	 * anderen also bis eine Minute voraus sein.
+	 * Steht der Pokalstand so lange still und passt trotzdem nicht zu den
+	 * gebuchten Kämpfen, wird die Abweichung aufgegeben (nur Journal und Stern,
+	 * nichts gebucht).
 	 */
-	public static final java.time.Duration RUHE = java.time.Duration.ofSeconds(90);
-	/** Passt der Topf so lange nicht zusammen, wird nach dem Vorzeichen gebucht. */
 	public static final java.time.Duration HOECHSTENS_OFFEN = java.time.Duration.ofMinutes(10);
+	/** Verbuchte Schlüssel werden nach so langer Zeit vergessen (nicht nach dem Protokoll). */
+	public static final java.time.Duration MERKEN = java.time.Duration.ofDays(3);
 
 	/**
-	 * Legend I, seit 17.11.2026 (Pixel: „mach das gleiche per api“ wie ClashPerk).
-	 * Der Takt fragt alle 30 Sekunden. Pokaländerungen und neue Kämpfe (erkannt am
-	 * Schlüssel im Protokoll, nicht an Zeitgrenzen) wandern in einen Topf; steht
-	 * beides {@link #RUHE} lang still und passt zusammen (Plus nur mit neuem
-	 * Angriff, höchstens 40 je Angriff und Verteidigung), ordnet {@link #zuordnen}
-	 * den Topf zu. Weil zwischen zwei Angriffen eines Spielers Minuten liegen,
-	 * enthält der Topf fast immer einen Kampf, sonst einen Angriff und eine
-	 * Verteidigung (Dreistern-Verteidigung = genau 40, sonst gelernt geschätzt).
-	 * Vorher filterte der Bot nach Zeitgrenzen und schätzte ganze Serien; am 17.11.
-	 * ergab das bei Vendetta 120 statt 276.
+	 * Legend I, seit 23.11.2026: jeder neue Kampf im Protokoll (erkannt am
+	 * Schlüssel) zählt einzeln nach der Formel {@link #legendEinsPokale}, auf den
+	 * Legend-Tag seines Beginns (wie ClashPerk, {@code tagesSumme} und
+	 * legend-gegenprobe.py). Die Formel trifft auch Verteidigungen (844 von 845
+	 * Einzelkampf-Fenstern in legend_stichprobe, gemessen 23.11.2026).
+	 *
+	 * Der Pokalstand löst nur noch den Blick ins Protokoll aus und dient als
+	 * Gegenprobe: {@code topfPokale} ist der Teil der Pokaländerung, den noch kein
+	 * Kampf erklärt (positiv: Protokoll hinkt hinterher, negativ: Pokalstand
+	 * hinkt hinterher). Bleibt er {@link #HOECHSTENS_OFFEN} ohne jede Bewegung
+	 * stehen, wird er verworfen und nicht gebucht; {@code zuordnung().unsicher()}
+	 * meldet das (Journal, Spalte unsicher), {@code stand().topfPokale()} ist dann 0
+	 * und der verworfene Rest steht in {@code zuordnung().lernPokale()}.
+	 *
+	 * Bis 22.11.2026 verteilte der Bot stattdessen die Pokaländerung auf die
+	 * Kämpfe im „Topf“ und buchte nach zehn Minuten ohne Passung höchstens 40 je
+	 * Angriff im Topf. Bei einer Serie ohne Pause, in der Pokalstand und Protokoll
+	 * auseinanderliefen, gingen so Pokale verloren (Stefan 22.11.: 200 statt 295).
+	 *
+	 * Verbucht bleibt verbucht: Schlüssel werden nach {@link #MERKEN} vergessen,
+	 * nicht weil sie in einer Antwort fehlen (die API lässt ältere Kämpfe
+	 * gelegentlich für eine Antwort weg und liefert sie dann wieder). Schlüssel im
+	 * {@code topf} (Rest des alten Verfahrens beim Umstieg) gelten als noch nicht
+	 * gebucht.
 	 *
 	 * @param protokoll liefert die Legend-Kämpfe des Protokolls, null = nicht abrufbar
+	 * @param schaetzer wird nicht mehr gebraucht (Formel), bleibt für die Aufrufer
 	 * @return null = Protokoll nicht abrufbar, Stand unverändert lassen
 	 */
 	public static EinsErgebnis legendEins(EinsStand vorher, int pokale, java.util.function.Supplier<List<Eintrag>> protokoll,
 			Instant jetzt, Schaetzer schaetzer) {
 		int delta = pokale - vorher.pokale();
-		int topfPokale = vorher.topfPokale() + delta;
-		if (delta == 0 && topfPokale == 0 && vorher.topf().isEmpty()) {
+		int rest = vorher.topfPokale() + delta;
+		if (delta == 0 && rest == 0 && vorher.topf().isEmpty() && vorher.offenSeit() == null) {
 			return new EinsErgebnis(new EinsStand(pokale, vorher.gesehen(), vorher.blindBis(), 0, vorher.topf(),
 					vorher.letzteRegung(), null), Map.of(), null);
 		}
@@ -350,63 +364,76 @@ public final class LegendRegeln {
 			return null;
 		}
 		java.util.Set<String> gesehen = new java.util.HashSet<>(vorher.gesehen());
-		java.util.Set<String> topf = new java.util.HashSet<>(vorher.topf());
-		java.util.Set<String> imLog = new java.util.HashSet<>();
+		Map<LocalDate, Integer> tage = new java.util.TreeMap<>();
+		int angriffe = 0, erklaert = 0;
 		boolean neu = false;
 		for (Eintrag e : log) {
-			imLog.add(e.schluessel());
-			if (gesehen.contains(e.schluessel())) {
+			boolean ausTopf = vorher.topf().contains(e.schluessel());
+			if (!gesehen.add(e.schluessel()) && !ausTopf) {
 				continue;
 			}
-			gesehen.add(e.schluessel());
-			if (vorher.blindBis() != null && !e.kampf().ende().isAfter(vorher.blindBis())) {
+			if (!ausTopf && vorher.blindBis() != null && !e.kampf().ende().isAfter(vorher.blindBis())) {
 				continue;
 			}
-			topf.add(e.schluessel());
 			neu = true;
-		}
-		gesehen.retainAll(imLog);
-		topf.retainAll(imLog);
-		Instant regung = (delta != 0 || neu || vorher.letzteRegung() == null) ? jetzt : vorher.letzteRegung();
-		Instant offen = vorher.offenSeit() != null ? vorher.offenSeit() : jetzt;
-
-		List<Kampf> kaempfe = new ArrayList<>();
-		for (Eintrag e : log) {
-			if (topf.contains(e.schluessel())) {
-				kaempfe.add(e.kampf());
+			Kampf k = e.kampf();
+			int x = legendEinsPokale(k.sterne(), k.prozent());
+			if (k.angriff()) {
+				tage.merge(legendTag(beginn(e)), x, Integer::sum);
+				angriffe++;
+				erklaert += x;
+			} else {
+				erklaert -= x;
 			}
 		}
-		kaempfe.sort((x, y) -> x.ende().compareTo(y.ende()));
-		long angriffe = kaempfe.stream().filter(Kampf::angriff).count();
-		long verteidigungen = kaempfe.size() - angriffe;
-		boolean passt = !kaempfe.isEmpty() && topfPokale <= MAX_JE_KAMPF * angriffe
-				&& topfPokale >= -MAX_JE_KAMPF * verteidigungen;
-		boolean ruhig = java.time.Duration.between(regung, jetzt).compareTo(RUHE) >= 0;
+		alteSchluesselWeg(gesehen, jetzt.minus(MERKEN));
+		rest -= erklaert;
+		Instant regung = (delta != 0 || neu || vorher.letzteRegung() == null) ? jetzt : vorher.letzteRegung();
+		boolean unsicher = false;
+		int verworfen = 0;
+		Instant offen = null;
+		if (rest != 0) {
+			offen = (vorher.offenSeit() == null || delta != 0 || neu) ? jetzt : vorher.offenSeit();
+			if (java.time.Duration.between(offen, jetzt).compareTo(HOECHSTENS_OFFEN) >= 0) {
+				// Pokalstand und Kämpfe finden nicht zusammen: verwerfen, nur melden.
+				unsicher = true;
+				verworfen = rest;
+				rest = 0;
+				offen = null;
+			}
+		}
+		Zuordnung z = new Zuordnung(Math.max(0, tage.values().stream().mapToInt(Integer::intValue).sum()), angriffe,
+				unsicher, -1, 0, verworfen);
+		return new EinsErgebnis(new EinsStand(pokale, gesehen, vorher.blindBis(), rest, new java.util.HashSet<>(),
+				regung, offen), tage, (tage.isEmpty() && !unsicher) ? null : z);
+	}
 
-		boolean zuLange = java.time.Duration.between(offen, jetzt).compareTo(HOECHSTENS_OFFEN) >= 0;
-		// Lange Angriffsserie ohne Pause: passt der Topf, trotzdem zuordnen.
-		if (passt && (ruhig || zuLange)) {
-			Zuordnung z = zuordnen(topfPokale, kaempfe, false, schaetzer);
-			Map<LocalDate, Integer> tage = z.angriffe() > 0
-					? aufTageVerteilen(z.angriffspokale(), kaempfe, false, schaetzer)
-					: Map.of();
-			return new EinsErgebnis(new EinsStand(pokale, gesehen, vorher.blindBis(), 0, new java.util.HashSet<>(),
-					regung, null), tage, z);
+	/** Beginn eines Kampfes aus seinem Schlüssel (battleTimestamp vorn), sonst dessen Ende. */
+	static Instant beginn(Eintrag e) {
+		String s = e.schluessel();
+		if (s.length() >= 15 && s.charAt(8) == 'T') {
+			try {
+				return java.time.LocalDateTime.parse(s.substring(0, 15),
+						java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")).toInstant(ZoneOffset.UTC);
+			} catch (Exception ex) {
+				// anders gebauter Schlüssel (Tests): Ende nehmen
+			}
 		}
-		if (kaempfe.isEmpty() && topfPokale == 0) {
-			return new EinsErgebnis(new EinsStand(pokale, gesehen, vorher.blindBis(), 0, topf, regung, null), Map.of(),
-					null);
-		}
-		if (zuLange) {
-			// Passt nicht zusammen (Protokoll unvollständig?): nach dem Vorzeichen. Was bis
-			// jetzt geendet hat, gilt als verbucht.
-			int wert = Math.max(0, Math.min(topfPokale, MAX_JE_KAMPF * (int) Math.max(1, angriffe)));
-			Map<LocalDate, Integer> tage = wert > 0 ? Map.of(legendTag(jetzt), wert) : Map.of();
-			return new EinsErgebnis(new EinsStand(pokale, gesehen, jetzt, 0, new java.util.HashSet<>(), regung, null),
-					tage, new Zuordnung(wert, wert > 0 ? (int) Math.max(1, angriffe) : 0, true, -1, 0, 0));
-		}
-		return new EinsErgebnis(new EinsStand(pokale, gesehen, vorher.blindBis(), topfPokale, topf, regung, offen),
-				Map.of(), null);
+		return e.kampf().ende();
+	}
+
+	private static final java.time.format.DateTimeFormatter SCHLUESSELZEIT = java.time.format.DateTimeFormatter
+			.ofPattern("yyyyMMdd'T'HHmmss").withZone(ZoneOffset.UTC);
+
+	/**
+	 * Entfernt Schlüssel von Kämpfen, die vor {@code vor} begonnen haben. Ein
+	 * Schlüssel beginnt mit dem battleTimestamp der API (yyyyMMdd'T'HHmmss…), der
+	 * sich als Text sortiert; anders gebaute Schlüssel bleiben.
+	 */
+	static void alteSchluesselWeg(java.util.Set<String> schluessel, Instant vor) {
+		String grenze = SCHLUESSELZEIT.format(vor);
+		schluessel.removeIf(k -> k.length() >= 15 && Character.isDigit(k.charAt(0)) && k.charAt(8) == 'T'
+				&& k.compareTo(grenze) < 0);
 	}
 
 	/**
