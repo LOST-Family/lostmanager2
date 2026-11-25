@@ -275,6 +275,11 @@ class ListeningEventBearbeitungTest {
 		s.useLists = 1;
 		s.excludeLeaders = 0;
 		faelle.add(s);
+		s = spec("cw", -1, "cwdonator");
+		s.useLists = 0;
+		s.excludeLeaders = 1;
+		s.namedSettings = new HashMap<>(Map.of(ListeningEvent.SETTING_CWDONATOR_MIN_TH, 15L));
+		faelle.add(s);
 		s = spec("seasonend", 172800000, "infomessage");
 		s.namedSettings = new HashMap<>(Map.of(ListeningEvent.SETTING_WINS_THRESHOLD, 80L));
 		faelle.add(s);

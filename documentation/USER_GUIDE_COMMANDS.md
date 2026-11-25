@@ -1224,6 +1224,8 @@ Randomly select war donors for a clan war.
 - `clan` - Clan name or tag (autocomplete available)
 - `exclude_leaders` - (Optional) Set to "true" to exclude leaders and co-leaders
 - `use_lists` - (Optional) Set to "true" for fair rotation tracking
+- `min_th` - (Optional, 1–18) Only members with at least this town hall level are drawn. If a range has
+  nobody at that level, it is filled from the remaining members as before and marked as „aufgefüllt“.
 
 **What happens:**
 1. Bot checks current war size

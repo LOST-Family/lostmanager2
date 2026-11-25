@@ -61,6 +61,11 @@ public class ListeningEvent {
 	public static final String SETTING_STARFAILS_FREE_HITS = "starfails_free_hits";
 	/** Minimum number of clan wars a member has to be in the lineup of per season. */
 	public static final String SETTING_CW_MIN_COUNT = "cw_min_count";
+	/**
+	 * CW donator only: minimum town hall level of the donators. Missing = any.
+	 * Ranges without such a donator are filled from everybody else.
+	 */
+	public static final String SETTING_CWDONATOR_MIN_TH = "cwdonator_min_th";
 
 	private final Long id;
 	private String clan_tag;
@@ -1222,6 +1227,9 @@ public class ListeningEvent {
 			}
 		}
 
+		Long minThWert = getSetting(SETTING_CWDONATOR_MIN_TH, null);
+		Integer minTh = minThWert != null ? minThWert.intValue() : null;
+
 		// Use the same mapping logic as cwdonator command
 		HashMap<Integer, ArrayList<lostmanager.util.Tuple<Integer, Integer>>> mappings = getCWDonatorMappings();
 		ArrayList<lostmanager.util.Tuple<Integer, Integer>> currentmap = mappings.get(cwsize);
@@ -1233,7 +1241,12 @@ public class ListeningEvent {
 
 		StringBuilder message = new StringBuilder();
 		message.append("## CW-Spender (automatisch)\n\n");
-		message.append("Folgende Mitglieder wurden zufällig als Spender ausgewählt:\n\n");
+		message.append("Folgende Mitglieder wurden zufällig als Spender ausgewählt:\n");
+		if (minTh != null) {
+			message.append("Mindest-Rathaus: ").append(minTh).append("\n");
+		}
+		message.append("\n");
+		int aufgefuellt = 0;
 
 		// If using lists, initialize/sync them
 		if (useLists) {
@@ -1241,13 +1254,13 @@ public class ListeningEvent {
 		}
 
 		for (lostmanager.util.Tuple<Integer, Integer> map : currentmap) {
-			Player chosen;
-
-			if (useLists) {
-				// Pick from list A
-				chosen = pickPlayerFromListAForEvent(getClanTag(), warMemberList, map, excludeLeaders);
-			} else {
-				chosen = pickRandomEligibleForEvent(warMemberList, map, excludeLeaders);
+			// Erst nur Spieler ab der Mindest-RH; gibt es für diesen Bereich keinen,
+			// wird wie bisher aus allen aufgefüllt (lieber vollständig als Lücken).
+			Player chosen = pickDonatorForEvent(warMemberList, map, excludeLeaders, useLists, minTh);
+			boolean unterMinTh = false;
+			if (chosen == null && minTh != null) {
+				chosen = pickDonatorForEvent(warMemberList, map, excludeLeaders, useLists, null);
+				unterMinTh = chosen != null;
 			}
 
 			if (chosen == null) {
@@ -1264,10 +1277,29 @@ public class ListeningEvent {
 			} else {
 				message.append(" (nicht verlinkt)");
 			}
-			message.append(" (Nr. ").append(mapposition).append(")\n");
+			message.append(" (Nr. ").append(mapposition).append(")");
+			if (unterMinTh) {
+				aufgefuellt++;
+				message.append(" – RH ").append(chosen.getWarThLevel()).append(", aufgefüllt");
+			}
+			message.append("\n");
+		}
+		if (aufgefuellt > 0) {
+			message.append("\n-# Nicht genug Spieler ab RH ").append(minTh).append(": ").append(aufgefuellt)
+					.append(aufgefuellt == 1 ? " Bereich wurde" : " Bereiche wurden")
+					.append(" mit niedrigerem RH aufgefüllt.\n");
 		}
 
 		sendMessageToChannel(message.toString());
+	}
+
+	/** Ein Spender für den Bereich, mit oder ohne A/B-Listen; minTh null = ohne Mindest-RH. */
+	private Player pickDonatorForEvent(ArrayList<Player> warMemberList, lostmanager.util.Tuple<Integer, Integer> map,
+			boolean excludeLeaders, boolean useLists, Integer minTh) {
+		if (useLists) {
+			return pickPlayerFromListAForEvent(getClanTag(), warMemberList, map, excludeLeaders, minTh);
+		}
+		return pickRandomEligibleForEvent(warMemberList, map, excludeLeaders, minTh);
 	}
 
 	private HashMap<Integer, ArrayList<lostmanager.util.Tuple<Integer, Integer>>> getCWDonatorMappings() {
@@ -3633,7 +3665,7 @@ public class ListeningEvent {
 	 * cycle. Returns null if no eligible donator exists at all.
 	 */
 	private Player pickPlayerFromListAForEvent(String clanTag, ArrayList<Player> warMemberList,
-			lostmanager.util.Tuple<Integer, Integer> map, boolean excludeLeaders) {
+			lostmanager.util.Tuple<Integer, Integer> map, boolean excludeLeaders, Integer minTh) {
 		try (java.sql.Connection conn = lostmanager.dbutil.Connection.getConnection()) {
 			// Get current lists
 			String selectSql = "SELECT list_a, list_b FROM cwdonator_lists WHERE clan_tag = ?";
@@ -3659,7 +3691,7 @@ public class ListeningEvent {
 
 			// Build a list of eligible players from warMemberList that are in List A
 			ArrayList<Player> eligiblePlayers = collectEligibleFromListForEvent(warMemberList, listA, map,
-					excludeLeaders);
+					excludeLeaders, minTh);
 
 			// Nobody in List A can donate for this range (list empty, everybody in the
 			// range itself, opted out, signed off, ...) => merge List B back into List A
@@ -3668,7 +3700,7 @@ public class ListeningEvent {
 			if (eligiblePlayers.isEmpty() && !listB.isEmpty()) {
 				listA.addAll(listB);
 				listB.clear();
-				eligiblePlayers = collectEligibleFromListForEvent(warMemberList, listA, map, excludeLeaders);
+				eligiblePlayers = collectEligibleFromListForEvent(warMemberList, listA, map, excludeLeaders, minTh);
 			}
 
 			if (eligiblePlayers.isEmpty()) {
@@ -3695,7 +3727,7 @@ public class ListeningEvent {
 		} catch (Exception e) {
 			System.err.println("Error picking player from List A for event: " + e.getMessage());
 			// Fallback: ignore the lists and pick a random eligible player
-			return pickRandomEligibleForEvent(warMemberList, map, excludeLeaders);
+			return pickRandomEligibleForEvent(warMemberList, map, excludeLeaders, minTh);
 		}
 	}
 
@@ -3703,10 +3735,10 @@ public class ListeningEvent {
 	 * All war members that are still in List A and may donate for the given range
 	 */
 	private ArrayList<Player> collectEligibleFromListForEvent(ArrayList<Player> warMemberList, ArrayList<String> listA,
-			lostmanager.util.Tuple<Integer, Integer> map, boolean excludeLeaders) {
+			lostmanager.util.Tuple<Integer, Integer> map, boolean excludeLeaders, Integer minTh) {
 		ArrayList<Player> eligiblePlayers = new ArrayList<>();
 		for (Player p : warMemberList) {
-			if (listA.contains(p.getTag()) && isEligibleDonatorForEvent(p, map, excludeLeaders)) {
+			if (listA.contains(p.getTag()) && isEligibleDonatorForEvent(p, map, excludeLeaders, minTh)) {
 				eligiblePlayers.add(p);
 			}
 		}
@@ -3718,11 +3750,11 @@ public class ListeningEvent {
 	 * nobody is eligible.
 	 */
 	private Player pickRandomEligibleForEvent(ArrayList<Player> warMemberList,
-			lostmanager.util.Tuple<Integer, Integer> map, boolean excludeLeaders) {
+			lostmanager.util.Tuple<Integer, Integer> map, boolean excludeLeaders, Integer minTh) {
 		ArrayList<Player> candidates = new ArrayList<>(warMemberList);
 		Collections.shuffle(candidates);
 		for (Player p : candidates) {
-			if (isEligibleDonatorForEvent(p, map, excludeLeaders)) {
+			if (isEligibleDonatorForEvent(p, map, excludeLeaders, minTh)) {
 				return p;
 			}
 		}
@@ -3734,7 +3766,7 @@ public class ListeningEvent {
 	 * opt out of the war and - if requested - is no (co-)leader
 	 */
 	private boolean isEligibleDonatorForEvent(Player player, lostmanager.util.Tuple<Integer, Integer> map,
-			boolean excludeLeaders) {
+			boolean excludeLeaders, Integer minTh) {
 		int mapposition = player.getWarMapPosition();
 		if (mapposition >= map.getFirst() && mapposition <= map.getSecond()) {
 			return false; // would donate for himself
@@ -3742,7 +3774,14 @@ public class ListeningEvent {
 		if (!player.getWarPreference()) {
 			return false; // opted out of the war
 		}
-		return !(excludeLeaders && isLeaderOrCoLeaderForEvent(player));
+		if (excludeLeaders && isLeaderOrCoLeaderForEvent(player)) {
+			return false;
+		}
+		if (minTh != null) {
+			Integer th = player.getWarThLevel();
+			return th != null && th >= minTh;
+		}
+		return true;
 	}
 
 	/**

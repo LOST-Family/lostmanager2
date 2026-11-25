@@ -338,6 +338,10 @@ public final class ListeningEventService {
 			if (minCw != null && (minCw < 1 || minCw > 999)) {
 				return Result.fehler("Die Mindestanzahl CWs muss zwischen 1 und 999 liegen.", 400);
 			}
+			Long minTh = s.namedSettings.get(ListeningEvent.SETTING_CWDONATOR_MIN_TH);
+			if (minTh != null && (minTh < 1 || minTh > 18)) {
+				return Result.fehler("Die Mindest-Rathausstufe muss zwischen 1 und 18 liegen.", 400);
+			}
 		}
 
 		return null;
@@ -784,6 +788,10 @@ public final class ListeningEventService {
 		if (minCw != null) {
 			b.put("Minimum CWs", String.valueOf(minCw));
 		}
+		Long minTh = n.get(ListeningEvent.SETTING_CWDONATOR_MIN_TH);
+		if (minTh != null) {
+			b.put("Mindest-Rathaus", String.valueOf(minTh));
+		}
 		// Einstellungen, die keine eigene Zeile haben (etwa von der Website), dürfen
 		// beim Vergleich nicht unter den Tisch fallen.
 		for (final Map.Entry<String, Long> e : new java.util.TreeMap<>(n).entrySet()) {
@@ -805,7 +813,7 @@ public final class ListeningEventService {
 	private static final java.util.Set<String> BEKANNTE_EINSTELLUNGEN = java.util.Set.of(
 			ListeningEvent.SETTING_IGNORE_PERFECT_WAR, ListeningEvent.SETTING_RAID_FORCE_KICKPOINTS,
 			ListeningEvent.SETTING_STARFAILS_FREE_HITS, ListeningEvent.SETTING_WINS_THRESHOLD,
-			ListeningEvent.SETTING_CW_MIN_COUNT);
+			ListeningEvent.SETTING_CW_MIN_COUNT, ListeningEvent.SETTING_CWDONATOR_MIN_TH);
 
 	private static void jaNein(Map<String, String> b, String label, Long wert) {
 		if (wert != null) {

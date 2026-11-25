@@ -84,6 +84,16 @@ class ListeningEventFormularTest {
 		w = lies(Art.CWDONATOR, "cw", false, Map.of("use_lists", "1", "exclude_leaders", "0")).werte();
 		assertEquals(1, w.useLists);
 		assertEquals(0, w.excludeLeaders);
+		assertFalse(w.namedSettings.containsKey(ListeningEvent.SETTING_CWDONATOR_MIN_TH),
+				"ohne Mindest-RH bleibt alles wie bisher");
+
+		w = lies(Art.CWDONATOR, "cw", false,
+				Map.of("use_lists", "0", "exclude_leaders", "0", "cwdonator_min_th", " 15 ")).werte();
+		assertEquals(15L, w.namedSettings.get(ListeningEvent.SETTING_CWDONATOR_MIN_TH));
+
+		w = lies(Art.CWDONATOR, "cw", false,
+				Map.of("use_lists", "0", "exclude_leaders", "0", "cwdonator_min_th", "")).werte();
+		assertFalse(w.namedSettings.containsKey(ListeningEvent.SETTING_CWDONATOR_MIN_TH));
 	}
 
 	@Test
@@ -99,6 +109,10 @@ class ListeningEventFormularTest {
 		assertNotNull(lies(Art.STARFAILS, "cw", false,
 				Map.of("star_count", "3", "punishment_mode", "1", "starfails_free_hits", "0")).fehler());
 		assertNotNull(lies(Art.CWDONATOR, "cw", false, Map.of("use_lists", "2", "exclude_leaders", "0")).fehler());
+		assertNotNull(lies(Art.CWDONATOR, "cw", false,
+				Map.of("use_lists", "0", "exclude_leaders", "0", "cwdonator_min_th", "19")).fehler());
+		assertNotNull(lies(Art.CWDONATOR, "cw", false,
+				Map.of("use_lists", "0", "exclude_leaders", "0", "cwdonator_min_th", "zehn")).fehler());
 		assertNotNull(lies(Art.CUSTOMMESSAGE, "cw", false, Map.of("custommessage", "   ")).fehler());
 	}
 
@@ -115,6 +129,8 @@ class ListeningEventFormularTest {
 						"other_districts_max", "5", "penalize_both", "2", "raid_force_kickpoints", "1") },
 				{ Art.CUSTOMMESSAGE, "cw", "custommessage", false, Map.of("custommessage", "Hallo\nWelt") },
 				{ Art.CWDONATOR, "cw", "cwdonator", false, Map.of("use_lists", "1", "exclude_leaders", "1") },
+				{ Art.CWDONATOR, "cw", "cwdonator", false,
+						Map.of("use_lists", "0", "exclude_leaders", "1", "cwdonator_min_th", "16") },
 				{ Art.STARFAILS, "cw", "starfails_kickpoint", true,
 						Map.of("star_count", "1", "punishment_mode", "3", "starfails_free_hits", "2") }, };
 		for (Object[] f : faelle) {

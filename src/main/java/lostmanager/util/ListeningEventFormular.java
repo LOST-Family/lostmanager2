@@ -201,6 +201,8 @@ public final class ListeningEventFormular {
 						"1 = aktiviert, 0 = deaktiviert", true, 1, 1, "0"));
 				f.add(new Feld("exclude_leaders", "Leader ausschließen (1 oder 0)", false,
 						"1 = aktiviert, 0 = deaktiviert", true, 1, 1, "0"));
+				f.add(new Feld("cwdonator_min_th", "Mindest-Rathaus (leer = alle)", false,
+						"z.B. 15 - reicht es nicht, wird aufgefüllt", false, 0, 2, null));
 			}
 			case STARFAILS -> {
 				f.add(new Feld("star_count", "Sterne-Anzahl (0, 1 oder 2)", false,
@@ -370,6 +372,19 @@ public final class ListeningEventFormular {
 				} catch (final NumberFormatException e) {
 					return new Lesung(null, "Ungültige Werte eingegeben. Beide Felder müssen entweder 0 oder 1 sein.");
 				}
+				// Leer (oder Feld fehlt, etwa bei alten Formularen) = keine Mindest-RH
+				String minThRoh = text(eingabe, "cwdonator_min_th");
+				if (minThRoh != null && !minThRoh.isEmpty()) {
+					try {
+						long minTh = Long.parseLong(minThRoh);
+						if (minTh < 1 || minTh > 18) {
+							throw new NumberFormatException();
+						}
+						w.namedSettings.put(ListeningEvent.SETTING_CWDONATOR_MIN_TH, minTh);
+					} catch (final NumberFormatException e) {
+						return new Lesung(null, "Ungültige Mindest-Rathausstufe: " + minThRoh + " (Erlaubt: 1 bis 18)");
+					}
+				}
 			}
 			case STARFAILS -> {
 				String modusRoh = text(eingabe, "punishment_mode");
@@ -418,6 +433,7 @@ public final class ListeningEventFormular {
 		setze(v, "ignore_perfect_war", n.get(ListeningEvent.SETTING_IGNORE_PERFECT_WAR));
 		setze(v, "wins_threshold", n.get(ListeningEvent.SETTING_WINS_THRESHOLD));
 		setze(v, "cw_min_count", n.get(ListeningEvent.SETTING_CW_MIN_COUNT));
+		setze(v, "cwdonator_min_th", n.get(ListeningEvent.SETTING_CWDONATOR_MIN_TH));
 		setze(v, "raid_force_kickpoints", n.get(ListeningEvent.SETTING_RAID_FORCE_KICKPOINTS));
 		setze(v, "starfails_free_hits", n.get(ListeningEvent.SETTING_STARFAILS_FREE_HITS));
 		if (s.raidDistrictThresholds != null) {

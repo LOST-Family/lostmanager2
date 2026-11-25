@@ -847,6 +847,9 @@ public class Clan {
 				String name = member.getString("name");
 				int warmapposition = member.getInt("mapPosition");
 				Player p = new Player(tag).setNameAPI(name).setWarMapPosition(warmapposition);
+				if (member.has("townhallLevel")) {
+					p.setWarThLevel(member.getInt("townhallLevel"));
+				}
 				liste.add(p);
 			}
 			clanwarmembers = liste;

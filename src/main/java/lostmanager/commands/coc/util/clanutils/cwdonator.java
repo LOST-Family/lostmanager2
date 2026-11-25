@@ -57,6 +57,16 @@ public class cwdonator extends ListenerAdapter {
 			OptionMapping useListsOption = event.getOption("use_lists");
 			boolean useLists = useListsOption != null && "true".equals(useListsOption.getAsString());
 
+			// Mindest-Rathausstufe (25.11.2026, Wunsch LOST 8): ohne Angabe wie bisher
+			OptionMapping minThOption = event.getOption("min_th");
+			Integer minTh = minThOption != null ? minThOption.getAsInt() : null;
+			if (minTh != null && (minTh < 1 || minTh > 18)) {
+				event.getHook().editOriginalEmbeds(MessageUtil.buildEmbed(title,
+						"Die Mindest-Rathausstufe muss zwischen 1 und 18 liegen.", MessageUtil.EmbedType.ERROR))
+						.queue();
+				return;
+			}
+
 			ArrayList<String> allclantags = DBManager.getAllClans();
 
 			if (!allclantags.contains(clantag) && useLists) {
@@ -90,7 +100,12 @@ public class cwdonator extends ListenerAdapter {
 			String desc = "";
 			desc += "ausgeführt von " + event.getUser().getAsMention() + "\n";
 			desc += "## " + title + "\n";
-			desc += "Folgende Mitglieder wurden zufällig als Spender ausgewählt: \n\n";
+			desc += "Folgende Mitglieder wurden zufällig als Spender ausgewählt: \n";
+			if (minTh != null) {
+				desc += "Mindest-Rathaus: " + minTh + "\n";
+			}
+			desc += "\n";
+			int aufgefuellt = 0;
 
 			Clan clan = new Clan(clantag);
 
@@ -152,18 +167,21 @@ public class cwdonator extends ListenerAdapter {
 			}
 
 			for (Tuple<Integer, Integer> range : currentmap) {
-				Player chosen;
-
-				if (useLists) {
-					// Pick from list A
-					chosen = pickPlayerFromListA(clantag, warMemberList, range, excludeLeaders);
-				} else {
-					chosen = pickRandomEligible(warMemberList, range, excludeLeaders);
+				// Erst nur Spieler ab der Mindest-RH; gibt es für diesen Bereich keinen,
+				// wird wie bisher aus allen aufgefüllt (lieber vollständig als Lücken).
+				Player chosen = pickDonator(clantag, warMemberList, range, excludeLeaders, useLists, minTh);
+				boolean unterMinTh = false;
+				if (chosen == null && minTh != null) {
+					chosen = pickDonator(clantag, warMemberList, range, excludeLeaders, useLists, null);
+					unterMinTh = chosen != null;
 				}
 
 				if (chosen == null) {
 					desc += range.getFirst() + "-" + range.getSecond() + ": kein geeigneter Spender verfügbar\n";
 					continue;
+				}
+				if (unterMinTh) {
+					aufgefuellt++;
 				}
 
 				int mapposition = chosen.getWarMapPosition();
@@ -185,6 +203,14 @@ public class cwdonator extends ListenerAdapter {
 								+ "(nicht verlinkt) (Nr. " + mapposition + ")\n";
 					}
 				}
+				if (unterMinTh) {
+					desc = desc.substring(0, desc.length() - 1) + " – RH " + chosen.getWarThLevel()
+							+ ", aufgefüllt\n";
+				}
+			}
+			if (aufgefuellt > 0) {
+				desc += "\n-# Nicht genug Spieler ab RH " + minTh + ": " + aufgefuellt
+						+ (aufgefuellt == 1 ? " Bereich wurde" : " Bereiche wurden") + " mit niedrigerem RH aufgefüllt.\n";
 			}
 
 			event.getHook().editOriginal(".").queue(message -> {
@@ -344,7 +370,11 @@ public class cwdonator extends ListenerAdapter {
 				ArrayList<Player> liste = new ArrayList<>();
 				for (int i = 0; i < sortiert.size(); i++) {
 					org.json.JSONObject m = sortiert.get(i);
-					liste.add(new Player(m.getString("tag")).setNameAPI(m.optString("name")).setWarMapPosition(i + 1));
+					Player p = new Player(m.getString("tag")).setNameAPI(m.optString("name")).setWarMapPosition(i + 1);
+					if (m.has("townhallLevel")) {
+						p.setWarThLevel(m.getInt("townhallLevel"));
+					}
+					liste.add(p);
 				}
 				return liste;
 			}
@@ -354,6 +384,15 @@ public class cwdonator extends ListenerAdapter {
 
 	private static boolean gleicherTag(String a, String b) {
 		return a != null && b != null && a.replace("#", "").equalsIgnoreCase(b.replace("#", ""));
+	}
+
+	/** Ein Spender für den Bereich, mit oder ohne A/B-Listen; minTh null = ohne Mindest-RH. */
+	private Player pickDonator(String clanTag, ArrayList<Player> warMemberList, Tuple<Integer, Integer> range,
+			boolean excludeLeaders, boolean useLists, Integer minTh) {
+		if (useLists) {
+			return pickPlayerFromListA(clanTag, warMemberList, range, excludeLeaders, minTh);
+		}
+		return pickRandomEligible(warMemberList, range, excludeLeaders, minTh);
 	}
 
 	/**
@@ -440,7 +479,7 @@ public class cwdonator extends ListenerAdapter {
 	 * cycle. Returns null if no eligible donator exists at all.
 	 */
 	private Player pickPlayerFromListA(String clanTag, ArrayList<Player> warMemberList, Tuple<Integer, Integer> map,
-			boolean excludeLeaders) {
+			boolean excludeLeaders, Integer minTh) {
 		try (Connection conn = lostmanager.dbutil.Connection.getConnection()) {
 			// Get current lists
 			String selectSql = "SELECT list_a, list_b FROM cwdonator_lists WHERE clan_tag = ?";
@@ -465,7 +504,8 @@ public class cwdonator extends ListenerAdapter {
 			}
 
 			// Build a list of eligible players from warMemberList that are in List A
-			ArrayList<Player> eligiblePlayers = collectEligibleFromList(warMemberList, listA, map, excludeLeaders);
+			ArrayList<Player> eligiblePlayers = collectEligibleFromList(warMemberList, listA, map, excludeLeaders,
+					minTh);
 
 			// Nobody in List A can donate for this range (list empty, everybody in the
 			// range itself, opted out, signed off, ...) => merge List B back into List A
@@ -474,7 +514,7 @@ public class cwdonator extends ListenerAdapter {
 			if (eligiblePlayers.isEmpty() && !listB.isEmpty()) {
 				listA.addAll(listB);
 				listB.clear();
-				eligiblePlayers = collectEligibleFromList(warMemberList, listA, map, excludeLeaders);
+				eligiblePlayers = collectEligibleFromList(warMemberList, listA, map, excludeLeaders, minTh);
 			}
 
 			if (eligiblePlayers.isEmpty()) {
@@ -501,7 +541,7 @@ public class cwdonator extends ListenerAdapter {
 		} catch (Exception e) {
 			System.err.println("Error picking player from List A: " + e.getMessage());
 			// Fallback: ignore the lists and pick a random eligible player
-			return pickRandomEligible(warMemberList, map, excludeLeaders);
+			return pickRandomEligible(warMemberList, map, excludeLeaders, minTh);
 		}
 	}
 
@@ -509,10 +549,10 @@ public class cwdonator extends ListenerAdapter {
 	 * All war members that are still in List A and may donate for the given range
 	 */
 	private ArrayList<Player> collectEligibleFromList(ArrayList<Player> warMemberList, ArrayList<String> listA,
-			Tuple<Integer, Integer> map, boolean excludeLeaders) {
+			Tuple<Integer, Integer> map, boolean excludeLeaders, Integer minTh) {
 		ArrayList<Player> eligiblePlayers = new ArrayList<>();
 		for (Player p : warMemberList) {
-			if (listA.contains(p.getTag()) && isEligibleDonator(p, map, excludeLeaders)) {
+			if (listA.contains(p.getTag()) && isEligibleDonator(p, map, excludeLeaders, minTh)) {
 				eligiblePlayers.add(p);
 			}
 		}
@@ -523,12 +563,12 @@ public class cwdonator extends ListenerAdapter {
 	 * Pick a random eligible donator without using the A/B lists. Returns null if
 	 * nobody is eligible.
 	 */
-	private Player pickRandomEligible(ArrayList<Player> warMemberList, Tuple<Integer, Integer> map,
-			boolean excludeLeaders) {
+	static Player pickRandomEligible(ArrayList<Player> warMemberList, Tuple<Integer, Integer> map,
+			boolean excludeLeaders, Integer minTh) {
 		ArrayList<Player> candidates = new ArrayList<>(warMemberList);
 		Collections.shuffle(candidates);
 		for (Player p : candidates) {
-			if (isEligibleDonator(p, map, excludeLeaders)) {
+			if (isEligibleDonator(p, map, excludeLeaders, minTh)) {
 				return p;
 			}
 		}
@@ -537,9 +577,11 @@ public class cwdonator extends ListenerAdapter {
 
 	/**
 	 * A player may donate for a range if he is not in that range himself, did not
-	 * opt out of the war and - if requested - is no (co-)leader
+	 * opt out of the war, - if requested - is no (co-)leader and has at least the
+	 * minimum town hall level (null = any)
 	 */
-	private boolean isEligibleDonator(Player player, Tuple<Integer, Integer> map, boolean excludeLeaders) {
+	static boolean isEligibleDonator(Player player, Tuple<Integer, Integer> map, boolean excludeLeaders,
+			Integer minTh) {
 		int mapposition = player.getWarMapPosition();
 		if (mapposition >= map.getFirst() && mapposition <= map.getSecond()) {
 			return false; // would donate for himself
@@ -547,13 +589,20 @@ public class cwdonator extends ListenerAdapter {
 		if (!player.getWarPreference()) {
 			return false; // opted out of the war
 		}
-		return !(excludeLeaders && isLeaderOrCoLeader(player));
+		if (excludeLeaders && isLeaderOrCoLeader(player)) {
+			return false;
+		}
+		if (minTh != null) {
+			Integer th = player.getWarThLevel();
+			return th != null && th >= minTh;
+		}
+		return true;
 	}
 
 	/**
 	 * Check if a player is a leader or co-leader
 	 */
-	private boolean isLeaderOrCoLeader(Player player) {
+	private static boolean isLeaderOrCoLeader(Player player) {
 		Player.RoleType roleDB = player.getRoleDB();
 		return roleDB == Player.RoleType.LEADER || roleDB == Player.RoleType.COLEADER;
 	}

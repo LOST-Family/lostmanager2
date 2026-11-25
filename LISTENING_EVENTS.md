@@ -236,6 +236,8 @@ Special action type for Clan War donor selection.
 - Selects random players to donate during war
 - Can use list-based distribution
 - Can exclude leaders from selection
+- Optional minimum town hall level (form field „Mindest-Rathaus“, stored as setting `cwdonator_min_th`);
+  ranges without such a donor are filled from everybody else. Events without the setting behave as before.
 
 **Usage:**
 ```

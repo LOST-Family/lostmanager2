@@ -215,7 +215,8 @@ public final class ListeningEventBearbeitung {
 			lostmanager.datawrapper.ListeningEvent.SETTING_RAID_FORCE_KICKPOINTS,
 			lostmanager.datawrapper.ListeningEvent.SETTING_WINS_THRESHOLD,
 			lostmanager.datawrapper.ListeningEvent.SETTING_STARFAILS_FREE_HITS,
-			lostmanager.datawrapper.ListeningEvent.SETTING_CW_MIN_COUNT);
+			lostmanager.datawrapper.ListeningEvent.SETTING_CW_MIN_COUNT,
+			lostmanager.datawrapper.ListeningEvent.SETTING_CWDONATOR_MIN_TH);
 
 	/** Nach dem Formular: die eingegebenen Werte in den Plan übernehmen. */
 	public static Spec mitFormular(Plan p, ListeningEventFormular.Werte w) {

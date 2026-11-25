@@ -67,6 +67,7 @@ public class Player {
 	private Integer currentRaidbonusAttackLimit;
 	private Boolean warpreference;
 	private Integer warmapposition;
+	private Integer warthlevel;
 	private String namedb;
 	private String nameapi;
 	private Integer townhalldb;
@@ -93,6 +94,7 @@ public class Player {
 		currentRaidbonusAttackLimit = null;
 		warpreference = null;
 		warmapposition = null;
+		warthlevel = null;
 		namedb = null;
 		nameapi = null;
 		townhalldb = null;
@@ -140,6 +142,23 @@ public class Player {
 	public Player setWarMapPosition(Integer i) {
 		this.warmapposition = i;
 		return this;
+	}
+
+	/** Rathausstufe, wie sie in der Kriegsaufstellung steht (townhallLevel). */
+	public Player setWarThLevel(Integer i) {
+		this.warthlevel = i;
+		return this;
+	}
+
+	/**
+	 * Rathausstufe im Krieg: aus der Kriegsaufstellung, wenn gesetzt, sonst die in
+	 * der Datenbank hinterlegte.
+	 */
+	public Integer getWarThLevel() {
+		if (warthlevel == null) {
+			warthlevel = getThLevelDB();
+		}
+		return warthlevel;
 	}
 
 	public Player setNameDB(String name) {

@@ -325,7 +325,10 @@ public class Bot extends ListenerAdapter {
 											.setAutoComplete(true))
 									.addOptions(new OptionData(OptionType.STRING, "use_lists",
 											"Listen-basierte Verteilung nutzen (nur 'true' als Wert)", false)
-											.setAutoComplete(true)),
+											.setAutoComplete(true))
+									.addOptions(new OptionData(OptionType.INTEGER, "min_th",
+											"Nur Spieler ab dieser Rathausstufe als Spender (reicht es nicht, wird aufgefüllt)",
+											false).setRequiredRange(1, 18)),
 
 							Commands.slash("checkreacts",
 									"Überprüfe die Reaktionen einer Nachricht auf Mitglieder einer Rolle.")

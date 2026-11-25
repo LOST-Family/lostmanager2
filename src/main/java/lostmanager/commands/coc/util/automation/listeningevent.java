@@ -1076,7 +1076,8 @@ public class listeningevent extends ListenerAdapter {
 			cwdonatorParams.put("use_lists", w.useLists);
 			cwdonatorParams.put("exclude_leaders", w.excludeLeaders);
 			processEventCreationWithCWDonatorParams(event.getHook(), title, pending.clantag, pending.type,
-					pending.duration, pending.actionType, pending.channelId, cwdonatorParams);
+					pending.duration, pending.actionType, pending.channelId, cwdonatorParams,
+					w.namedSettings.isEmpty() ? null : w.namedSettings);
 			return;
 		}
 
@@ -1097,7 +1098,7 @@ public class listeningevent extends ListenerAdapter {
 
 	private void processEventCreationWithCWDonatorParams(net.dv8tion.jda.api.interactions.InteractionHook hook,
 			String title, String clantag, String type, long duration, String actionTypeStr, String channelId,
-			java.util.Map<String, Integer> cwdonatorParams) {
+			java.util.Map<String, Integer> cwdonatorParams, java.util.Map<String, Long> namedSettings) {
 
 		ListeningEventService.Spec spec = new ListeningEventService.Spec();
 		spec.clanTag = clantag;
@@ -1107,6 +1108,7 @@ public class listeningevent extends ListenerAdapter {
 		spec.channelId = channelId;
 		spec.useLists = cwdonatorParams.get("use_lists");
 		spec.excludeLeaders = cwdonatorParams.get("exclude_leaders");
+		spec.namedSettings = namedSettings;
 
 		ListeningEventService.Result ergebnis = ListeningEventService.create(spec);
 		if (!ergebnis.ok()) {
@@ -1126,6 +1128,8 @@ public class listeningevent extends ListenerAdapter {
 		desc += "**Channel:** <#" + channelId + ">\n";
 		desc += "**Listen-basierte Verteilung:** " + (cwdonatorParams.get("use_lists") == 1 ? "Ja" : "Nein") + "\n";
 		desc += "**Leader ausschließen:** " + (cwdonatorParams.get("exclude_leaders") == 1 ? "Ja" : "Nein") + "\n";
+		Long minTh = namedSettings != null ? namedSettings.get(ListeningEvent.SETTING_CWDONATOR_MIN_TH) : null;
+		desc += "**Mindest-Rathaus:** " + (minTh != null ? String.valueOf(minTh) : "keins") + "\n";
 
 		hook.editOriginalEmbeds(MessageUtil.buildEmbed(title, desc, MessageUtil.EmbedType.SUCCESS)).queue();
 	}
