@@ -1748,10 +1748,10 @@ public class stats extends ListenerAdapter {
 
 	private String formatPriceFactor(double factor) {
 		if (factor >= PRICE_FACTOR_FULL) {
-			return "Originalpreis";
+			return "Aktueller Preis";
 		}
 
-		return Math.round(factor * 100) + " % vom Originalpreis";
+		return Math.round(factor * 100) + " % vom aktuellen Preis";
 	}
 
 	/**
