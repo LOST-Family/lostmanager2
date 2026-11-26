@@ -6258,7 +6258,7 @@
       },
       "5": {
         "upgrade-price2": 7500000,
-        "upgrade-price-old2": 8000000
+        "upgrade-price-old2": 16500000
       }
     }
   },
@@ -6275,11 +6275,11 @@
       },
       "3": {
         "upgrade-price2": 1700000,
-        "upgrade-price-old2": 5000000
+        "upgrade-price-old2": 8000000
       },
       "4": {
         "upgrade-price2": 3000000,
-        "upgrade-price-old2": 6500000
+        "upgrade-price-old2": 8000000
       },
       "5": {
         "upgrade-price2": 4200000,
@@ -6428,7 +6428,7 @@
       },
       "2": {
         "upgrade-price2": 18500000,
-        "upgrade-price-old2": 22000000
+        "upgrade-price-old2": 21000000
       },
       "3": {
         "upgrade-price2": 19000000,
@@ -13068,47 +13068,52 @@
   "18000243": {
     "name": "Ultimate Hot Streak (Oct. 2026)",
     "icon": "/home-base/decorations/243.png",
-    "index": 172
-  },
-  "18000251": {
-    "name": "Super Dragon Skull (Dec. 2026)",
-    "icon": "/home-base/decorations/251.png",
-    "index": 173
+    "index": 1720000
   },
   "18000252": {
-    "name": "Golden Pekka (Dec. 2026)",
+    "name": "Ice Stag (Dec. 2026)",
     "icon": "/home-base/decorations/252.png",
-    "index": 174
-  },
-  "18000253": {
-    "name": "Larrys Hoard (Dec. 2026)",
-    "icon": "/home-base/decorations/253.png",
-    "index": 175
-  },
-  "18000254": {
-    "name": "Collection Case (Dec. 2026)",
-    "icon": "/home-base/decorations/254.png",
-    "index": 176
-  },
-  "18000240": {
-    "name": "Ember Pot (Dec. 2026)",
-    "icon": "/home-base/decorations/240.png",
-    "index": 177
-  },
-  "18000256": {
-    "name": "Clash on Ice (Dec. 2026)",
-    "icon": "/home-base/decorations/256.png",
-    "index": 174
-  },
-  "18000241": {
-    "name": "Shield Banner (Dec. 2026)",
-    "icon": "/home-base/decorations/241.png",
-    "index": 175
+    "index": 172
   },
   "18000249": {
     "name": "Stuck Sword (Dec. 2026)",
     "icon": "/home-base/decorations/249.png",
+    "index": 173
+  },
+  "18000251": {
+    "name": "Super Dragon Skull (Dec. 2026)",
+    "icon": "/home-base/decorations/251.png",
+    "index": 174
+  },
+  "18000240": {
+    "name": "Ember Pot (Dec. 2026)",
+    "icon": "/home-base/decorations/240.png",
+    "index": 175
+  },
+  "18000256": {
+    "name": "Clash on Ice (Dec. 2026)",
+    "icon": "/home-base/decorations/256.png",
     "index": 176
+  },
+  "18000253": {
+    "name": "Golden Pekka (Dec. 2026)",
+    "icon": "/home-base/decorations/253.png",
+    "index": 177
+  },
+  "18000254": {
+    "name": "Larrys Hoard (Dec. 2026)",
+    "icon": "/home-base/decorations/254.png",
+    "index": 178
+  },
+  "18000255": {
+    "name": "Collection Case (Dec. 2026)",
+    "icon": "/home-base/decorations/255.png",
+    "index": 179
+  },
+  "18000241": {
+    "name": "Shield Banner (Dec. 2026)",
+    "icon": "/home-base/decorations/241.png",
+    "index": 180
   },
   "8000015": {
     "name": "2012 Stone",
