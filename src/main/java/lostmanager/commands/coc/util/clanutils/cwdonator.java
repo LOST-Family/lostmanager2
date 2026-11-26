@@ -204,7 +204,7 @@ public class cwdonator extends ListenerAdapter {
 					}
 				}
 				if (unterMinTh) {
-					desc = desc.substring(0, desc.length() - 1) + " – RH " + chosen.getWarThLevel()
+					desc = desc.substring(0, desc.length() - 1) + " – RH " + rhText(chosen.getWarThLevel())
 							+ ", aufgefüllt\n";
 				}
 			}
@@ -512,8 +512,7 @@ public class cwdonator extends ListenerAdapter {
 			// and start a new cycle. This happens at most once per pick, so it can never
 			// loop, no matter how many ineligible tags are stuck in List A.
 			if (eligiblePlayers.isEmpty() && !listB.isEmpty()) {
-				listA.addAll(listB);
-				listB.clear();
+				neueRunde(listA, listB, warMemberList, minTh);
 				eligiblePlayers = collectEligibleFromList(warMemberList, listA, map, excludeLeaders, minTh);
 			}
 
@@ -543,6 +542,33 @@ public class cwdonator extends ListenerAdapter {
 			// Fallback: ignore the lists and pick a random eligible player
 			return pickRandomEligible(warMemberList, map, excludeLeaders, minTh);
 		}
+	}
+
+	/**
+	 * Neue Runde der A/B-Listen, weil in Liste A für den Bereich niemand mehr steht.
+	 * Ohne Mindest-RH wie bisher: ganz Liste B zurück nach A. Mit Mindest-RH (26.11.2026)
+	 * nur die Kriegsteilnehmer ab dieser Stufe – sonst setzte jede Auslosung, bei der die
+	 * wenigen Starken schon dran waren, die ganze Rotation zurück, samt der Spender, die
+	 * im selben Lauf gerade erst aufgefüllt wurden.
+	 */
+	public static void neueRunde(ArrayList<String> listA, ArrayList<String> listB, ArrayList<Player> warMemberList,
+			Integer minTh) {
+		if (minTh == null) {
+			listA.addAll(listB);
+			listB.clear();
+			return;
+		}
+		for (Player p : warMemberList) {
+			Integer th = p.getWarThLevel();
+			if (th != null && th >= minTh && listB.remove(p.getTag())) {
+				listA.add(p.getTag());
+			}
+		}
+	}
+
+	/** Rathausstufe für die Ausgabe; unbekannt wird „?“ statt „null“. */
+	public static String rhText(Integer th) {
+		return th != null ? String.valueOf(th) : "?";
 	}
 
 	/**

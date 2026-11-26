@@ -1280,7 +1280,7 @@ public class ListeningEvent {
 			message.append(" (Nr. ").append(mapposition).append(")");
 			if (unterMinTh) {
 				aufgefuellt++;
-				message.append(" – RH ").append(chosen.getWarThLevel()).append(", aufgefüllt");
+				message.append(" – RH ").append(lostmanager.commands.coc.util.clanutils.cwdonator.rhText(chosen.getWarThLevel())).append(", aufgefüllt");
 			}
 			message.append("\n");
 		}
@@ -3698,8 +3698,7 @@ public class ListeningEvent {
 			// and start a new cycle. This happens at most once per pick, so it can never
 			// loop, no matter how many ineligible tags are stuck in List A.
 			if (eligiblePlayers.isEmpty() && !listB.isEmpty()) {
-				listA.addAll(listB);
-				listB.clear();
+				lostmanager.commands.coc.util.clanutils.cwdonator.neueRunde(listA, listB, warMemberList, minTh);
 				eligiblePlayers = collectEligibleFromListForEvent(warMemberList, listA, map, excludeLeaders, minTh);
 			}
 

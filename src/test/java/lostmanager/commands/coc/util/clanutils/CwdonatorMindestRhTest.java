@@ -84,4 +84,44 @@ class CwdonatorMindestRhTest {
 		assertEquals(17, l.get(0).getWarThLevel());
 		assertEquals(16, l.get(1).getWarThLevel());
 	}
+
+	@Test
+	void neueRundeMitMindestRhHoltNurDieStarkenZurueck() {
+		// 10er-Krieg: Platz 1 RH 16, Plätze 2–10 RH 14. #P6 hat im letzten Krieg aufgefüllt,
+		// #P1 gespendet; eben wurde #P7 für 1–5 aufgefüllt. Für 6–10 steht ab RH 16 niemand
+		// mehr in A – vorher wanderte ganz B zurück (auch #P6 und #P7), jetzt nur #P1.
+		ArrayList<Player> l = aufstellung(16, 14, 14, 14, 14, 14, 14, 14, 14, 14);
+		ArrayList<String> a = new ArrayList<>(List.of("#P2", "#P3", "#P4", "#P5", "#P8", "#P9", "#P10"));
+		ArrayList<String> b = new ArrayList<>(List.of("#P6", "#P1", "#P7"));
+		cwdonator.neueRunde(a, b, l, 16);
+		assertEquals(List.of("#P6", "#P7"), b, "Aufgefüllte bleiben in B");
+		assertTrue(a.contains("#P1"));
+		assertEquals(8, a.size());
+	}
+
+	@Test
+	void neueRundeOhneMindestRhWieBisher() {
+		ArrayList<Player> l = aufstellung(16, 14, 14);
+		ArrayList<String> a = new ArrayList<>(List.of("#P2"));
+		ArrayList<String> b = new ArrayList<>(List.of("#P1", "#P3", "#ALT"));
+		cwdonator.neueRunde(a, b, l, null);
+		assertTrue(b.isEmpty());
+		assertEquals(List.of("#P2", "#P1", "#P3", "#ALT"), a);
+	}
+
+	@Test
+	void neueRundeLaesstUnbekannteUndAbwesendeInB() {
+		ArrayList<Player> l = new ArrayList<>(List.of(spieler(1, 17), spieler(2, 9)));
+		ArrayList<String> a = new ArrayList<>();
+		ArrayList<String> b = new ArrayList<>(List.of("#P1", "#P2", "#NICHTIMKRIEG"));
+		cwdonator.neueRunde(a, b, l, 15);
+		assertEquals(List.of("#P1"), a);
+		assertEquals(List.of("#P2", "#NICHTIMKRIEG"), b);
+	}
+
+	@Test
+	void unbekannteRathausstufeAlsFragezeichen() {
+		assertEquals("?", cwdonator.rhText(null));
+		assertEquals("15", cwdonator.rhText(15));
+	}
 }
