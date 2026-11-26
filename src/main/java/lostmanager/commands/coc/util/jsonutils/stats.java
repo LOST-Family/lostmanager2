@@ -381,11 +381,13 @@ public class stats extends ListenerAdapter {
 
 				User userExecuted = new User(event.getUser().getId());
 				if (!mayUseScheme(userExecuted, scheme) || !canAccessPlayer(userExecuted, playerTag)) {
+					// Nur an den, der geklickt hat: editOriginal würde hier die öffentliche
+					// Ansicht eines anderen mit der Absage überschreiben.
 					event.getHook()
-							.editOriginalEmbeds(MessageUtil.buildEmbed(scheme.title(),
+							.sendMessageEmbeds(MessageUtil.buildEmbed(scheme.title(),
 									"Du hast keine Berechtigung, die Daten dieses Spielers anzusehen.",
 									MessageUtil.EmbedType.ERROR))
-							.queue();
+							.setEphemeral(true).queue();
 					return;
 				}
 
@@ -484,11 +486,13 @@ public class stats extends ListenerAdapter {
 
 				// Verify access
 				if (!canAccessPlayer(userExecuted, playerTag)) {
+					// Nur an den, der geklickt hat: editOriginal würde hier die öffentliche
+					// Ansicht eines anderen mit der Absage überschreiben.
 					event.getHook()
-							.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							.sendMessageEmbeds(MessageUtil.buildEmbed(title,
 									"Du hast keine Berechtigung, die Daten dieses Spielers anzusehen.",
 									MessageUtil.EmbedType.ERROR))
-							.queue();
+							.setEphemeral(true).queue();
 					return;
 				}
 
@@ -537,11 +541,13 @@ public class stats extends ListenerAdapter {
 
 				// Verify access
 				if (!canAccessPlayer(userExecuted, playerTag)) {
+					// Nur an den, der geklickt hat: editOriginal würde hier die öffentliche
+					// Ansicht eines anderen mit der Absage überschreiben.
 					event.getHook()
-							.editOriginalEmbeds(MessageUtil.buildEmbed(title,
+							.sendMessageEmbeds(MessageUtil.buildEmbed(title,
 									"Du hast keine Berechtigung, die Daten dieses Spielers anzusehen.",
 									MessageUtil.EmbedType.ERROR))
-							.queue();
+							.setEphemeral(true).queue();
 					return;
 				}
 
@@ -1055,6 +1061,12 @@ public class stats extends ListenerAdapter {
 				int cnt = obj.has("cnt") ? obj.optInt("cnt", 1) : 1;
 				group.totalCount += cnt;
 
+				for (String zeitFeld : ZEIT_FELDER) {
+					if (obj.opt(zeitFeld) instanceof Number sekunden) {
+						group.laufzeiten.computeIfAbsent(zeitFeld, _ -> new ArrayList<>()).add(sekunden.longValue());
+					}
+				}
+
 				// Track gear_up
 				if (obj.has("gear_up")) {
 					int gearUp = obj.optInt("gear_up", 0);
@@ -1088,18 +1100,31 @@ public class stats extends ListenerAdapter {
 				// Get and sort keys for consistent display order
 				// Note: timer and helper_cooldown are included here for display, even though
 				// they don't affect grouping
-				List<String> sortedKeys = new ArrayList<>();
+				// Die Zeitfelder kommen aus der ganzen Gruppe, nicht nur vom ersten Eintrag.
+				Set<String> keys = new HashSet<>(group.laufzeiten.keySet());
 				for (String key : group.representative.keySet()) {
 					if (!key.equals("data") && !key.equals("cnt") && !key.equals("gear_up")) {
-						sortedKeys.add(key);
+						keys.add(key);
 					}
 				}
+				List<String> sortedKeys = new ArrayList<>(keys);
 				// Sort keys: lvl first, then supercharge, then alphabetically
 				sortedKeys.sort(new AttributeDisplayComparator());
 
 				// Display attributes
 				for (String key : sortedKeys) {
-					Object value = group.representative.get(key);
+					if (ZEIT_FELDER.contains(key)) {
+						long elapsedSeconds = (System.currentTimeMillis() - jsonTimestamp.getTime()) / 1000;
+						String restzeiten = restzeitenText(group.laufzeiten.getOrDefault(key, List.of()),
+								elapsedSeconds, group.totalCount);
+						if (!restzeiten.isEmpty()) {
+							sb.append("\n").append(baseIndent).append(ATTR_TRANSLATIONS.getOrDefault(key, key))
+									.append(": ").append(restzeiten);
+						}
+						continue;
+					}
+
+					Object value = group.representative.opt(key);
 					if (value == null || value == JSONObject.NULL) {
 						continue;
 					}
@@ -1222,6 +1247,13 @@ public class stats extends ListenerAdapter {
 		JSONObject representative;
 		int totalCount = 0;
 		int gearedUpCount = 0;
+		/**
+		 * "timer"/"helper_cooldown" jedes Eintrags der Gruppe. Beide zählen nicht
+		 * zum Gruppenschlüssel, deshalb liegen hier Gebäude mit und ohne laufenden
+		 * Ausbau zusammen - nur beim ersten Eintrag nachzusehen, verschluckt die
+		 * Timer der übrigen oder schreibt seinen der ganzen Gruppe zu.
+		 */
+		final Map<String, List<Long>> laufzeiten = new HashMap<>();
 
 		ConfigGroup(JSONObject obj) {
 			this.representative = obj;
@@ -1414,7 +1446,45 @@ public class stats extends ListenerAdapter {
 	/**
 	 * Format remaining timer duration
 	 */
-	private String formatTimerRemaining(long seconds) {
+	/** Felder mit einer Laufzeit in Sekunden ab dem Zeitpunkt des Uploads. */
+	private static final List<String> ZEIT_FELDER = List.of("timer", "helper_cooldown");
+
+	/**
+	 * Was von den Laufzeiten einer Gruppe noch übrig ist, die kürzeste zuerst:
+	 * "3h verbleibend, 1d 2h verbleibend". Läuft nicht bei jedem Gebäude der
+	 * Gruppe etwas, steht dahinter, bei wie vielen: "... (2 von 4)".
+	 *
+	 * @param timerSekunden    die Laufzeiten der Einträge, wie sie im Upload stehen
+	 * @param vergangenSekunden seit dem Upload vergangene Zeit
+	 * @param anzahl           Gebäude in der Gruppe
+	 * @return leer, wenn nichts mehr läuft
+	 */
+	static String restzeitenText(List<Long> timerSekunden, long vergangenSekunden, int anzahl) {
+		List<Long> rest = new ArrayList<>();
+		for (Long timer : timerSekunden) {
+			if (timer != null && timer - vergangenSekunden > 0) {
+				rest.add(timer - vergangenSekunden);
+			}
+		}
+		if (rest.isEmpty()) {
+			return "";
+		}
+		rest.sort(Long::compare);
+
+		StringBuilder sb = new StringBuilder();
+		for (Long sekunden : rest) {
+			if (sb.length() > 0) {
+				sb.append(", ");
+			}
+			sb.append(formatTimerRemaining(sekunden));
+		}
+		if (rest.size() < anzahl) {
+			sb.append(" (").append(rest.size()).append(" von ").append(anzahl).append(")");
+		}
+		return sb.toString();
+	}
+
+	private static String formatTimerRemaining(long seconds) {
 		long days = seconds / 86400;
 		seconds %= 86400;
 		long hours = seconds / 3600;
@@ -1435,9 +1505,8 @@ public class stats extends ListenerAdapter {
 		if (seconds > 0 || sb.length() == 0) {
 			sb.append(seconds).append("s");
 		}
-		sb.append(" verbleibend");
-
-		return sb.toString().trim();
+		// Erst kürzen, dann anhängen: "1h " + " verbleibend" gab zwei Leerzeichen.
+		return sb.toString().trim() + " verbleibend";
 	}
 
 	/**
