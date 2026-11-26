@@ -693,7 +693,7 @@ public class stats extends ListenerAdapter {
 				Object dataToDisplay = fieldData;
 
 				if (MODE_MISSING.equals(normalizedMode)) {
-					dataToDisplay = buildMissingData(statType, fieldData, getTownHallLevel(json));
+					dataToDisplay = buildMissingData(statType, json, getTownHallLevel(json));
 					if (dataToDisplay instanceof JSONArray missingArr && missingArr.length() == 0) {
 						hook.editOriginalEmbeds(MessageUtil.buildEmbed(title,
 								"Für **" + statType + "** fehlen keine Einträge.", MessageUtil.EmbedType.INFO)).queue();
@@ -2242,7 +2242,14 @@ public class stats extends ListenerAdapter {
 		return levels.getOrDefault(DATA_TOWN_HALL, 0);
 	}
 
-	private JSONArray buildMissingData(String statType, Object fieldData, int townHallLevel) {
+	/**
+	 * @param upload der ganze Upload, nicht nur das Feld des Stat-Typs: Was ein
+	 *               Spieler in irgendeinem Feld besitzt, fehlt ihm nicht - auch
+	 *               wenn die Image Map es einem anderen Typ zuordnet als der
+	 *               Upload (so stand der Sky Wagon bei jedem Besitzer als fehlende
+	 *               Truppe da, weil er im Upload unter den Belagerungsmaschinen liegt).
+	 */
+	private JSONArray buildMissingData(String statType, Object upload, int townHallLevel) {
 		JSONObject imageMapCache = null;
 		try {
 			imageMapCache = lostmanager.util.ImageMapCache.fetchFullMapOnce();
@@ -2260,7 +2267,7 @@ public class stats extends ListenerAdapter {
 		}
 
 		Set<String> ownedIds = new HashSet<>();
-		collectOwnedIds(fieldData, ownedIds);
+		collectOwnedIds(upload, ownedIds);
 
 		List<String> missingIds = new ArrayList<>();
 		for (String id : fullMapIds) {
@@ -2331,7 +2338,18 @@ public class stats extends ListenerAdapter {
 		}
 	}
 
-	private Set<String> getAllIdsForStatType(String statType, JSONObject imageMap) {
+	/**
+	 * Einträge, deren Bildpfad in der Image Map nicht zu dem Feld passt, in dem
+	 * der Upload sie führt: Die B.O.B-Hütte steht im Heimatdorf (Feld
+	 * "buildings"), ihr Bild liegt aber unter /builder-base/; die alte
+	 * Barbarenstatue ist ein Hindernis der Bauarbeiterbasis ("obstacles2"), trägt
+	 * aber kein "(BB)" im Namen. Für sie gilt der Typ hier, nicht der Pfad.
+	 */
+	private static final Map<String, String> FESTER_STAT_TYP = Map.of(
+			"1000064", CATEGORY_BUILDINGS,
+			"8000055", "Decorative (BB)");
+
+	static Set<String> getAllIdsForStatType(String statType, JSONObject imageMap) {
 		Set<String> ids = new HashSet<>();
 
 		for (String id : imageMap.keySet()) {
@@ -2340,7 +2358,8 @@ public class stats extends ListenerAdapter {
 				continue;
 			}
 
-			if (matchesStatType(statType, entry)) {
+			String fest = FESTER_STAT_TYP.get(id);
+			if (fest != null ? fest.equals(statType) : matchesStatType(statType, entry)) {
 				ids.add(id);
 			}
 		}
@@ -2348,7 +2367,7 @@ public class stats extends ListenerAdapter {
 		return ids;
 	}
 
-	private boolean matchesStatType(String statType, JSONObject entry) {
+	static boolean matchesStatType(String statType, JSONObject entry) {
 		String path = getEntryPath(entry).toLowerCase();
 		String name = entry.optString("name", "").toLowerCase();
 
@@ -2367,7 +2386,8 @@ public class stats extends ListenerAdapter {
 				return path.contains("/emotes/");
 			}
 			case "Equips" -> {
-				return path.contains("/equipment/");
+				// In der Image Map heißt der Ordner "equipments".
+				return path.contains("/equipment/") || path.contains("/equipments/");
 			}
 			case "Guardians" -> {
 				return path.contains("/guardians/");
@@ -2433,7 +2453,7 @@ public class stats extends ListenerAdapter {
 		}
 	}
 
-	private String getEntryPath(JSONObject entry) {
+	private static String getEntryPath(JSONObject entry) {
 		String icon = entry.optString("icon", "");
 		if (!icon.isEmpty()) {
 			return icon;
@@ -2495,14 +2515,15 @@ public class stats extends ListenerAdapter {
 	 * Decos, obstacles and sceneries all live under /home-base/ in the image map, so
 	 * the only reliable BB marker is the explicit "(BB)" suffix in the name. Looser
 	 * substrings like "builder" would misclassify home items such as
-	 * "Builder Statue" or "Builder Bust".
+	 * "Builder Statue" or "Builder Bust". Die Szenerien schreiben das Datum mit in
+	 * die Klammer: "Crystal Caverns Scenery (BB, Jul. 2023)".
 	 */
-	private boolean isBuilderVariantName(String nameLower) {
-		return nameLower.contains("(bb)");
+	private static boolean isBuilderVariantName(String nameLower) {
+		return nameLower.contains("(bb)") || nameLower.contains("(bb,");
 	}
 
-	private boolean isSiegeMachine(String nameLower) {
-		return nameLower.contains("wrecker") || nameLower.contains("blimp") || nameLower.contains("slammer")
+	private static boolean isSiegeMachine(String nameLower) {
+		return nameLower.contains("wagon") || nameLower.contains("wrecker") || nameLower.contains("blimp") || nameLower.contains("slammer")
 				|| nameLower.contains("siege") || nameLower.contains("launcher") || nameLower.contains("flinger")
 				|| nameLower.contains("drill");
 	}
