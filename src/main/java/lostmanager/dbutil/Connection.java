@@ -244,11 +244,32 @@ public class Connection {
 		}
 	}
 
-	public static java.sql.Connection getConnection() throws SQLException {
-		if (connection == null || connection.isClosed()) {
+	public static synchronized java.sql.Connection getConnection() throws SQLException {
+		// isValid fängt eine vom Server beendete Verbindung (Postgres-Neustart durch
+		// unattended-upgrades, pg_terminate_backend) ab, bevor die nächste Abfrage daran scheitert.
+		if (connection == null || connection.isClosed() || !isConnectionValid()) {
+			closeQuietly(connection);
 			connection = DriverManager.getConnection(url, user, password);
 		}
 		return connection;
+	}
+
+	private static boolean isConnectionValid() {
+		try {
+			return connection.isValid(5);
+		} catch (final SQLException e) {
+			return false;
+		}
+	}
+
+	private static void closeQuietly(java.sql.Connection conn) {
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (final SQLException e) {
+				// Verbindung ist ohnehin defekt
+			}
+		}
 	}
 
 }
